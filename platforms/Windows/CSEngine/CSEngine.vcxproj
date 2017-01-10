@@ -83,11 +83,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <PrecompiledHeaderFile />
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,12 +146,22 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\src\Component\SComponent.h" />
+    <ClInclude Include="..\..\..\src\MacroDef.h" />
+    <ClInclude Include="..\..\..\src\Manager\MainProc.h" />
+    <ClInclude Include="..\..\..\src\Manager\MemoryContainer.h" />
+    <ClInclude Include="..\..\..\src\Manager\MemoryMgr.h" />
+    <ClInclude Include="..\..\..\src\SObject.h" />
     <ClInclude Include="CSEngine.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\Manager\MainProc.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\MemoryContainer.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\MemoryMgr.cpp" />
+    <ClCompile Include="..\..\..\src\SObject.cpp" />
     <ClCompile Include="CSEngine.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
