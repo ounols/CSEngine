@@ -3,6 +3,7 @@
 
 
 SObject::SObject() {
+	// register this object to MemoryContainer class
 	MemoryMgr::getInstance()->RegisterSObject(this);
 }
 
