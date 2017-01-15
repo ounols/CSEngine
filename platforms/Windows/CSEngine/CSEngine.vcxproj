@@ -151,7 +151,12 @@
     <ClInclude Include="..\..\..\src\Manager\MainProc.h" />
     <ClInclude Include="..\..\..\src\Manager\MemoryContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\MemoryMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\OGLMgr.h" />
+    <ClInclude Include="..\..\..\src\OGLDef.h" />
     <ClInclude Include="..\..\..\src\SObject.h" />
+    <ClInclude Include="..\..\..\src\Util\Matrix.h" />
+    <ClInclude Include="..\..\..\src\Util\MatrixDef.h" />
+    <ClInclude Include="..\..\..\src\Util\Vector.h" />
     <ClInclude Include="CSEngine.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -161,6 +166,7 @@
     <ClCompile Include="..\..\..\src\Manager\MainProc.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MemoryContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MemoryMgr.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\OGLMgr.cpp" />
     <ClCompile Include="..\..\..\src\SObject.cpp" />
     <ClCompile Include="CSEngine.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -11,7 +11,7 @@ MainProc::~MainProc()
 }
 
 
-void MainProc::Init() {
+void MainProc::Init(GLuint width, GLuint height) {
 }
 
 

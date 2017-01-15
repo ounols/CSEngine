@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 #define SINGLETONE(x) static inline x* getInstance() { static x t; return &t; }
 
 #define NULLPTR(p) { (p) = nullptr; }
