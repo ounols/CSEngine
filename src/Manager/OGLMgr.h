@@ -11,11 +11,14 @@ public:
 	void setupEGLGraphics();
 	void setupEGLGraphics(GLuint width, GLuint height);
 
-	GLuint createProgram(const GLchar* vertexSource, const GLchar* fragmentSource) const;
-	static GLuint loadShader(GLenum shaderType, const char *pSource);
-
 	void setVertexShader(GLchar* vertexSource);
 	void setFragmentShader(GLchar* fragmentSource);
+
+	void Render(float elapsedTime);
+
+private:
+	static GLuint createProgram(const GLchar* vertexSource, const GLchar* fragmentSource);
+	static GLuint loadShader(GLenum shaderType, const char *pSource);
 
 private:
 	GLuint m_width, m_height;

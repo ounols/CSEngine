@@ -39,7 +39,7 @@ void OGLMgr::setupEGLGraphics(GLuint width, GLuint height) {
 }
 
 
-GLuint OGLMgr::createProgram(const GLchar* vertexSource, const GLchar* fragmentSource) const {
+GLuint OGLMgr::createProgram(const GLchar* vertexSource, const GLchar* fragmentSource) {
 
 	GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vertexSource);
 	if (!vertexShader) {
@@ -134,4 +134,11 @@ void OGLMgr::setVertexShader(GLchar* vertexSource) {
 
 void OGLMgr::setFragmentShader(GLchar* fragmentSource) {
 	m_fragmentShader = fragmentSource;
+}
+
+
+void OGLMgr::Render(float elapsedTime) {
+
+
+
 }
