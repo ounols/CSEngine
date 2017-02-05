@@ -152,8 +152,12 @@
     <ClInclude Include="..\..\..\src\Manager\MemoryContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\MemoryMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\OGLMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\ResMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\Scene.h" />
+    <ClInclude Include="..\..\..\src\Manager\ShaderProgramContainer.h" />
     <ClInclude Include="..\..\..\src\OGLDef.h" />
     <ClInclude Include="..\..\..\src\SObject.h" />
+    <ClInclude Include="..\..\..\src\Util\GLProgramHandle.h" />
     <ClInclude Include="..\..\..\src\Util\Matrix.h" />
     <ClInclude Include="..\..\..\src\Util\MatrixDef.h" />
     <ClInclude Include="..\..\..\src\Util\Vector.h" />
@@ -167,6 +171,9 @@
     <ClCompile Include="..\..\..\src\Manager\MemoryContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MemoryMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\OGLMgr.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\ResMgr.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\Scene.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\ShaderProgramContainer.cpp" />
     <ClCompile Include="..\..\..\src\SObject.cpp" />
     <ClCompile Include="CSEngine.cpp" />
     <ClCompile Include="stdafx.cpp">

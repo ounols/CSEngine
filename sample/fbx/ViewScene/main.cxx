@@ -146,6 +146,8 @@ static bool gAutoQuit = false;
 
 int main(int argc, char** argv)
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
     // Set exit function to destroy objects created by the FBX SDK.
     atexit(ExitFunction);
 

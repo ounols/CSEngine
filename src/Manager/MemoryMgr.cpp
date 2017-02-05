@@ -12,6 +12,7 @@ MemoryMgr::~MemoryMgr()
 
 
 void MemoryMgr::ExterminateObject() {
+
 	for (const auto& object : m_objects) {
 		if (object == nullptr)	continue;
 

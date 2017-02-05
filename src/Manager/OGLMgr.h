@@ -16,6 +16,7 @@ public:
 
 	void Render(float elapsedTime);
 
+
 private:
 	static GLuint createProgram(const GLchar* vertexSource, const GLchar* fragmentSource);
 	static GLuint loadShader(GLenum shaderType, const char *pSource);

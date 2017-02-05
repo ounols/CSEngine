@@ -1,5 +1,6 @@
 #include "MainProc.h"
 #include "../Macrodef.h"
+#include "MemoryMgr.h"
 
 
 MainProc::MainProc()
@@ -35,5 +36,6 @@ void MainProc::Render(float elapsedTime) {
 void MainProc::Exterminate() {
 
 	SAFE_DELETE(m_oglMgr);
+	MemoryMgr::getInstance()->ExterminateObject();
 
 }
