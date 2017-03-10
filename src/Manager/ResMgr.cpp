@@ -1,5 +1,6 @@
 #include "ResMgr.h"
 
+IMPLEMENT_SINGLETON(ResMgr);
 
 ResMgr::ResMgr(){
 
@@ -21,10 +22,14 @@ void ResMgr::Init() {
 }
 
 
-void ResMgr::Exterminate() const {
+void ResMgr::Exterminate() {
 
-	deleteObject(m_programContainer);
 
+}
+
+
+void ResMgr::RegisterProgram(GLProgramHandle* m_handle) const {
+	m_programContainer->RegisterProgram(m_handle);
 }
 
 
@@ -32,10 +37,3 @@ GLProgramHandle* ResMgr::getShaderProgramHandle(int id) const {
 	return m_programContainer->getProgramHandle(id);
 }
 
-
-void ResMgr::deleteObject(SObject* object) {
-
-	object->Exterminate();
-	SAFE_DELETE(object);
-
-}

@@ -13,6 +13,8 @@
 //#include <gl/glut.h>
 #include <GL/glew.h>
 #include <crtdbg.h>
+#include "../../../src/Manager/MainProc.h"
+#include "../../../src/Macrodef.h"
 
 
 #pragma comment(lib, "glew32.lib")
@@ -68,9 +70,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CSENGINE));
 
+	MainProc* mainProc = new MainProc();
+
 	//init GLEW
 	glewInit();
 	//GL20Lib::setupGLGraphics(WIDTH, HEIGHT);
+	mainProc->Init(WIDTH, HEIGHT);
 
 	MSG msg;
 	DWORD dwStartTime = timeGetTime();
@@ -90,7 +95,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		else {
 			//GL20Lib::renderFrame(static_cast<float>(timeGetTime() - dwStartTime));
-
+			float deltaTime = static_cast<float>(timeGetTime() - dwStartTime);
+			mainProc->Update(deltaTime);
+			mainProc->Render(deltaTime);
 			glEnd();
 			glFinish();
 
@@ -98,6 +105,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 
 	}
+
+	SAFE_DELETE(mainProc);
 
 	return static_cast<int>(msg.wParam);
 }
@@ -205,14 +214,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 	}
-					 break;
-					 //case WM_PAINT: {
-					 //	PAINTSTRUCT ps;
-					 //	HDC hdc = BeginPaint(hWnd, &ps);
-					 //	// TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
-					 //	EndPaint(hWnd, &ps);
-					 //}
-					 //	break;
+		break;
+	//case WM_PAINT: {
+	//	PAINTSTRUCT ps;
+	//	HDC hdc = BeginPaint(hWnd, &ps);
+	//	// TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
+	//	EndPaint(hWnd, &ps);
+	//}
+	//	break;
 	case WM_DESTROY:
 		b_isQuit = true;
 		wglMakeCurrent(hdc, nullptr);

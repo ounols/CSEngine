@@ -1,6 +1,7 @@
 #pragma once
 #include "../OGLDef.h"
 #include "../SObject.h"
+#include "../Manager/ResMgr.h"
 
 #define HANDLE_NULL -1
 
@@ -27,7 +28,9 @@ class GLProgramHandle :
 	public SObject
 {
 public:
-	GLProgramHandle() : Program(HANDLE_NULL) {}
+	GLProgramHandle() : Program(HANDLE_NULL) {
+		ResMgr::getInstance()->RegisterProgram(this);
+	}
 	~GLProgramHandle() {}
 	void Exterminate() override {}
 

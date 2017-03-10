@@ -1,12 +1,11 @@
 #include "Scene.h"
 #include "MemoryMgr.h"
 
-Scene::Scene()
-{
+
+Scene::Scene() {
 }
 
 
-Scene::~Scene()
-{
-	MemoryMgr::getInstance()->ExterminateObject();
+Scene::~Scene() {
+	MemoryMgr::getInstance()->ExterminateObjects();
 }

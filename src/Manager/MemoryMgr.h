@@ -6,12 +6,11 @@ class MemoryMgr :
 	public MemoryContainer
 {
 protected:
-	MemoryMgr();
 	~MemoryMgr();
+	DECLARE_SINGLETONE(MemoryMgr);
 
 public:
-	SINGLETONE(MemoryMgr);
-
-	void ExterminateObject();
+	
+	void ExterminateObjects();
+	void ReleaseObject(SObject* object);
 };
-

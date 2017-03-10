@@ -15,7 +15,11 @@ public:
 	{
 	}
 
-	virtual void Tick() = 0;
+	virtual void Tick(float elapsedTime) = 0;
+
+	const char* getName() const {
+		return m_name.c_str();
+	}
 
 protected:
 	std::string m_name;

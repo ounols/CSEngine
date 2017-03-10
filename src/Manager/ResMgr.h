@@ -1,27 +1,32 @@
 #pragma once
 #include "../Macrodef.h"
-#include "../SObject.h"
 #include "ShaderProgramContainer.h"
 
 #define RESMGR ResMgr::getInstance()
 
-class ShaderProgramContainer;
+class SObject;
+class GLProgramHandle;
+
 class ResMgr
 {
 private:
-	ResMgr();
 	~ResMgr();
 
 public:
-	SINGLETONE(ResMgr);
+	DECLARE_SINGLETONE(ResMgr);
 
 	void Init();
-	void Exterminate() const;
+	void Exterminate();
 
+	void RegisterProgram(GLProgramHandle* m_handle) const;
 	GLProgramHandle* getShaderProgramHandle(int id) const;
+	int getShaderProgramSize() const {
+		return m_programContainer->getSize();
+	}
 
-private:
-	static void deleteObject(SObject* object);
+	bool isEmpty() {
+		return m_programContainer->getSize() == 0;
+	}
 
 private:
 	ShaderProgramContainer* m_programContainer;

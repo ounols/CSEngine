@@ -148,6 +148,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Component\SComponent.h" />
     <ClInclude Include="..\..\..\src\MacroDef.h" />
+    <ClInclude Include="..\..\..\src\Manager\GameObjectContainer.h" />
+    <ClInclude Include="..\..\..\src\Manager\GameObjectMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\MainProc.h" />
     <ClInclude Include="..\..\..\src\Manager\MemoryContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\MemoryMgr.h" />
@@ -155,6 +157,7 @@
     <ClInclude Include="..\..\..\src\Manager\ResMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\Scene.h" />
     <ClInclude Include="..\..\..\src\Manager\ShaderProgramContainer.h" />
+    <ClInclude Include="..\..\..\src\Object\SGameObject.h" />
     <ClInclude Include="..\..\..\src\OGLDef.h" />
     <ClInclude Include="..\..\..\src\SObject.h" />
     <ClInclude Include="..\..\..\src\Util\GLProgramHandle.h" />
@@ -167,6 +170,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\Manager\GameObjectContainer.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\GameObjectMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MainProc.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MemoryContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MemoryMgr.cpp" />
@@ -174,6 +179,7 @@
     <ClCompile Include="..\..\..\src\Manager\ResMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Scene.cpp" />
     <ClCompile Include="..\..\..\src\Manager\ShaderProgramContainer.cpp" />
+    <ClCompile Include="..\..\..\src\Object\SGameObject.cpp" />
     <ClCompile Include="..\..\..\src\SObject.cpp" />
     <ClCompile Include="CSEngine.cpp" />
     <ClCompile Include="stdafx.cpp">

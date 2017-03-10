@@ -1,9 +1,10 @@
 #pragma once
 #include "../SObject.h"
-#include "../Util/GLProgramHandle.h"
 
 #include <vector>
 
+
+class GLProgramHandle;
 
 class ShaderProgramContainer :
 	public SObject
@@ -20,6 +21,11 @@ public:
 		return m_programHandles[id];
 	}
 
+	int getSize() const {
+		return m_size;
+	}
+
 private:
 	std::vector<GLProgramHandle*> m_programHandles;
+	int m_size = 0;
 };

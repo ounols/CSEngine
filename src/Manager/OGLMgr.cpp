@@ -1,8 +1,8 @@
 #include "OGLMgr.h"
+#include "../Util/GLProgramHandle.h"
 
 
-OGLMgr::OGLMgr()
-{
+OGLMgr::OGLMgr(): m_programId(-1), m_projectionRatio(-1) {
 }
 
 
@@ -11,19 +11,36 @@ OGLMgr::~OGLMgr()
 }
 
 
-void OGLMgr::setupEGLGraphics() {
+void OGLMgr::setupEGLGraphics(int id = HANDLE_NULL) {
 
-	m_program = createProgram(m_vertexShader.c_str(), m_fragmentShader.c_str());
-	if(m_program) {
-		return;
+	GLProgramHandle* gProgramhandle;
+
+	if (id == HANDLE_NULL) {
+		//기본값 쉐이더 적용
+		gProgramhandle = new GLProgramHandle();
+		m_programId = RESMGR->getShaderProgramSize();
+
+		gProgramhandle->Program = createProgram(m_vertexShader.c_str(), m_fragmentShader.c_str());
+		if (gProgramhandle->Program) {
+			return;
+		}
+	}
+	else {
+		//커스텀 쉐이더 적용
+		gProgramhandle = RESMGR->getShaderProgramHandle(id);
+		m_programId = id;
 	}
 
+	const auto m_program = gProgramhandle->Program;
+
 	//버텍스 포지션 핸들을 쉐이더 변수에서 받아옴
-	m_vPositionHandle = static_cast<GLuint>(glGetAttribLocation(m_program, "vPosition"));
+	gProgramhandle->Attributes.Position = static_cast<GLuint>(glGetAttribLocation(m_program, "vPosition"));
 
 	//버텍스 컬러 핸들을 쉐이더 변수에서 받아옴
-	m_aColorHandle = static_cast<GLuint>(glGetAttribLocation(m_program, "aColor"));
+	gProgramhandle->Attributes.Color = static_cast<GLuint>(glGetAttribLocation(m_program, "aColor"));
 
+	//추가바람
+	//...
 }
 
 
@@ -35,7 +52,7 @@ void OGLMgr::setupEGLGraphics(GLuint width, GLuint height) {
 	m_height = height;
 
 	setupEGLGraphics();
-
+	setPerspectiveView();
 }
 
 
@@ -126,6 +143,18 @@ GLuint OGLMgr::loadShader(GLenum shaderType, const char* pSource) {
 
 }
 
+//렌더링 매니저로 이동
+void OGLMgr::setPerspectiveView() {
+	if(m_projectionRatio < 0) {
+		if (m_width > m_height)
+			m_projectionRatio = (GLfloat)m_width / (GLfloat)m_height;
+		else
+			m_projectionRatio = (GLfloat)m_height / (GLfloat)m_width;
+	}
+
+
+}
+
 
 void OGLMgr::setVertexShader(GLchar* vertexSource) {
 	m_vertexShader = vertexSource;
@@ -139,6 +168,7 @@ void OGLMgr::setFragmentShader(GLchar* fragmentSource) {
 
 void OGLMgr::Render(float elapsedTime) {
 
-
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 }

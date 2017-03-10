@@ -7,6 +7,5 @@ public:
 	SObject();
 	virtual ~SObject();
 
-
 	virtual void Exterminate() = 0;
 };
