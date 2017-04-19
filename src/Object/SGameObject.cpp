@@ -7,6 +7,12 @@ SGameObject::SGameObject() {
 }
 
 
+SGameObject::SGameObject(std::string name) {
+	GameObjectMgr::getInstance()->RegisterGameObject(this);
+	m_name = name;
+}
+
+
 SGameObject::~SGameObject() {
 	SGameObject::Exterminate();
 }

@@ -2,26 +2,29 @@
 #include "../SObject.h"
 #include <string>
 
-class SComponent
-	: public SObject
-{
+class SComponent : public SObject {
 public:
 
-	SComponent()
-	{
+	SComponent() {
 	}
 
-	virtual ~SComponent()
-	{
+
+	virtual ~SComponent() {
 	}
+
 
 	virtual void Tick(float elapsedTime) = 0;
 
-	const char* getName() const {
+
+	const char* GetName() const {
 		return m_name.c_str();
 	}
+
+	void SetName(std::string name) {
+		m_name = name;
+	}
+
 
 protected:
 	std::string m_name;
 };
-

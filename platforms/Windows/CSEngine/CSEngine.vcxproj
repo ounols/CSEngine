@@ -146,6 +146,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\src\Component\DrawableStaticMeshComponent.h" />
     <ClInclude Include="..\..\..\src\Component\SComponent.h" />
     <ClInclude Include="..\..\..\src\MacroDef.h" />
     <ClInclude Include="..\..\..\src\Manager\GameObjectContainer.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\Component\DrawableStaticMeshComponent.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MainProc.cpp" />

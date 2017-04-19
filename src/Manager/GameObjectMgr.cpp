@@ -29,3 +29,15 @@ void GameObjectMgr::DeleteGameObject(SGameObject* object) {
 		MemoryMgr::getInstance()->ReleaseObject(object);
 	}
 }
+
+
+SGameObject* GameObjectMgr::Find(std::string name) {
+
+	for(auto object : m_gameObjects) {
+		if (object->GetName() == name)
+			return object;
+	}
+
+	return nullptr;
+
+}
