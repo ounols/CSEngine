@@ -2,7 +2,7 @@
 #include "../SObject.h"
 #include <vector>
 #include "../Component/SComponent.h"
-#include "../Util/Vector.h"
+#include "../Component/TransformComponent.h"
 
 class SGameObject : public SObject {
 public:
@@ -16,48 +16,64 @@ public:
 
 	void AddComponent(SComponent* component);
 	template <class T>
-	T* GetComponent(const char* name);
-
-
-	vec3 GetPosition() const {
-		return m_position;
-	}
+	T* GetComponent();
+	template <class T>
+	bool DeleteComponent();
 
 	std::string GetName() const {
 		return m_name;
-	}
-
-
-	void SetPosition(vec3 position) {
-		m_position = position;
 	}
 
 	void SetName(std::string name) {
 		m_name = name;
 	}
 
+	TransformComponent* GetTransform() const {
+		return m_transform;
+	}
+
 
 private:
 	void UpdateComponent(float elapsedTime);
 
-
 private:
 	std::vector<SComponent*> m_components;
-	vec3 m_position;
 	std::string m_name;
-
+	TransformComponent* m_transform;
 };
 
 
 template <class T>
-T* SGameObject::GetComponent(const char* name) {
+T* SGameObject::GetComponent() {
 	for (const auto& component : m_components) {
 		if (component == nullptr) continue;
 
-		if (!strcmp(component->getName(), name)) {
+		if (typeid(component) == typeid(T)) {
 			return T(component);
 		}
 	}
 
 	return nullptr;
+}
+
+template <class T>
+bool SGameObject::DeleteComponent() {
+	for (auto component : m_components) {
+		if (component == nullptr) continue;
+
+		if (typeid(component) == typeid(T)) {
+			
+			auto iCompObj = std::find(m_components.begin(), m_components.end(), component);
+
+			if(iCompObj != m_components.end()) {
+				m_components.erase(iCompObj);
+				MemoryMgr::getInstance()->ReleaseObject(component);
+			}
+			
+
+			return true;
+		}
+	}
+
+	return false;
 }

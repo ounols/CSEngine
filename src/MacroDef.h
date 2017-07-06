@@ -1,7 +1,6 @@
 #pragma once
 
 
-
 //#define SINGLETONE(x) static inline x* getInstance() { static x t; return &t; }
 // 복사 금지 매크로
 #define MAKE_NO_COPY(CLASSNAME)                                             \
@@ -32,7 +31,6 @@
                {                                                    \
                     SAFE_DELETE(sInstance);                        \
                }
-
 
 
 #define NULLPTR(p) { (p) = nullptr; }

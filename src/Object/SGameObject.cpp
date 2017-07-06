@@ -1,9 +1,10 @@
 #include "SGameObject.h"
 #include "../Manager/GameObjectMgr.h"
 
-
 SGameObject::SGameObject() {
 	GameObjectMgr::getInstance()->RegisterGameObject(this);
+
+	
 }
 
 

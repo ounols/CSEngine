@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Component\DrawableStaticMeshComponent.h" />
     <ClInclude Include="..\..\..\src\Component\SComponent.h" />
+    <ClInclude Include="..\..\..\src\Component\TransformComponent.h" />
     <ClInclude Include="..\..\..\src\MacroDef.h" />
     <ClInclude Include="..\..\..\src\Manager\GameObjectContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\GameObjectMgr.h" />
@@ -172,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\Component\DrawableStaticMeshComponent.cpp" />
+    <ClCompile Include="..\..\..\src\Component\TransformComponent.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MainProc.cpp" />

@@ -1,6 +1,6 @@
 #include <algorithm>
-#include "GameObjectMgr.h"
 #include "MemoryMgr.h"
+#include "GameObjectMgr.h"
 
 IMPLEMENT_SINGLETON(GameObjectMgr);
 

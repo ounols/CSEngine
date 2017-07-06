@@ -9,8 +9,8 @@ public:
 
 private:
 	int m_vertexBuffer = -1;
-	int m_indexBuffer = -1;
+	int m_indicesBuffer = -1;
 	int m_vertexSize = -1;
-	int m_indexSize = -1;
+	int m_indicesSize = -1;
 };
 

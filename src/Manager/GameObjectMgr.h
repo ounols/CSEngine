@@ -1,6 +1,8 @@
 #pragma once
-#include "GameObjectContainer.h"
 #include "../Macrodef.h"
+#include "GameObjectContainer.h"
+
+class SGameObject;
 
 class GameObjectMgr : public GameObjectContainer {
 protected:

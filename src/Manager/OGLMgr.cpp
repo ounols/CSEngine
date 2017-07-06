@@ -2,12 +2,11 @@
 #include "../Util/GLProgramHandle.h"
 
 
-OGLMgr::OGLMgr(): m_programId(-1), m_projectionRatio(-1) {
+OGLMgr::OGLMgr() : m_projectionRatio(-1), m_programId(-1) {
 }
 
 
-OGLMgr::~OGLMgr()
-{
+OGLMgr::~OGLMgr() {
 }
 
 
@@ -143,9 +142,10 @@ GLuint OGLMgr::loadShader(GLenum shaderType, const char* pSource) {
 
 }
 
+
 //렌더링 매니저로 이동
 void OGLMgr::setPerspectiveView() {
-	if(m_projectionRatio < 0) {
+	if (m_projectionRatio < 0) {
 		if (m_width > m_height)
 			m_projectionRatio = (GLfloat)m_width / (GLfloat)m_height;
 		else

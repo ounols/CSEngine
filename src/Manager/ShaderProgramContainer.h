@@ -6,8 +6,7 @@
 
 class GLProgramHandle;
 
-class ShaderProgramContainer :
-	public SObject
+class ShaderProgramContainer : public SObject
 {
 
 public:
