@@ -3,6 +3,7 @@
 #include <vector>
 #include "../Component/SComponent.h"
 #include "../Component/TransformComponent.h"
+#include "../Manager/MemoryMgr.h"
 
 class SGameObject : public SObject {
 public:
@@ -14,11 +15,17 @@ public:
 	virtual void Exterminate() override;
 	void Destroy();
 
+	/**
+	 * \brief 컴포넌트를 이 오브젝트에 추가합니다.
+	 * \param component 추가할 오브젝트
+	 */
 	void AddComponent(SComponent* component);
 	template <class T>
 	T* GetComponent();
 	template <class T>
 	bool DeleteComponent();
+	template <class T>
+	T* CreateComponent();
 
 	std::string GetName() const {
 		return m_name;
@@ -45,11 +52,10 @@ private:
 
 template <class T>
 T* SGameObject::GetComponent() {
-	for (const auto& component : m_components) {
+	for (auto component : m_components) {
 		if (component == nullptr) continue;
-
-		if (typeid(component) == typeid(T)) {
-			return T(component);
+		if (typeid(*component) == typeid(T)) {
+			return static_cast<T*>(component);
 		}
 	}
 
@@ -60,8 +66,8 @@ template <class T>
 bool SGameObject::DeleteComponent() {
 	for (auto component : m_components) {
 		if (component == nullptr) continue;
-
-		if (typeid(component) == typeid(T)) {
+		
+		if (typeid(*component) == typeid(T)) {
 			
 			auto iCompObj = std::find(m_components.begin(), m_components.end(), component);
 
@@ -76,4 +82,14 @@ bool SGameObject::DeleteComponent() {
 	}
 
 	return false;
+}
+
+
+template <class T>
+T* SGameObject::CreateComponent() {
+
+	T* component = new T();
+	AddComponent(component);
+	return component;
+
 }

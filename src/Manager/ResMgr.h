@@ -7,8 +7,7 @@
 class SObject;
 class GLProgramHandle;
 
-class ResMgr
-{
+class ResMgr {
 private:
 	~ResMgr();
 
@@ -20,13 +19,17 @@ public:
 
 	void RegisterProgram(GLProgramHandle* m_handle) const;
 	GLProgramHandle* getShaderProgramHandle(int id) const;
+
+
 	int getShaderProgramSize() const {
 		return m_programContainer->getSize();
 	}
 
-	bool isEmpty() {
+
+	bool isProgramEmpty() const {
 		return m_programContainer->getSize() == 0;
 	}
+
 
 private:
 	ShaderProgramContainer* m_programContainer;

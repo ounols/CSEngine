@@ -3,6 +3,7 @@
 #include "MemoryMgr.h"
 #include "ResMgr.h"
 #include "GameObjectMgr.h"
+#include "../Component/DrawableStaticMeshComponent.h"
 
 
 MainProc::MainProc()
@@ -21,12 +22,13 @@ void MainProc::Init(GLuint width, GLuint height) {
 
 	m_oglMgr->setupEGLGraphics(width, height);
 
-	//Managing Memory Test
+	////Managing Memory Test
 	//SGameObject* a = new SGameObject();
 	//SGameObject* b = new SGameObject();
 	//SGameObject* c = new SGameObject();
 
 	//b->Destroy();
+
 
 }
 
@@ -50,7 +52,7 @@ void MainProc::Exterminate() {
 	GameObjectMgr::delInstance();
 
 
-	MemoryMgr::getInstance()->ExterminateObjects();
+	MemoryMgr::getInstance()->ExterminateObjects(true);
 	MemoryMgr::delInstance();
 	
 

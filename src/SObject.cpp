@@ -10,3 +10,8 @@ SObject::SObject() {
 
 SObject::~SObject() {
 }
+
+
+void SObject::SetUndestroyable(bool enable) {
+	isUndestroyable = enable;
+}

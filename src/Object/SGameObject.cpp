@@ -3,14 +3,14 @@
 
 SGameObject::SGameObject() {
 	GameObjectMgr::getInstance()->RegisterGameObject(this);
-
-	
+	m_transform = CreateComponent<TransformComponent>();
 }
 
 
 SGameObject::SGameObject(std::string name) {
 	GameObjectMgr::getInstance()->RegisterGameObject(this);
 	m_name = name;
+	m_transform = CreateComponent<TransformComponent>();
 }
 
 
@@ -26,15 +26,25 @@ void SGameObject::Tick(float elapsedTime) {
 
 
 void SGameObject::Exterminate() {
+
 }
 
 
 void SGameObject::Destroy() {
+
+	for (auto component : m_components) {
+		if (component == nullptr) continue;
+		MemoryMgr::getInstance()->ReleaseObject(component);
+	}
+
+	m_components.clear();
+
 	GameObjectMgr::getInstance()->DeleteGameObject(this);
 }
 
 
 void SGameObject::AddComponent(SComponent* component) {
+
 	m_components.push_back(component);
 }
 

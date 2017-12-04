@@ -2,8 +2,7 @@
 #include "MemoryContainer.h"
 #include "../Macrodef.h"
 
-class MemoryMgr :
-	public MemoryContainer
+class MemoryMgr : public MemoryContainer
 {
 protected:
 	~MemoryMgr();
@@ -11,6 +10,6 @@ protected:
 
 public:
 	
-	void ExterminateObjects();
+	void ExterminateObjects(bool killAll = false);
 	void ReleaseObject(SObject* object);
 };

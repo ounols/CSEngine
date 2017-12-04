@@ -3,13 +3,12 @@
 #include "../Util/GLProgramHandle.h"
 
 
-ShaderProgramContainer::ShaderProgramContainer()
-{
+ShaderProgramContainer::ShaderProgramContainer() {
+	SetUndestroyable(true);
 }
 
 
-ShaderProgramContainer::~ShaderProgramContainer()
-{
+ShaderProgramContainer::~ShaderProgramContainer() {
 	ShaderProgramContainer::Exterminate();
 }
 

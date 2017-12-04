@@ -30,6 +30,7 @@ class GLProgramHandle :
 public:
 	GLProgramHandle() : Program(HANDLE_NULL) {
 		ResMgr::getInstance()->RegisterProgram(this);
+		SetUndestroyable(true);
 	}
 	~GLProgramHandle() {}
 	void Exterminate() override {}
