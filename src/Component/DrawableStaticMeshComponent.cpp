@@ -9,6 +9,10 @@ DrawableStaticMeshComponent::DrawableStaticMeshComponent() {}
 DrawableStaticMeshComponent::~DrawableStaticMeshComponent() {}
 
 
+void DrawableStaticMeshComponent::Init() {
+}
+
+
 void DrawableStaticMeshComponent::Tick(float elapsedTime) {
 }
 
@@ -19,7 +23,14 @@ void DrawableStaticMeshComponent::Exterminate() {
 
 bool DrawableStaticMeshComponent::SetMesh(const SISurface& meshSurface, int flags) {
 
-	if (m_vertexSize != -1 || m_vertexBuffer != -1) return false;
+	if (m_meshId.m_vertexSize != -1 || m_meshId.m_vertexBuffer != -1) return false;
+
+	if (meshSurface.m_staticMeshId.m_vertexSize != -1
+		|| meshSurface.m_staticMeshId.m_vertexBuffer != -1) {
+		m_meshId = meshSurface.m_staticMeshId;
+		return true;
+
+	}
 
 	CreateMeshBuffers(meshSurface, flags);
 
@@ -64,10 +75,13 @@ void DrawableStaticMeshComponent::CreateMeshBuffers(const SISurface& surface, in
 	}
 
 	//Pulling data
-	m_vertexBuffer = vertexBuffer;
-	m_vertexSize = vertexCount;
-	m_indexBuffer = indexBuffer;
-	m_indexSize = indexCount;
+	surface.m_staticMeshId.m_vertexBuffer = vertexBuffer;
+	surface.m_staticMeshId.m_vertexSize = vertexCount;
+	surface.m_staticMeshId.m_indexBuffer = indexBuffer;
+	surface.m_staticMeshId.m_indexSize = indexCount;
+	surface.m_staticMeshId.m_flags = flags;
+
+	m_meshId = surface.m_staticMeshId;
 
 	//Unbinding
 	glBindTexture(GL_ARRAY_BUFFER, 0);

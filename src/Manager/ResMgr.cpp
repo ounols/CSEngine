@@ -18,6 +18,7 @@ ResMgr::~ResMgr()
 void ResMgr::Init() {
 
 	m_programContainer = new ShaderProgramContainer();
+	m_surfaceMeshContainer = new SurfaceMeshContainer();
 
 }
 
@@ -33,7 +34,16 @@ void ResMgr::RegisterProgram(GLProgramHandle* m_handle) const {
 }
 
 
+void ResMgr::RegisterSurfaceMesh(SISurface* m_surface) const {
+	m_surfaceMeshContainer->RegisterProgram(m_surface);
+}
+
+
 GLProgramHandle* ResMgr::getShaderProgramHandle(int id) const {
 	return m_programContainer->getProgramHandle(id);
 }
 
+
+SISurface* ResMgr::GetSurfaceMesh(int id) const {
+	return m_surfaceMeshContainer->GetSurfaceMesh(id);
+}

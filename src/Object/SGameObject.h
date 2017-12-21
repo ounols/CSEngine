@@ -1,9 +1,10 @@
 #pragma once
-#include "../SObject.h"
 #include <vector>
-#include "../Component/SComponent.h"
-#include "../Component/TransformComponent.h"
+#include "../SObject.h"
 #include "../Manager/MemoryMgr.h"
+#include "../Component/SComponent.h"
+
+class SComponent;
 
 class SGameObject : public SObject {
 public:
@@ -11,6 +12,7 @@ public:
 	explicit SGameObject(std::string name);
 	~SGameObject();
 
+	virtual void Init();
 	virtual void Tick(float elapsedTime);
 	virtual void Exterminate() override;
 	void Destroy();
@@ -35,18 +37,20 @@ public:
 		m_name = name;
 	}
 
-	TransformComponent* GetTransform() const {
+	SComponent* GetTransform() const {
 		return m_transform;
 	}
 
 
 private:
 	void UpdateComponent(float elapsedTime);
+	//static bool isSameComponent(const SComponent* src, const SComponent* dst);
+
 
 private:
 	std::vector<SComponent*> m_components;
 	std::string m_name;
-	TransformComponent* m_transform;
+	SComponent* m_transform;
 };
 
 
@@ -54,7 +58,7 @@ template <class T>
 T* SGameObject::GetComponent() {
 	for (auto component : m_components) {
 		if (component == nullptr) continue;
-		if (typeid(*component) == typeid(T)) {
+		if (dynamic_cast<T*>(component)) {
 			return static_cast<T*>(component);
 		}
 	}
@@ -67,7 +71,7 @@ bool SGameObject::DeleteComponent() {
 	for (auto component : m_components) {
 		if (component == nullptr) continue;
 		
-		if (typeid(*component) == typeid(T)) {
+		if (dynamic_cast<T*>(component)) {
 			
 			auto iCompObj = std::find(m_components.begin(), m_components.end(), component);
 

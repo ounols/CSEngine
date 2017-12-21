@@ -58,6 +58,7 @@ void MemoryMgr::ReleaseObject(SObject* object) {
 		OutputDebugStringA("...\n");
 
 		m_objects.erase(iObj);
+		object->Exterminate();
 		SAFE_DELETE(object);
 
 		OutputDebugStringA("deleted\n");

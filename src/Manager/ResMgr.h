@@ -1,11 +1,13 @@
 #pragma once
 #include "../Macrodef.h"
 #include "ShaderProgramContainer.h"
+#include "SurfaceMeshContainer.h"
 
 #define RESMGR ResMgr::getInstance()
 
 class SObject;
 class GLProgramHandle;
+class SISurface;
 
 class ResMgr {
 private:
@@ -18,7 +20,10 @@ public:
 	void Exterminate();
 
 	void RegisterProgram(GLProgramHandle* m_handle) const;
+	void RegisterSurfaceMesh(SISurface* m_surface) const;
+
 	GLProgramHandle* getShaderProgramHandle(int id) const;
+	SISurface* GetSurfaceMesh(int id) const;
 
 
 	int getShaderProgramSize() const {
@@ -33,4 +38,5 @@ public:
 
 private:
 	ShaderProgramContainer* m_programContainer;
+	SurfaceMeshContainer* m_surfaceMeshContainer;
 };

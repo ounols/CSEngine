@@ -10,6 +10,16 @@ GameObjectMgr::GameObjectMgr() {}
 GameObjectMgr::~GameObjectMgr() {}
 
 
+void GameObjectMgr::Init() {
+
+	for (const auto& object : m_gameObjects) {
+		if (object == nullptr) continue;
+		object->Init();
+	}
+
+}
+
+
 void GameObjectMgr::Update(float elapsedTime) {
 	for (const auto& object : m_gameObjects) {
 		if (object == nullptr) continue;

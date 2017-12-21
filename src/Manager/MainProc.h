@@ -11,7 +11,7 @@ public:
 
 	void Init(GLuint width, GLuint height);
 	void Update(float elapsedTime);
-	void Render(float elapsedTime);
+	void Render(float elapsedTime) const;
 	void Exterminate();
 
 private:

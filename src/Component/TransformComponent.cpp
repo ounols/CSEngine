@@ -11,6 +11,10 @@ TransformComponent::TransformComponent() {
 TransformComponent::~TransformComponent() {}
 
 
+void TransformComponent::Init() {
+}
+
+
 void TransformComponent::Tick(float elapsedTime) {
 }
 

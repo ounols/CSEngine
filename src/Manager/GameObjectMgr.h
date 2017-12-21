@@ -10,6 +10,7 @@ protected:
 	~GameObjectMgr();
 
 public:
+	void Init();
 	void Update(float elapsedTime);
 	void DeleteGameObject(SGameObject* object);
 

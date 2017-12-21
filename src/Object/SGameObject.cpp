@@ -1,5 +1,7 @@
 #include "SGameObject.h"
 #include "../Manager/GameObjectMgr.h"
+#include "../Component/TransformComponent.h"
+
 
 SGameObject::SGameObject() {
 	GameObjectMgr::getInstance()->RegisterGameObject(this);
@@ -16,6 +18,18 @@ SGameObject::SGameObject(std::string name) {
 
 SGameObject::~SGameObject() {
 	SGameObject::Exterminate();
+}
+
+
+void SGameObject::Init() {
+
+	for(auto component : m_components) {
+		if (component == nullptr) continue;
+
+		component->Init();
+
+	}
+
 }
 
 
@@ -44,8 +58,9 @@ void SGameObject::Destroy() {
 
 
 void SGameObject::AddComponent(SComponent* component) {
-
+	component->SetGameObject(this);
 	m_components.push_back(component);
+
 }
 
 
@@ -56,3 +71,10 @@ void SGameObject::UpdateComponent(float elapsedTime) {
 		component->Tick(elapsedTime);
 	}
 }
+
+
+//bool SGameObject::isSameComponent(const SComponent* src, const SComponent* dst) {
+//
+//	
+//
+//}

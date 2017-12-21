@@ -14,6 +14,17 @@ struct GLUniformHandles {
 	GLint SpecularMaterial = HANDLE_NULL;
 	GLint Shininess = HANDLE_NULL;
 	GLint TextureMode = HANDLE_NULL;
+	GLint DiffuseLight = HANDLE_NULL;
+	GLint AmbientLight = HANDLE_NULL;
+	GLint SpecularLight = HANDLE_NULL;
+	GLint LightMode = HANDLE_NULL;
+	GLint Interpolation_z = HANDLE_NULL;
+	GLint AttenuationFactor = HANDLE_NULL;
+	GLint IsAttenuation = HANDLE_NULL;
+	GLint LightRadius = HANDLE_NULL;
+	GLint SpotDirection = HANDLE_NULL;
+	GLint SpotExponent = HANDLE_NULL;
+	GLint SpotCutOffAngle = HANDLE_NULL;
 };
 
 struct GLAttributeHandles {
@@ -24,16 +35,21 @@ struct GLAttributeHandles {
 	GLint TextureCoord = HANDLE_NULL;
 };
 
-class GLProgramHandle :
-	public SObject
-{
+class GLProgramHandle : public SObject {
 public:
 	GLProgramHandle() : Program(HANDLE_NULL) {
 		ResMgr::getInstance()->RegisterProgram(this);
 		SetUndestroyable(true);
 	}
-	~GLProgramHandle() {}
-	void Exterminate() override {}
+
+
+	~GLProgramHandle() {
+	}
+
+
+	void Exterminate() override {
+	}
+
 
 	GLuint Program;
 	GLAttributeHandles Attributes;

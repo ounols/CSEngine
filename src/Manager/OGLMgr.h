@@ -11,6 +11,7 @@ public:
 	void setupEGLGraphics(GLuint width, GLuint height);
 
 	static GLuint createProgram(const GLchar* vertexSource, const GLchar* fragmentSource);
+	static void AttachProgramHandle(int shaderID);
 	void setVertexShader(GLchar* vertexSource);
 	void setFragmentShader(GLchar* fragmentSource);
 

@@ -3,6 +3,21 @@
 
 
 OGLMgr::OGLMgr() : m_projectionRatio(-1), m_programId(-1) {
+	m_vertexShader = "uniform mat4 u_projectionMatrix;\n"
+        "uniform mat4 u_modelViewMatrix;\n"
+        "attribute vec4 a_position;\n"
+                "void main() {\n"
+                "   gl_Position = u_modelViewMatrix * a_position;\n"
+		//"   gl_Position = a_position;\n"
+		//"   vColor = aColor;\n"
+		"}\n";
+
+	m_fragmentShader = "precision mediump float;\n"
+                "void main() {\n"
+		"  gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);\n"    //모든 정점을 녹색으로 설정
+														  //"   gl_FragColor = vColor;\n"                       //임의로 정의한 색으로 정점을 설정
+		"}\n";
+
 }
 
 
@@ -17,10 +32,10 @@ void OGLMgr::setupEGLGraphics(int id = HANDLE_NULL) {
 	if (id == HANDLE_NULL) {
 		//기본값 쉐이더 적용
 		gProgramhandle = new GLProgramHandle();
-		m_programId = RESMGR->getShaderProgramSize();
+		m_programId = RESMGR->getShaderProgramSize() - 1;
 
 		gProgramhandle->Program = createProgram(m_vertexShader.c_str(), m_fragmentShader.c_str());
-		if (gProgramhandle->Program) {
+		if (!gProgramhandle->Program) {
 			return;
 		}
 	}
@@ -30,16 +45,9 @@ void OGLMgr::setupEGLGraphics(int id = HANDLE_NULL) {
 		m_programId = id;
 	}
 
-	const auto m_program = gProgramhandle->Program;
+	//const auto m_program = gProgramhandle->Program;
 
-	//버텍스 포지션 핸들을 쉐이더 변수에서 받아옴
-	gProgramhandle->Attributes.Position = static_cast<GLuint>(glGetAttribLocation(m_program, "vPosition"));
-
-	//버텍스 컬러 핸들을 쉐이더 변수에서 받아옴
-	gProgramhandle->Attributes.Color = static_cast<GLuint>(glGetAttribLocation(m_program, "aColor"));
-
-	//추가바람
-	//...
+	AttachProgramHandle(m_programId);
 }
 
 
@@ -102,6 +110,42 @@ GLuint OGLMgr::createProgram(const GLchar* vertexSource, const GLchar* fragmentS
 		}
 	}
 	return program;
+
+}
+
+
+void OGLMgr::AttachProgramHandle(int shaderID) {
+
+	GLProgramHandle* gProgramhandle;
+	GLuint program;
+
+	gProgramhandle = RESMGR->getShaderProgramHandle(shaderID);
+	program = gProgramhandle->Program;
+
+	glUseProgram(program);
+
+	gProgramhandle->Attributes.Position = glGetAttribLocation(program, "a_position");
+	gProgramhandle->Attributes.Normal = glGetAttribLocation(program, "a_normal");
+	gProgramhandle->Attributes.DiffuseMaterial = glGetAttribLocation(program, "a_diffuseMaterial");
+	gProgramhandle->Attributes.TextureCoord = glGetAttribLocation(program, "a_textureCoordIn");
+	gProgramhandle->Uniforms.Projection = glGetUniformLocation(program, "u_projectionMatrix");
+	gProgramhandle->Uniforms.Modelview = glGetUniformLocation(program, "u_modelViewMatrix");
+	gProgramhandle->Uniforms.NormalMatrix = glGetUniformLocation(program, "u_normalMatrix");
+	gProgramhandle->Uniforms.LightPosition = glGetUniformLocation(program, "u_lightPosition");
+	gProgramhandle->Uniforms.DiffuseLight = glGetUniformLocation(program, "u_diffuseLight");
+	gProgramhandle->Uniforms.AmbientLight = glGetUniformLocation(program, "u_ambientLight");
+	gProgramhandle->Uniforms.SpecularLight = glGetUniformLocation(program, "u_specularLight");
+	gProgramhandle->Uniforms.AmbientMaterial = glGetUniformLocation(program, "u_ambientMaterial");
+	gProgramhandle->Uniforms.SpecularMaterial = glGetUniformLocation(program, "u_specularMaterial");
+	gProgramhandle->Uniforms.Shininess = glGetUniformLocation(program, "u_shininess");
+	gProgramhandle->Uniforms.LightMode = glGetUniformLocation(program, "u_lightMode");
+	gProgramhandle->Uniforms.Interpolation_z = glGetUniformLocation(program, "u_interpolation_z");
+	gProgramhandle->Uniforms.AttenuationFactor = glGetUniformLocation(program, "u_attenuationFactor");
+	gProgramhandle->Uniforms.IsAttenuation = glGetUniformLocation(program, "u_computeAttenuation");
+	gProgramhandle->Uniforms.LightRadius = glGetUniformLocation(program, "u_lightRadius");
+	gProgramhandle->Uniforms.SpotDirection = glGetUniformLocation(program, "u_spotDirection");
+	gProgramhandle->Uniforms.SpotExponent = glGetUniformLocation(program, "u_spotExponent");
+	gProgramhandle->Uniforms.SpotCutOffAngle = glGetUniformLocation(program, "u_spotCutOffAngle");
 
 }
 
@@ -170,5 +214,10 @@ void OGLMgr::Render(float elapsedTime) {
 
 	glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+	////VBO 언바인드
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 
 }
