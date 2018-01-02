@@ -4,12 +4,14 @@
 IMPLEMENT_SINGLETON(RenderMgr);
 
 
-RenderMgr::RenderMgr() {
+RenderMgr::RenderMgr(): cameraMgr(new CameraMgr()) {
 	m_camera = mat4::LookAt(vec3(0, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0));
 }
 
 
-RenderMgr::~RenderMgr() {}
+RenderMgr::~RenderMgr() {
+	Exterminate();
+}
 
 
 void RenderMgr::Init() {
@@ -49,5 +51,12 @@ void RenderMgr::Render(float elapsedTime) const {
 	}
 
 
+
+}
+
+
+void RenderMgr::Exterminate() {
+
+	SAFE_DELETE(cameraMgr);
 
 }

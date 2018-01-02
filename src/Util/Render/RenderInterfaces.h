@@ -2,6 +2,7 @@
 #include <vector>
 #include "../../SObject.h"
 #include "../../Manager/ResMgr.h"
+#include "../../Manager/SurfaceMeshContainer.h"
 #include "../Matrix.h"
 
 enum VertexFlags {
@@ -23,7 +24,7 @@ class SISurface : public SObject {
 public:
 	
 	SISurface() {
-		ResMgr::getInstance()->RegisterSurfaceMesh(this);
+		ResMgr::getInstance()->Register<SurfaceMeshContainer, SISurface>(this);
 		SetUndestroyable(true);
 	}
 	virtual ~SISurface() {}

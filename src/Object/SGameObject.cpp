@@ -4,13 +4,13 @@
 
 
 SGameObject::SGameObject() {
-	GameObjectMgr::getInstance()->RegisterGameObject(this);
+	GameObjectMgr::getInstance()->Register(this);
 	m_transform = CreateComponent<TransformComponent>();
 }
 
 
 SGameObject::SGameObject(std::string name) {
-	GameObjectMgr::getInstance()->RegisterGameObject(this);
+	GameObjectMgr::getInstance()->Register(this);
 	m_name = name;
 	m_transform = CreateComponent<TransformComponent>();
 }
@@ -40,7 +40,6 @@ void SGameObject::Tick(float elapsedTime) {
 
 
 void SGameObject::Exterminate() {
-
 }
 
 

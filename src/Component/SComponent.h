@@ -24,8 +24,12 @@ public:
 		gameObject = object;
 	}
 
+	SGameObject* GetGameObject() const {
+		return gameObject;
+	}
+
 protected:
 	SGameObject* gameObject = nullptr;
 };
 
-#define Transform static_cast<TransformComponent*>(gameObject->GetTransform())
+#define Transform static_cast<TransformInterface*>(gameObject->GetTransform())

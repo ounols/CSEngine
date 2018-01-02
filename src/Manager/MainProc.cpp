@@ -26,21 +26,21 @@ void MainProc::Init(GLuint width, GLuint height) {
 
 	m_oglMgr->setupEGLGraphics(width, height);
 
-	////Managing Memory Test
-	//SGameObject* a = new SGameObject();
-	//SGameObject* b = new SGameObject();
-	//SGameObject* c = new SGameObject();
+	//Managing Memory Test
+	SGameObject* a = new SGameObject();
+	SGameObject* b = new SGameObject();
+	SGameObject* c = new SGameObject();
 
-	//ObjSurface* cube = new ObjSurface(CH02::teapot2NumVerts, CH02::teapot2Verts, CH02::teapot2Normals);
+	ObjSurface* cube = new ObjSurface(CH02::teapot2NumVerts, CH02::teapot2Verts, CH02::teapot2Normals);
 
-	//b->Destroy();
+	b->Destroy();
 
-	//c->CreateComponent<DrawableStaticMeshComponent>();
-	//c->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube, VertexFlagsNormals);
+	c->CreateComponent<DrawableStaticMeshComponent>();
+	c->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube, VertexFlagsNormals);
 
-	//c->CreateComponent<RenderComponent>();
-	//c->GetComponent<RenderComponent>()->SetShaderHandle(0);
-	//c->GetComponent<TransformComponent>()->m_position.y = 1.f;
+	c->CreateComponent<RenderComponent>();
+	c->GetComponent<RenderComponent>()->SetShaderHandle(0);
+	c->GetComponent<TransformComponent>()->m_position.y = 0.5f;
 
 	GameObjectMgr::getInstance()->Init();
 }
@@ -48,6 +48,7 @@ void MainProc::Init(GLuint width, GLuint height) {
 
 void MainProc::Update(float elapsedTime) {
 	GameObjectMgr::getInstance()->Update(elapsedTime);
+
 }
 
 

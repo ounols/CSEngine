@@ -1,5 +1,5 @@
 #include "Scene.h"
-#include "MemoryMgr.h"
+#include "../MemoryMgr.h"
 
 
 Scene::Scene() {

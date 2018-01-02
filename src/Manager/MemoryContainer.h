@@ -1,19 +1,13 @@
 #pragma once
-#include <vector>
 #include "../SObject.h"
+#include "Base/SContainer.h"
 
 class SObject;
-class MemoryContainer
-{
+class MemoryContainer : public SContainer<SObject*> {
 
 protected:
 	MemoryContainer();
 	~MemoryContainer();
 
-public:
-	void RegisterSObject(SObject* object);
-
-protected:
-	std::vector<SObject*> m_objects;
 };
 

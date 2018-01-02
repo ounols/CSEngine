@@ -2,6 +2,7 @@
 #include "../OGLDef.h"
 #include "../SObject.h"
 #include "../Manager/ResMgr.h"
+#include "../Manager/ShaderProgramContainer.h"
 
 #define HANDLE_NULL -1
 
@@ -38,7 +39,7 @@ struct GLAttributeHandles {
 class GLProgramHandle : public SObject {
 public:
 	GLProgramHandle() : Program(HANDLE_NULL) {
-		ResMgr::getInstance()->RegisterProgram(this);
+		ResMgr::getInstance()->Register<ShaderProgramContainer, GLProgramHandle>(this);
 		SetUndestroyable(true);
 	}
 

@@ -20,10 +20,10 @@
 
 // ΩÃ±€≈Ê ∆–≈œ ±∏«ˆ ∏≈≈©∑Œ
 #define IMPLEMENT_SINGLETON(CLASSNAME)                              \
-               CLASSNAME* CLASSNAME::sInstance= NULL;               \
+               CLASSNAME* CLASSNAME::sInstance= nullptr;               \
                                                                     \
                CLASSNAME* CLASSNAME::getInstance() {                \
-                       if(sInstance == NULL)                        \
+                       if(sInstance == nullptr)                        \
                               sInstance = new CLASSNAME;              \
                               return sInstance;                    \
                }                                                    \

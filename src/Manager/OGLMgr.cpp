@@ -32,7 +32,7 @@ void OGLMgr::setupEGLGraphics(int id = HANDLE_NULL) {
 	if (id == HANDLE_NULL) {
 		//기본값 쉐이더 적용
 		gProgramhandle = new GLProgramHandle();
-		m_programId = RESMGR->getShaderProgramSize() - 1;
+		m_programId = RESMGR->GetSize<ShaderProgramContainer, GLProgramHandle>() - 1;
 
 		gProgramhandle->Program = createProgram(m_vertexShader.c_str(), m_fragmentShader.c_str());
 		if (!gProgramhandle->Program) {
@@ -108,7 +108,15 @@ GLuint OGLMgr::createProgram(const GLchar* vertexSource, const GLchar* fragmentS
 			program = 0;
 
 		}
+
+		glDetachShader(program, vertexShader);
+		glDetachShader(program, pixelShader);
+
 	}
+
+	glDeleteShader(vertexShader);
+	glDeleteShader(pixelShader);
+
 	return program;
 
 }

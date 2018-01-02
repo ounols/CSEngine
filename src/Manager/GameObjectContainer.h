@@ -1,17 +1,12 @@
 #pragma once
 #include <vector>
 #include "../Object/SGameObject.h"
+#include "Base/SContainer.h"
 
-class GameObjectContainer {
+class GameObjectContainer : public SContainer<SGameObject*> {
 protected:
 	GameObjectContainer();
 	~GameObjectContainer();
 
-public:
-	void RegisterGameObject(SGameObject* object);
-
-protected:
-	std::vector<SGameObject*> m_gameObjects;
-	int m_size;
 };
 

@@ -3,6 +3,7 @@
 #include "../SObject.h"
 #include "../Manager/MemoryMgr.h"
 #include "../Component/SComponent.h"
+#include "../Util/Interface/TransformInterface.h"
 
 class SComponent;
 
@@ -15,6 +16,9 @@ public:
 	virtual void Init();
 	virtual void Tick(float elapsedTime);
 	virtual void Exterminate() override;
+	/**
+	 * \brief 자동 삭제가 아닌 특정한 상황에서 삭제될 때 호출되는 함수
+	 */
 	void Destroy();
 
 	/**
@@ -37,7 +41,7 @@ public:
 		m_name = name;
 	}
 
-	SComponent* GetTransform() const {
+	TransformInterface* GetTransform() const {
 		return m_transform;
 	}
 
@@ -50,7 +54,7 @@ private:
 private:
 	std::vector<SComponent*> m_components;
 	std::string m_name;
-	SComponent* m_transform;
+	TransformInterface* m_transform;
 };
 
 

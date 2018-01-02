@@ -14,7 +14,7 @@ public:
 	typedef std::map<GLProgramHandle*, RenderInterfaces> ProgramRenderLayer;
 
 public:
-	void RegisterRenderInterface(SIRender* object);
+	void Register(SIRender* object);
 
 protected:
 	ProgramRenderLayer m_rendersLayer;

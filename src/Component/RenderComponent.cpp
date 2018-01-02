@@ -21,7 +21,7 @@ void RenderComponent::Init() {
 
 	SetVectorInfomation();
 	m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
-	RenderMgr::getInstance()->RegisterRenderInterface(this);
+	RenderMgr::getInstance()->Register(this);
 }
 
 

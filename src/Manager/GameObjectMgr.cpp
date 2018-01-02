@@ -12,7 +12,7 @@ GameObjectMgr::~GameObjectMgr() {}
 
 void GameObjectMgr::Init() {
 
-	for (const auto& object : m_gameObjects) {
+	for (const auto& object : m_objects) {
 		if (object == nullptr) continue;
 		object->Init();
 	}
@@ -21,7 +21,7 @@ void GameObjectMgr::Init() {
 
 
 void GameObjectMgr::Update(float elapsedTime) {
-	for (const auto& object : m_gameObjects) {
+	for (const auto& object : m_objects) {
 		if (object == nullptr) continue;
 		object->Tick(elapsedTime);
 	}
@@ -31,11 +31,11 @@ void GameObjectMgr::Update(float elapsedTime) {
 void GameObjectMgr::DeleteGameObject(SGameObject* object) {
 	if (object == nullptr) return;
 
-	auto iGameObj = std::find(m_gameObjects.begin(), m_gameObjects.end(), object);
+	auto iGameObj = std::find(m_objects.begin(), m_objects.end(), object);
 
-	if (iGameObj != m_gameObjects.end()) {
+	if (iGameObj != m_objects.end()) {
 		m_size--;
-		m_gameObjects.erase(iGameObj);
+		m_objects.erase(iGameObj);
 		MemoryMgr::getInstance()->ReleaseObject(object);
 	}
 }
@@ -43,7 +43,7 @@ void GameObjectMgr::DeleteGameObject(SGameObject* object) {
 
 SGameObject* GameObjectMgr::Find(std::string name) {
 
-	for(auto object : m_gameObjects) {
+	for(auto object : m_objects) {
 		if (object->GetName() == name)
 			return object;
 	}

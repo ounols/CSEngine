@@ -13,13 +13,6 @@ ShaderProgramContainer::~ShaderProgramContainer() {
 }
 
 
-void ShaderProgramContainer::RegisterProgram(GLProgramHandle* m_handle) {
-
-	m_programHandles.push_back(m_handle);
-	m_size++;
-
-}
-
 
 void ShaderProgramContainer::Exterminate() {
 
