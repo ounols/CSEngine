@@ -22,6 +22,7 @@ void RenderComponent::Init() {
 	SetVectorInfomation();
 	m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
 	RenderMgr::getInstance()->Register(this);
+	isRenderActive = isEnable;
 }
 
 
@@ -31,6 +32,8 @@ void RenderComponent::Tick(float elapsedTime) {
 		m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
 	}
 
+	isRenderActive = isEnable;
+
 }
 
 
@@ -39,12 +42,14 @@ void RenderComponent::SetMatrix(mat4 camera) {
 	//model-view
 	mat4 scale = mat4::Scale(m_scale->x, m_scale->y, m_scale->z);
 	mat4 translation = mat4::Translate(m_position->x, m_position->y, m_position->z);
+	//юс╫ц rotation
+	mat4 rotationY = mat4::RotateY(m_rotation->y);
 	//mat4 rotation = 
-	mat4 modelView = scale * /*rotation*/ translation * camera;
+	mat4 modelView = scale * /*rotation*/ rotationY * translation * camera;
 	glUniformMatrix4fv(handler->Uniforms.Modelview, 1, 0, modelView.Pointer());
 
 
-	//nomal matrix
+	//normal matrix
 	glUniformMatrix3fv(handler->Uniforms.NormalMatrix, 1, 0, modelView.ToMat3().Pointer());
 
 
@@ -101,7 +106,9 @@ void RenderComponent::SetShaderHandle(int id) {
 
 void RenderComponent::SetShaderHandle(GLProgramHandle* handle) {
 
+	RenderMgr::getInstance()->Remove(this);
 	handler = handle;
+	RenderMgr::getInstance()->Register(this);
 
 }
 

@@ -18,6 +18,7 @@ public:
 	}
 
 	void SetTarget(vec3 target);
+	void SetTarget(SGameObject* gameobject);
 	void SetUp(vec3 up);
 
 private:

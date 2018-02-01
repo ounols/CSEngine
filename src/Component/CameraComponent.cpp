@@ -4,7 +4,7 @@
 
 
 CameraComponent::CameraComponent(): m_eye(nullptr), m_targetObject(nullptr) {
-	RESMGR->Register<CameraMgr, CameraComponent>(this);
+	CameraMgr::getInstance()->Register(this);
 }
 
 
@@ -30,6 +30,11 @@ void CameraComponent::Tick(float elapsedTime) {
 
 	if(m_targetObject == nullptr)
 		m_resultTarget = *m_eye + m_target;
+	else {
+		m_resultTarget = m_targetObject->GetTransform()->m_position;
+	}
+
+	SetCameraMatrix();
 
 }
 
@@ -38,6 +43,11 @@ void CameraComponent::SetTarget(vec3 target) {
 
 	m_target = target;
 
+}
+
+
+void CameraComponent::SetTarget(SGameObject* gameobject) {
+	m_targetObject = gameobject;
 }
 
 

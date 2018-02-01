@@ -11,6 +11,8 @@ public:
 template<class T>
 class SContainer : public SIContainer {
 public:
+	typedef SContainer<T> BaseSContainer;
+public:
 	SContainer() {
 	}
 
@@ -19,7 +21,7 @@ public:
 	}
 
 
-	void Register(T object) {
+	virtual void Register(T object) {
 		m_objects.push_back(object);
 		m_size++;
 	}

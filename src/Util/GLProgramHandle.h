@@ -26,6 +26,7 @@ struct GLUniformHandles {
 	GLint SpotDirection = HANDLE_NULL;
 	GLint SpotExponent = HANDLE_NULL;
 	GLint SpotCutOffAngle = HANDLE_NULL;
+	GLboolean IsDirectional = HANDLE_NULL;
 };
 
 struct GLAttributeHandles {

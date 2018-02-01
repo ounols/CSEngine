@@ -1,31 +1,23 @@
 #include "OGLMgr.h"
 #include "../Util/GLProgramHandle.h"
+#include "../Util/AssetsDef.h"
 
+using namespace CSE;
 
 OGLMgr::OGLMgr() : m_projectionRatio(-1), m_programId(-1) {
-	m_vertexShader = "uniform mat4 u_projectionMatrix;\n"
-        "uniform mat4 u_modelViewMatrix;\n"
-        "attribute vec4 a_position;\n"
-                "void main() {\n"
-                "   gl_Position = u_modelViewMatrix * a_position;\n"
-		//"   gl_Position = a_position;\n"
-		//"   vColor = aColor;\n"
-		"}\n";
 
-	m_fragmentShader = "precision mediump float;\n"
-                "void main() {\n"
-		"  gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);\n"    //모든 정점을 녹색으로 설정
-														  //"   gl_FragColor = vColor;\n"                       //임의로 정의한 색으로 정점을 설정
-		"}\n";
+	m_vertexShader = OpenAssetsTxtFile(AssetsPath() + "Default.vert");
+	m_fragmentShader = OpenAssetsTxtFile(AssetsPath() + "Default.frag");
 
 }
 
 
 OGLMgr::~OGLMgr() {
+	releaseBuffers();
 }
 
 
-void OGLMgr::setupEGLGraphics(int id = HANDLE_NULL) {
+void OGLMgr::setShaderProgram(int id = HANDLE_NULL) {
 
 	GLProgramHandle* gProgramhandle;
 
@@ -51,6 +43,39 @@ void OGLMgr::setupEGLGraphics(int id = HANDLE_NULL) {
 }
 
 
+void OGLMgr::setBuffers() {
+
+	//렌더버퍼 생성
+	glGenRenderbuffers(1, &m_colorRenderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_colorRenderbuffer);
+
+	//깊이버퍼 생성
+	glGenRenderbuffers(1, &m_depthRenderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_depthRenderbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_width, m_height);
+
+	//프레임버퍼 오브젝트를 생성
+	glGenFramebuffers(1, &m_framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+		GL_COLOR_ATTACHMENT0,
+		GL_RENDERBUFFER,
+		m_colorRenderbuffer);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+		GL_DEPTH_ATTACHMENT,
+		GL_RENDERBUFFER,
+		m_depthRenderbuffer);
+
+	// 렌더링을 위해 랜더버퍼를 바인딩
+	glBindRenderbuffer(GL_RENDERBUFFER, m_colorRenderbuffer);
+
+#ifndef PLATFORM_IOS
+	//프레임버퍼 바인딩
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#endif
+}
+
+
 void OGLMgr::setupEGLGraphics(GLuint width, GLuint height) {
 
 	//뷰포트 설정
@@ -58,8 +83,12 @@ void OGLMgr::setupEGLGraphics(GLuint width, GLuint height) {
 	m_width = width;
 	m_height = height;
 
-	setupEGLGraphics();
+	setBuffers();
+	setShaderProgram();
 	setPerspectiveView();
+
+	glEnable(GL_DEPTH_TEST);
+	glClearDepthf(1.0f);
 }
 
 
@@ -122,6 +151,12 @@ GLuint OGLMgr::createProgram(const GLchar* vertexSource, const GLchar* fragmentS
 }
 
 
+GLuint OGLMgr::createProgramfromFile(const GLchar* vertexPath, const GLchar* fragmentPath) {
+
+	return 0;
+}
+
+
 void OGLMgr::AttachProgramHandle(int shaderID) {
 
 	GLProgramHandle* gProgramhandle;
@@ -154,6 +189,7 @@ void OGLMgr::AttachProgramHandle(int shaderID) {
 	gProgramhandle->Uniforms.SpotDirection = glGetUniformLocation(program, "u_spotDirection");
 	gProgramhandle->Uniforms.SpotExponent = glGetUniformLocation(program, "u_spotExponent");
 	gProgramhandle->Uniforms.SpotCutOffAngle = glGetUniformLocation(program, "u_spotCutOffAngle");
+	gProgramhandle->Uniforms.IsDirectional = glGetUniformLocation(program, "u_isDirectional");
 
 }
 
@@ -181,6 +217,7 @@ GLuint OGLMgr::loadShader(GLenum shaderType, const char* pSource) {
 				if (buf) {
 					glGetShaderInfoLog(shader, infoLen, NULL, buf);
 					//LOGE("Could not compile shader %d:\n%s\n", shaderType, buf);
+					OutputDebugStringA(buf);
 					free(buf);
 				}
 
@@ -224,8 +261,25 @@ void OGLMgr::Render(float elapsedTime) {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	////VBO 언바인드
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+
+}
+
+
+void OGLMgr::releaseBuffers() {
+
+	glDeleteFramebuffers(1, &m_framebuffer);
+	m_framebuffer = 0;
+	glDeleteRenderbuffers(1, &m_colorRenderbuffer);
+	m_colorRenderbuffer = 0;
+
+	if (m_depthRenderbuffer) {
+		glDeleteRenderbuffers(1, &m_depthRenderbuffer);
+		m_depthRenderbuffer = 0;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }

@@ -1,5 +1,6 @@
 #include "CameraMgr.h"
 
+IMPLEMENT_SINGLETON(CameraMgr);
 
 CameraMgr::CameraMgr() {
 }
@@ -24,6 +25,22 @@ void CameraMgr::DeleteCameraComponent(CameraComponent* object) {
 	if (iGameObj != m_objects.end()) {
 		m_size--;
 		m_objects.erase(iGameObj);
-		MemoryMgr::getInstance()->ReleaseObject(object);
+		object->GetGameObject()->DeleteComponent(object);
+		//MemoryMgr::getInstance()->ReleaseObject(object);
 	}
+}
+
+
+CameraComponent* CameraMgr::GetCurrentCamera() const {
+	if (m_currentCamera == nullptr && m_size > 0)
+		return m_objects.at(0);
+
+	return m_currentCamera;
+}
+
+
+void CameraMgr::ChangeCurrentCamera(CameraComponent* camera) {
+
+	m_currentCamera = camera;
+
 }

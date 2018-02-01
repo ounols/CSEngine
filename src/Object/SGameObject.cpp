@@ -1,4 +1,7 @@
 #include "SGameObject.h"
+
+#include <memory>
+
 #include "../Manager/GameObjectMgr.h"
 #include "../Component/TransformComponent.h"
 
@@ -6,6 +9,8 @@
 SGameObject::SGameObject() {
 	GameObjectMgr::getInstance()->Register(this);
 	m_transform = CreateComponent<TransformComponent>();
+
+	SGameObject::Init();
 }
 
 
@@ -13,6 +18,8 @@ SGameObject::SGameObject(std::string name) {
 	GameObjectMgr::getInstance()->Register(this);
 	m_name = name;
 	m_transform = CreateComponent<TransformComponent>();
+
+	SGameObject::Init();
 }
 
 
@@ -63,11 +70,36 @@ void SGameObject::AddComponent(SComponent* component) {
 }
 
 
+bool SGameObject::DeleteComponent(SComponent* component) {
+
+	for (auto m_component : m_components) {
+		if (m_component == nullptr) continue;
+
+		if (std::addressof(component) == std::addressof(m_component)) {
+
+			auto iCompObj = std::find(m_components.begin(), m_components.end(), m_component);
+
+			if (iCompObj != m_components.end()) {
+				m_components.erase(iCompObj);
+				MemoryMgr::getInstance()->ReleaseObject(m_component);
+			}
+
+
+			return true;
+		}
+	}
+
+	return false;
+
+}
+
+
 void SGameObject::UpdateComponent(float elapsedTime) {
 	for (const auto& component : m_components) {
 		if (component == nullptr)	continue;
 
-		component->Tick(elapsedTime);
+		if(component->getIsEnable())
+			component->Tick(elapsedTime);
 	}
 }
 

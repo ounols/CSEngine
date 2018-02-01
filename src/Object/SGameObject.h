@@ -2,8 +2,8 @@
 #include <vector>
 #include "../SObject.h"
 #include "../Manager/MemoryMgr.h"
-#include "../Component/SComponent.h"
 #include "../Util/Interface/TransformInterface.h"
+#include "../Component/SComponent.h"
 
 class SComponent;
 
@@ -30,6 +30,7 @@ public:
 	T* GetComponent();
 	template <class T>
 	bool DeleteComponent();
+	bool DeleteComponent(SComponent* component);
 	template <class T>
 	T* CreateComponent();
 
@@ -98,6 +99,7 @@ T* SGameObject::CreateComponent() {
 
 	T* component = new T();
 	AddComponent(component);
+	static_cast<SComponent*>(component)->Init();
 	return component;
 
 }

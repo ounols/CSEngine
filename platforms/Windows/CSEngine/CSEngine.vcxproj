@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Component\CameraComponent.h" />
     <ClInclude Include="..\..\..\src\Component\DrawableStaticMeshComponent.h" />
+    <ClInclude Include="..\..\..\src\Component\LightComponent.h" />
     <ClInclude Include="..\..\..\src\Component\RenderComponent.h" />
     <ClInclude Include="..\..\..\src\Component\SComponent.h" />
     <ClInclude Include="..\..\..\src\Component\TransformComponent.h" />
@@ -157,6 +158,7 @@
     <ClInclude Include="..\..\..\src\Manager\CameraMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\GameObjectContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\GameObjectMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\LightMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\MainProc.h" />
     <ClInclude Include="..\..\..\src\Manager\MemoryContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\MemoryMgr.h" />
@@ -169,10 +171,12 @@
     <ClInclude Include="..\..\..\src\Object\SGameObject.h" />
     <ClInclude Include="..\..\..\src\OGLDef.h" />
     <ClInclude Include="..\..\..\src\SObject.h" />
+    <ClInclude Include="..\..\..\src\Util\AssetsDef.h" />
     <ClInclude Include="..\..\..\src\Util\GLProgramHandle.h" />
     <ClInclude Include="..\..\..\src\Util\Interface\TransformInterface.h" />
     <ClInclude Include="..\..\..\src\Util\Matrix.h" />
     <ClInclude Include="..\..\..\src\Util\MatrixDef.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\LightHelper.h" />
     <ClInclude Include="..\..\..\src\Util\Render\ObjSurface.h" />
     <ClInclude Include="..\..\..\src\Util\Render\RenderInterfaces.h" />
     <ClInclude Include="..\..\..\src\Util\Vector.h" />
@@ -184,12 +188,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\Component\CameraComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\DrawableStaticMeshComponent.cpp" />
+    <ClCompile Include="..\..\..\src\Component\LightComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\RenderComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\TransformComponent.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Base\Scene.cpp" />
     <ClCompile Include="..\..\..\src\Manager\CameraMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectMgr.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\LightMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MainProc.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MemoryContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MemoryMgr.cpp" />

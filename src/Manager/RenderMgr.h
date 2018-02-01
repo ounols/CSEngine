@@ -16,7 +16,5 @@ private:
 	void Exterminate();
 
 private:
-	CameraMgr* cameraMgr;
-	mat4 m_camera;	//юс╫ц
+	mat4 m_NoneCamera;
 };
-

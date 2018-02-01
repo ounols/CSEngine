@@ -15,6 +15,7 @@ public:
 
 public:
 	void Register(SIRender* object);
+	void Remove(SIRender* object);
 
 protected:
 	ProgramRenderLayer m_rendersLayer;

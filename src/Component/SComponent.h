@@ -14,6 +14,7 @@ public:
 
 
 	virtual ~SComponent() {
+
 	}
 
 	virtual void Init() = 0;
@@ -28,8 +29,20 @@ public:
 		return gameObject;
 	}
 
+
+	bool getIsEnable() const {
+		return isEnable;
+	}
+
+
+	void setIsEnable(bool is_enable) {
+		isEnable = is_enable;
+	}
+
+
 protected:
 	SGameObject* gameObject = nullptr;
+	bool isEnable = true;
 };
 
 #define Transform static_cast<TransformInterface*>(gameObject->GetTransform())

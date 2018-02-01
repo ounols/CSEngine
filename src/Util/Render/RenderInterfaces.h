@@ -51,6 +51,7 @@ public:
 
 protected:
 	GLProgramHandle* handler;
+	bool isRenderActive = true;
 
 public:
 	friend class RenderContainer;
