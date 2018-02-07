@@ -11,4 +11,7 @@ protected:
 public:
 	void ExterminateObjects(bool killAll = false);
 	void ReleaseObject(SObject* object);
+
+private:
+
 };

@@ -18,21 +18,21 @@ public:
 	void setFragmentShader(GLchar* fragmentSource);
 
 	void Render(float elapsedTime);
+	void ResizeWindow(GLuint width, GLuint height);
 
 	void releaseBuffers();
 
 private:
 	static GLuint loadShader(GLenum shaderType, const char *pSource);
-	//렌더링 매니저로 이동
-	void setPerspectiveView();
+	void setProjectionRatio();
 
 private:
 	GLuint m_width, m_height;
 	GLfloat m_projectionRatio;
 
-	GLuint m_depthRenderbuffer;
-	GLuint m_colorRenderbuffer;
-	GLuint m_framebuffer;
+	GLuint m_depthRenderbuffer = 0;
+	GLuint m_colorRenderbuffer = 0;
+	GLuint m_framebuffer = 0;
 
 	std::string m_vertexShader;
 	std::string m_fragmentShader;

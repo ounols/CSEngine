@@ -13,5 +13,8 @@ public:
 private:
 	void AttachDirectionalLight(const GLProgramHandle* handle, const SLight* light) const;
 
+
+	static void SetLightMode(const GLProgramHandle* handle, const LightComponent* light);
+
 };
 

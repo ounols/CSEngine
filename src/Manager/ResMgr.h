@@ -1,6 +1,10 @@
 #pragma once
 #include "../Macrodef.h"
 #include "Base/SContainer.h"
+#ifdef __ANDROID__
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+#endif
 
 #define RESMGR ResMgr::getInstance()
 
@@ -21,6 +25,9 @@ public:
 	template <class CONTAINER, class TYPE>
 	void Register(TYPE* m_object) const;
 
+	template <class CONTAINER, class TYPE>
+	void Remove(TYPE* m_object) const;
+
 	GLProgramHandle* getShaderProgramHandle(int id) const;
 	SISurface* GetSurfaceMesh(int id) const;
 	template <class CONTAINER, class TYPE>
@@ -34,11 +41,22 @@ public:
 	template <class CONTAINER, class TYPE>
 	bool IsEmpty() const;
 
+#ifdef __ANDROID__
+	void SetAssetManager(AAssetManager* obj);
+	AAssetManager* GetAssetManager();
+	void SetEnv(JNIEnv* obj);
+	JNIEnv* GetEnv();
+#endif
+
 
 private:
 	//ShaderProgramContainer* m_programContainer;
 	//SurfaceMeshContainer* m_surfaceMeshContainer;
 	std::vector<SIContainer*> m_containers;
+#ifdef __ANDROID__
+	AAssetManager* m_assetManager;
+	JNIEnv* m_env = nullptr;
+#endif
 };
 
 
@@ -48,6 +66,19 @@ void ResMgr::Register(TYPE* m_object) const {
 	for(auto container : m_containers) {
 		if(dynamic_cast<CONTAINER*>(container)) {
 			static_cast<SContainer<TYPE*>*>(container)->Register(m_object);
+			return;
+		}
+	}
+
+}
+
+
+template <class CONTAINER, class TYPE>
+void ResMgr::Remove(TYPE* m_object) const {
+
+	for (auto container : m_containers) {
+		if (dynamic_cast<CONTAINER*>(container)) {
+			static_cast<SContainer<TYPE*>*>(container)->Remove(m_object);
 			return;
 		}
 	}

@@ -24,7 +24,6 @@ SGameObject::SGameObject(std::string name) {
 
 
 SGameObject::~SGameObject() {
-	SGameObject::Exterminate();
 }
 
 
@@ -41,12 +40,14 @@ void SGameObject::Init() {
 
 
 void SGameObject::Tick(float elapsedTime) {
+	if (!isEnable) return;
 	UpdateComponent(elapsedTime);
 
 }
 
 
 void SGameObject::Exterminate() {
+	GameObjectMgr::getInstance()->Remove(this);
 }
 
 
@@ -94,18 +95,25 @@ bool SGameObject::DeleteComponent(SComponent* component) {
 }
 
 
-void SGameObject::UpdateComponent(float elapsedTime) {
+bool SGameObject::GetIsEnable() const {
+	return isEnable;
+}
+
+
+void SGameObject::SetIsEnable(bool is_enable) {
+	isEnable = is_enable;
 	for (const auto& component : m_components) {
 		if (component == nullptr)	continue;
-
-		if(component->getIsEnable())
-			component->Tick(elapsedTime);
+		component->SetIsEnable(is_enable);
 	}
 }
 
 
-//bool SGameObject::isSameComponent(const SComponent* src, const SComponent* dst) {
-//
-//	
-//
-//}
+void SGameObject::UpdateComponent(float elapsedTime) {
+	for (const auto& component : m_components) {
+		if (component == nullptr)	continue;
+
+		if(component->GetIsEnable())
+			component->Tick(elapsedTime);
+	}
+}

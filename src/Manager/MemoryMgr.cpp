@@ -1,10 +1,15 @@
 #include<algorithm>
 #include "MemoryMgr.h"
+#ifdef WIN32
 #include <windows.h>
-
 #ifdef _DEBUG
 #include <typeinfo.h>
 #endif
+#elif __ANDROID__
+
+#endif
+
+
 
 IMPLEMENT_SINGLETON(MemoryMgr);
 
@@ -20,48 +25,71 @@ MemoryMgr::~MemoryMgr()
 
 void MemoryMgr::ExterminateObjects(bool killAll) {
 
-	for (auto object : m_objects) {
-		if (object == nullptr)	continue;
+	int index = 0;
 
+	for (auto object : m_objects) {
+		if (object == nullptr) {
+			index++;
+			continue;
+		}
+
+#ifdef WIN32
 		OutputDebugStringA("Auto Releasing Object : ");
 		OutputDebugStringA(typeid(*object).name());
 		OutputDebugStringA("...\n");
+#endif
 
-		//Á¦°Å°¡ ºÒ°¡´ÉÇÑ Á¶°ÇÀ» °¡Á³´ÂÁö È®ÀÎ
+		//ï¿½ï¿½ï¿½Å°ï¿½ ï¿½Ò°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 		if(object->isUndestroyable && !killAll) {
+#ifdef WIN32
 			OutputDebugStringA("denied.\n");
+#endif
+			index++;
 			continue;
 		}
 
 		object->Exterminate();
 		SAFE_DELETE(object);
+#ifdef WIN32
 		OutputDebugStringA("deleted.\n");
+#endif
+
+		m_objects.at(index) = nullptr;
+		index++;
 	}
+
+	m_objects.erase(std::remove(m_objects.begin(), m_objects.end(), nullptr), m_objects.end());
 }
 
 
 void MemoryMgr::ReleaseObject(SObject* object) {
 	if (object == nullptr) return;
 
-	//Á¦°Å°¡ ºÒ°¡´ÉÇÑ Á¶°ÇÀ» °¡Á³´ÂÁö È®ÀÎ
+	//ï¿½ï¿½ï¿½Å°ï¿½ ï¿½Ò°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 	if (object->isUndestroyable) {
+#ifdef WIN32
 		OutputDebugStringA("Releasing Object is denied.");
+#endif
 		return;
 	}
 
-	//½ÇÁ¦·Î Á¸ÀçÇÏ´Â ¿ÀºêÁ§Æ®ÀÎÁö ÆÇº° ÈÄ SAFE_DELETE¸¦ È£Ãâ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Çºï¿½ ï¿½ï¿½ SAFE_DELETEï¿½ï¿½ È£ï¿½ï¿½
 	auto iObj = std::find(m_objects.begin(), m_objects.end(), object);
 
 	if(iObj != m_objects.end()) {
+#ifdef WIN32
 		OutputDebugStringA("Releasing Object : ");
 		OutputDebugStringA(typeid(*object).name());
 		OutputDebugStringA("...\n");
+#endif
 
 		m_objects.erase(iObj);
 		object->Exterminate();
 		SAFE_DELETE(object);
 
+#ifdef WIN32
 		OutputDebugStringA("deleted\n");
+#endif
 
 	}
 }

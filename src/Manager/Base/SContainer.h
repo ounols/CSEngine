@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <vector>
 
 class SIContainer {
@@ -24,6 +25,14 @@ public:
 	virtual void Register(T object) {
 		m_objects.push_back(object);
 		m_size++;
+	}
+
+	virtual void Remove(T object) {
+		auto iObj = std::find(m_objects.begin(), m_objects.end(), object);
+
+		if(iObj != m_objects.end()) {
+			m_objects.erase(iObj);
+		}
 	}
 
 	T Get(int index) const {

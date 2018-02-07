@@ -22,9 +22,10 @@ varying vec3 v_lightPosition;
 varying vec3 v_diffuse;//Diffuse;
 //varying vec2 v_textureCoordOut;
 varying float v_distance;
+//varying vec3 v_vertPosition;
 
 
-//define
+//defined
 const lowp float c_zero = 0.0;
 const lowp float c_one = 1.0;
 
@@ -50,7 +51,10 @@ void main(void) {
 	v_lightPosition = normalize(aux);
 	v_distance = length(aux);
 
+	//vec4 vertPosition = u_modelViewMatrix * a_position;
+	//v_vertPosition = vec3(vertPosition) / vertPosition.w;
+
 
 	//vertex position
-	gl_Position = u_modelViewMatrix * a_position;
+	gl_Position = u_projectionMatrix * u_modelViewMatrix * a_position;
 }

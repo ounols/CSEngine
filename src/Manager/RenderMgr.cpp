@@ -23,7 +23,9 @@ void RenderMgr::Render(float elapsedTime) const {
 
 	const CameraComponent* cameraComponent = CameraMgr::getInstance()->GetCurrentCamera();
 	mat4 camera = (cameraComponent != nullptr) ? 
-		cameraComponent->GetMatrix() : m_NoneCamera;
+		cameraComponent->GetCameraMatrix() : m_NoneCamera;
+	mat4 projection = (cameraComponent != nullptr) ?
+		cameraComponent->GetProjectionMatrix() : mat4::Identity();
 
 	ProgramRenderLayer programComp(m_rendersLayer.begin(), m_rendersLayer.end());
 
@@ -33,28 +35,33 @@ void RenderMgr::Render(float elapsedTime) const {
 		const auto& renderComp = programPair.second;
 
 		if(programPair.first == nullptr) continue;
+        if(renderComp.size() <= 0) continue;
 
 		glUseProgram(handler.Program);
 
-		glUniform1i(handler.Uniforms.LightMode, 0);	//юс╫ц
+		//Attach Light
 		LightMgr::getInstance()->AttachLightToShader(&handler);
 
-		// Initialize various state.
-		glEnableVertexAttribArray(handler.Attributes.Position);
-		glEnableVertexAttribArray(handler.Attributes.Normal);
+		
 
 
 		for (const auto& render : renderComp) {
 			if (render == nullptr) continue;
 			if(!render->isRenderActive) continue;
 
-			render->SetMatrix(camera);
+			// Initialize various state.
+			glEnableVertexAttribArray(handler.Attributes.Position);
+			glEnableVertexAttribArray(handler.Attributes.Normal);
+
+			render->SetMatrix(camera, projection);
 			render->Render(elapsedTime);
+
+			glDisableVertexAttribArray(handler.Attributes.Position);
+			glDisableVertexAttribArray(handler.Attributes.Normal);
 
 		}
 
-		glDisableVertexAttribArray(handler.Attributes.Position);
-		glDisableVertexAttribArray(handler.Attributes.Normal);
+
 		
 	}
 

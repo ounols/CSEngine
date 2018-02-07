@@ -31,6 +31,24 @@ void CameraMgr::DeleteCameraComponent(CameraComponent* object) {
 }
 
 
+const float* CameraMgr::GetProjectionRatio() const {
+	return &m_projectionRatio;
+}
+
+
+void CameraMgr::SetProjectionRatio(float ratio) {
+	m_projectionRatio = ratio;
+
+	for(auto camera : m_objects) {
+		
+		if (camera == nullptr) continue;
+
+		camera->SetProjectionMatrix();
+
+	}
+}
+
+
 CameraComponent* CameraMgr::GetCurrentCamera() const {
 	if (m_currentCamera == nullptr && m_size > 0)
 		return m_objects.at(0);

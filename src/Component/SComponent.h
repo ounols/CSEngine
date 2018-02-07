@@ -30,12 +30,12 @@ public:
 	}
 
 
-	bool getIsEnable() const {
+	virtual bool GetIsEnable() const {
 		return isEnable;
 	}
 
 
-	void setIsEnable(bool is_enable) {
+	virtual void SetIsEnable(bool is_enable) {
 		isEnable = is_enable;
 	}
 

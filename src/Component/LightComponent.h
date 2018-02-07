@@ -16,7 +16,10 @@ public:
 	void Tick(float elapsedTime) override;
 
 	void SetLightType(LIGHT type);
-	void SetDirection(vec4 direction);
+	void SetDirection(vec4 direction) const;
+	void SetColorAmbient(vec4 color) const;
+	void SetColorDiffuse(vec4 color) const;
+	void SetColorSpecular(vec4 color) const;
 
 
 	SLight* GetLight() const {
@@ -40,10 +43,13 @@ public:
 
 
 private:
-	void SetLightPosition();
+	void SetLightPosition() const;
 
 public:
 	LIGHT m_type = DIRECTIONAL;
+	bool DisableAmbient = false;
+	bool DisableDiffuse = false;
+	bool DisableSpecular = true;
 
 private:
 	SLight* m_light = nullptr;

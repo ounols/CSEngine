@@ -16,9 +16,6 @@ struct SLight : BaseLight {
 	vec4 direction;
 	float dir_pad;
 
-	//Directional Light
-	bool is_directional;
-
 	//Point Light
 	vec3* position;
 	float range;

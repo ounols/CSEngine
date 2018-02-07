@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <algorithm>
 #include "../SObject.h"
 #include "../Manager/MemoryMgr.h"
 #include "../Util/Interface/TransformInterface.h"
@@ -17,19 +18,19 @@ public:
 	virtual void Tick(float elapsedTime);
 	virtual void Exterminate() override;
 	/**
-	 * \brief ÀÚµ¿ »èÁ¦°¡ ¾Æ´Ñ Æ¯Á¤ÇÑ »óÈ²¿¡¼­ »èÁ¦µÉ ¶§ È£ÃâµÇ´Â ÇÔ¼ö
+	 * \brief ìë™ ì‚­ì œê°€ ì•„ë‹Œ íŠ¹ì •í•œ ìƒí™©ì—ì„œ ì‚­ì œë  ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
 	 */
 	void Destroy();
 
 	/**
-	 * \brief ÄÄÆ÷³ÍÆ®¸¦ ÀÌ ¿ÀºêÁ§Æ®¿¡ Ãß°¡ÇÕ´Ï´Ù.
-	 * \param component Ãß°¡ÇÒ ¿ÀºêÁ§Æ®
+	 * \brief ì»´í¬ë„ŒíŠ¸ë¥¼ ì´ ì˜¤ë¸Œì íŠ¸ì— ì¶”ê°€í•©ë‹ˆë‹¤.
+	 * \param component ì¶”ê°€í•  ì˜¤ë¸Œì íŠ¸
 	 */
 	void AddComponent(SComponent* component);
 	template <class T>
 	T* GetComponent();
-	template <class T>
-	bool DeleteComponent();
+	//template <class T>
+	//bool DeleteComponent();
 	bool DeleteComponent(SComponent* component);
 	template <class T>
 	T* CreateComponent();
@@ -47,15 +48,17 @@ public:
 	}
 
 
+	bool GetIsEnable() const;
+	void SetIsEnable(bool is_enable);
 private:
 	void UpdateComponent(float elapsedTime);
-	//static bool isSameComponent(const SComponent* src, const SComponent* dst);
 
 
 private:
 	std::vector<SComponent*> m_components;
 	std::string m_name;
 	TransformInterface* m_transform;
+	bool isEnable = true;
 };
 
 
@@ -71,27 +74,28 @@ T* SGameObject::GetComponent() {
 	return nullptr;
 }
 
-template <class T>
-bool SGameObject::DeleteComponent() {
-	for (auto component : m_components) {
-		if (component == nullptr) continue;
-		
-		if (dynamic_cast<T*>(component)) {
-			
-			auto iCompObj = std::find(m_components.begin(), m_components.end(), component);
-
-			if(iCompObj != m_components.end()) {
-				m_components.erase(iCompObj);
-				MemoryMgr::getInstance()->ReleaseObject(component);
-			}
-			
-
-			return true;
-		}
-	}
-
-	return false;
-}
+//ë¡œì§ ë° ë¬¸ë²• ìƒ ë¬¸ì œê°€ ì œê¸°ë¨
+//template <class T>
+//bool SGameObject::DeleteComponent() {
+//	for (auto component : m_components) {
+//		if (component == nullptr) continue;
+//		
+//		if (dynamic_cast<T*>(component)) {
+//			
+//			auto iCompObj = std::find(m_components.begin(), m_components.end(), component);
+//
+//			if(iCompObj != m_components.end()) {
+//				m_components.erase(iCompObj);
+//				//MemoryMgr::getInstance()->ReleaseObject((SObject*)component);
+//			}
+//			
+//
+//			return true;
+//		}
+//	}
+//
+//	return false;
+//}
 
 
 template <class T>
@@ -99,7 +103,7 @@ T* SGameObject::CreateComponent() {
 
 	T* component = new T();
 	AddComponent(component);
-	static_cast<SComponent*>(component)->Init();
+	component->Init();
 	return component;
 
 }

@@ -27,7 +27,9 @@ void ResMgr::Init() {
 
 
 void ResMgr::Exterminate() {
-
+#ifdef __ANDROID__
+    SAFE_DELETE(m_assetManager);
+#endif
 }
 
 
@@ -40,3 +42,25 @@ GLProgramHandle* ResMgr::getShaderProgramHandle(int id) const {
 SISurface* ResMgr::GetSurfaceMesh(int id) const {
 	return GetObject<SurfaceMeshContainer, SISurface>(id);
 }
+
+
+#ifdef __ANDROID__
+
+void ResMgr::SetAssetManager(AAssetManager* obj) {
+	m_assetManager = obj;
+}
+
+
+AAssetManager * ResMgr::GetAssetManager() {
+	return m_assetManager;
+}
+
+void ResMgr::SetEnv(JNIEnv *obj) {
+	m_env = obj;
+}
+
+JNIEnv *ResMgr::GetEnv() {
+	return m_env;
+}
+
+#endif

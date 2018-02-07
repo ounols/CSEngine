@@ -27,7 +27,8 @@ public:
 		ResMgr::getInstance()->Register<SurfaceMeshContainer, SISurface>(this);
 		SetUndestroyable(true);
 	}
-	virtual ~SISurface() {}
+	virtual ~SISurface() {
+	}
 
 	virtual int GetVertexCount() const = 0;
 	virtual int GetLineIndexCount() const = 0;
@@ -46,7 +47,7 @@ public:
 	SIRender() {}
 	virtual ~SIRender() {}
 
-	virtual void SetMatrix(mat4 camera) = 0;
+	virtual void SetMatrix(mat4 camera, mat4 projection) = 0;
 	virtual void Render(float elapsedTime) = 0;
 
 protected:

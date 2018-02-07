@@ -1,6 +1,8 @@
+#include "../Util/Matrix.h"
 #include "OGLMgr.h"
 #include "../Util/GLProgramHandle.h"
 #include "../Util/AssetsDef.h"
+#include "CameraMgr.h"
 
 using namespace CSE;
 
@@ -22,7 +24,7 @@ void OGLMgr::setShaderProgram(int id = HANDLE_NULL) {
 	GLProgramHandle* gProgramhandle;
 
 	if (id == HANDLE_NULL) {
-		//±‚∫ª∞™ Ω¶¿Ã¥ı ¿˚øÎ
+		//Í∏∞Î≥∏Í∞í ÏâêÏù¥Îçî Ï†ÅÏö©
 		gProgramhandle = new GLProgramHandle();
 		m_programId = RESMGR->GetSize<ShaderProgramContainer, GLProgramHandle>() - 1;
 
@@ -32,7 +34,7 @@ void OGLMgr::setShaderProgram(int id = HANDLE_NULL) {
 		}
 	}
 	else {
-		//ƒøΩ∫≈“ Ω¶¿Ã¥ı ¿˚øÎ
+		//Ïª§Ïä§ÌÖÄ ÏâêÏù¥Îçî Ï†ÅÏö©
 		gProgramhandle = RESMGR->getShaderProgramHandle(id);
 		m_programId = id;
 	}
@@ -45,16 +47,16 @@ void OGLMgr::setShaderProgram(int id = HANDLE_NULL) {
 
 void OGLMgr::setBuffers() {
 
-	//∑ª¥ıπˆ∆€ ª˝º∫
+	//Î†åÎçîÎ≤ÑÌçº ÏÉùÏÑ±
 	glGenRenderbuffers(1, &m_colorRenderbuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_colorRenderbuffer);
 
-	//±Ì¿Ãπˆ∆€ ª˝º∫
-	glGenRenderbuffers(1, &m_depthRenderbuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_depthRenderbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_width, m_height);
+	//ÍπäÏù¥Î≤ÑÌçº ÏÉùÏÑ± Î∞è Î∞îÏù∏Îî©(ÏòÆÍπÄ)
+	//glGenRenderbuffers(1, &m_depthRenderbuffer);
+	//glBindRenderbuffer(GL_RENDERBUFFER, m_depthRenderbuffer);
+	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_width, m_height);
 
-	//«¡∑π¿”πˆ∆€ ø¿∫Í¡ß∆Æ∏¶ ª˝º∫
+	//ÌîÑÎ†àÏûÑÎ≤ÑÌçº ÏÉùÏÑ±
 	glGenFramebuffers(1, &m_framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER,
@@ -66,11 +68,14 @@ void OGLMgr::setBuffers() {
 		GL_RENDERBUFFER,
 		m_depthRenderbuffer);
 
-	// ∑ª¥ı∏µ¿ª ¿ß«ÿ ∑£¥ıπˆ∆€∏¶ πŸ¿Œµ˘
+	// Î†åÎçîÎ≤ÑÌçº Î∞îÏù∏Îî©
 	glBindRenderbuffer(GL_RENDERBUFFER, m_colorRenderbuffer);
 
+	glEnable(GL_DEPTH_TEST);
+	glClearDepthf(1.0f);
+
 #ifndef PLATFORM_IOS
-	//«¡∑π¿”πˆ∆€ πŸ¿Œµ˘
+	//ÌîÑÎ†àÏûÑÎ≤ÑÌçº Î∞îÏù∏Îî©
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif
 }
@@ -78,23 +83,24 @@ void OGLMgr::setBuffers() {
 
 void OGLMgr::setupEGLGraphics(GLuint width, GLuint height) {
 
-	//∫‰∆˜∆Æ º≥¡§
-	glViewport(0, 0, width, height);
-	m_width = width;
-	m_height = height;
-
 	setBuffers();
 	setShaderProgram();
-	setPerspectiveView();
+	setProjectionRatio();
 
 	glEnable(GL_DEPTH_TEST);
-	glClearDepthf(1.0f);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+    glDepthFunc(GL_LEQUAL);
+    glDepthMask(true);
+	//glDepthRangef(0.0,1.0);
 }
 
 
 GLuint OGLMgr::createProgram(const GLchar* vertexSource, const GLchar* fragmentSource) {
 
-	GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vertexSource);
+
+    GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vertexSource);
 	if (!vertexShader) {
 		return 0;
 	}
@@ -108,7 +114,7 @@ GLuint OGLMgr::createProgram(const GLchar* vertexSource, const GLchar* fragmentS
 
 	if (program) {
 
-		//Ω¶¿Ã¥ı∏¶ attach «’¥œ¥Ÿ.
+		//ÏâêÏù¥ÎçîÎ•º attach Ìï©ÎãàÎã§.
 		glAttachShader(program, vertexShader);
 		glAttachShader(program, pixelShader);
 		glLinkProgram(program);
@@ -217,7 +223,9 @@ GLuint OGLMgr::loadShader(GLenum shaderType, const char* pSource) {
 				if (buf) {
 					glGetShaderInfoLog(shader, infoLen, NULL, buf);
 					//LOGE("Could not compile shader %d:\n%s\n", shaderType, buf);
+#ifdef WIN32
 					OutputDebugStringA(buf);
+#endif
 					free(buf);
 				}
 
@@ -232,8 +240,7 @@ GLuint OGLMgr::loadShader(GLenum shaderType, const char* pSource) {
 }
 
 
-//∑ª¥ı∏µ ∏≈¥œ¿˙∑Œ ¿Ãµø
-void OGLMgr::setPerspectiveView() {
+void OGLMgr::setProjectionRatio() {
 	if (m_projectionRatio < 0) {
 		if (m_width > m_height)
 			m_projectionRatio = (GLfloat)m_width / (GLfloat)m_height;
@@ -241,6 +248,7 @@ void OGLMgr::setPerspectiveView() {
 			m_projectionRatio = (GLfloat)m_height / (GLfloat)m_width;
 	}
 
+	CameraMgr::getInstance()->SetProjectionRatio(m_projectionRatio);
 
 }
 
@@ -258,12 +266,41 @@ void OGLMgr::setFragmentShader(GLchar* fragmentSource) {
 void OGLMgr::Render(float elapsedTime) {
 
 	glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	////VBO æπŸ¿ŒµÂ
+	////VBO Ïñ∏Î∞îÏù∏Îî©
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+
+
+}
+
+
+void OGLMgr::ResizeWindow(GLuint width, GLuint height) {
+
+	if (m_depthRenderbuffer) {
+		glDeleteRenderbuffers(1, &m_depthRenderbuffer);
+		m_depthRenderbuffer = 0;
+	}
+
+	// Create the depth buffer.
+	glGenRenderbuffers(1, &m_depthRenderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_depthRenderbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+
+	/* Protect against a divide by zero */
+	if (height == 0) {
+		height = 1;
+	}
+
+	/* Setup our viewport. */
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+
+	m_width = width;
+	m_height = height;
+
+	setProjectionRatio();
 
 }
 

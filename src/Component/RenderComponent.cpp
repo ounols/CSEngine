@@ -14,6 +14,7 @@ RenderComponent::~RenderComponent() {}
 
 
 void RenderComponent::Exterminate() {
+	RenderMgr::getInstance()->Remove(this);
 }
 
 
@@ -21,6 +22,8 @@ void RenderComponent::Init() {
 
 	SetVectorInfomation();
 	m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
+	m_material = gameObject->GetComponent<MaterialComponent>();
+
 	RenderMgr::getInstance()->Register(this);
 	isRenderActive = isEnable;
 }
@@ -32,12 +35,14 @@ void RenderComponent::Tick(float elapsedTime) {
 		m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
 	}
 
-	isRenderActive = isEnable;
+	if(m_material == nullptr) {
+		m_material = gameObject->GetComponent<MaterialComponent>();
+	}
 
 }
 
 
-void RenderComponent::SetMatrix(mat4 camera) {
+void RenderComponent::SetMatrix(mat4 camera, mat4 projection) {
 
 	//model-view
 	mat4 scale = mat4::Scale(m_scale->x, m_scale->y, m_scale->z);
@@ -54,10 +59,8 @@ void RenderComponent::SetMatrix(mat4 camera) {
 
 
 	//projection transform
+	glUniformMatrix4fv(handler->Uniforms.Projection, 1, 0, projection.Pointer());
 
-
-	//other
-	glVertexAttrib4f(handler->Attributes.DiffuseMaterial, 0.75f, 0.75f, 0.75f, 1);
 
 }
 
@@ -65,6 +68,9 @@ void RenderComponent::SetMatrix(mat4 camera) {
 void RenderComponent::Render(float elapsedTime) {
 
 	if (m_mesh == nullptr) return;
+
+	SetMaterials();
+
 
 	int stride = 2 * sizeof(vec3);
 	const auto& drawable_id = m_mesh->m_meshId;
@@ -113,6 +119,13 @@ void RenderComponent::SetShaderHandle(GLProgramHandle* handle) {
 }
 
 
+void RenderComponent::SetIsEnable(bool is_enable) {
+	SComponent::SetIsEnable(is_enable);
+
+	isRenderActive = isEnable;
+}
+
+
 void RenderComponent::SetVectorInfomation() {
 
 	if (gameObject == nullptr) return;
@@ -120,5 +133,28 @@ void RenderComponent::SetVectorInfomation() {
 	m_position = &Transform->m_position;
 	m_scale = &Transform->m_scale;
 	m_rotation = &Transform->m_rotation;
+
+}
+
+
+void RenderComponent::SetMaterials() {
+
+	//Set Materials
+
+	if(m_material == nullptr) {
+		//Default Error Material
+		vec3 m_ambientMaterial = vec3{ 1.f, 0.f, 0.f };
+		vec3 m_specularMaterial = vec3{ 1, 1, 1 };
+		float m_shininess = 128;
+
+		glUniform3fv(handler->Uniforms.AmbientMaterial, 1, m_ambientMaterial.Pointer());
+		glUniform3fv(handler->Uniforms.SpecularMaterial, 1, m_specularMaterial.Pointer());
+		glUniform1f(handler->Uniforms.Shininess, m_shininess);
+
+	}else {
+		m_material->AttachMaterials(handler);
+	}
+
+	
 
 }

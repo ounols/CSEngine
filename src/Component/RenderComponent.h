@@ -2,6 +2,7 @@
 #include "SComponent.h"
 #include "../Util/Render/RenderInterfaces.h"
 #include "DrawableStaticMeshComponent.h"
+#include "MaterialComponent.h"
 
 class RenderComponent : public SComponent, public SIRender {
 public:
@@ -14,20 +15,26 @@ public:
 	void Tick(float elapsedTime) override;
 
 
-	void SetMatrix(mat4 camera) override;
+	void SetMatrix(mat4 camera, mat4 projection) override;
 	void Render(float elapsedTime) override;
 
 	void SetShaderHandle(int id);
 	void SetShaderHandle(GLProgramHandle* handle);
 
 
+	void SetIsEnable(bool is_enable) override;
+
 private:
 	void SetVectorInfomation();
+	void SetMaterials();
 
 private:
 	DrawableStaticMeshComponent* m_mesh;
+	MaterialComponent* m_material;
 	const vec3* m_position;
 	const vec3* m_scale;
 	const vec3* m_rotation;
+
+	
 };
 

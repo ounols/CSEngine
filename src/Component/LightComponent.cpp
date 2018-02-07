@@ -13,6 +13,7 @@ LightComponent::~LightComponent() {}
 
 void LightComponent::Exterminate() {
 
+	LightMgr::getInstance()->Remove(this);
 	SAFE_DELETE(m_light);
 
 }
@@ -36,15 +37,12 @@ void LightComponent::SetLightType(LIGHT type) {
 
 	if(m_type == POINT || m_type == SPOT) {
 		SetLightPosition();
-		m_light->is_directional = false;
-	}else {
-		m_light->is_directional = true;
 	}
 
 }
 
 
-void LightComponent::SetDirection(vec4 direction) {
+void LightComponent::SetDirection(vec4 direction) const {
 
 	switch (m_type) {
 		
@@ -61,7 +59,25 @@ void LightComponent::SetDirection(vec4 direction) {
 }
 
 
-void LightComponent::SetLightPosition() {
+void LightComponent::SetColorAmbient(vec4 color) const {
+	m_light->ambientColor = color;
+
+}
+
+
+void LightComponent::SetColorDiffuse(vec4 color) const {
+	m_light->diffuseColor = color;
+
+}
+
+
+void LightComponent::SetColorSpecular(vec4 color) const {
+	m_light->specularColor = color;
+
+}
+
+
+void LightComponent::SetLightPosition() const {
 
 	m_light->position = &Transform->m_position;
 
