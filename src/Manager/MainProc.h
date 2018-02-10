@@ -2,6 +2,7 @@
 
 #include "../OGLDef.h"
 #include "OGLMgr.h"
+#include "ScriptMgr.h"
 
 class MainProc
 {
@@ -17,6 +18,7 @@ public:
 
 private:
 	OGLMgr* m_oglMgr = nullptr;
+	ScriptMgr* m_scriptMgr = nullptr;
 
 };
 

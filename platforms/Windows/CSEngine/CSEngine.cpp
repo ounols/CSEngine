@@ -23,6 +23,18 @@
 #pragma comment(lib, "glu32.lib")
 #pragma comment(lib, "winmm.lib")
 
+#ifdef _DEBUG
+#pragma comment(lib, "../../../External/SqPlus/lib/Windows/squirrelD.lib")
+#pragma comment(lib, "../../../External/SqPlus/lib/Windows/sqstdlibD.lib")
+
+#pragma comment(lib, "../../../External/SqPlus/lib/Windows/sqplusD.lib")
+#else // Release
+#pragma comment(lib, "../../../External/SqPlus/lib/Windows/squirrel.lib")
+#pragma comment(lib, "../../../External/SqPlus/lib/Windows/sqstdlib.lib")
+
+#pragma comment(lib, "../../../External/SqPlus/lib/Windows/sqplus.lib")
+#endif
+
 
 #define MAX_LOADSTRING 100
 

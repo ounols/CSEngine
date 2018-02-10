@@ -4,6 +4,7 @@
 #include "../../Assets/teapot_smooth.h"
 #include "../Component/MaterialComponent.h"
 #include "../Component/RenderComponent.h"
+#include "../Component/CustomComponent.h"
 
 
 FirstDemoScene::FirstDemoScene() {
@@ -53,6 +54,9 @@ void FirstDemoScene::Init() {
 	c3->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 0 });
 	c3->GetComponent<MaterialComponent>()->SetShininess(2);
 	c3->GetTransform()->m_position.y = -0.5f;
+
+	c3->CreateComponent<CustomComponent>();
+	c3->GetComponent<CustomComponent>()->SetClassName("TestScript");
 
 
 	c3->CreateComponent<RenderComponent>();

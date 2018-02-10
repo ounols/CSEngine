@@ -2,6 +2,7 @@
 #include "../OGLDef.h"
 #include <string>
 
+
 class OGLMgr
 {
 public:

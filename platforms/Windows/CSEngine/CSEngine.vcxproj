@@ -29,7 +29,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -71,6 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -89,6 +90,8 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile />
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\External\SqPlus\include;$(SolutionDir)..\..\External\SqPlus\lib\sqplus;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -147,11 +150,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Component\CameraComponent.h" />
+    <ClInclude Include="..\..\..\src\Component\CustomComponent.h" />
     <ClInclude Include="..\..\..\src\Component\DrawableStaticMeshComponent.h" />
     <ClInclude Include="..\..\..\src\Component\LightComponent.h" />
     <ClInclude Include="..\..\..\src\Component\MaterialComponent.h" />
     <ClInclude Include="..\..\..\src\Component\RenderComponent.h" />
     <ClInclude Include="..\..\..\src\Component\SComponent.h" />
+    <ClInclude Include="..\..\..\src\Component\SISComponent.h" />
     <ClInclude Include="..\..\..\src\Component\TransformComponent.h" />
     <ClInclude Include="..\..\..\src\MacroDef.h" />
     <ClInclude Include="..\..\..\src\Manager\Base\Scene.h" />
@@ -168,6 +173,7 @@
     <ClInclude Include="..\..\..\src\Manager\RenderMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\ResMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\SceneMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\ScriptMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\ShaderProgramContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\SurfaceMeshContainer.h" />
     <ClInclude Include="..\..\..\src\Object\SGameObject.h" />
@@ -182,6 +188,7 @@
     <ClInclude Include="..\..\..\src\Util\Render\LightHelper.h" />
     <ClInclude Include="..\..\..\src\Util\Render\ObjSurface.h" />
     <ClInclude Include="..\..\..\src\Util\Render\RenderInterfaces.h" />
+    <ClInclude Include="..\..\..\src\Util\ScriptDef.h" />
     <ClInclude Include="..\..\..\src\Util\Vector.h" />
     <ClInclude Include="CSEngine.h" />
     <ClInclude Include="Resource.h" />
@@ -190,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\Component\CameraComponent.cpp" />
+    <ClCompile Include="..\..\..\src\Component\CustomComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\DrawableStaticMeshComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\LightComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\MaterialComponent.cpp" />
@@ -208,6 +216,7 @@
     <ClCompile Include="..\..\..\src\Manager\RenderMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\ResMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\SceneMgr.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\ScriptMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\ShaderProgramContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\SurfaceMeshContainer.cpp" />
     <ClCompile Include="..\..\..\src\Object\SGameObject.cpp" />

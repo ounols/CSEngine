@@ -1,0 +1,13 @@
+#pragma once
+#include "../Component/CustomComponent.h"
+#include "Matrix.h"
+
+DECLARE_INSTANCE_TYPE(SComponent);
+DECLARE_INSTANCE_TYPE(CustomComponent);
+
+DECLARE_INSTANCE_TYPE(vec4);
+DECLARE_INSTANCE_TYPE(vec3);
+DECLARE_INSTANCE_TYPE(vec2);
+DECLARE_INSTANCE_TYPE(mat2);
+DECLARE_INSTANCE_TYPE(mat3);
+DECLARE_INSTANCE_TYPE(mat4);

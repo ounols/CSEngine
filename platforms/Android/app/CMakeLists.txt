@@ -19,24 +19,32 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp )
 
-file(GLOB CSENGINE_SOURCE_SRC
-                        "../../../src/*.cpp"
-                        "../../../src/*/*.cpp"
-                        "../../../src/*/*/*.cpp")
+file(GLOB CSENGINE_SRC
+                        "../../../src/*.*"
+                        "../../../src/*/*.*"
+                        "../../../src/*/*/*.*")
 
-file(GLOB CSENGINE_HEADER_SRC
-                        "../../../src/*.h"
-                        "../../../src/*/*.h"
-                        "../../../src/*/*/*.h")
+file(GLOB SQPLUS_SRC
+                        "../../../External/SqPlus/lib/sqplus/*.*"
+                        "../../../External/SqPlus/lib/sqstdlib/*.*"
+                        "../../../External/SqPlus/lib/squirrel/*.*")
 
 
 
 add_library( CSEngineLib
               SHARED
-              ${CSENGINE_SOURCE_SRC} ${CSENGINE_HEADER_SRC} src/main/cpp/CSEngineAndroidBinder.cpp )
+              ${CSENGINE_SRC} src/main/cpp/CSEngineAndroidBinder.cpp )
+
+add_library( SqplusLib
+            SHARED
+            ${SQPLUS_SRC})
 
 #헤더파일 위치
 include_directories(../../../src)
+#Squirrel 헤더파일 위치
+include_directories(../../../External/SqPlus/include)
+#SqPlus 헤더파일 위치
+include_directories(../../../External/SqPlus/lib/sqplus)
 
 
 #add_library( CSEngineBinderLib
@@ -72,4 +80,5 @@ target_link_libraries(CSEngineLib
                      log
                      EGL
                      GLESv2
+                     SqplusLib
                      ${log-lib})
