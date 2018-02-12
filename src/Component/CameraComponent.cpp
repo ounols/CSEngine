@@ -3,7 +3,7 @@
 #include "../Manager/CameraMgr.h"
 
 
-CameraComponent::CameraComponent(): m_eye(nullptr), m_targetObject(nullptr) {
+COMPONENT_CONSTRUCTOR(CameraComponent), m_eye(nullptr), m_targetObject(nullptr) {
 	CameraMgr::getInstance()->Register(this);
 	m_pRatio = CameraMgr::getInstance()->GetProjectionRatio();
 }

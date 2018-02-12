@@ -71,6 +71,17 @@ void SGameObject::AddComponent(SComponent* component) {
 }
 
 
+SComponent* SGameObject::GetComponentForScript(char* type) {
+	for(auto component : m_components) {
+		if(type == component->GetClassType()) {
+			return component;
+		}
+	}
+
+	return nullptr;
+}
+
+
 bool SGameObject::DeleteComponent(SComponent* component) {
 
 	for (auto m_component : m_components) {

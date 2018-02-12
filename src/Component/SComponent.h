@@ -9,7 +9,7 @@ class SGameObject;
 class SComponent : public SObject , public virtual SISComponent {
 public:
 
-	SComponent() {
+	explicit SComponent(std::string classType) : m_classType(classType) {
 
 	}
 
@@ -37,10 +37,16 @@ public:
 		isEnable = is_enable;
 	}
 
+	std::string GetClassType() const {
+		return m_classType;
+	}
 
 protected:
 	SGameObject* gameObject = nullptr;
 	bool isEnable = true;
+
+	std::string m_classType;
 };
 
 #define Transform static_cast<TransformInterface*>(gameObject->GetTransform())
+#define COMPONENT_CONSTRUCTOR(CLASSNAME) CLASSNAME::CLASSNAME() : SComponent(#CLASSNAME)

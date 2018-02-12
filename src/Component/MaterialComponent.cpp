@@ -1,7 +1,7 @@
 #include "MaterialComponent.h"
 
 
-MaterialComponent::MaterialComponent() {}
+COMPONENT_CONSTRUCTOR(MaterialComponent) {}
 
 
 MaterialComponent::~MaterialComponent() {}

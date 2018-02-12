@@ -35,6 +35,8 @@ void FirstDemoScene::Init() {
 
 	c->CreateComponent<RenderComponent>();
 	c->GetComponent<RenderComponent>()->SetShaderHandle(0);
+	c->CreateComponent<CustomComponent>();
+	c->GetComponent<CustomComponent>()->SetClassName("TestScript");
 
 	c2 = new SGameObject();
 	c2->CreateComponent<DrawableStaticMeshComponent>();
@@ -42,6 +44,7 @@ void FirstDemoScene::Init() {
 	c2->CreateComponent<MaterialComponent>();
 	c2->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
 	c2->GetTransform()->m_position.y = 0.5f;
+
 
 	 
 	c2->CreateComponent<RenderComponent>();
@@ -83,7 +86,7 @@ void FirstDemoScene::Tick(float elapsedTime) {
 	}
 
 	//===============
-	c->GetTransform()->m_rotation.y += 0.1f;
+	//c->GetTransform()->m_rotation.y += 0.1f;
 	c->GetTransform()->m_position.y = sinf(elapsedTime*0.001) * 0.1f;
 	//===============
 

@@ -90,7 +90,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile />
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\External\SqPlus\include;$(SolutionDir)..\..\External\SqPlus\lib\sqplus;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\External\Squirrel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -185,6 +185,7 @@
     <ClInclude Include="..\..\..\src\Util\Interface\TransformInterface.h" />
     <ClInclude Include="..\..\..\src\Util\Matrix.h" />
     <ClInclude Include="..\..\..\src\Util\MatrixDef.h" />
+    <ClInclude Include="..\..\..\src\Util\MoreString.h" />
     <ClInclude Include="..\..\..\src\Util\Render\LightHelper.h" />
     <ClInclude Include="..\..\..\src\Util\Render\ObjSurface.h" />
     <ClInclude Include="..\..\..\src\Util\Render\RenderInterfaces.h" />

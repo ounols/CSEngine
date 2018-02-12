@@ -2,7 +2,7 @@
 #include "../Manager/LightMgr.h"
 
 
-LightComponent::LightComponent() {
+COMPONENT_CONSTRUCTOR(LightComponent) {
 	
 	LightMgr::getInstance()->Register(this);
 }

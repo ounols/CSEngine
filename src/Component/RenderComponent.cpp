@@ -5,7 +5,7 @@
 #include "../Manager/RenderMgr.h"
 
 
-RenderComponent::RenderComponent() {
+COMPONENT_CONSTRUCTOR(RenderComponent) {
 
 }
 

@@ -24,10 +24,9 @@ file(GLOB CSENGINE_SRC
                         "../../../src/*/*.*"
                         "../../../src/*/*/*.*")
 
-file(GLOB SQPLUS_SRC
-                        "../../../External/SqPlus/lib/sqplus/*.*"
-                        "../../../External/SqPlus/lib/sqstdlib/*.*"
-                        "../../../External/SqPlus/lib/squirrel/*.*")
+file(GLOB SQUIRREL_SRC
+                        "../../../External/Squirrel/lib/sqstdlib/*.*"
+                        "../../../External/Squirrel/lib/squirrel/*.*")
 
 
 
@@ -35,16 +34,14 @@ add_library( CSEngineLib
               SHARED
               ${CSENGINE_SRC} src/main/cpp/CSEngineAndroidBinder.cpp )
 
-add_library( SqplusLib
+add_library( SquirrelLib
             SHARED
-            ${SQPLUS_SRC})
+            ${SQUIRREL_SRC})
 
 #헤더파일 위치
 include_directories(../../../src)
 #Squirrel 헤더파일 위치
-include_directories(../../../External/SqPlus/include)
-#SqPlus 헤더파일 위치
-include_directories(../../../External/SqPlus/lib/sqplus)
+include_directories(../../../External/Squirrel/include)
 
 
 #add_library( CSEngineBinderLib
@@ -80,5 +77,5 @@ target_link_libraries(CSEngineLib
                      log
                      EGL
                      GLESv2
-                     SqplusLib
+                     SquirrelLib
                      ${log-lib})

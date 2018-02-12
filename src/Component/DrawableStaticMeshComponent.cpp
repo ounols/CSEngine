@@ -3,7 +3,7 @@
 #include <vector>
 
 
-DrawableStaticMeshComponent::DrawableStaticMeshComponent() {}
+COMPONENT_CONSTRUCTOR(DrawableStaticMeshComponent) {}
 
 
 DrawableStaticMeshComponent::~DrawableStaticMeshComponent() {}

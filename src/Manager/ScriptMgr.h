@@ -2,35 +2,56 @@
 #include "../Component/CustomComponent.h"
 #include "../Util/Matrix.h"
 
-class ScriptMgr {
+class ScriptMgr : public SContainer<Sqrat::Object*> {
 public:
 	ScriptMgr();
 	~ScriptMgr();
 
-	void Init() const;
+	void Init();
 
 
 	static void RegisterScriptInAsset(std::string path);
+	static void RegisterScript(std::string script);
 
 private:
-	static void DefineClasses();
+	void DefineClasses();
+	void ReleaseSqratObject();
 	void ReadScriptList() const;
 
+	template<class T>
+	Sqrat::Class<T>& SQRClassDef(std::string className);
+	template<class T>
+	Sqrat::Class<T>& SQRComponentDef(std::string className);
+
 private:
-	HSQUIRRELVM vm = nullptr;
+	int m_gameobjectIndex = -1;
 };
 
-////Gameobject
-//DECLARE_INSTANCE_TYPE_NAME(SGameObject, GameObject);
-//
-////Components
-//DECLARE_INSTANCE_TYPE_NAME(TransformInterface, TRANSFORM);
-//DECLARE_INSTANCE_TYPE_NAME(CustomComponent, SCEngineComponent);
-//
-////Util
-//DECLARE_INSTANCE_TYPE_NAME(vec4, vec4);
-//DECLARE_INSTANCE_TYPE_NAME(vec3, vec3);
-//DECLARE_INSTANCE_TYPE_NAME(vec2, vec2);
-//DECLARE_INSTANCE_TYPE_NAME(mat2, mat2);
-//DECLARE_INSTANCE_TYPE_NAME(mat3, mat3);
-//DECLARE_INSTANCE_TYPE_NAME(mat4, mat4);
+
+template <class T>
+Sqrat::Class<T>& ScriptMgr::SQRClassDef(std::string className) {
+
+	Sqrat::Class<T>* sqClass = new Sqrat::Class<T>(Sqrat::DefaultVM::Get(), className);
+	Sqrat::RootTable().Bind(className.c_str(), *sqClass);
+	Register(sqClass);
+
+	//게임 오브젝트인가?
+	if (className == _SC("GameObject")) {
+		m_gameobjectIndex = m_objects.size();
+	}
+
+	return *sqClass;
+}
+
+
+template <class T>
+Sqrat::Class<T>& ScriptMgr::SQRComponentDef(std::string className) {
+	if (m_gameobjectIndex >= 0) {
+		auto sqClass = *static_cast<Sqrat::Class<SGameObject>*>(Get(m_gameobjectIndex));
+		sqClass.Func((std::string() + "GetComponent_" + className + "_").c_str(),
+			&SGameObject::GetComponent<T>);
+
+	}
+
+	return SQRClassDef<T>(className);
+}

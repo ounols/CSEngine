@@ -24,15 +24,12 @@
 #pragma comment(lib, "winmm.lib")
 
 #ifdef _DEBUG
-#pragma comment(lib, "../../../External/SqPlus/lib/Windows/squirrelD.lib")
-#pragma comment(lib, "../../../External/SqPlus/lib/Windows/sqstdlibD.lib")
+#pragma comment(lib, "../../../External/Squirrel/lib/Windows/squirrelD.lib")
+#pragma comment(lib, "../../../External/Squirrel/lib/Windows/sqstdlibD.lib")
 
-#pragma comment(lib, "../../../External/SqPlus/lib/Windows/sqplusD.lib")
 #else // Release
-#pragma comment(lib, "../../../External/SqPlus/lib/Windows/squirrel.lib")
-#pragma comment(lib, "../../../External/SqPlus/lib/Windows/sqstdlib.lib")
-
-#pragma comment(lib, "../../../External/SqPlus/lib/Windows/sqplus.lib")
+#pragma comment(lib, "../../../External/Squirrel/lib/Windows/squirrel.lib")
+#pragma comment(lib, "../../../External/Squirrel/lib/Windows/sqstdlib.lib")
 #endif
 
 

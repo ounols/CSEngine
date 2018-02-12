@@ -29,6 +29,7 @@ public:
 	void AddComponent(SComponent* component);
 	template <class T>
 	T* GetComponent();
+	SComponent* GetComponentForScript(char* type);
 	//template <class T>
 	//bool DeleteComponent();
 	bool DeleteComponent(SComponent* component);

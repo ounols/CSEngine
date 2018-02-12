@@ -5,9 +5,9 @@
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 #include <android/log.h>
+#include <Manager/ResMgr.h>
 
 #define  LOG_TAG    "SCENGINE"
-#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 #endif
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "SComponent.h"
-#include "SqPlus.h"
+#include "sqext.h"
 
 class CustomComponent : public SComponent {
 public:
@@ -18,19 +18,24 @@ public:
 	bool GetIsEnable() const override;
 	void SetIsEnable(bool is_enable) override;
 
+	void Log(const char* log);
 
 	SGameObject* GetGameObject() const override {
 		return gameObject;
 	}
 
 private:
-	void RegisterScript() const;
+	void RegisterScript();
 
 private:
-	mutable SquirrelObject m_specialization;
-	mutable SquirrelObject m_classInstance;
-	SqPlus::SquirrelFunction<void> m_funcTick;
-	SqPlus::SquirrelFunction<void> m_funcExterminate;
+	mutable sqext::SQIClass* m_specialization = nullptr;
+	mutable sqext::SQIClassInstance* m_classInstance = nullptr;
+	int m_funcSetCSEngine = 0;
+	int m_funcInit = 1;
+	int m_funcTick = 2;
+	int m_funcExterminate = 3;
 
 	std::string m_className = "";
+
+	bool m_isError = false;
 };
