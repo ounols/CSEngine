@@ -4,28 +4,24 @@ class TestScript extends SCEngineScript {
 	lightComp = null;
 	ambient = null;
 
-	function Init(){
+	function Init()
 		materialComp = gameobject.GetComponent<MaterialComponent>();
 		lightComp = gameobject.GetComponent<LightComponent>();
 		
 		ambient = vec3();
-		ambient.Set(1, 0, 0);
+		ambient.x = 1;
+		ambient.y = 0;
+		ambient.z = 0;
 
 		
-		Log("light component : " + lightComp);			//???? ????????? ???????? ??????? null
-		Log("material component : " + materialComp);	//???? ????????? ???????? ?????? ??��??.
+		Log("light component : " + lightComp);			//���� ������Ʈ�� �������� �����Ƿ� null
+		Log("material component : " + materialComp);	//���� ������Ʈ�� �����ϹǷ� �ּҰ��� ��µȴ�.
 
-		gameobject.SetName("test");
 	}
 
 	function Tick(elapsedTime) {
 		materialComp.SetAmbient(ambient);
 
 		gameobject.GetTransform().rotation.y += 0.5;
-	}
-
-	//로테이션을 받아오는 임의의 함수
-	function GetRotation() {
-		return gameobject.GetTransform().rotation;
 	}
 }

@@ -10,6 +10,7 @@ attribute vec3 a_diffuseMaterial;
 // Uniforms
 uniform mat4 u_projectionMatrix;//Projection;
 uniform mat4 u_modelViewMatrix;//Modelview;
+uniform mat4 u_modelViewNoCameraMatrix;//Modelview - no camera matrix;
 uniform mat3 u_normalMatrix;//NormalMatrix;
 uniform vec4 u_lightPosition;//LightPosition;
 
@@ -41,7 +42,7 @@ void main(void) {
 	if(u_isDirectional == 1) {
 		positionLight = vec4(c_zero, c_zero, c_zero, c_one);
 	}else {
-		positionLight = u_modelViewMatrix * a_position;
+		positionLight = u_modelViewNoCameraMatrix * a_position;
 	}
 
 	//for positional light
@@ -53,7 +54,6 @@ void main(void) {
 
 	//vec4 vertPosition = u_modelViewMatrix * a_position;
 	//v_vertPosition = vec3(vertPosition) / vertPosition.w;
-
 
 	//vertex position
 	gl_Position = u_projectionMatrix * u_modelViewMatrix * a_position;

@@ -178,6 +178,7 @@ void OGLMgr::AttachProgramHandle(int shaderID) {
 	gProgramhandle->Attributes.DiffuseMaterial = glGetAttribLocation(program, "a_diffuseMaterial");
 	gProgramhandle->Attributes.TextureCoord = glGetAttribLocation(program, "a_textureCoordIn");
 	gProgramhandle->Uniforms.Projection = glGetUniformLocation(program, "u_projectionMatrix");
+	gProgramhandle->Uniforms.ModelNoCameraMatrix = glGetUniformLocation(program, "u_modelViewNoCameraMatrix");
 	gProgramhandle->Uniforms.Modelview = glGetUniformLocation(program, "u_modelViewMatrix");
 	gProgramhandle->Uniforms.NormalMatrix = glGetUniformLocation(program, "u_normalMatrix");
 	gProgramhandle->Uniforms.LightPosition = glGetUniformLocation(program, "u_lightPosition");
@@ -190,7 +191,7 @@ void OGLMgr::AttachProgramHandle(int shaderID) {
 	gProgramhandle->Uniforms.LightMode = glGetUniformLocation(program, "u_lightMode");
 	gProgramhandle->Uniforms.Interpolation_z = glGetUniformLocation(program, "u_interpolation_z");
 	gProgramhandle->Uniforms.AttenuationFactor = glGetUniformLocation(program, "u_attenuationFactor");
-	gProgramhandle->Uniforms.IsAttenuation = glGetUniformLocation(program, "u_computeAttenuation");
+	gProgramhandle->Uniforms.IsAttenuation = glGetUniformLocation(program, "u_isAttenuation");
 	gProgramhandle->Uniforms.LightRadius = glGetUniformLocation(program, "u_lightRadius");
 	gProgramhandle->Uniforms.SpotDirection = glGetUniformLocation(program, "u_spotDirection");
 	gProgramhandle->Uniforms.SpotExponent = glGetUniformLocation(program, "u_spotExponent");

@@ -10,6 +10,10 @@
 #ifdef WIN32
 #include <windows.h>
 #endif
+#ifdef __ANDROID__
+#include <android/log.h>
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,"ScriptManager",__VA_ARGS__)
+#endif
 
 using namespace Sqrat;
 using namespace CSE;
@@ -32,6 +36,10 @@ return SCEngine.IsEnable();					  \n\
 											  \n\
 function SetEnable(enable) {				  \n\
 	SCEngine.SetEnable(enable);				  \n\
+}											  \n\
+											  \n\
+function GetTransform() {					  \n\
+	return gameobject.GetTransform();		  \n\
 }											  \n\
 function Log(log){							  \n\
 SCEngine.Log(log);							  \n\
@@ -67,8 +75,12 @@ void ScriptMgr::RegisterScriptInAsset(std::string path) {
 	std::string script_str = CSE::OpenAssetsTxtFile(CSE::AssetsPath() + path);
 
 	//replace GetComponent function
-	script_str = ReplaceAll(script_str, "GetComponent<", "GetComponent_");
-	script_str = ReplaceAll(script_str, ">()", "_()");
+	//script_str = ReplaceAll(script_str, "GetComponent<", "GetComponent_");
+	//script_str = ReplaceAll(script_str, ">()", "_()");
+	script_str = ReplaceFunction(script_str, "GetComponent<", ">()", "GetComponent_", "_()");
+
+	//replace GetCustomComponent(GetClass) function
+	script_str = ReplaceFunction(script_str, "GetClass<", ">()", "GetClass(\"", "\")");
 
 	RegisterScript(script_str);
 
@@ -79,7 +91,7 @@ void ScriptMgr::RegisterScript(std::string script) {
 
 	HSQUIRRELVM vm = DefaultVM::Get();
 
-	//스크립트의 존재여부 확인
+	//register script
 	if (!script.empty()) {
 		Script compiledScript;
 		compiledScript.CompileString(script.c_str());
@@ -87,6 +99,8 @@ void ScriptMgr::RegisterScript(std::string script) {
 #ifdef WIN32
 			OutputDebugString(_SC("Compile Failed: "));
 			OutputDebugString(Error::Message(vm).c_str());
+#elif __ANDROID__
+            LOGE("Compile Failed : %s", Error::Message(vm).c_str());
 #endif
 		}
 
@@ -95,6 +109,8 @@ void ScriptMgr::RegisterScript(std::string script) {
 #ifdef WIN32
 			OutputDebugString(_SC("Run Failed: "));
 			OutputDebugString(Error::Message(vm).c_str());
+#elif __ANDROID__
+            LOGE("Run Failed : %s", Error::Message(vm).c_str());
 #endif
 		}
 
@@ -103,17 +119,42 @@ void ScriptMgr::RegisterScript(std::string script) {
 
 }
 
+SQInteger GetCustomComponentFunc(HSQUIRRELVM v) {
+	SQInteger args = sq_gettop(v);
 
-void ScriptMgr::DefineClasses() {
+	if (args != 2) return 1;
 
-	HSQUIRRELVM vm = DefaultVM::Get();
+	SGameObject* game_object = Var<SGameObject*>(v, 1).value;
+	char* classname_str = Var<char*>(v, 2).value;
+	auto customComponent = game_object->GetCustomComponent(classname_str);
+
+	if(customComponent._type == OT_NULL) {
+		return 1;
+	}
+
+	sq_pushobject(v, customComponent);
+
+	return 1;
+
+	
+
+}
+
+
+void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
+
+	
 
 	//GameObject
 
-	SQRClassDef<SGameObject>(_SC("GameObject"))
+	SQRClassDef<SGameObject>(_SC("GameObject"), vm)
+		.Func(_SC("Find"), &SGameObject::Find)
 		.Func(_SC("GetTransform"), &SGameObject::GetTransform)
 		.Func(_SC("IsEnable"), &SGameObject::GetIsEnable)
 		.Func(_SC("SetEnable"), &SGameObject::SetIsEnable)
+		.Func(_SC("SetName"), &SGameObject::SetName)
+		.Func(_SC("GetName"), &SGameObject::GetName)
+		.SquirrelFunc(_SC("GetClass"), GetCustomComponentFunc)
 	;
 	//Components
 
@@ -125,7 +166,9 @@ void ScriptMgr::DefineClasses() {
 	;
 	**/
 
-	SQRClassDef<TransformInterface>(_SC("Transform"))
+	
+
+	SQRClassDef<TransformInterface>(_SC("Transform"), vm)
 		.Var(_SC("position"), &TransformInterface::m_position)
 		.Var(_SC("rotation"), &TransformInterface::m_rotation)
 		.Var(_SC("scale"), &TransformInterface::m_scale);
@@ -155,16 +198,32 @@ void ScriptMgr::DefineClasses() {
 
 	//Util
 
+	SQRClassDef<vec2>(_SC("vec2"))
+		.Var(_SC("x"), &vec2::x)
+		.Var(_SC("y"), &vec2::y)
+		.Func(_SC("Set"), &vec2::Set)
+	;
+
 	SQRClassDef<vec3>(_SC("vec3"))
 		.Var(_SC("x"), &vec3::x)
 		.Var(_SC("y"), &vec3::y)
-		.Var(_SC("z"), &vec3::z);
+		.Var(_SC("z"), &vec3::z)
+		.Func(_SC("Set"), &vec3::Set)
+	;
 
 	SQRClassDef<vec4>(_SC("vec4"))
 		.Var(_SC("x"), &vec4::x)
 		.Var(_SC("y"), &vec4::y)
 		.Var(_SC("z"), &vec4::z)
-		.Var(_SC("w"), &vec4::w);
+		.Var(_SC("w"), &vec4::w)
+		.Func(_SC("Set"), &vec4::Set)
+	;
+
+}
+
+
+void ScriptMgr::DefineScenes(HSQUIRRELVM vm) {
+
 
 }
 
@@ -188,6 +247,7 @@ void ScriptMgr::ReadScriptList() const {
 	RegisterScript(SCEngineScript);
 
 	while (std::getline(list, path, '\n')) {
+        path = ReplaceAll(path, "\r", "");
 		RegisterScriptInAsset(path);
 	}
 

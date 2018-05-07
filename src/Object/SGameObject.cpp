@@ -1,9 +1,10 @@
 #include "SGameObject.h"
 
-#include <memory>
-
+#include "../Manager/MemoryMgr.h"
 #include "../Manager/GameObjectMgr.h"
 #include "../Component/TransformComponent.h"
+#include "../Component/CustomComponent.h"
+
 
 
 SGameObject::SGameObject() {
@@ -71,14 +72,25 @@ void SGameObject::AddComponent(SComponent* component) {
 }
 
 
-SComponent* SGameObject::GetComponentForScript(char* type) {
-	for(auto component : m_components) {
-		if(type == component->GetClassType()) {
-			return component;
+HSQOBJECT SGameObject::GetCustomComponent(const char* className) {
+
+	for (auto component : m_components) {
+		if (component == nullptr) continue;
+		if (dynamic_cast<CustomComponent*>(component)) {
+			auto customComponent = static_cast<CustomComponent*>(component);
+
+			if (customComponent->SGetClassName() != className) continue;
+
+			return customComponent->GetClassInstance().GetObject();
+
+
 		}
 	}
 
-	return nullptr;
+	HSQOBJECT obj = HSQOBJECT();
+	obj._type = OT_NULL;
+
+	return obj;
 }
 
 
@@ -102,6 +114,13 @@ bool SGameObject::DeleteComponent(SComponent* component) {
 	}
 
 	return false;
+
+}
+
+
+SGameObject* SGameObject::Find(std::string name) const {
+
+	return GameObjectMgr::getInstance()->Find(name);
 
 }
 

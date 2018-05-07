@@ -50,8 +50,10 @@ void RenderComponent::SetMatrix(mat4 camera, mat4 projection) {
 	//юс╫ц rotation
 	mat4 rotationY = mat4::RotateY(m_rotation->y);
 	//mat4 rotation = 
-	mat4 modelView = scale * /*rotation*/ rotationY * translation * camera;
+	mat4 modelNoCameraView = scale * /*rotation*/ rotationY * translation;
+	mat4 modelView = modelNoCameraView * camera;
 	glUniformMatrix4fv(handler->Uniforms.Modelview, 1, 0, modelView.Pointer());
+	glUniformMatrix4fv(handler->Uniforms.ModelNoCameraMatrix, 1, 0, modelNoCameraView.Pointer());
 
 
 	//normal matrix
@@ -137,7 +139,7 @@ void RenderComponent::SetVectorInfomation() {
 }
 
 
-void RenderComponent::SetMaterials() {
+void RenderComponent::SetMaterials() const {
 
 	//Set Materials
 

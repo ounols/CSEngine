@@ -5,6 +5,7 @@
 #include "../Component/MaterialComponent.h"
 #include "../Component/RenderComponent.h"
 #include "../Component/CustomComponent.h"
+#include "../Manager/GameObjectMgr.h"
 
 
 FirstDemoScene::FirstDemoScene() {
@@ -59,22 +60,35 @@ void FirstDemoScene::Init() {
 	c3->GetTransform()->m_position.y = -0.5f;
 
 	c3->CreateComponent<CustomComponent>();
-	c3->GetComponent<CustomComponent>()->SetClassName("TestScript");
+	c3->GetComponent<CustomComponent>()->SetClassName("TestScript2");
 
 
 	c3->CreateComponent<RenderComponent>();
 	c3->GetComponent<RenderComponent>()->SetShaderHandle(0);
 
-	a->CreateComponent<CameraComponent>();
-	a->GetTransform()->m_position = vec3{ 0, 0, 3.f };
-	a->GetComponent<CameraComponent>()->SetTarget(c);
 
+
+	d->SetName("light");
 	d->CreateComponent<LightComponent>();
-	d->GetTransform()->m_position = vec3{ 0, 0.3f, 0 };
-	d->GetComponent<LightComponent>()->SetDirection(vec4{ 1.f, 0.5f, 1.f, 1.0f });
+	d->GetTransform()->m_position = vec3{ 0.f, 0.0f, -2.f };
+	d->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
+	//d->GetComponent<LightComponent>()->SetDirection(vec4{ 1.f, 0.5f, 1.f, 1.0f });
 	d->GetComponent<LightComponent>()->SetColorAmbient(vec4{ 0.1f, 0.1f, 0.1f, 1 });
 	d->GetComponent<LightComponent>()->DisableSpecular = false;
+	d->GetComponent<LightComponent>()->SetLightType(LightComponent::POINT);
+	d->GetComponent<LightComponent>()->SetLightRadius(1);
+	d->CreateComponent<DrawableStaticMeshComponent>();
+	d->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube, VertexFlagsNormals);
+	d->CreateComponent<MaterialComponent>();
+	d->GetComponent<MaterialComponent>()->SetDiffuseMaterial(vec4{ 1, 1, 1, 1 });
+	d->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 1 });
+	d->CreateComponent<RenderComponent>();
+	d->GetComponent<RenderComponent>()->SetShaderHandle(0);
 	//d->GetComponent<LightComponent>()->DisableDiffuse = true;
+
+	a->CreateComponent<CameraComponent>();
+	a->GetTransform()->m_position = vec3{ 0, 0, 3.f };
+	a->GetComponent<CameraComponent>()->SetTarget(d);
 	//===============
 }
 
@@ -86,6 +100,9 @@ void FirstDemoScene::Tick(float elapsedTime) {
 	}
 
 	//===============
+	SGameObject* d = GameObjectMgr::getInstance()->Find("light");
+	d->GetTransform()->m_position.x = sinf(elapsedTime*0.001) * 1.f;
+	d->GetTransform()->m_position.z = cosf(elapsedTime*0.001) * 1.f;
 	//c->GetTransform()->m_rotation.y += 0.1f;
 	c->GetTransform()->m_position.y = sinf(elapsedTime*0.001) * 0.1f;
 	//===============

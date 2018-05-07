@@ -13,6 +13,7 @@ public:
 	void Tick(float elapsedTime) override;
 
 	void SetClassName(std::string name);
+	std::string SGetClassName() const;
 
 
 	bool GetIsEnable() const override;
@@ -20,8 +21,11 @@ public:
 
 	void Log(const char* log);
 
-	SGameObject* GetGameObject() const override {
-		return gameObject;
+	SGameObject* GetGameObject() const override;
+
+
+	Sqrat::Object GetClassInstance() const {
+		return m_classInstance->get();
 	}
 
 private:

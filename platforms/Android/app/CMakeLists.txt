@@ -79,3 +79,5 @@ target_link_libraries(CSEngineLib
                      GLESv2
                      SquirrelLib
                      ${log-lib})
+
+set(CMAKE_C_FLAGS "-Wno-error=format-security")

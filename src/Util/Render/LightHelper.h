@@ -14,14 +14,12 @@ struct SLight : BaseLight {
 
 	//Direction
 	vec4 direction;
-	float dir_pad;
 
 	//Point Light
 	vec3* position;
-	float range;
+	float radius = 1.0f;
 
-	vec4 att;
-	float att_pad;
+	vec3 att = vec3{ 1.f, 0.f, 0.f };	//Kc, Kl, Kq
 
 	//Spot Light
 	float spot;

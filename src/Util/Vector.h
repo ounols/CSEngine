@@ -13,6 +13,11 @@ public:
 	Vector2(T x, T y) : x(x), y(y) {}
 	~Vector2() {}
 
+	void Set(T x, T y) {
+		this->x = x;
+		this->y = y;
+	}
+
 	T Dot(const Vector2& v) const {
 		return x * v.x + y * v.y;
 	}
@@ -103,6 +108,12 @@ public:
 	Vector3() : x(0.0f), y(0.0f), z(0.0f) {}
 	Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
 	~Vector3() {}
+
+	void Set(T x, T y, T z) {
+		this->x = x;
+		this->y = y;
+		this->z = z;
+	}
 
 	void Normalize() {
 		float s = 1.0f / std::sqrt(x * x + y * y + z * z);
@@ -199,6 +210,14 @@ public:
 	Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
 	Vector4(const Vector3<T>& v, T w) : x(v.x), y(v.y), z(v.z), w(w) {}
 	~Vector4() {}
+
+	void Set(T x, T y, T z, T w) {
+		this->x = x;
+		this->y = y;
+		this->z = z;
+		this->w = w;
+
+	}
 
 	T Dot(const Vector4& v) const {
 		return x * v.x + y * v.y + z * v.z + w * v.w;

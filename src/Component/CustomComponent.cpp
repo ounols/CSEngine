@@ -1,6 +1,7 @@
 #include "CustomComponent.h"
 #include "../Util/AssetsDef.h"
 #include "../Manager/ScriptMgr.h"
+#include "../Macrodef.h"
 #ifdef WIN32
 #include <windows.h>
 #elif __ANDROID__
@@ -33,10 +34,16 @@ void CustomComponent::Init() {
 		SAFE_DELETE(m_classInstance);
 	}
 
-	m_classInstance = m_specialization->NewPointer();
+	try {
+		m_classInstance = m_specialization->NewPointer();
 
-	if (m_funcSetCSEngine < 0) return;
-	m_classInstance->call(m_funcSetCSEngine, this);
+		if (m_funcSetCSEngine < 0) return;
+		m_classInstance->call(m_funcSetCSEngine, this);
+	}catch (Sqrat::Exception e){
+		m_isError = true;
+		return;
+	}
+
 
 	if (m_funcInit < 0) return;
 
@@ -113,6 +120,13 @@ void CustomComponent::SetClassName(std::string name) {
 }
 
 
+std::string CustomComponent::SGetClassName() const {
+
+	return m_className;
+
+}
+
+
 bool CustomComponent::GetIsEnable() const {
 	return isEnable;
 }
@@ -129,7 +143,13 @@ void CustomComponent::Log(const char* log) {
 	log_str.append(m_className + "] : " + log + '\n');
 	OutputDebugString(log_str.c_str());
 #elif __ANDROID__
-	LOGD(m_className.c_str(), log);
+    std::string log_str = "SCEngineScript/" + m_className;
+	LOGD(log_str.c_str(), "%s", log);
 #endif
 
+}
+
+
+SGameObject* CustomComponent::GetGameObject() const {
+	return gameObject;
 }
