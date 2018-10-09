@@ -67,7 +67,7 @@ void FirstDemoScene::Init() {
 	d->GetComponent<LightComponent>()->SetDirection(vec4{ 1.f, 0.5f, 1.f, 1.0f });
 	d->GetComponent<LightComponent>()->SetColorAmbient(vec4{ 0.1f, 0.1f, 0.1f, 1 });
 	d->GetComponent<LightComponent>()->DisableSpecular = false;
-	//d->GetComponent<LightComponent>()->DisableDiffuse = true;
+	d->GetComponent<LightComponent>()->DisableDiffuse = true;
 	//===============
 }
 

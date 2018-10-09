@@ -7,6 +7,9 @@
 #endif
 #elif __ANDROID__
 
+
+#elif __linux__
+#include <iostream>
 #endif
 
 
@@ -37,6 +40,8 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 		OutputDebugStringA("Auto Releasing Object : ");
 		OutputDebugStringA(typeid(*object).name());
 		OutputDebugStringA("...\n");
+#elif __linux__
+		// std::cout << "Auto Releasing Object : " << &object << "...\n";
 #endif
 
 		//���Ű� �Ұ����� ������ �������� Ȯ��
@@ -52,6 +57,8 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 		SAFE_DELETE(object);
 #ifdef WIN32
 		OutputDebugStringA("deleted.\n");
+#elif __linux__
+		// std::cout << "deleted.\n";
 #endif
 
 		m_objects.at(index) = nullptr;

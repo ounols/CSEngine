@@ -1,5 +1,5 @@
 #include "MainProc.h"
-#include "../Macrodef.h"
+#include "../MacroDef.h"
 #include "MemoryMgr.h"
 #include "ResMgr.h"
 #include "GameObjectMgr.h"
