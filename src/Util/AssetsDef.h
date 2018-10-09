@@ -16,7 +16,7 @@ namespace CSE {
 	static std::string AssetsPath() {
 
 		std::string path;
-#ifdef _DEBUG
+#if defined(_DEBUG) || defined(__linux__)
 		path.append("../../../Assets/");
 #endif
 #ifdef __ANDROID__
@@ -30,7 +30,7 @@ namespace CSE {
 
 		std::string buf;
 
-#ifdef WIN32
+#if defined (WIN32) || defined(__linux__)
 
 		std::ifstream fin(path);
 

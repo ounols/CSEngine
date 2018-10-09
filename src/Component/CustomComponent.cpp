@@ -1,7 +1,7 @@
 #include "CustomComponent.h"
 #include "../Util/AssetsDef.h"
 #include "../Manager/ScriptMgr.h"
-#include "../Macrodef.h"
+#include "../MacroDef.h"
 #ifdef WIN32
 #include <windows.h>
 #elif __ANDROID__

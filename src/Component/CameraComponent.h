@@ -19,7 +19,10 @@ public:
 		return m_cameraMatrix;
 	}
 
-	mat4 GetProjectionMatrix() const {
+	mat4 GetProjectionMatrix() {
+		if(!m_isProjectionInited){
+			SetProjectionMatrix();
+		}
 		return m_projectionMatrix;
 	}
 
@@ -52,6 +55,7 @@ private:
 
 
 	CAMERATYPE m_type = PERSPECTIVE;
+	bool m_isProjectionInited = false;
 
 	//perspective
 	float m_pFov = 45.f;

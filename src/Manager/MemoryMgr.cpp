@@ -8,6 +8,10 @@
 #elif __ANDROID__
 #define LOGE(...) __android_log_print(ANDROID_LOG_DEBUG,"SCEngineMomory",__VA_ARGS__)
 #include <android/log.h>
+
+
+#elif __linux__
+#include <iostream>
 #endif
 
 
@@ -40,6 +44,8 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 		OutputDebugStringA("...\n");
 #elif __ANDROID__
 		LOGE("Auto Releasing Object : UNKOWN...");
+#elif __linux__
+		// std::cout << "Auto Releasing Object : " << &object << "...\n";
 #endif
 
 		//���Ű� �Ұ����� ������ �������� Ȯ��
@@ -59,6 +65,8 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 		OutputDebugStringA("deleted.\n");
 #elif __ANDROID__
 		LOGE("deleted.\n");
+#elif __linux__
+		// std::cout << "deleted.\n";
 #endif
 
 		m_objects.at(index) = nullptr;

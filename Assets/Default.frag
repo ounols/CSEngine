@@ -1,3 +1,4 @@
+//#version 100
 precision highp float;
 precision highp int;
 
@@ -136,7 +137,7 @@ float calcLightAtt() {
 		att = c_one / (denom*denom);
 	}
 
-	//°¨¼è¹æÁ¤½ÄÀÌ Àû¿ëµÇÁö ¾ÊÀ¸¸é ±×³É ¸®ÅÏ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (att <= c_zero) return c_one;
 
 	return att;
