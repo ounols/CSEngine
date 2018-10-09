@@ -1,6 +1,6 @@
 #pragma once
+#include "../MacroDef.h"
 #include "MemoryContainer.h"
-#include "../Macrodef.h"
 
 class MemoryMgr : public MemoryContainer
 {

@@ -21,7 +21,7 @@ void RenderMgr::Init() {
 
 void RenderMgr::Render(float elapsedTime) const {
 
-	const CameraComponent* cameraComponent = CameraMgr::getInstance()->GetCurrentCamera();
+	CameraComponent* cameraComponent = CameraMgr::getInstance()->GetCurrentCamera();
 	mat4 camera = (cameraComponent != nullptr) ? 
 		cameraComponent->GetCameraMatrix() : m_NoneCamera;
 	mat4 projection = (cameraComponent != nullptr) ?
@@ -38,6 +38,7 @@ void RenderMgr::Render(float elapsedTime) const {
         if(renderComp.size() <= 0) continue;
 
 		glUseProgram(handler.Program);
+		
 
 		//Attach Light
 		LightMgr::getInstance()->AttachLightToShader(&handler);

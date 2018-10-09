@@ -1,6 +1,6 @@
 #pragma once
 #include "Base/Scene.h"
-#include "../Macrodef.h"
+#include "../MacroDef.h"
 
 class SceneMgr {
 public:
