@@ -24,7 +24,7 @@ namespace CH02 {
 
 int teapot_smoothNumVerts = 12096;
 
-double teapot_smoothVerts [] = {
+float teapot_smoothVerts [] = {
   // f 11/11/1 2/2/2 1/1/3 
   0.204449220089824, 0.110007388510933, 0.0438271751833647,
   0.208751267116665, 0.110007347059004, -1.44345093579574e-09,
@@ -16155,7 +16155,7 @@ double teapot_smoothVerts [] = {
   0.195726708237215, 0.103312860482703, -1.44345093579574e-09,
 };
 
-double teapot_smoothNormals [] = {
+float teapot_smoothNormals [] = {
   // f 11/11/1 2/2/2 1/1/3 
   -0.953570238659112, -0.233646058476826, -0.190035047561883,
   -0.972374311060161, -0.23342707467275, 0,
@@ -32286,7 +32286,7 @@ double teapot_smoothNormals [] = {
   0.786853226924963, 0.617140177980476, -0,
 };
 
-double teapot_smoothTexCoords [] = {
+float teapot_smoothTexCoords [] = {
   // f 11/11/1 2/2/2 1/1/3 
   0.711397, 0.297322,
   0.750000, 0.296453,

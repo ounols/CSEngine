@@ -1,6 +1,7 @@
 #include "RenderMgr.h"
 #include "../Util/GLProgramHandle.h"
 #include "LightMgr.h"
+// #include <iostream>
 
 IMPLEMENT_SINGLETON(RenderMgr);
 
@@ -21,7 +22,7 @@ void RenderMgr::Init() {
 
 void RenderMgr::Render(float elapsedTime) const {
 
-	const CameraComponent* cameraComponent = CameraMgr::getInstance()->GetCurrentCamera();
+	CameraComponent* cameraComponent = CameraMgr::getInstance()->GetCurrentCamera();
 	mat4 camera = (cameraComponent != nullptr) ? 
 		cameraComponent->GetCameraMatrix() : m_NoneCamera;
 	mat4 projection = (cameraComponent != nullptr) ?
@@ -38,6 +39,7 @@ void RenderMgr::Render(float elapsedTime) const {
         if(renderComp.size() <= 0) continue;
 
 		glUseProgram(handler.Program);
+		
 
 		//Attach Light
 		LightMgr::getInstance()->AttachLightToShader(&handler);
@@ -52,12 +54,14 @@ void RenderMgr::Render(float elapsedTime) const {
 			// Initialize various state.
 			glEnableVertexAttribArray(handler.Attributes.Position);
 			glEnableVertexAttribArray(handler.Attributes.Normal);
+			glEnableVertexAttribArray(handler.Attributes.TextureCoord);
 
 			render->SetMatrix(camera, projection);
 			render->Render(elapsedTime);
 
 			glDisableVertexAttribArray(handler.Attributes.Position);
 			glDisableVertexAttribArray(handler.Attributes.Normal);
+			glDisableVertexAttribArray(handler.Attributes.TextureCoord);
 
 		}
 
@@ -65,7 +69,9 @@ void RenderMgr::Render(float elapsedTime) const {
 		
 	}
 
-
+		////VBO 언바인딩
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 }
 

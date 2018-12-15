@@ -3,7 +3,7 @@
 #include "../Manager/CameraMgr.h"
 
 
-CameraComponent::CameraComponent(): m_eye(nullptr), m_targetObject(nullptr) {
+COMPONENT_CONSTRUCTOR(CameraComponent), m_eye(nullptr), m_targetObject(nullptr) {
 	CameraMgr::getInstance()->Register(this);
 	m_pRatio = CameraMgr::getInstance()->GetProjectionRatio();
 }
@@ -102,10 +102,12 @@ void CameraComponent::SetProjectionMatrix() {
 
 	if(m_type == PERSPECTIVE) {
 		m_projectionMatrix = mat4::Perspective(m_pFov, *m_pRatio, m_Near, m_Far);
-
+		
 	}else {
 		m_projectionMatrix = mat4::Ortho(m_oLeft, m_oRight, m_oBottom, m_oTop, m_Near, m_Far);
 
 	}
+
+	m_isProjectionInited = true;
 
 }

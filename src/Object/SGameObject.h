@@ -2,9 +2,11 @@
 #include <vector>
 #include <algorithm>
 #include "../SObject.h"
-#include "../Manager/MemoryMgr.h"
+
 #include "../Util/Interface/TransformInterface.h"
 #include "../Component/SComponent.h"
+#include "sqrat/sqratUtil.h"
+//#include "sqrat/sqratObject.h"
 
 class SComponent;
 
@@ -29,11 +31,13 @@ public:
 	void AddComponent(SComponent* component);
 	template <class T>
 	T* GetComponent();
+	HSQOBJECT GetCustomComponent(const char* className);
 	//template <class T>
 	//bool DeleteComponent();
 	bool DeleteComponent(SComponent* component);
 	template <class T>
 	T* CreateComponent();
+	SGameObject* Find(std::string name) const;
 
 	std::string GetName() const {
 		return m_name;

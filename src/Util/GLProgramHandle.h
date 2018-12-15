@@ -8,6 +8,7 @@
 
 struct GLUniformHandles {
 	GLuint Modelview = HANDLE_NULL;
+	GLuint ModelNoCameraMatrix = HANDLE_NULL;
 	GLuint Projection = HANDLE_NULL;
 	GLuint NormalMatrix = HANDLE_NULL;
 	GLuint LightPosition = HANDLE_NULL;
@@ -26,7 +27,7 @@ struct GLUniformHandles {
 	GLint SpotDirection = HANDLE_NULL;
 	GLint SpotExponent = HANDLE_NULL;
 	GLint SpotCutOffAngle = HANDLE_NULL;
-	GLboolean IsDirectional = HANDLE_NULL;
+	GLint IsDirectional = HANDLE_NULL;
 };
 
 struct GLAttributeHandles {

@@ -1,5 +1,5 @@
 #include "MainProc.h"
-#include "../Macrodef.h"
+#include "../MacroDef.h"
 #include "MemoryMgr.h"
 #include "ResMgr.h"
 #include "GameObjectMgr.h"
@@ -9,11 +9,13 @@
 
 
 #include "../Sample/FirstDemoScene.h"
+#include "ScriptMgr.h"
 
 
 MainProc::MainProc()
 {
 	m_oglMgr = new OGLMgr();
+	m_scriptMgr = new ScriptMgr();
 }
 
 
@@ -27,6 +29,8 @@ MainProc::~MainProc()
 void MainProc::Init(GLuint width, GLuint height) {
 
 	m_oglMgr->setupEGLGraphics(width, height);
+
+	m_scriptMgr->Init();
 	GameObjectMgr::getInstance()->Init();
 
 	SceneMgr::getInstance()->SetScene(new FirstDemoScene());
@@ -64,6 +68,7 @@ void MainProc::Exterminate() {
 
 	MemoryMgr::delInstance();
 	
+	SAFE_DELETE(m_scriptMgr);
 
 }
 

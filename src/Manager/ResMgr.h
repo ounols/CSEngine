@@ -1,5 +1,5 @@
 #pragma once
-#include "../Macrodef.h"
+#include "../MacroDef.h"
 #include "Base/SContainer.h"
 #ifdef __ANDROID__
 #include <android/asset_manager.h>

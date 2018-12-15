@@ -19,24 +19,29 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp )
 
-file(GLOB CSENGINE_SOURCE_SRC
-                        "../../../src/*.cpp"
-                        "../../../src/*/*.cpp"
-                        "../../../src/*/*/*.cpp")
+file(GLOB CSENGINE_SRC
+                        "../../../src/*.*"
+                        "../../../src/*/*.*"
+                        "../../../src/*/*/*.*")
 
-file(GLOB CSENGINE_HEADER_SRC
-                        "../../../src/*.h"
-                        "../../../src/*/*.h"
-                        "../../../src/*/*/*.h")
+file(GLOB SQUIRREL_SRC
+                        "../../../External/Squirrel/lib/sqstdlib/*.*"
+                        "../../../External/Squirrel/lib/squirrel/*.*")
 
 
 
 add_library( CSEngineLib
               SHARED
-              ${CSENGINE_SOURCE_SRC} ${CSENGINE_HEADER_SRC} src/main/cpp/CSEngineAndroidBinder.cpp )
+              ${CSENGINE_SRC} src/main/cpp/CSEngineAndroidBinder.cpp )
+
+add_library( SquirrelLib
+            SHARED
+            ${SQUIRREL_SRC})
 
 #헤더파일 위치
 include_directories(../../../src)
+#Squirrel 헤더파일 위치
+include_directories(../../../External/Squirrel/include)
 
 
 #add_library( CSEngineBinderLib
@@ -72,4 +77,7 @@ target_link_libraries(CSEngineLib
                      log
                      EGL
                      GLESv2
+                     SquirrelLib
                      ${log-lib})
+
+set(CMAKE_C_FLAGS "-Wno-error=format-security")

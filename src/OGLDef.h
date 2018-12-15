@@ -14,5 +14,9 @@
 
 #include <GLES2/gl2.h>
 
+#elif __linux__
+
+// #include <GL/glew.h>
+#include <GLES2/gl2.h>
 
 #endif

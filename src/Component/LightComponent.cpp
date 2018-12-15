@@ -2,7 +2,7 @@
 #include "../Manager/LightMgr.h"
 
 
-LightComponent::LightComponent() {
+COMPONENT_CONSTRUCTOR(LightComponent) {
 	
 	LightMgr::getInstance()->Register(this);
 }
@@ -46,8 +46,8 @@ void LightComponent::SetDirection(vec4 direction) const {
 
 	switch (m_type) {
 		
-	case LIGHT::DIRECTIONAL:
-	case LIGHT::SPOT:
+	case DIRECTIONAL:
+	case SPOT:
 
 		m_light->direction = direction;
 		return;
@@ -73,6 +73,27 @@ void LightComponent::SetColorDiffuse(vec4 color) const {
 
 void LightComponent::SetColorSpecular(vec4 color) const {
 	m_light->specularColor = color;
+
+}
+
+
+void LightComponent::SetLightRadius(float radius) const {
+
+	m_light->radius = radius;
+
+}
+
+
+void LightComponent::SetAttenuationFactor(vec3 att) const {
+
+	m_light->att = att;
+
+}
+
+
+void LightComponent::SetAttenuationFactor(float Kc, float Kl, float Kq) const {
+
+	SetAttenuationFactor(vec3{ Kc, Kl, Kq });
 
 }
 

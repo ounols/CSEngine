@@ -5,9 +5,9 @@
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 #include <android/log.h>
+#include <Manager/ResMgr.h>
 
 #define  LOG_TAG    "SCENGINE"
-#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 #endif
 
@@ -16,7 +16,7 @@ namespace CSE {
 	static std::string AssetsPath() {
 
 		std::string path;
-#ifdef _DEBUG
+#if defined(_DEBUG) || defined(__linux__)
 		path.append("../../../Assets/");
 #endif
 #ifdef __ANDROID__
@@ -30,7 +30,7 @@ namespace CSE {
 
 		std::string buf;
 
-#ifdef WIN32
+#if defined (WIN32) || defined(__linux__)
 
 		std::ifstream fin(path);
 

@@ -6,7 +6,12 @@
 #include <typeinfo.h>
 #endif
 #elif __ANDROID__
+#define LOGE(...) __android_log_print(ANDROID_LOG_DEBUG,"SCEngineMomory",__VA_ARGS__)
+#include <android/log.h>
 
+
+#elif __linux__
+#include <iostream>
 #endif
 
 
@@ -37,12 +42,18 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 		OutputDebugStringA("Auto Releasing Object : ");
 		OutputDebugStringA(typeid(*object).name());
 		OutputDebugStringA("...\n");
+#elif __ANDROID__
+		LOGE("Auto Releasing Object : UNKOWN...");
+#elif __linux__
+		// std::cout << "Auto Releasing Object : " << &object << "...\n";
 #endif
 
 		//���Ű� �Ұ����� ������ �������� Ȯ��
 		if(object->isUndestroyable && !killAll) {
 #ifdef WIN32
 			OutputDebugStringA("denied.\n");
+#elif __ANDROID__
+			LOGE("denied.\n");
 #endif
 			index++;
 			continue;
@@ -52,6 +63,10 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 		SAFE_DELETE(object);
 #ifdef WIN32
 		OutputDebugStringA("deleted.\n");
+#elif __ANDROID__
+		LOGE("deleted.\n");
+#elif __linux__
+		// std::cout << "deleted.\n";
 #endif
 
 		m_objects.at(index) = nullptr;
@@ -69,6 +84,8 @@ void MemoryMgr::ReleaseObject(SObject* object) {
 	if (object->isUndestroyable) {
 #ifdef WIN32
 		OutputDebugStringA("Releasing Object is denied.");
+#elif __ANDROID__
+        LOGE("Releasing Object is denied.");
 #endif
 		return;
 	}
@@ -81,6 +98,8 @@ void MemoryMgr::ReleaseObject(SObject* object) {
 		OutputDebugStringA("Releasing Object : ");
 		OutputDebugStringA(typeid(*object).name());
 		OutputDebugStringA("...\n");
+#elif __ANDROID__
+		LOGE("Releasing Object : UNKOWN...");
 #endif
 
 		m_objects.erase(iObj);
@@ -89,6 +108,8 @@ void MemoryMgr::ReleaseObject(SObject* object) {
 
 #ifdef WIN32
 		OutputDebugStringA("deleted\n");
+#elif __ANDROID__
+		LOGE("deleted\n");
 #endif
 
 	}

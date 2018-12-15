@@ -3,9 +3,9 @@
 #include "TransformComponent.h"
 #include "../Util/GLProgramHandle.h"
 #include "../Manager/RenderMgr.h"
+#include <iostream>
 
-
-RenderComponent::RenderComponent() {
+COMPONENT_CONSTRUCTOR(RenderComponent) {
 
 }
 
@@ -50,8 +50,10 @@ void RenderComponent::SetMatrix(mat4 camera, mat4 projection) {
 	//юс╫ц rotation
 	mat4 rotationY = mat4::RotateY(m_rotation->y);
 	//mat4 rotation = 
-	mat4 modelView = scale * /*rotation*/ rotationY * translation * camera;
+	mat4 modelNoCameraView = scale * /*rotation*/ rotationY * translation;
+	mat4 modelView = modelNoCameraView * camera;
 	glUniformMatrix4fv(handler->Uniforms.Modelview, 1, 0, modelView.Pointer());
+	glUniformMatrix4fv(handler->Uniforms.ModelNoCameraMatrix, 1, 0, modelNoCameraView.Pointer());
 
 
 	//normal matrix
@@ -72,33 +74,40 @@ void RenderComponent::Render(float elapsedTime) {
 	SetMaterials();
 
 
-	int stride = 2 * sizeof(vec3);
+	int stride = 2 * sizeof(vec3) + sizeof(vec2);	//normal + position + uv
 	const auto& drawable_id = m_mesh->m_meshId;
 	const GLvoid* offset = (const GLvoid*) sizeof(vec3);
 	GLint position = handler->Attributes.Position;
 	GLint normal = handler->Attributes.Normal;
+	GLint tex = handler->Attributes.TextureCoord;
+	bool isTex = tex != HANDLE_NULL;
 
 	if(drawable_id.m_indexSize < 0) {
 
 		glBindBuffer(GL_ARRAY_BUFFER, drawable_id.m_vertexBuffer);
 		glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
 		glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, offset);
+		if(isTex){
+			offset = (GLvoid*) (sizeof(vec3) * 2);
+    		glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, stride, offset);
+		}
 
 		glDrawArrays(GL_TRIANGLES, 0, drawable_id.m_vertexSize);
 
-	}else {
-		
+	} else {
 		glBindBuffer(GL_ARRAY_BUFFER, drawable_id.m_vertexBuffer);
 		glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, 0);
 		glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, offset);
+		if(isTex){
+			offset = (GLvoid*) (sizeof(vec3) * 2);
+    		glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, stride, offset);
+		}
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawable_id.m_indexBuffer);
 
-		glDrawElements(GL_TRIANGLES, drawable_id.m_indexSize, GL_UNSIGNED_SHORT, 0);
+
+		glDrawElements(GL_TRIANGLES, drawable_id.m_indexSize * 3, GL_UNSIGNED_SHORT, 0);
 
 	}
-
-	glDisableVertexAttribArray(handler->Attributes.Position);
-	glDisableVertexAttribArray(handler->Attributes.Normal);
 
 }
 
@@ -137,7 +146,7 @@ void RenderComponent::SetVectorInfomation() {
 }
 
 
-void RenderComponent::SetMaterials() {
+void RenderComponent::SetMaterials() const {
 
 	//Set Materials
 

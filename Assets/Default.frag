@@ -1,3 +1,4 @@
+//#version 100
 precision highp float;
 precision highp int;
 
@@ -11,6 +12,10 @@ uniform float u_shininess;
 
 uniform lowp int u_lightMode;
 uniform lowp int u_isDirectional;
+/**Attenuation Factor**/
+uniform lowp int u_isAttenuation;
+uniform vec3 u_attenuationFactor;
+uniform float u_lightRadius;
 
 
 //Varying
@@ -41,6 +46,7 @@ const lowp int MODE_COMPLETE = 123;
 vec3 calcLightDif();
 vec3 calcLightAmb();
 vec3 calcLightSpec();
+float calcLightAtt();
 
 
 void main(void) {
@@ -49,7 +55,7 @@ void main(void) {
 
 	bool isAtt = u_isDirectional == 0;
 
-	if(u_lightMode == MODE_DIF || u_lightMode == MODE_AMB_DIF || u_lightMode == MODE_DIF_SPEC ||
+	if (u_lightMode == MODE_DIF || u_lightMode == MODE_AMB_DIF || u_lightMode == MODE_DIF_SPEC ||
 		u_lightMode == MODE_COMPLETE) {
 		color += calcLightDif();
 	}
@@ -61,6 +67,9 @@ void main(void) {
 		u_lightMode == MODE_COMPLETE) {
 		color += calcLightSpec();
 	}
+
+	//Attenuation Factor
+	color *= calcLightAtt();
 
 
 	gl_FragColor = vec4(color, 0.8);
@@ -99,4 +108,37 @@ vec3 calcLightSpec() {
 	sf = pow(sf, u_shininess);
 
 	return (u_specularMaterial * vec3(u_specularLight) * sf);
+}
+
+// only attenuation Factor
+float calcLightAtt() {
+
+	if (u_isAttenuation != 1) return c_one;
+
+	float dist = v_distance;
+	float att = c_one;
+
+	float d = max(dist, c_zero);
+
+	float Kc = u_attenuationFactor.x;
+	float Kl = u_attenuationFactor.y;
+	float Kq = u_attenuationFactor.z;
+
+	att = c_one / (Kc + (Kl * d) + (Kq * d * d));
+
+	if (att == c_one) {
+		float r = u_lightRadius;
+		d = max(dist - r, c_zero);
+		//L = normalize(L / dist);
+
+		// calculate basic attenuation
+		float denom = d / r + 1.0;
+
+		att = c_one / (denom*denom);
+	}
+
+	//����������� ������� ������ �׳� ����
+	if (att <= c_zero) return c_one;
+
+	return att;
 }

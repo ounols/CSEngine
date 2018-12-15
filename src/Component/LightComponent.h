@@ -21,6 +21,11 @@ public:
 	void SetColorDiffuse(vec4 color) const;
 	void SetColorSpecular(vec4 color) const;
 
+	//for Positional Light and Spot Light
+	void SetLightRadius(float radius) const;
+	void SetAttenuationFactor(vec3 att) const;
+	void SetAttenuationFactor(float Kc, float Kl, float Kq) const;
+
 
 	SLight* GetLight() const {
 		//switch (m_type) {

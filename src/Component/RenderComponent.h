@@ -26,7 +26,7 @@ public:
 
 private:
 	void SetVectorInfomation();
-	void SetMaterials();
+	void SetMaterials() const;
 
 private:
 	DrawableStaticMeshComponent* m_mesh;

@@ -2,13 +2,14 @@
 #include "../SObject.h"
 #include <string>
 #include "../Object/SGameObject.h"
+#include "SISComponent.h"
 
 class SGameObject;
 
-class SComponent : public SObject {
+class SComponent : public SObject , public virtual SISComponent {
 public:
 
-	SComponent() {
+	explicit SComponent(std::string classType) : m_classType(classType) {
 
 	}
 
@@ -17,15 +18,12 @@ public:
 
 	}
 
-	virtual void Init() = 0;
-	virtual void Tick(float elapsedTime) = 0;
-
 
 	void SetGameObject(SGameObject* object) {
 		gameObject = object;
 	}
 
-	SGameObject* GetGameObject() const {
+	virtual SGameObject* GetGameObject() const {
 		return gameObject;
 	}
 
@@ -39,10 +37,16 @@ public:
 		isEnable = is_enable;
 	}
 
+	std::string GetClassType() const {
+		return m_classType;
+	}
 
 protected:
 	SGameObject* gameObject = nullptr;
 	bool isEnable = true;
+
+	std::string m_classType;
 };
 
 #define Transform static_cast<TransformInterface*>(gameObject->GetTransform())
+#define COMPONENT_CONSTRUCTOR(CLASSNAME) CLASSNAME::CLASSNAME() : SComponent(#CLASSNAME)
