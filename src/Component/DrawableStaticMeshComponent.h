@@ -10,10 +10,10 @@ public:
 	void Init() override;
 	void Tick(float elapsedTime) override;
 	void Exterminate() override;
-	bool SetMesh(const SISurface& meshSurface, int flags);
+	bool SetMesh(const SISurface& meshSurface);
 
 private:
-	void CreateMeshBuffers(const SISurface& surface, int flags);
+	void CreateMeshBuffers(const SISurface& surface);
 
 private:
 	GLStaticMeshID m_meshId;

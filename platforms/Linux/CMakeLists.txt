@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.4.1)
 PROJECT(CSEngine.app)
 SET(CMAKE_VERBOSE_MAKEFILE true)
 SET(CMAKE_CXX_STANDARD 11)
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 link_directories(/usr/lib)
 link_directories(/usr/lib32)

@@ -4,8 +4,10 @@
 
 class ObjSurface : public SISurface {
 public:
-	ObjSurface(int sizeVert, double* vertices, double* normals);
-	ObjSurface(int sizeVert, double* vertices, double* normals, double* texCoords);
+	ObjSurface();
+	ObjSurface(int sizeVert, float* vertices, float* normals);
+	ObjSurface(int sizeVert, float* vertices, float* normals, float* texCoords);
+	ObjSurface(int sizeVert, int sizeIndic, float* vertices, float* normals, float* texCoords, float* indices);
 	~ObjSurface();
 
 	int GetVertexCount() const override;
@@ -22,10 +24,15 @@ public:
 	void Exterminate() override;
 	void Destroy();
 
+	bool MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords = nullptr);
+	bool MakeIndices(int sizeIndic, int* indices);
+
 private:
 	mutable size_t m_faceSize;
 	mutable size_t m_vertexSize;
+	mutable size_t m_indexSize;
 
 	std::vector<float> m_Verts;
+	std::vector<unsigned short> m_Indics;
 };
 

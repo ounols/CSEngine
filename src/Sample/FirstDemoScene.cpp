@@ -2,10 +2,14 @@
 #include "../Component/LightComponent.h"
 #include "../Component/CameraComponent.h"
 #include "../../Assets/teapot_smooth.h"
+#include "../../Assets/cube.h"
 #include "../Component/MaterialComponent.h"
 #include "../Component/RenderComponent.h"
 #include "../Component/CustomComponent.h"
 #include "../Manager/GameObjectMgr.h"
+
+#include "../Util/Render/DAELoader.h"
+#include "../Util/AssetsDef.h"
 
 
 FirstDemoScene::FirstDemoScene() {
@@ -20,6 +24,32 @@ FirstDemoScene::~FirstDemoScene() {
 
 void FirstDemoScene::Init() {
 	//===============
+
+	//DAE test
+	std::string path = CSE::AssetsPath() + "duck.dae";
+	DAELoader* daeLoader = new DAELoader(path.c_str(), nullptr);
+
+	SGameObject* aa = new SGameObject();
+	aa->CreateComponent<DrawableStaticMeshComponent>();
+	aa->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*(daeLoader->GetObject()));
+	aa->CreateComponent<MaterialComponent>();
+	aa->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 0 });
+	aa->GetComponent<MaterialComponent>()->SetShininess(40);
+
+	aa->CreateComponent<RenderComponent>();
+	aa->GetComponent<RenderComponent>()->SetShaderHandle(0);
+	float scale = 0.003f;
+	aa->GetTransform()->m_scale = vec3{scale, scale, scale};
+	// aa->GetTransform()->m_rotation.x = 90.f; 
+	aa->GetTransform()->m_position.y = -0.3f;
+	aa->CreateComponent<CustomComponent>();
+	aa->GetComponent<CustomComponent>()->SetClassName("TestScript");
+
+	// cube = daeLoader->GetObject();
+	// cube->SetUndestroyable(false);
+	
+	SAFE_DELETE(daeLoader);
+
 	//Managing Memory Test
 	SGameObject* a = new SGameObject();
 	SGameObject* b = new SGameObject();
@@ -30,18 +60,20 @@ void FirstDemoScene::Init() {
 	b->Destroy();
 	c = new SGameObject();
 	c->CreateComponent<DrawableStaticMeshComponent>();
-	c->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube, VertexFlagsNormals);
+	c->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 	c->CreateComponent<MaterialComponent>();
 	c->GetComponent<MaterialComponent>()->SetShininess(40);
 
 	c->CreateComponent<RenderComponent>();
 	c->GetComponent<RenderComponent>()->SetShaderHandle(0);
+	c->GetComponent<RenderComponent>()->SetIsEnable(false);
 	c->CreateComponent<CustomComponent>();
 	c->GetComponent<CustomComponent>()->SetClassName("TestScript");
 
 	c2 = new SGameObject();
+	// c2->AddComponent(c->GetComponent<DrawableStaticMeshComponent>());
 	c2->CreateComponent<DrawableStaticMeshComponent>();
-	c2->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube, VertexFlagsNormals);
+	c2->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 	c2->CreateComponent<MaterialComponent>();
 	c2->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
 	c2->GetTransform()->m_position.y = 0.5f;
@@ -53,7 +85,7 @@ void FirstDemoScene::Init() {
 
 	c3 = new SGameObject();
 	c3->CreateComponent<DrawableStaticMeshComponent>();
-	c3->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube, VertexFlagsNormals);
+	c3->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 	c3->CreateComponent<MaterialComponent>();
 	c3->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 0 });
 	c3->GetComponent<MaterialComponent>()->SetShininess(2);
@@ -78,7 +110,7 @@ void FirstDemoScene::Init() {
 	d->GetComponent<LightComponent>()->SetLightType(LightComponent::POINT);
 	d->GetComponent<LightComponent>()->SetLightRadius(1);
 	d->CreateComponent<DrawableStaticMeshComponent>();
-	d->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube, VertexFlagsNormals);
+	d->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 	d->CreateComponent<MaterialComponent>();
 	d->GetComponent<MaterialComponent>()->SetDiffuseMaterial(vec4{ 1, 1, 1, 1 });
 	d->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 1 });
@@ -128,7 +160,7 @@ void FirstDemoScene::switchingObject() {
 	}else {
 		c2 = new SGameObject();
 		c2->CreateComponent<DrawableStaticMeshComponent>();
-		c2->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube, VertexFlagsNormals);
+		c2->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 		c2->CreateComponent<MaterialComponent>();
 		c2->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
 		c2->GetComponent<MaterialComponent>()->SetMaterialSpecular(vec3{ 0, 0, 0 });

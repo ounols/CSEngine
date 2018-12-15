@@ -5,18 +5,11 @@
 #include "../../Manager/SurfaceMeshContainer.h"
 #include "../Matrix.h"
 
-enum VertexFlags {
-	VertexFlagsNone,
-	VertexFlagsNormals,
-	VertexFlagsTexCoords,
-};
-
 struct GLStaticMeshID {
 	int m_vertexBuffer = -1;
 	int m_indexBuffer = -1;
 	int m_vertexSize = -1;
 	int m_indexSize = -1;
-	int m_flags;
 };
 
 

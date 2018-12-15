@@ -2,6 +2,8 @@
 #include "../OGLDef.h"
 #include <vector>
 
+#include <iostream>
+
 
 COMPONENT_CONSTRUCTOR(DrawableStaticMeshComponent) {}
 
@@ -18,10 +20,16 @@ void DrawableStaticMeshComponent::Tick(float elapsedTime) {
 
 
 void DrawableStaticMeshComponent::Exterminate() {
+
+	// const GLuint vertexBuffer = m_meshId.m_vertexBuffer;
+	// const GLuint indexBuffer = m_meshId.m_indexBuffer;
+
+	// glDeleteBuffers(1, &vertexBuffer);
+	// glDeleteBuffers(1, &indexBuffer);
 }
 
 
-bool DrawableStaticMeshComponent::SetMesh(const SISurface& meshSurface, int flags) {
+bool DrawableStaticMeshComponent::SetMesh(const SISurface& meshSurface) {
 
 	if (m_meshId.m_vertexSize != -1 || m_meshId.m_vertexBuffer != -1) return false;
 
@@ -32,17 +40,17 @@ bool DrawableStaticMeshComponent::SetMesh(const SISurface& meshSurface, int flag
 
 	}
 
-	CreateMeshBuffers(meshSurface, flags);
+	CreateMeshBuffers(meshSurface);
 
 	return true;
 }
 
 
-void DrawableStaticMeshComponent::CreateMeshBuffers(const SISurface& surface, int flags) {
+void DrawableStaticMeshComponent::CreateMeshBuffers(const SISurface& surface) {
 
 	// Create the VBO for the vertices.
 	std::vector<float> vertices;
-	surface.GenerateVertices(vertices, flags);
+	surface.GenerateVertices(vertices);
 	GLuint vertexBuffer;
 	glGenBuffers(1, &vertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -57,6 +65,7 @@ void DrawableStaticMeshComponent::CreateMeshBuffers(const SISurface& surface, in
 	int indexCount = surface.GetTriangleIndexCount();
 	GLuint indexBuffer;
 
+
 	// Set exception to not using indices when index count is 0 or lower.
 	if (indexCount < 0) {
 		indexBuffer = 0;
@@ -68,22 +77,22 @@ void DrawableStaticMeshComponent::CreateMeshBuffers(const SISurface& surface, in
 		glGenBuffers(1, &indexBuffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-			indexCount * sizeof(GLushort),
+			indexCount * 3 * sizeof(GLushort),
 			&indices[0],
 			GL_STATIC_DRAW);
 
 	}
+
 
 	//Pulling data
 	surface.m_staticMeshId.m_vertexBuffer = vertexBuffer;
 	surface.m_staticMeshId.m_vertexSize = vertexCount;
 	surface.m_staticMeshId.m_indexBuffer = indexBuffer;
 	surface.m_staticMeshId.m_indexSize = indexCount;
-	surface.m_staticMeshId.m_flags = flags;
 
 	m_meshId = surface.m_staticMeshId;
 
 	//Unbinding
-	glBindTexture(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 }

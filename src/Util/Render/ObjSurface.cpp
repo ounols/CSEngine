@@ -1,46 +1,35 @@
 #include "ObjSurface.h"
 #include "../../Manager/MemoryMgr.h"
+// #include <iostream>
 
+ObjSurface::ObjSurface() {}
 
-ObjSurface::ObjSurface(int sizeVert, double* vertices, double* normals): m_faceSize(0), m_vertexSize(0) {
+ObjSurface::ObjSurface(int sizeVert, float* vertices, float* normals): m_faceSize(0), m_vertexSize(0), m_indexSize(-1) {
 
-	struct Vertex {
-		vec3 Position;
-		vec3 Normal;
-	};
-
-	float v0[] = {0, 0, 0};
-	float n0[] = {0, 0, 0};
-	float n1[] = {0, 0, 0};
-
-	m_Verts.resize(sizeVert * 6);
-
-	Vertex* vertex_tmp = reinterpret_cast<Vertex*>(&m_Verts[0]);
-
-	for (int i = 0; i < sizeVert; ++i) {
-
-		vertex_tmp->Position.x = static_cast<float>(*(vertices)++);
-		vertex_tmp->Position.y = static_cast<float>(*(vertices)++);
-		vertex_tmp->Position.z = static_cast<float>(*(vertices)++);
-
-		vertex_tmp->Normal.x = static_cast<float>(*(normals)++);
-		vertex_tmp->Normal.y = static_cast<float>(*(normals)++);
-		vertex_tmp->Normal.z = static_cast<float>(*(normals)++);
-
-		vertex_tmp++;
-	}
-
-	m_vertexSize = sizeVert;
+	MakeVertices(sizeVert, vertices, normals);
 }
 
 
-ObjSurface::ObjSurface(int sizeVert, double* vertices, double* normals, double* texCoords): m_faceSize(0), m_vertexSize(0) {
+ObjSurface::ObjSurface(int sizeVert, float* vertices, float* normals, float* texCoords): m_faceSize(0), m_vertexSize(0), m_indexSize(-1) {
+
+	MakeVertices(sizeVert, vertices, normals, texCoords);
+
+}
+
+
+ObjSurface::~ObjSurface() {
+
+}
+
+bool ObjSurface::MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords) {
+	if(!m_Verts.empty()) return false;
 
 	struct Vertex {
 		vec3 Position;
 		vec3 Normal;
 		vec2 TexCoord;
 	};
+	
 
 	m_Verts.resize(sizeVert * 8);
 
@@ -55,6 +44,9 @@ ObjSurface::ObjSurface(int sizeVert, double* vertices, double* normals, double* 
 		vertex_tmp->Normal.y = static_cast<float>(*(normals)++);
 		vertex_tmp->Normal.z = static_cast<float>(*(normals)++);
 
+		// std::cout << "{ " << vertex_tmp->Position.x << ", " << vertex_tmp->Position.y << ", " << vertex_tmp->Position.z << " }, ";
+		
+
 		if (texCoords == nullptr) {
 			vertex_tmp->TexCoord.x = 0;
 			vertex_tmp->TexCoord.y = 0;
@@ -68,13 +60,35 @@ ObjSurface::ObjSurface(int sizeVert, double* vertices, double* normals, double* 
 		vertex_tmp++;
 	}
 
+	// std::cout << "\n\n";
 	m_vertexSize = sizeVert;
-
+	return true;
 }
 
+bool ObjSurface::MakeIndices(int sizeIndic, int* indices) {
+	if(!m_Indics.empty()) return false;
 
-ObjSurface::~ObjSurface() {
+	struct Index {
+		Vector3<unsigned short> index;
+	};
 
+	m_Indics.resize(sizeIndic * 3);
+
+	Index* index_tmp = reinterpret_cast<Index*>(&m_Indics[0]);
+	// std::cout << "\nsizeIndic : " << sizeIndic << "\n";
+
+	for(int i = 0; i < sizeIndic; ++i) {
+		index_tmp->index.x = static_cast<unsigned short>(*(indices)++);
+		index_tmp->index.y = static_cast<unsigned short>(*(indices)++);
+		index_tmp->index.z = static_cast<unsigned short>(*(indices)++);
+
+		// std::cout << "{ " << index_tmp->index.x << ", " << index_tmp->index.y << ", " << index_tmp->index.z << " }, ";
+		index_tmp++;
+	}
+
+	m_indexSize = sizeIndic;
+	
+	return true;
 }
 
 
@@ -83,30 +97,20 @@ int ObjSurface::GetVertexCount() const {
 }
 
 
+
 int ObjSurface::GetLineIndexCount() const {
-	return 0;
+	return -1;
 }
 
 
 int ObjSurface::GetTriangleIndexCount() const {
-	return -1;
+	return m_indexSize;
 }
 
 
 void ObjSurface::GenerateVertices(std::vector<float>& vertices, unsigned char flags) const {
 
-	switch (flags) {
-		case VertexFlagsNormals:
-			vertices.resize(GetVertexCount() * 6); // xzy + xyz
-			break;
-
-		case VertexFlagsTexCoords:
-			vertices.resize(GetVertexCount() * 8); // xzy + xyz + st
-			break;
-
-		default:
-			return;
-	}
+	vertices.resize(GetVertexCount() * 8); // xzy + xyz + st
 
 	vertices = m_Verts;
 
@@ -114,10 +118,16 @@ void ObjSurface::GenerateVertices(std::vector<float>& vertices, unsigned char fl
 
 
 void ObjSurface::GenerateLineIndices(std::vector<unsigned short>& indices) const {
+	indices.resize(GetTriangleIndexCount() * 3); //xyz
+
+	indices = m_Indics;
 }
 
 
 void ObjSurface::GenerateTriangleIndices(std::vector<unsigned short>& indices) const {
+	indices.resize(GetTriangleIndexCount() * 3);
+    
+	indices = m_Indics;
 }
 
 
