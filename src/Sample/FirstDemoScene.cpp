@@ -26,7 +26,7 @@ void FirstDemoScene::Init() {
 	//===============
 
 	//DAE test
-	std::string path = CSE::AssetsPath() + "duck.dae";
+	std::string path = CSE::AssetsPath() + "model.dae";
 	DAELoader* daeLoader = new DAELoader(path.c_str(), nullptr);
 
 	SGameObject* aa = new SGameObject();
@@ -38,7 +38,7 @@ void FirstDemoScene::Init() {
 
 	aa->CreateComponent<RenderComponent>();
 	aa->GetComponent<RenderComponent>()->SetShaderHandle(0);
-	float scale = 0.003f;
+	float scale = 0.1f;
 	aa->GetTransform()->m_scale = vec3{scale, scale, scale};
 	// aa->GetTransform()->m_rotation.x = 90.f; 
 	aa->GetTransform()->m_position.y = -0.3f;

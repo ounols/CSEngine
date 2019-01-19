@@ -44,13 +44,14 @@ void RenderComponent::Tick(float elapsedTime) {
 
 void RenderComponent::SetMatrix(mat4 camera, mat4 projection) {
 
-	//model-view
-	mat4 scale = mat4::Scale(m_scale->x, m_scale->y, m_scale->z);
-	mat4 translation = mat4::Translate(m_position->x, m_position->y, m_position->z);
-	//юс╫ц rotation
-	mat4 rotationY = mat4::RotateY(m_rotation->y);
-	//mat4 rotation = 
-	mat4 modelNoCameraView = scale * /*rotation*/ rotationY * translation;
+	// //model-view
+	// mat4 scale = mat4::Scale(m_scale->x, m_scale->y, m_scale->z);
+	// mat4 translation = mat4::Translate(m_position->x, m_position->y, m_position->z);
+	// //О©╫с╫О©╫ rotation
+	// mat4 rotationY = mat4::RotateY(m_rotation->y);
+	// //mat4 rotation = 
+	// mat4 modelNoCameraView = scale * /*rotation*/ rotationY * translation;
+	mat4 modelNoCameraView = static_cast<TransformComponent*>(gameObject->GetTransform())->GetMatrix();
 	mat4 modelView = modelNoCameraView * camera;
 	glUniformMatrix4fv(handler->Uniforms.Modelview, 1, 0, modelView.Pointer());
 	glUniformMatrix4fv(handler->Uniforms.ModelNoCameraMatrix, 1, 0, modelNoCameraView.Pointer());

@@ -11,8 +11,8 @@ link_directories(/usr/lib)
 link_directories(/usr/lib32)
 link_directories(/usr/local/lib)
 
-find_package(glfw3 REQUIRED)
-find_package(OpenGL REQUIRED)
+#find_package(glfw3 REQUIRED)
+#find_package(OpenGL REQUIRED)
 
 
 
@@ -27,7 +27,8 @@ find_package(OpenGL REQUIRED)
 file(GLOB CSENGINE_SRC
                         "../../src/*.*"
                         "../../src/*/*.*"
-                        "../../src/*/*/*.*")
+                        "../../src/*/*/*.*"
+                        "../../src/*/*/*/*.*")
 
 file(GLOB SQUIRREL_SRC
                         "../../External/Squirrel/lib/sqstdlib/*.*"

@@ -62,6 +62,20 @@ void SGameObject::Destroy() {
 	m_components.clear();
 
 	GameObjectMgr::getInstance()->DeleteGameObject(this);
+
+	for(auto object : m_children) {
+		if(object == nullptr) continue;
+		object->Destroy();
+	}
+}
+
+void SGameObject::AddChild(SGameObject* object) {
+	if(object == nullptr) return;
+	m_children.push_back(object);
+}
+
+std::vector<SGameObject*> SGameObject::GetChildren() const {
+	return m_children;
 }
 
 

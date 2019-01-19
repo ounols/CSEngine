@@ -21,7 +21,13 @@ class TestScript extends SCEngineScript {
 	function Tick(elapsedTime) {
 		materialComp.SetAmbient(ambient);
 
-		gameobject.GetTransform().rotation.y += 0.5;
+		local angle = gameobject.GetTransform().rotation.ToEulerAngle();
+		Log("(" +angle.x + ", " + angle.y + ", " + angle.z + ")");
+
+		local axis = vec3();
+		axis.Set(0, 1, 0);
+		// rotation = Quaternion.AngleAxis(axis, 1);
+		gameobject.GetTransform().rotation.Rotate(Quaternion.AngleAxis(axis, 0.01));
 	}
 
 	//로테이션을 받아오는 임의의 함수

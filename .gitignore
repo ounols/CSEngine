@@ -23,6 +23,10 @@ gen/
 .gradle/
 build/
 
+#Ignore cmake-build files
+cmake-build-debug/
+cmake-build-release/
+
 # Local configuration file (sdk path, etc)
 local.properties
 

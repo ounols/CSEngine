@@ -8,6 +8,7 @@
 #include <MacroDef.h>
 // #include <GL/glew.h>
 #define GLFW_INCLUDE_ES2
+
 #include <GLFW/glfw3.h>
 
 #include <stdio.h>
@@ -17,29 +18,28 @@
 #include <math.h>
 
 
-float timeGetTime(){
+float timeGetTime() {
     long ms; // Milliseconds
     int s;  // Seconds
     struct timespec spec;
 
     clock_gettime(CLOCK_REALTIME, &spec);
 
-    s  = spec.tv_sec * 1000;
+    s = spec.tv_sec * 1000;
     ms = round(spec.tv_nsec / 1.0e6); // Convert nanoseconds to milliseconds
 
     return ms + s;
 }
 
-int main(void)
-{
+int main(void) {
     GLFWwindow* window;
 
     /* Initialize the library */
     if (!glfwInit())
         return -1;
 
-	// glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
-	// glfwWindowHint(GLFW_CONTEXT_CREATION_API,GLFW_EGL_CONTEXT_API);
+    // glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
+    // glfwWindowHint(GLFW_CONTEXT_CREATION_API,GLFW_EGL_CONTEXT_API);
     // glfwDefaultWindowHints();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -50,8 +50,7 @@ int main(void)
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
-    if (!window)
-    {
+    if (!window) {
         glfwTerminate();
         return -1;
     }
@@ -67,8 +66,8 @@ int main(void)
     //     return -1;
     // }
 
-    printf("GL_VERSION  : %s\n", glGetString(GL_VERSION) );
-    printf("GL_RENDERER : %s\n", glGetString(GL_RENDERER) );
+    printf("GL_VERSION  : %s\n", glGetString(GL_VERSION));
+    printf("GL_RENDERER : %s\n", glGetString(GL_RENDERER));
 
     MainProc* mainProc = new MainProc();
 
@@ -78,8 +77,7 @@ int main(void)
     float elapsedTime = timeGetTime();
 
     /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         float deltaTime = timeGetTime() - elapsedTime;
         // std::cout << deltaTime <<'\n';
         /* Render here */
@@ -95,6 +93,7 @@ int main(void)
     }
     mainProc->Exterminate();
     SAFE_DELETE(mainProc);
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }

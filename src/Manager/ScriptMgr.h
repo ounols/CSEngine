@@ -37,7 +37,7 @@ Sqrat::Class<T>& ScriptMgr::SQRClassDef(std::string className, HSQUIRRELVM vm) {
 	Sqrat::RootTable(vm).Bind(className.c_str(), *sqClass);
 	Register(sqClass);
 
-	//°ÔÀÓ ¿ÀºêÁ§Æ®ÀÎ°¡?
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Î°ï¿½?
 	if (className == _SC("GameObject")) {
 		m_gameobjectIndex = m_objects.size();
 	}

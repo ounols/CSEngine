@@ -23,6 +23,8 @@ public:
 	 * \brief 자동 삭제가 아닌 특정한 상황에서 삭제될 때 호출되는 함수
 	 */
 	void Destroy();
+	void AddChild(SGameObject* object);
+	std::vector<SGameObject*> GetChildren() const;
 
 	/**
 	 * \brief 컴포넌트를 이 오브젝트에 추가합니다.
@@ -59,6 +61,8 @@ private:
 
 
 private:
+	std::vector<SGameObject*> m_children;
+
 	std::vector<SComponent*> m_components;
 	std::string m_name;
 	TransformInterface* m_transform;

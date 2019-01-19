@@ -13,6 +13,8 @@
 #ifdef __ANDROID__
 #include <android/log.h>
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,"ScriptManager",__VA_ARGS__)
+#elif __linux__
+#include <iostream>
 #endif
 
 using namespace Sqrat;
@@ -101,6 +103,8 @@ void ScriptMgr::RegisterScript(std::string script) {
 			OutputDebugString(Error::Message(vm).c_str());
 #elif __ANDROID__
             LOGE("Compile Failed : %s", Error::Message(vm).c_str());
+#elif __linux__
+			std::cout << "Compile Failed : " << Error::Message(vm) << '\n';
 #endif
 		}
 
@@ -111,6 +115,8 @@ void ScriptMgr::RegisterScript(std::string script) {
 			OutputDebugString(Error::Message(vm).c_str());
 #elif __ANDROID__
             LOGE("Run Failed : %s", Error::Message(vm).c_str());
+#elif __linux__
+			std::cout << "Run Failed : " << Error::Message(vm) << '\n';
 #endif
 		}
 
@@ -217,6 +223,16 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
 		.Var(_SC("z"), &vec4::z)
 		.Var(_SC("w"), &vec4::w)
 		.Func(_SC("Set"), &vec4::Set)
+	;
+
+	SQRClassDef<Quaternion>(_SC("Quaternion"))
+	.Var(_SC("x"), &Quaternion::x)
+	.Var(_SC("y"), &Quaternion::y)
+	.Var(_SC("z"), &Quaternion::z)
+	.Var(_SC("w"), &Quaternion::w)
+	.StaticFunc(_SC("AngleAxis"), &Quaternion::AngleAxis)
+	.Func(_SC("Rotate"), &Quaternion::Rotate)
+	.Func(_SC("ToEulerAngle"), &Quaternion::ToEulerAngle)
 	;
 
 }

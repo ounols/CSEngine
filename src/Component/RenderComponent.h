@@ -33,7 +33,7 @@ private:
 	MaterialComponent* m_material;
 	const vec3* m_position;
 	const vec3* m_scale;
-	const vec3* m_rotation;
+	const Quaternion* m_rotation;
 
 	
 };

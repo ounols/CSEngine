@@ -7,7 +7,7 @@ const mat4 CORRECTION = /*mat4::RotateX(90)*/mat4::Identity();
 
 DAELoader::DAELoader(const char* path, ObjSurface* obj) {
     m_obj = obj;
-    if(m_obj == nullptr){
+    if (m_obj == nullptr) {
         m_obj = new ObjSurface();
     }
 
@@ -22,6 +22,12 @@ void DAELoader::Load(const char* path) {
     m_root = XFILE(path).getRoot();
     XNode collada = m_root->getChild("COLLADA");
 
+    try {
+        LoadSkin(collada.getChild("library_controllers"));
+    } catch (int error) {
+        std::cout << "passing library_controllers...\n";
+        m_isSkinning = false;
+    }
 
     //지오메트리를 불러옴
     LoadGeometry(collada.getChild("library_geometries"));
@@ -30,18 +36,36 @@ void DAELoader::Load(const char* path) {
 void DAELoader::Exterminate() {
     SAFE_DELETE(m_root);
     std::cout << "\ndeleting " << m_vertices.size() << " DAE Vertexes...\n";
-    for(auto vertices : m_vertices) {
+    for (auto vertices : m_vertices) {
         SAFE_DELETE(vertices);
     }
 
     m_vertices.clear();
 }
 
+void DAELoader::LoadSkin(XNode root_s) {
+    XNode skinningData = root_s.getChild("controller").getChild("skin");
+
+
+    std::vector<std::string> jointsList = loadJointsList(skinningData);
+    std::vector<float> weights = loadWeights(skinningData);
+    XNode weightsDataNode = skinningData.getChild("vertex_weights");
+    std::vector<int> effectorJointCounts = getEffectiveJointsCounts(weightsDataNode);
+    std::vector<VertexSkinData*> vertexWeights = getSkinData(weightsDataNode, effectorJointCounts, weights);
+
+    //쓰레기값 제거
+    SAFE_DELETE(m_skinningData);
+    m_skinningData = new SkinningData();
+    m_skinningData->set_jointOrder(jointsList);
+    m_skinningData->set_verticesSkinData(vertexWeights);
+
+}
+
 void DAELoader::LoadGeometry(XNode root_g) {
     XNode meshData = root_g.getChild("geometry").getChild("mesh");
 
     //RAW data
-    ReadPositions(meshData);
+    ReadPositions(meshData, std::vector<VertexSkinData*>());
     ReadNormals(meshData);
 
     AssembleVertices(meshData);
@@ -54,7 +78,11 @@ void DAELoader::LoadGeometry(XNode root_g) {
 
 }
 
-void DAELoader::ReadPositions(XNode data) {
+//===================================================================
+// GeometryLoader Functions
+//===================================================================
+
+void DAELoader::ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWeight) {
     std::string positionID = data.getChild("vertices").getChild("input").getAttribute("source").value.substr(1);
     XNode positionData = data.getNodeByAttribute("source", "id", positionID.c_str()).getChild("float_array");
     int vertsSize = std::stoi(positionData.getAttribute("count").value);
@@ -68,18 +96,20 @@ void DAELoader::ReadPositions(XNode data) {
         // vec4 position = vec4{ x, y, z, 1 };
         mat4 transform = mat4::Translate(x, y, z) * CORRECTION;
         // Matrix4f.transform(CORRECTION, position, position);
-        m_vertices.push_back(new Vertex(m_vertices.size(), vec3{ transform.w.x, transform.w.y, transform.w.z }));
+        m_vertices.push_back(new Vertex(m_vertices.size(), vec3{transform.w.x, transform.w.y, transform.w.z},
+                                        m_isSkinning ? vertexWeight.at(m_vertices.size()) : nullptr));
     }
 
 }
 
 void DAELoader::ReadNormals(XNode data) {
-    std::string normalsID = data.getChild("polylist").getNodeByAttribute("input", "semantic", "NORMAL").getAttribute("source").value.substr(1);
+    std::string normalsID = data.getChild("polylist").getNodeByAttribute("input", "semantic", "NORMAL").getAttribute(
+            "source").value.substr(1);
     XNode normalsData = data.getNodeByAttribute("source", "id", normalsID.c_str()).getChild("float_array");
     int normalsSize = std::stoi(normalsData.getAttribute("count").value);
     std::vector<float> normals = normalsData.value.toFloatVector();
 
-    for(int i = 0; i < normalsSize / 3; i++) {
+    for (int i = 0; i < normalsSize / 3; i++) {
         float x = normals[i * 3];
         float y = normals[i * 3 + 1];
         float z = normals[i * 3 + 2];
@@ -88,7 +118,7 @@ void DAELoader::ReadNormals(XNode data) {
         mat4 transform = mat4::Translate(x, y, z) * CORRECTION;
         // std::cout << "{ " << x << ", " << y << ", " << z << " }, ";
         // Matrix4f.transform(CORRECTION, normal, normal);
-        m_normals.push_back(vec3{ transform.w.x, transform.w.y, transform.w.z });
+        m_normals.push_back(vec3{transform.w.x, transform.w.y, transform.w.z});
 
     }
 
@@ -100,8 +130,8 @@ void DAELoader::AssembleVertices(XNode data) {
     XNode poly = data.getChild("polylist");
     int typeCount = 0;
 
-    for(auto child : poly.children) {
-        if(child.name == "input") {
+    for (auto child : poly.children) {
+        if (child.name == "input") {
             typeCount++;
         }
     }
@@ -110,7 +140,7 @@ void DAELoader::AssembleVertices(XNode data) {
 
     // std::cout << "\n\ntypeCount : " << typeCount << '\n';
 
-    for(int i = 0; i<indexData.size() / typeCount; i++) {
+    for (int i = 0; i < indexData.size() / typeCount; i++) {
         int positionIndex = indexData[i * typeCount];
         int normalIndex = indexData[i * typeCount + 1];
         int texCoordIndex = indexData[i * typeCount + 2];
@@ -133,36 +163,85 @@ Vertex* DAELoader::processVertex(int posIndex, int normIndex, int texIndex) {
 
 Vertex* DAELoader::dealWithAlreadyProcessedVertex(Vertex* previousVertex, int newTextureIndex, int newNormalIndex) {
     if (previousVertex->hasSameTextureAndNormal(newTextureIndex, newNormalIndex)) {
-			m_indices.push_back(previousVertex->getIndex());
-            // std::cout << "index = " << m_indices[m_indices.size() - 1] << " (hasSameTextureAndNormal)\n";
-			return previousVertex;
-		} else {
-			Vertex* anotherVertex = previousVertex->getDuplicateVertex();
-			if (anotherVertex != nullptr) {
-				return dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex);
-			} else {
-				Vertex* duplicateVertex = new Vertex(m_vertices.size(), previousVertex->getPosition()/*, previousVertex->getWeightsData()*/);
-				duplicateVertex->setTextureIndex(newTextureIndex);
-				duplicateVertex->setNormalIndex(newNormalIndex);
-				previousVertex->setDuplicateVertex(duplicateVertex);
-				m_vertices.push_back(duplicateVertex);
-				m_indices.push_back(duplicateVertex->getIndex());
-                // std::cout << "index = " << m_indices[m_indices.size() - 1] << " (else)\n";
-				return duplicateVertex;
-			}
+        m_indices.push_back(previousVertex->getIndex());
+        // std::cout << "index = " << m_indices[m_indices.size() - 1] << " (hasSameTextureAndNormal)\n";
+        return previousVertex;
+    } else {
+        Vertex* anotherVertex = previousVertex->getDuplicateVertex();
+        if (anotherVertex != nullptr) {
+            return dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex);
+        } else {
+            Vertex* duplicateVertex = new Vertex(m_vertices.size(),
+                                                 previousVertex->getPosition()/*, previousVertex->getWeightsData()*/);
+            duplicateVertex->setTextureIndex(newTextureIndex);
+            duplicateVertex->setNormalIndex(newNormalIndex);
+            previousVertex->setDuplicateVertex(duplicateVertex);
+            m_vertices.push_back(duplicateVertex);
+            m_indices.push_back(duplicateVertex->getIndex());
+            // std::cout << "index = " << m_indices[m_indices.size() - 1] << " (else)\n";
+            return duplicateVertex;
+        }
 
-		}
+    }
 }
 
 void DAELoader::removeUnusedVertices() {
     for (auto vertex : m_vertices) {
-			// vertex->averageTangents();
-			if (!vertex->isSet()) {
-				vertex->setTextureIndex(0);
-				vertex->setNormalIndex(0);
-			}
-		}
+        // vertex->averageTangents();
+        if (!vertex->isSet()) {
+            vertex->setTextureIndex(0);
+            vertex->setNormalIndex(0);
+        }
+    }
 }
+
+//===================================================================
+// SkinLoader Functions
+//===================================================================
+
+std::vector<std::string> DAELoader::loadJointsList(XNode skinningData) {
+    XNode inputNode = skinningData.getChild("vertex_weights");
+    std::string jointDataId = inputNode.getNodeByAttribute("input", "semantic", "JOINT").getAttribute(
+            "source").toString();
+    XNode jointsNode = skinningData.getNodeByAttribute("source", "id", jointDataId.c_str()).getChild("Name_array");
+
+    std::vector<std::string> jointsList = jointsNode.value.toStringVector();
+
+    return jointsList;
+}
+
+std::vector<float> DAELoader::loadWeights(XNode skinningData) {
+    XNode inputNode = skinningData.getChild("vertex_weights");
+    std::string weightsDataId = inputNode.getNodeByAttribute("input", "semantic", "WEIGHT").getAttribute(
+            "source").toString();
+    XNode weightsNode = skinningData.getNodeByAttribute("source", "id", weightsDataId.c_str()).getChild("float_array");
+    std::vector<float> weights = weightsNode.value.toFloatVector();
+
+    return weights;
+}
+
+std::vector<int> DAELoader::getEffectiveJointsCounts(XNode node) {
+    return node.getChild("vcount").value.toIntegerVector();
+}
+
+std::vector<VertexSkinData*>
+DAELoader::getSkinData(XNode weightsDataNode, std::vector<int> counts, std::vector<float> weights) {
+    auto rawData = weightsDataNode.getChild("v").value.toIntegerVector();
+    std::vector<VertexSkinData*> skinningData;
+    int pointer = 0;
+    for (int count : counts) {
+        VertexSkinData* skinData = new VertexSkinData();
+        for (int i = 0; i < count; i++) {
+            int jointId = rawData[pointer++];
+            int weightId = rawData[pointer++];
+            skinData->addJointEffect(jointId, weights[weightId]);
+        }
+        skinData->limitJointNumber(m_maxWeight);
+        skinningData.push_back(skinData);
+    }
+    return skinningData;
+}
+
 
 void DAELoader::ConvertDataToVectors() {
     {
@@ -170,6 +249,8 @@ void DAELoader::ConvertDataToVectors() {
         m_f_vertices.resize(size * 3);
         m_f_normals.resize(size * 3);
         m_f_texUVs.resize(size * 2);
+        m_f_jointIDs.resize(size * 3);
+        m_f_weights.resize(size * 3);
     }
 
     float furthestPoint = 0;
@@ -180,7 +261,7 @@ void DAELoader::ConvertDataToVectors() {
         }
         vec3 position = currentVertex.getPosition();
         // vec2 textureCoord = textures.get(currentVertex.getTextureIndex());
-        vec2 textureCoord = vec2{ 0, 0 };
+        vec2 textureCoord = vec2{0, 0};
         vec3 normalVector = m_normals.at(currentVertex.getNormalIndex());
         m_f_vertices[i * 3] = position.x;
         m_f_vertices[i * 3 + 1] = position.y;
@@ -190,20 +271,20 @@ void DAELoader::ConvertDataToVectors() {
         m_f_normals[i * 3] = normalVector.x;
         m_f_normals[i * 3 + 1] = normalVector.y;
         m_f_normals[i * 3 + 2] = normalVector.z;
-        // VertexSkinData weights = currentVertex.getWeightsData();
-        // jointIdsArray[i * 3] = weights.jointIds.get(0);
-        // jointIdsArray[i * 3 + 1] = weights.jointIds.get(1);
-        // jointIdsArray[i * 3 + 2] = weights.jointIds.get(2);
-        // weightsArray[i * 3] = weights.weights.get(0);
-        // weightsArray[i * 3 + 1] = weights.weights.get(1);
-        // weightsArray[i * 3 + 2] = weights.weights.get(2);
+        VertexSkinData* weights = currentVertex.getWeightsData();
+        m_f_jointIDs[i * 3] = weights->getJointIDs()[0];
+        m_f_jointIDs[i * 3 + 1] = weights->getJointIDs()[1];
+        m_f_jointIDs[i * 3 + 2] = weights->getJointIDs()[2];
+        m_f_weights[i * 3] = weights->getWeights()[0];
+        m_f_weights[i * 3 + 1] = weights->getWeights()[1];
+        m_f_weights[i * 3 + 2] = weights->getWeights()[2];
 
     }
 }
 
 
 void DAELoader::AttachDataToObjSurface() {
-    int sizeVertex = m_vertices.size(); 
+    int sizeVertex = m_vertices.size();
     int sizeIndices = m_indices.size() / 3;
 
     // std::cout << "size vertices : " << sizeVertex << "\nsize indices : " << sizeIndices << '\n';
@@ -211,3 +292,8 @@ void DAELoader::AttachDataToObjSurface() {
     m_obj->MakeVertices(sizeVertex, &m_f_vertices[0], &m_f_normals[0]);
     m_obj->MakeIndices(sizeIndices, &m_indices[0]);
 }
+
+
+
+
+
