@@ -4,8 +4,8 @@ cmake_minimum_required(VERSION 3.4.1)
 
 PROJECT(CSEngine.app)
 SET(CMAKE_VERBOSE_MAKEFILE true)
-SET(CMAKE_CXX_STANDARD 11)
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
+#SET(CMAKE_CXX_STANDARD 11)
+set(CMAKE_BUILD_TYPE Debug)
 
 link_directories(/usr/lib)
 link_directories(/usr/lib32)
@@ -28,7 +28,8 @@ file(GLOB CSENGINE_SRC
                         "../../src/*.*"
                         "../../src/*/*.*"
                         "../../src/*/*/*.*"
-                        "../../src/*/*/*/*.*")
+#                        "../../src/*/*/*/*.*"
+        )
 
 file(GLOB SQUIRREL_SRC
                         "../../External/Squirrel/lib/sqstdlib/*.*"

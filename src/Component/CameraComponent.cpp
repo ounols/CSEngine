@@ -20,7 +20,7 @@ void CameraComponent::Exterminate() {
 
 
 void CameraComponent::Init() {
-	m_eye = &Transform->m_position;
+	m_eye = static_cast<TransformComponent*>(gameObject->GetTransform())->GetPosition();
 	m_target = vec3(0, 0, -1);
 	m_up = vec3(0, 1, 0);
 
@@ -33,7 +33,7 @@ void CameraComponent::Tick(float elapsedTime) {
 	if(m_targetObject == nullptr)
 		m_resultTarget = *m_eye + m_target;
 	else {
-		m_resultTarget = m_targetObject->GetTransform()->m_position;
+		m_resultTarget = *static_cast<TransformComponent*>(m_targetObject->GetTransform())->GetPosition();
 	}
 
 	SetCameraMatrix();

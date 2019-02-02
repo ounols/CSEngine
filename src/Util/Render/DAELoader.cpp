@@ -1,36 +1,52 @@
 #include "DAELoader.h"
-#include <string>
+#include "../MoreString.h"
 #include <iostream>
+#include <algorithm>
 
-const mat4 CORRECTION = /*mat4::RotateX(90)*/mat4::Identity();
+const mat4 CORRECTION = mat4::RotateX(90) /*mat4::Identity()*/;
 
 
-DAELoader::DAELoader(const char* path, ObjSurface* obj) {
+DAELoader::DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type) {
+    if (type == NOTHING) return;
+
     m_obj = obj;
     if (m_obj == nullptr) {
-        m_obj = new ObjSurface();
+        m_obj = new MeshSurface();
     }
 
-    Load(path);
+    Load(path, type);
 }
 
 DAELoader::~DAELoader() {
     Exterminate();
 }
 
-void DAELoader::Load(const char* path) {
+void DAELoader::Load(const char* path, LOAD_TYPE type) {
     m_root = XFILE(path).getRoot();
     XNode collada = m_root->getChild("COLLADA");
 
-    try {
-        LoadSkin(collada.getChild("library_controllers"));
-    } catch (int error) {
-        std::cout << "passing library_controllers...\n";
-        m_isSkinning = false;
+    if (type == LOAD_TYPE::MESH || type == LOAD_TYPE::ALL) {
+        try {
+            //스킨데이터를 불러옴
+            LoadSkin(collada.getChild("library_controllers"));
+            LoadSkeleton(collada.getChild("library_visual_scenes"));
+            m_isSkinning = true;
+        } catch (int error) {
+            std::cout << "passing skinning...\n";
+            m_isSkinning = false;
+        }
+
+
+        //지오메트리를 불러옴
+        LoadGeometry(collada.getChild("library_geometries"));
     }
 
-    //지오메트리를 불러옴
-    LoadGeometry(collada.getChild("library_geometries"));
+    if (type != LOAD_TYPE::ANIMATION && type != LOAD_TYPE::ALL) return;
+
+    //애니메이션 데이터를 불러옴
+
+
+
 }
 
 void DAELoader::Exterminate() {
@@ -41,6 +57,9 @@ void DAELoader::Exterminate() {
     }
 
     m_vertices.clear();
+
+    SAFE_DELETE(m_skinningData);
+//    m_skeletonData->Destroy();
 }
 
 void DAELoader::LoadSkin(XNode root_s) {
@@ -61,11 +80,23 @@ void DAELoader::LoadSkin(XNode root_s) {
 
 }
 
+void DAELoader::LoadSkeleton(XNode root_s) {
+    XNode armatureData = root_s.getChild("visual_scene").getNodeByAttribute("node", "id", "Armature");
+
+    XNode headNode = armatureData.getChild("node");
+    Joint* headJoint = loadJointData(headNode, true);
+
+
+    SAFE_DELETE(m_skeletonData);
+    m_skeletonData = new Skeleton(m_jointSize, headJoint);
+
+}
+
 void DAELoader::LoadGeometry(XNode root_g) {
     XNode meshData = root_g.getChild("geometry").getChild("mesh");
 
     //RAW data
-    ReadPositions(meshData, std::vector<VertexSkinData*>());
+    ReadPositions(meshData, m_skinningData->get_verticesSkinData());
     ReadNormals(meshData);
 
     AssembleVertices(meshData);
@@ -95,7 +126,6 @@ void DAELoader::ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWei
 
         // vec4 position = vec4{ x, y, z, 1 };
         mat4 transform = mat4::Translate(x, y, z) * CORRECTION;
-        // Matrix4f.transform(CORRECTION, position, position);
         m_vertices.push_back(new Vertex(m_vertices.size(), vec3{transform.w.x, transform.w.y, transform.w.z},
                                         m_isSkinning ? vertexWeight.at(m_vertices.size()) : nullptr));
     }
@@ -172,7 +202,7 @@ Vertex* DAELoader::dealWithAlreadyProcessedVertex(Vertex* previousVertex, int ne
             return dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex);
         } else {
             Vertex* duplicateVertex = new Vertex(m_vertices.size(),
-                                                 previousVertex->getPosition()/*, previousVertex->getWeightsData()*/);
+                                                 previousVertex->getPosition(), previousVertex->getWeightsData());
             duplicateVertex->setTextureIndex(newTextureIndex);
             duplicateVertex->setNormalIndex(newNormalIndex);
             previousVertex->setDuplicateVertex(duplicateVertex);
@@ -202,7 +232,7 @@ void DAELoader::removeUnusedVertices() {
 std::vector<std::string> DAELoader::loadJointsList(XNode skinningData) {
     XNode inputNode = skinningData.getChild("vertex_weights");
     std::string jointDataId = inputNode.getNodeByAttribute("input", "semantic", "JOINT").getAttribute(
-            "source").toString();
+            "source").value.substr(1);
     XNode jointsNode = skinningData.getNodeByAttribute("source", "id", jointDataId.c_str()).getChild("Name_array");
 
     std::vector<std::string> jointsList = jointsNode.value.toStringVector();
@@ -213,7 +243,7 @@ std::vector<std::string> DAELoader::loadJointsList(XNode skinningData) {
 std::vector<float> DAELoader::loadWeights(XNode skinningData) {
     XNode inputNode = skinningData.getChild("vertex_weights");
     std::string weightsDataId = inputNode.getNodeByAttribute("input", "semantic", "WEIGHT").getAttribute(
-            "source").toString();
+            "source").value.substr(1);
     XNode weightsNode = skinningData.getNodeByAttribute("source", "id", weightsDataId.c_str()).getChild("float_array");
     std::vector<float> weights = weightsNode.value.toFloatVector();
 
@@ -243,14 +273,65 @@ DAELoader::getSkinData(XNode weightsDataNode, std::vector<int> counts, std::vect
 }
 
 
+//===================================================================
+// SkeletonLoader Functions
+//===================================================================
+
+Joint* DAELoader::extractMainJointData(XNode jointNode, bool isRoot) {
+    std::string nameId = jointNode.getAttribute("id").value;
+    int index = -1;
+    auto jointOrders = m_skinningData->get_jointOrder();
+    for(int i = 0; i < jointOrders.size(); ++i) {
+        if(trim(jointOrders[i]) == nameId) {
+            index = i;
+            break;
+        }
+    }
+
+    if(index < 0) return nullptr;
+
+    std::vector<float> matrixData = jointNode.getChild("matrix").value.toFloatVector();
+    mat4 matrix = mat4(&matrixData[0]);
+    matrix = matrix.Transposed();
+    if(isRoot){
+        //because in Blender z is up, but in our game y is up.
+        matrix *= CORRECTION;
+    }
+    m_jointSize++;
+    return new Joint(index, nameId, matrix);
+}
+
+Joint* DAELoader::loadJointData(XNode jointNode, bool isRoot) {
+    Joint* joint = extractMainJointData(jointNode, isRoot);
+
+    try {
+        XNode nodes = jointNode.getChild("node");
+
+        for(XNode childNode : nodes.children){
+            if(childNode.name == "node") {
+                joint->addChild(loadJointData(childNode, false));
+            }
+        }
+    } catch (int error) {}
+
+
+    return joint;
+}
+
+
+
+
 void DAELoader::ConvertDataToVectors() {
     {
         int size = m_vertices.size();
         m_f_vertices.resize(size * 3);
         m_f_normals.resize(size * 3);
         m_f_texUVs.resize(size * 2);
-        m_f_jointIDs.resize(size * 3);
-        m_f_weights.resize(size * 3);
+        if(m_isSkinning) {
+            m_f_jointIDs.resize(size * 3);
+            m_f_weights.resize(size * 3);
+        }
+
     }
 
     float furthestPoint = 0;
@@ -271,6 +352,9 @@ void DAELoader::ConvertDataToVectors() {
         m_f_normals[i * 3] = normalVector.x;
         m_f_normals[i * 3 + 1] = normalVector.y;
         m_f_normals[i * 3 + 2] = normalVector.z;
+
+        if(!m_isSkinning) continue;
+
         VertexSkinData* weights = currentVertex.getWeightsData();
         m_f_jointIDs[i * 3] = weights->getJointIDs()[0];
         m_f_jointIDs[i * 3 + 1] = weights->getJointIDs()[1];
@@ -291,7 +375,11 @@ void DAELoader::AttachDataToObjSurface() {
 
     m_obj->MakeVertices(sizeVertex, &m_f_vertices[0], &m_f_normals[0]);
     m_obj->MakeIndices(sizeIndices, &m_indices[0]);
+    m_obj->setJointIDs(m_f_jointIDs);
+    m_obj->setWeights(m_f_weights);
 }
+
+
 
 
 

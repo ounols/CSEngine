@@ -15,3 +15,12 @@ SObject::~SObject() {
 void SObject::SetUndestroyable(bool enable) {
 	isUndestroyable = enable;
 }
+
+void SObject::Destroy() {
+	MemoryMgr::getInstance()->ReleaseObject(this);
+
+}
+
+void SObject::__FORCE_DESTROY__() {
+	MemoryMgr::getInstance()->ReleaseObject(this, true);
+}

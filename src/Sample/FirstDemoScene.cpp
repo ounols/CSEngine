@@ -27,25 +27,26 @@ void FirstDemoScene::Init() {
 
 	//DAE test
 	std::string path = CSE::AssetsPath() + "model.dae";
-	DAELoader* daeLoader = new DAELoader(path.c_str(), nullptr);
+	DAELoader* daeLoader = new DAELoader(path.c_str(), nullptr, DAELoader::ALL);
 
 	SGameObject* aa = new SGameObject();
 	aa->CreateComponent<DrawableStaticMeshComponent>();
-	aa->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*(daeLoader->GetObject()));
+	aa->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*(daeLoader->GetMesh()));
 	aa->CreateComponent<MaterialComponent>();
 	aa->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 0 });
 	aa->GetComponent<MaterialComponent>()->SetShininess(40);
 
 	aa->CreateComponent<RenderComponent>();
 	aa->GetComponent<RenderComponent>()->SetShaderHandle(0);
-	float scale = 0.1f;
+	float scale = 0.06f;
 	aa->GetTransform()->m_scale = vec3{scale, scale, scale};
 	// aa->GetTransform()->m_rotation.x = 90.f; 
 	aa->GetTransform()->m_position.y = -0.3f;
 	aa->CreateComponent<CustomComponent>();
 	aa->GetComponent<CustomComponent>()->SetClassName("TestScript");
+	aa->SetName("dae mesh");
 
-	// cube = daeLoader->GetObject();
+	// cube = daeLoader->GetMesh();
 	// cube->SetUndestroyable(false);
 	
 	SAFE_DELETE(daeLoader);
@@ -55,7 +56,7 @@ void FirstDemoScene::Init() {
 	SGameObject* b = new SGameObject();
 	SGameObject* d = new SGameObject();
 
-	cube = new ObjSurface(CH02::teapot_smoothNumVerts, CH02::teapot_smoothVerts, CH02::teapot_smoothNormals);
+	cube = new MeshSurface(CH02::teapot_smoothNumVerts, CH02::teapot_smoothVerts, CH02::teapot_smoothNormals);
 	cube->SetUndestroyable(false);
 	b->Destroy();
 	c = new SGameObject();
@@ -102,8 +103,9 @@ void FirstDemoScene::Init() {
 
 	d->SetName("light");
 	d->CreateComponent<LightComponent>();
-	d->GetTransform()->m_position = vec3{ 0.f, 0.0f, -2.f };
-	d->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
+	d->GetTransform()->m_position = vec3{ 0.f, 5.f, -8.f };
+	d->GetTransform()->m_scale = vec3{ 4.f, 4.f, 4.f };
+	aa->AddChild(d);
 	//d->GetComponent<LightComponent>()->SetDirection(vec4{ 1.f, 0.5f, 1.f, 1.0f });
 	d->GetComponent<LightComponent>()->SetColorAmbient(vec4{ 0.1f, 0.1f, 0.1f, 1 });
 	d->GetComponent<LightComponent>()->DisableSpecular = false;
@@ -132,9 +134,9 @@ void FirstDemoScene::Tick(float elapsedTime) {
 	}
 
 	//===============
-	SGameObject* d = GameObjectMgr::getInstance()->Find("light");
-	d->GetTransform()->m_position.x = sinf(elapsedTime*0.001) * 1.f;
-	d->GetTransform()->m_position.z = cosf(elapsedTime*0.001) * 1.f;
+//	SGameObject* d = GameObjectMgr::getInstance()->Find("dae mesh");
+//	d->GetTransform()->m_position.x = sinf(elapsedTime*0.001) * 1.f;
+//	d->GetTransform()->m_position.z = cosf(elapsedTime*0.001) * 1.f;
 	//c->GetTransform()->m_rotation.y += 0.1f;
 	c->GetTransform()->m_position.y = sinf(elapsedTime*0.001) * 0.1f;
 	//===============

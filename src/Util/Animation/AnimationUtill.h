@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../../SObject.h"
 #include "../Matrix.h"
 #include "../Quaternion.h"
@@ -46,8 +47,9 @@ public:
         m_timeStamp = timeStamp;
         m_pose = pose;
     }
-    ~KeyFrame() {  
-        
+
+    ~KeyFrame() {
+
     }
 
     float GetTimeStamp() const {
@@ -65,16 +67,18 @@ private:
 
 class JointTransform {
 public:
-    JointTransform() {  
+    JointTransform() {
         m_position = vec3();
         m_rotation = Quaternion();
     }
-    JointTransform(vec3 position, Quaternion rotation) {  
+
+    JointTransform(vec3 position, Quaternion rotation) {
         m_position = position;
         m_rotation = rotation;
     }
-    ~JointTransform() {  
-        
+
+    ~JointTransform() {
+
     }
 
     static JointTransform Interpolate(float t, JointTransform& a, JointTransform& b) {

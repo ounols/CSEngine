@@ -1,6 +1,6 @@
 #pragma once
 #include "SComponent.h"
-#include "../Util/Render/ObjSurface.h"
+#include "Util/Render/MeshSurface.h"
 
 class DrawableStaticMeshComponent : public SComponent {
 public:

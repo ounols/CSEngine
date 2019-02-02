@@ -12,6 +12,7 @@
 
 #elif __linux__
 #include <iostream>
+#include <typeinfo>
 #endif
 
 
@@ -45,7 +46,7 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 #elif __ANDROID__
 		LOGE("Auto Releasing Object : UNKOWN...");
 #elif __linux__
-		// std::cout << "Auto Releasing Object : " << &object << "...\n";
+		 std::cout << "Auto Releasing Object : " << typeid(*object).name() << "...\n";
 #endif
 
 		//���Ű� �Ұ����� ������ �������� Ȯ��
@@ -66,7 +67,7 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 #elif __ANDROID__
 		LOGE("deleted.\n");
 #elif __linux__
-		// std::cout << "deleted.\n";
+		 std::cout << "deleted.\n";
 #endif
 
 		m_objects.at(index) = nullptr;
@@ -77,11 +78,11 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 }
 
 
-void MemoryMgr::ReleaseObject(SObject* object) {
+void MemoryMgr::ReleaseObject(SObject* object, bool isForce) {
 	if (object == nullptr) return;
 
 	//���Ű� �Ұ����� ������ �������� Ȯ��
-	if (object->isUndestroyable) {
+	if (object->isUndestroyable && !isForce) {
 #ifdef WIN32
 		OutputDebugStringA("Releasing Object is denied.");
 #elif __ANDROID__

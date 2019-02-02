@@ -1,27 +1,27 @@
-#include "ObjSurface.h"
+#include "MeshSurface.h"
 #include "../../Manager/MemoryMgr.h"
 // #include <iostream>
 
-ObjSurface::ObjSurface() {}
+MeshSurface::MeshSurface() {}
 
-ObjSurface::ObjSurface(int sizeVert, float* vertices, float* normals): m_faceSize(0), m_vertexSize(0), m_indexSize(-1) {
+MeshSurface::MeshSurface(int sizeVert, float* vertices, float* normals): m_faceSize(0), m_vertexSize(0), m_indexSize(-1) {
 
 	MakeVertices(sizeVert, vertices, normals);
 }
 
 
-ObjSurface::ObjSurface(int sizeVert, float* vertices, float* normals, float* texCoords): m_faceSize(0), m_vertexSize(0), m_indexSize(-1) {
+MeshSurface::MeshSurface(int sizeVert, float* vertices, float* normals, float* texCoords): m_faceSize(0), m_vertexSize(0), m_indexSize(-1) {
 
 	MakeVertices(sizeVert, vertices, normals, texCoords);
 
 }
 
 
-ObjSurface::~ObjSurface() {
+MeshSurface::~MeshSurface() {
 
 }
 
-bool ObjSurface::MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords) {
+bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords) {
 	if(!m_Verts.empty()) return false;
 
 	struct Vertex {
@@ -65,7 +65,7 @@ bool ObjSurface::MakeVertices(int sizeVert, float* vertices, float* normals, flo
 	return true;
 }
 
-bool ObjSurface::MakeIndices(int sizeIndic, int* indices) {
+bool MeshSurface::MakeIndices(int sizeIndic, int* indices) {
 	if(!m_Indics.empty()) return false;
 
 	struct Index {
@@ -92,23 +92,23 @@ bool ObjSurface::MakeIndices(int sizeIndic, int* indices) {
 }
 
 
-int ObjSurface::GetVertexCount() const {
+int MeshSurface::GetVertexCount() const {
 	return m_vertexSize;
 }
 
 
 
-int ObjSurface::GetLineIndexCount() const {
+int MeshSurface::GetLineIndexCount() const {
 	return -1;
 }
 
 
-int ObjSurface::GetTriangleIndexCount() const {
+int MeshSurface::GetTriangleIndexCount() const {
 	return m_indexSize;
 }
 
 
-void ObjSurface::GenerateVertices(std::vector<float>& vertices, unsigned char flags) const {
+void MeshSurface::GenerateVertices(std::vector<float>& vertices, unsigned char flags) const {
 
 	vertices.resize(GetVertexCount() * 8); // xzy + xyz + st
 
@@ -117,21 +117,21 @@ void ObjSurface::GenerateVertices(std::vector<float>& vertices, unsigned char fl
 }
 
 
-void ObjSurface::GenerateLineIndices(std::vector<unsigned short>& indices) const {
+void MeshSurface::GenerateLineIndices(std::vector<unsigned short>& indices) const {
 	indices.resize(GetTriangleIndexCount() * 3); //xyz
 
 	indices = m_Indics;
 }
 
 
-void ObjSurface::GenerateTriangleIndices(std::vector<unsigned short>& indices) const {
+void MeshSurface::GenerateTriangleIndices(std::vector<unsigned short>& indices) const {
 	indices.resize(GetTriangleIndexCount() * 3);
     
 	indices = m_Indics;
 }
 
 
-vec3 ObjSurface::GenerateTopTriangle(vec3 v0, vec3 v1, vec3 v2) {
+vec3 MeshSurface::GenerateTopTriangle(vec3 v0, vec3 v1, vec3 v2) {
 
 	float height = v1.y - v0.y;
 	float width = 0.0f;
@@ -154,7 +154,7 @@ vec3 ObjSurface::GenerateTopTriangle(vec3 v0, vec3 v1, vec3 v2) {
 }
 
 
-vec3 ObjSurface::GenerateBottomTriangle(vec3 v0, vec3 v1, vec3 v2) {
+vec3 MeshSurface::GenerateBottomTriangle(vec3 v0, vec3 v1, vec3 v2) {
 
 	float height = v2.y - v0.y;
 	float width = 0.0f;
@@ -177,7 +177,7 @@ vec3 ObjSurface::GenerateBottomTriangle(vec3 v0, vec3 v1, vec3 v2) {
 }
 
 
-vec3 ObjSurface::LerpFilter(vec3 v0, vec3 v1, float kCoff) {
+vec3 MeshSurface::LerpFilter(vec3 v0, vec3 v1, float kCoff) {
 
 	vec3 v = v1 * kCoff + (v0 * (1.0f - kCoff));
 
@@ -185,12 +185,28 @@ vec3 ObjSurface::LerpFilter(vec3 v0, vec3 v1, float kCoff) {
 }
 
 
-void ObjSurface::Exterminate() {
+void MeshSurface::Exterminate() {
 }
 
 
-void ObjSurface::Destroy() {
+void MeshSurface::Destroy() {
 
 	MemoryMgr::getInstance()->ReleaseObject(this);
 
+}
+
+const std::vector<int>& MeshSurface::getJointIDs() const {
+	return m_jointIDs;
+}
+
+void MeshSurface::setJointIDs(const std::vector<int>& m_jointIDs) {
+	MeshSurface::m_jointIDs = m_jointIDs;
+}
+
+const std::vector<float>& MeshSurface::getWeights() const {
+	return m_weights;
+}
+
+void MeshSurface::setWeights(const std::vector<float>& m_weights) {
+	MeshSurface::m_weights = m_weights;
 }

@@ -6,21 +6,20 @@
 #include "../Component/CustomComponent.h"
 
 
-
 SGameObject::SGameObject() {
-	GameObjectMgr::getInstance()->Register(this);
-	m_transform = CreateComponent<TransformComponent>();
+    GameObjectMgr::getInstance()->Register(this);
+    m_transform = CreateComponent<TransformComponent>();
 
-	SGameObject::Init();
+    SGameObject::Init();
 }
 
 
 SGameObject::SGameObject(std::string name) {
-	GameObjectMgr::getInstance()->Register(this);
-	m_name = name;
-	m_transform = CreateComponent<TransformComponent>();
+    GameObjectMgr::getInstance()->Register(this);
+    m_name = name;
+    m_transform = CreateComponent<TransformComponent>();
 
-	SGameObject::Init();
+    SGameObject::Init();
 }
 
 
@@ -30,134 +29,154 @@ SGameObject::~SGameObject() {
 
 void SGameObject::Init() {
 
-	for(auto component : m_components) {
-		if (component == nullptr) continue;
+    for (auto component : m_components) {
+        if (component == nullptr) continue;
 
-		component->Init();
+        component->Init();
 
-	}
+    }
 
 }
 
 
 void SGameObject::Tick(float elapsedTime) {
-	if (!isEnable) return;
-	UpdateComponent(elapsedTime);
+    if (!isEnable) return;
+    UpdateComponent(elapsedTime);
 
 }
 
 
 void SGameObject::Exterminate() {
-	GameObjectMgr::getInstance()->Remove(this);
+    GameObjectMgr::getInstance()->Remove(this);
 }
 
 
 void SGameObject::Destroy() {
 
-	for (auto component : m_components) {
-		if (component == nullptr) continue;
-		MemoryMgr::getInstance()->ReleaseObject(component);
-	}
+    for (auto component : m_components) {
+        if (component == nullptr) continue;
+        MemoryMgr::getInstance()->ReleaseObject(component);
+    }
 
-	m_components.clear();
+    m_components.clear();
 
-	GameObjectMgr::getInstance()->DeleteGameObject(this);
+    GameObjectMgr::getInstance()->DeleteGameObject(this);
 
-	for(auto object : m_children) {
-		if(object == nullptr) continue;
-		object->Destroy();
-	}
+    for (auto object : m_children) {
+        if (object == nullptr) continue;
+        object->Destroy();
+    }
 }
 
 void SGameObject::AddChild(SGameObject* object) {
-	if(object == nullptr) return;
-	m_children.push_back(object);
+    if (object == nullptr) return;
+    m_children.push_back(object);
+    object->SetParent(this);
 }
 
+void SGameObject::RemoveChild(bool isAllLevel) {
+    for (auto child : m_children) {
+        child->RemoveChild(isAllLevel);
+    }
+    m_children.clear();
+}
+
+SGameObject* SGameObject::GetParent() const {
+    return m_parent;
+}
+
+void SGameObject::SetParent(SGameObject* object) {
+    m_parent = object;
+}
+
+
 std::vector<SGameObject*> SGameObject::GetChildren() const {
-	return m_children;
+    return m_children;
 }
 
 
 void SGameObject::AddComponent(SComponent* component) {
-	component->SetGameObject(this);
-	m_components.push_back(component);
+    component->SetGameObject(this);
+    m_components.push_back(component);
 
 }
 
 
 HSQOBJECT SGameObject::GetCustomComponent(const char* className) {
 
-	for (auto component : m_components) {
-		if (component == nullptr) continue;
-		if (dynamic_cast<CustomComponent*>(component)) {
-			auto customComponent = static_cast<CustomComponent*>(component);
+    for (auto component : m_components) {
+        if (component == nullptr) continue;
+        if (dynamic_cast<CustomComponent*>(component)) {
+            auto customComponent = static_cast<CustomComponent*>(component);
 
-			if (customComponent->SGetClassName() != className) continue;
+            if (customComponent->SGetClassName() != className) continue;
 
-			return customComponent->GetClassInstance().GetObject();
+            return customComponent->GetClassInstance().GetObject();
 
 
-		}
-	}
+        }
+    }
 
-	HSQOBJECT obj = HSQOBJECT();
-	obj._type = OT_NULL;
+    HSQOBJECT obj = HSQOBJECT();
+    obj._type = OT_NULL;
 
-	return obj;
+    return obj;
 }
 
 
 bool SGameObject::DeleteComponent(SComponent* component) {
 
-	for (auto m_component : m_components) {
-		if (m_component == nullptr) continue;
+    for (auto m_component : m_components) {
+        if (m_component == nullptr) continue;
 
-		if (std::addressof(component) == std::addressof(m_component)) {
+        if (std::addressof(component) == std::addressof(m_component)) {
 
-			auto iCompObj = std::find(m_components.begin(), m_components.end(), m_component);
+            auto iCompObj = std::find(m_components.begin(), m_components.end(), m_component);
 
-			if (iCompObj != m_components.end()) {
-				m_components.erase(iCompObj);
-				MemoryMgr::getInstance()->ReleaseObject(m_component);
-			}
+            if (iCompObj != m_components.end()) {
+                m_components.erase(iCompObj);
+                MemoryMgr::getInstance()->ReleaseObject(m_component);
+            }
 
 
-			return true;
-		}
-	}
+            return true;
+        }
+    }
 
-	return false;
+    return false;
 
 }
 
 
 SGameObject* SGameObject::Find(std::string name) const {
 
-	return GameObjectMgr::getInstance()->Find(name);
+    return GameObjectMgr::getInstance()->Find(name);
 
 }
 
 
 bool SGameObject::GetIsEnable() const {
-	return isEnable;
+    return isEnable;
 }
 
 
 void SGameObject::SetIsEnable(bool is_enable) {
-	isEnable = is_enable;
-	for (const auto& component : m_components) {
-		if (component == nullptr)	continue;
-		component->SetIsEnable(is_enable);
-	}
+    isEnable = is_enable;
+    for (const auto& component : m_components) {
+        if (component == nullptr) continue;
+        component->SetIsEnable(is_enable);
+    }
 }
 
 
 void SGameObject::UpdateComponent(float elapsedTime) {
-	for (const auto& component : m_components) {
-		if (component == nullptr)	continue;
+    for (const auto& component : m_components) {
+        if (component == nullptr) continue;
 
-		if(component->GetIsEnable())
-			component->Tick(elapsedTime);
-	}
+        if (component->GetIsEnable())
+            component->Tick(elapsedTime);
+    }
 }
+
+
+

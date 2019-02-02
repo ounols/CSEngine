@@ -1,5 +1,6 @@
 #include "LightComponent.h"
 #include "../Manager/LightMgr.h"
+#include "TransformComponent.h"
 
 
 COMPONENT_CONSTRUCTOR(LightComponent) {
@@ -100,6 +101,6 @@ void LightComponent::SetAttenuationFactor(float Kc, float Kl, float Kq) const {
 
 void LightComponent::SetLightPosition() const {
 
-	m_light->position = &Transform->m_position;
+	m_light->position = static_cast<TransformComponent*>(gameObject->GetTransform())->GetPosition();
 
 }

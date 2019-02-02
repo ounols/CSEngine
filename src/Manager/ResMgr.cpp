@@ -1,6 +1,7 @@
 #include "ResMgr.h"
 #include "ShaderProgramContainer.h"
 #include "SurfaceMeshContainer.h"
+#include "SkeletonContainer.h"
 #include "CameraMgr.h"
 
 IMPLEMENT_SINGLETON(ResMgr);
@@ -22,6 +23,7 @@ void ResMgr::Init() {
 
 	m_containers.push_back(new ShaderProgramContainer());
 	m_containers.push_back(new SurfaceMeshContainer());
+	m_containers.push_back(new SkeletonContainer());
 
 }
 

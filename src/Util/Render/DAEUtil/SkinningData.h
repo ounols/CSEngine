@@ -6,12 +6,19 @@
 
 #include <vector>
 #include <string>
+#include "../../../MacroDef.h"
 
 class SkinningData {
 public:
     SkinningData() {}
 
-    ~SkinningData() {}
+    ~SkinningData() {
+        for (auto skin : m_verticesSkinData) {
+            SAFE_DELETE(skin);
+        }
+
+        m_verticesSkinData.clear();
+    }
 
     const std::vector<std::string>& get_jointOrder() const {
         return m_jointOrder;

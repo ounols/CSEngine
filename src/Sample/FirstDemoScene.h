@@ -1,7 +1,7 @@
 #pragma once
 #include "../Manager/Base/Scene.h"
 #include "../Object/SGameObject.h"
-#include "../Util/Render/ObjSurface.h"
+#include "Util/Render/MeshSurface.h"
 
 class FirstDemoScene : public Scene {
 public:
@@ -22,7 +22,7 @@ private:
 	SGameObject* c3;	//switching render
 	//===============
 	float startTIme = 0;
-	ObjSurface* cube;
+	MeshSurface* cube;
 
 	bool isUnvisible = false;
 };

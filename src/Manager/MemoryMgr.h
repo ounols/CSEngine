@@ -10,7 +10,7 @@ protected:
 
 public:
 	void ExterminateObjects(bool killAll = false);
-	void ReleaseObject(SObject* object);
+	void ReleaseObject(SObject* object, bool isForce = false);
 
 private:
 
