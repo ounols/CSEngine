@@ -2,7 +2,7 @@
 
 #include "DAEUtil/VertexSkinData.h"
 #include "DAEUtil/SkinningData.h"
-#include "Skeleton.h"
+#include "Util/Animation/Skeleton.h"
 #include "../XML/XML.h"
 #include "DAEUtil/Vertex.h"
 #include "MeshSurface.h"

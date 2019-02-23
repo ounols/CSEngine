@@ -1,5 +1,6 @@
 #include "DAELoader.h"
 #include "../MoreString.h"
+#include "DAEUtil/DAEConvertSGameObject.h"
 #include <iostream>
 #include <algorithm>
 

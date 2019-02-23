@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "Util/Matrix.h"
+#include "../Matrix.h"
 
 
 class Joint {

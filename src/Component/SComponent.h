@@ -1,8 +1,10 @@
 #pragma once
 #include "../SObject.h"
 #include <string>
+#include <map>
 #include "../Object/SGameObject.h"
 #include "SISComponent.h"
+
 
 class SGameObject;
 
@@ -13,9 +15,23 @@ public:
 
 	}
 
+	SComponent(const SComponent& src) : SISComponent(src) {
+        gameObject = src.gameObject;
+        isEnable = src.isEnable;
+        m_classType = src.m_classType;
+	}
+
 
 	virtual ~SComponent() {
 
+	}
+
+	virtual SComponent* Clone() {
+		return nullptr;
+	}
+
+	virtual void CopyReference(SComponent* src, std::map<const char*, SComponent*> lists) {
+		return;
 	}
 
 
@@ -46,6 +62,9 @@ protected:
 	bool isEnable = true;
 
 	std::string m_classType;
+
+private:
+	int m_refId;
 };
 
 #define Transform static_cast<TransformInterface*>(gameObject->GetTransform())

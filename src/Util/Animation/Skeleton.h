@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../SObject.h"
+#include "SObject.h"
 #include "../../Manager/SkeletonContainer.h"
 #include "../../Manager/ResMgr.h"
 #include "Joint.h"

@@ -8,7 +8,6 @@
 
 #include <vector>
 #include "Base/SContainer.h"
-//#include "../Util/Render/Skeleton.h"
 
 class Skeleton;
 

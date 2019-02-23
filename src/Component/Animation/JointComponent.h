@@ -5,6 +5,7 @@
 class JointComponent : public SComponent {
 public:
     JointComponent();
+    JointComponent(const JointComponent& src);
     ~JointComponent();
 
     void Exterminate() override;

@@ -5,6 +5,12 @@ COMPONENT_CONSTRUCTOR(JointComponent), m_id(-1), m_animatedMatrix(mat4::Identity
     
 }
 
+JointComponent::JointComponent(const JointComponent& src) : SComponent(src) {
+    m_animatedMatrix = src.m_animatedMatrix;
+    m_id = src.m_id;
+    m_inverseTransformMatrix = src.m_inverseTransformMatrix;
+}
+
 JointComponent::~JointComponent() {
 
 }

@@ -6,7 +6,9 @@
 class AnimatorComponent : public SComponent {
 public:
     AnimatorComponent();
-    ~AnimatorComponent();
+	AnimatorComponent(const AnimatorComponent& src);
+
+	~AnimatorComponent();
 
     void Init() override;
 	void Tick(float elapsedTime) override;

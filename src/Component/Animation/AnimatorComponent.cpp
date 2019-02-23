@@ -4,6 +4,14 @@ COMPONENT_CONSTRUCTOR(AnimatorComponent) {
 
 }
 
+AnimatorComponent::AnimatorComponent(const AnimatorComponent& src) : SComponent(src) {
+    m_animationTime = src.m_animationTime;
+    m_currentAnimation = src.m_currentAnimation;
+    m_entity = src.m_entity;
+    m_startTime = src.m_startTime;
+}
+
+
 AnimatorComponent::~AnimatorComponent() {
 
 }
@@ -107,3 +115,4 @@ std::map<std::string, mat4> AnimatorComponent::InterpolatePoses(KeyFrame previou
     }
     return currentPose;
 }
+

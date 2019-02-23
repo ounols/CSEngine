@@ -13,6 +13,14 @@ SGameObject::SGameObject() {
     SGameObject::Init();
 }
 
+SGameObject::SGameObject(const SGameObject& src) {
+    GameObjectMgr::getInstance()->Register(this);
+    m_transform = CreateComponent<TransformComponent>();
+
+    SGameObject::Init();
+
+}
+
 
 SGameObject::SGameObject(std::string name) {
     GameObjectMgr::getInstance()->Register(this);
@@ -102,6 +110,11 @@ void SGameObject::AddComponent(SComponent* component) {
 }
 
 
+std::vector<SComponent*> SGameObject::GetComponents() const {
+    return std::vector<SComponent*>(m_components);
+}
+
+
 HSQOBJECT SGameObject::GetCustomComponent(const char* className) {
 
     for (auto component : m_components) {
@@ -177,6 +190,7 @@ void SGameObject::UpdateComponent(float elapsedTime) {
             component->Tick(elapsedTime);
     }
 }
+
 
 
 

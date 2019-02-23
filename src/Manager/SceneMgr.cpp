@@ -43,3 +43,7 @@ void SceneMgr::SetScene(Scene* scene) {
 	if(m_scene != nullptr)
 		m_scene->Init();
 }
+
+Scene* SceneMgr::GetCurrentScene() const {
+	return m_scene;
+}

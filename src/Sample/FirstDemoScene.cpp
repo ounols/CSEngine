@@ -1,3 +1,5 @@
+#include <iostream>
+#include <sstream>
 #include "FirstDemoScene.h"
 #include "../Component/LightComponent.h"
 #include "../Component/CameraComponent.h"

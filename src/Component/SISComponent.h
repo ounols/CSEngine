@@ -3,6 +3,7 @@ class SISComponent {
 public:
 
 	SISComponent() {}
+	SISComponent(const SISComponent& src) {}
 
 	virtual ~SISComponent() {}
 

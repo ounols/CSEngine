@@ -13,7 +13,7 @@ class SComponent;
 class SGameObject : public SObject {
 public:
     SGameObject();
-
+    SGameObject(const SGameObject& src);
     explicit SGameObject(std::string name);
 
     ~SGameObject();
@@ -45,7 +45,7 @@ public:
 
     template<class T>
     T* GetComponent();
-
+    std::vector<SComponent*> GetComponents() const;
     HSQOBJECT GetCustomComponent(const char* className);
 
     //template <class T>
