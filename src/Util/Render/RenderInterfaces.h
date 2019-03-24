@@ -44,7 +44,7 @@ public:
 	virtual void Render(float elapsedTime) = 0;
 
 protected:
-	GLProgramHandle* handler;
+	GLProgramHandle* handler = nullptr;
 	bool isRenderActive = true;
 
 public:

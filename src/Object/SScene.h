@@ -23,6 +23,10 @@ public:
     }
 
 private:
+    void InitGameObject(SGameObject* obj);
+    void TickGameObject(SGameObject* obj, float elapsedTime);
+
+private:
     SGameObject* m_root = nullptr;
 };
 

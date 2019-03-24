@@ -34,7 +34,7 @@ namespace CSE {
 
 		std::ifstream fin(path);
 
-		if (!fin.is_open()) return nullptr;
+		if (!fin.is_open()) return "";
 
 
 		while(!fin.eof()) {

@@ -12,6 +12,8 @@ public:
 	void Init() override;
 	void Tick(float elapsedTime) override;
 
+    SComponent* Clone(SGameObject* object) override;
+
     void SetAnimationMatrix(mat4 animation);
     mat4 GetAnimationMatrix() const {
         return m_animatedMatrix;

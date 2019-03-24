@@ -19,6 +19,10 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 
 	if (handle == nullptr) return;
 
+	//¶óÀÌÆ® °¹¼ö¸¦ ½¦ÀÌ´õ¿¡ ³Ö¾îÁÜ
+	glUniform1i(handle->Uniforms.LightsSize, m_objects.size());
+
+	int i = 0;
 	for(const auto& light : m_objects) {
 		
 		if (light == nullptr) continue;
@@ -28,68 +32,68 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 		SLight* lightObject = light->GetLight();
 
 		//LightMode
-		SetLightMode(handle, light);
+		SetLightMode(handle, light, i);
 
 		switch (type) {
 			
 		case LightComponent::DIRECTIONAL:
-			AttachDirectionalLight(handle, lightObject);
+			AttachDirectionalLight(handle, lightObject, i);
 			break;
 		case LightComponent::POINT:
-			AttachPositionalLight(handle, lightObject);
+			AttachPositionalLight(handle, lightObject, i);
 			break;
 		case LightComponent::SPOT: break;
 		default: break;
 
 		}
 
-		
+		i++;
 	}
 
 }
 
 
-void LightMgr::AttachDirectionalLight(const GLProgramHandle* handle, const SLight* light) const {
+void LightMgr::AttachDirectionalLight(const GLProgramHandle* handle, const SLight* light, int index) const {
 
 
 	//¹æÇâ
-	glUniform4fv(handle->Uniforms.LightPosition, 1, light->direction.Pointer());
-	glUniform1i(handle->Uniforms.IsDirectional, 1);
+	glUniform4fv(handle->Uniforms.LightPosition[index], 1, light->direction.Pointer());
+	glUniform1i(handle->Uniforms.IsDirectional[index], 1);
 
 	//°¨¼è¹æÁ¤½Ä
-	glUniform1i(handle->Uniforms.IsAttenuation, 0);
+	glUniform1i(handle->Uniforms.IsAttenuation[index], 0);
 
 	//»ö±¤
-	glUniform4fv(handle->Uniforms.DiffuseLight, 1, light->diffuseColor.Pointer());
-	glUniform4fv(handle->Uniforms.AmbientLight, 1, light->ambientColor.Pointer());
-	glUniform4fv(handle->Uniforms.SpecularLight, 1, light->specularColor.Pointer());
+	glUniform4fv(handle->Uniforms.DiffuseLight[index], 1, light->diffuseColor.Pointer());
+	glUniform4fv(handle->Uniforms.AmbientLight[index], 1, light->ambientColor.Pointer());
+	glUniform4fv(handle->Uniforms.SpecularLight[index], 1, light->specularColor.Pointer());
 
 
 
 }
 
 
-void LightMgr::AttachPositionalLight(const GLProgramHandle* handle, const SLight* light) const {
+void LightMgr::AttachPositionalLight(const GLProgramHandle* handle, const SLight* light, int index) const {
 
 	vec4 position(light->position->x, light->position->y, light->position->z, 1);
 	//À§Ä¡
-	glUniform4fv(handle->Uniforms.LightPosition, 1, position.Pointer());
-	glUniform1i(handle->Uniforms.IsDirectional, 0);
+	glUniform4fv(handle->Uniforms.LightPosition[index], 1, position.Pointer());
+	glUniform1i(handle->Uniforms.IsDirectional[index], 0);
 
 	//°¨¼è¹æÁ¤½Ä
-	glUniform1i(handle->Uniforms.IsAttenuation, 1);
-	glUniform3fv(handle->Uniforms.AttenuationFactor, 1, light->att.Pointer());
-	glUniform1f(handle->Uniforms.LightRadius, light->radius);
+	glUniform1i(handle->Uniforms.IsAttenuation[index], 1);
+	glUniform3fv(handle->Uniforms.AttenuationFactor[index], 1, light->att.Pointer());
+	glUniform1f(handle->Uniforms.LightRadius[index], light->radius);
 
 	//»ö±¤
-	glUniform4fv(handle->Uniforms.DiffuseLight, 1, light->diffuseColor.Pointer());
-	glUniform4fv(handle->Uniforms.AmbientLight, 1, light->ambientColor.Pointer());
-	glUniform4fv(handle->Uniforms.SpecularLight, 1, light->specularColor.Pointer());
+	glUniform4fv(handle->Uniforms.DiffuseLight[index], 1, light->diffuseColor.Pointer());
+	glUniform4fv(handle->Uniforms.AmbientLight[index], 1, light->ambientColor.Pointer());
+	glUniform4fv(handle->Uniforms.SpecularLight[index], 1, light->specularColor.Pointer());
 
 }
 
 
-void LightMgr::SetLightMode(const GLProgramHandle* handle, const LightComponent* light) {
+void LightMgr::SetLightMode(const GLProgramHandle* handle, const LightComponent* light, int index) {
 
 	GLuint mode = 0;
 
@@ -107,6 +111,6 @@ void LightMgr::SetLightMode(const GLProgramHandle* handle, const LightComponent*
 		mode += Spec;
 	}
 
-	glUniform1i(handle->Uniforms.LightMode, mode);
+	glUniform1i(handle->Uniforms.LightMode[index], mode);
 
 }

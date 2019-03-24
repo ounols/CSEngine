@@ -4,9 +4,13 @@
 
 #pragma once
 
+#include "../../../Object/SGameObject.h"
+
 
 class DAEConvertSGameObject {
 public:
     DAEConvertSGameObject();
     ~DAEConvertSGameObject();
+
+    static SGameObject* GetJoints(SGameObject* parent, Joint* data);
 };

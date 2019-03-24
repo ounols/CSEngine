@@ -17,11 +17,14 @@ public:
 
     void Exterminate() override;
 
+    SComponent* Clone(SGameObject* object) override;
+
     mat4 GetMatrix() const;
 
     vec3* GetPosition();
     vec3 GetScale() const;
     Quaternion GetRotation() const;
+    void SetMatrix(mat4 matrix);
 
 private:
     mat4 GetFinalMatrix() const;

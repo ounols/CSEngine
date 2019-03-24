@@ -6,7 +6,7 @@
 #include <iostream>
 
 COMPONENT_CONSTRUCTOR(RenderComponent) {
-
+	RenderMgr::getInstance()->Register(this);
 }
 
 
@@ -24,7 +24,7 @@ void RenderComponent::Init() {
 	m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
 	m_material = gameObject->GetComponent<MaterialComponent>();
 
-	RenderMgr::getInstance()->Register(this);
+
 	isRenderActive = isEnable;
 }
 
@@ -167,4 +167,13 @@ void RenderComponent::SetMaterials() const {
 
 	
 
+}
+
+SComponent* RenderComponent::Clone(SGameObject* object) {
+    INIT_COMPONENT_CLONE(RenderComponent, clone);
+
+	clone->isRenderActive = isRenderActive;
+	clone->SetShaderHandle(handler);
+
+	return clone;
 }

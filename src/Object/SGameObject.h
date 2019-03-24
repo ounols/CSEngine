@@ -11,6 +11,8 @@
 class SComponent;
 
 class SGameObject : public SObject {
+private:
+    enum STATUS { IDLE, INIT, DESTROY, UNKOWN };
 public:
     SGameObject();
     SGameObject(const SGameObject& src);
@@ -28,6 +30,8 @@ public:
      * \brief 자동 삭제가 아닌 특정한 상황에서 삭제될 때 호출되는 함수
      */
     void Destroy();
+
+    void SetUndestroyable(bool enable) override;
 
     void AddChild(SGameObject* object);
     void RemoveChild(bool isAllLevel = false);
@@ -86,6 +90,7 @@ private:
     std::string m_name;
     TransformInterface* m_transform;
     bool isEnable = true;
+    STATUS m_status = INIT;
 };
 
 
@@ -130,7 +135,8 @@ T* SGameObject::CreateComponent() {
 
     T* component = new T();
     AddComponent(component);
-    component->Init();
+    if(m_status == IDLE)
+        component->Init();
     return component;
 
 }

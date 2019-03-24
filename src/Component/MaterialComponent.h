@@ -12,6 +12,11 @@ public:
 	void Init() override;
 	void Tick(float elapsedTime) override;
 
+	SComponent* Clone(SGameObject* object) override;
+
+	void CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
+					   std::map<SComponent*, SComponent*> lists_comp) override;
+
 	void AttachMaterials(const GLProgramHandle* handle) const;
 
 	void SetMaterialAmbient(vec3 color);
@@ -26,7 +31,7 @@ public:
 	float GetShininess() const;
 
 private:
-	vec3 m_ambientMaterial = vec3{ 0.f, 0.f, 0.f };
+	vec3 m_ambientMaterial = vec3{ 0.5f, 0.5f, 0.5f };
 	vec3 m_specularMaterial = vec3{ 1, 1, 1 };
 	vec4 m_diffuseMaterial = vec4{ 0.75f, 0.75f, 0.75f, 1 };
 	float m_shininess = 128;

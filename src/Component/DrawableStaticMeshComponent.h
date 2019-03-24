@@ -10,6 +10,9 @@ public:
 	void Init() override;
 	void Tick(float elapsedTime) override;
 	void Exterminate() override;
+
+	SComponent* Clone(SGameObject* object) override;
+
 	bool SetMesh(const SISurface& meshSurface);
 
 protected:

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../Object/SPrefab.h"
 #include "DAEUtil/VertexSkinData.h"
 #include "DAEUtil/SkinningData.h"
 #include "Util/Animation/Skeleton.h"
@@ -26,6 +27,8 @@ public:
     Skeleton* getSkeleton() const {
         return m_skeletonData;
     }
+
+    SPrefab* GeneratePrefab();
 
 private:
     void LoadSkin(XNode root_s);

@@ -66,7 +66,9 @@ public:
 
 class XFILE {
 private:
-    FILE* file; // the file being read
+//    FILE* file; // the file being read
+    std::string file;
+    int file_index = 0;
 
     int read(std::string& buffer);
 

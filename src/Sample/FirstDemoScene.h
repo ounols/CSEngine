@@ -20,6 +20,7 @@ private:
 	SGameObject* c;
 	SGameObject* c2;	//new and delete
 	SGameObject* c3;	//switching render
+	SGameObject* d;
 	//===============
 	float startTIme = 0;
 	MeshSurface* cube;

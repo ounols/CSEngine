@@ -14,6 +14,8 @@ public:
 	void Init() override;
 	void Tick(float elapsedTime) override;
 
+	SComponent* Clone(SGameObject* object) override;
+
 
 	void SetMatrix(mat4 camera, mat4 projection) override;
 	void Render(float elapsedTime) override;
@@ -35,6 +37,6 @@ private:
 	const vec3* m_scale;
 	const Quaternion* m_rotation;
 
-	
+
 };
 

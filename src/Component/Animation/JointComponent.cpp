@@ -46,3 +46,13 @@ void JointComponent::calcInverseBindTransform(mat4 parentTransform) {
 			child_comp->calcInverseBindTransform(bindTransform);
 		}
 }
+
+SComponent* JointComponent::Clone(SGameObject* object) {
+    INIT_COMPONENT_CLONE(JointComponent, clone);
+
+    clone->m_inverseTransformMatrix = mat4(m_inverseTransformMatrix);
+    clone->m_animatedMatrix = mat4(m_animatedMatrix);
+    clone->m_id = m_id;
+
+    return clone;
+}

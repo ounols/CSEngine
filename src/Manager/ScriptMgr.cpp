@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include "sqrat.h"
+#include "sqrat/sqratVM.h"
 
 #include "../Util/AssetsDef.h"
 #include "../Util/MoreString.h"
@@ -64,8 +65,13 @@ ScriptMgr::~ScriptMgr() {
 
 void ScriptMgr::Init() {
 	HSQUIRRELVM vm;
+//	Sqrat::SqratVM vm = Sqrat::SqratVM();
 	vm = sq_open(1024);
 	Sqrat::DefaultVM::Set(vm);
+//	Sqrat::DefaultVM::Set(vm.GetVM());
+	sq_pushroottable(vm);
+	sqstd_register_mathlib(vm);
+	sq_pop(vm, 1);
 	//SquirrelVM::Init();
 	DefineClasses();
 	ReadScriptList();
@@ -199,6 +205,11 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
 		.Func(_SC("SetColorAmbient"), &LightComponent::SetColorAmbient)
 		.Func(_SC("SetColorDiffuse"), &LightComponent::SetColorDiffuse)
 		.Func(_SC("SetColorSpecular"), &LightComponent::SetColorSpecular)
+		.Func(_SC("GetColorAmbient"), &LightComponent::GetColorAmbient)
+		.Func(_SC("GetColorDiffuse"), &LightComponent::GetColorDiffuse)
+		.Func(_SC("GetColorSpecular"), &LightComponent::GetColorSpecular)
+		.Func(_SC("SetDirection"), &LightComponent::SetDirection)
+		.Func(_SC("GetDirection"), &LightComponent::GetDirection)
 	;
 
 

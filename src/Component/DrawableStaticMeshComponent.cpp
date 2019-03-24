@@ -96,3 +96,10 @@ void DrawableStaticMeshComponent::CreateMeshBuffers(const SISurface& surface) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 }
+
+SComponent* DrawableStaticMeshComponent::Clone(SGameObject* object) {
+    INIT_COMPONENT_CLONE(DrawableStaticMeshComponent, comp);
+
+    comp->m_meshId = m_meshId;
+	return comp;
+}

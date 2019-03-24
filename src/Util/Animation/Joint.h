@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#include "../../MacroDef.h"
 #include "../Matrix.h"
 
 
@@ -16,6 +17,7 @@ public:
             : m_index(m_index), m_nameID(m_nameID), m_bindLocalTransform(m_bindLocalTransform) {
 
     }
+
     ~Joint() {
         for (auto child : m_children) {
             SAFE_DELETE(child);
@@ -25,8 +27,24 @@ public:
     }
 
     void addChild(Joint* child) {
-        if(child == nullptr) return;
+        if (child == nullptr) return;
         m_children.push_back(child);
+    }
+
+    const std::string& GetName() const {
+        return m_nameID;
+    }
+
+    int GetIndex() const {
+        return m_index;
+    }
+
+    const mat4 GetBindLocalTransform() const {
+        return m_bindLocalTransform;
+    }
+
+    const std::vector<Joint*>& GetChildren() const {
+        return m_children;
     }
 
 private:

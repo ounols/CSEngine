@@ -1,5 +1,6 @@
 #pragma once
 #include "Matrix.h"
+#include "MoreMath.h"
 
 template <typename T>
 struct QuaternionT {
@@ -30,6 +31,7 @@ struct QuaternionT {
     
     static QuaternionT<T> CreateFromVectors(const Vector3<T>& v0, const Vector3<T>& v1);
     static QuaternionT<T> AngleAxis(const Vector3<T>& axis, float radians);
+    static QuaternionT<T> ToQuaternion(const Matrix4<T>& matrix);
 };
 
 template <typename T>
@@ -316,6 +318,19 @@ inline void QuaternionT<T>::Conjugate()
 	q.z = -z;
 
 	*this = q;
+}
+
+template<typename T>
+QuaternionT<T> QuaternionT<T>::ToQuaternion(const Matrix4<T>& matrix) {
+    QuaternionT<T> q;
+    q.w = sqrt( fmax( 0, 1 + matrix.x.x + matrix.y.y + matrix.z.z ) ) / 2;
+    q.x = sqrt( fmax( 0, 1 + matrix.x.x - matrix.y.y - matrix.z.z ) ) / 2;
+    q.y = sqrt( fmax( 0, 1 - matrix.x.x + matrix.y.y - matrix.z.z ) ) / 2;
+    q.z = sqrt( fmax( 0, 1 - matrix.x.x - matrix.y.y + matrix.z.z ) ) / 2;
+    q.x *= sign<T>( q.x * ( matrix.z.y - matrix.y.z ) );
+    q.y *= sign<T>( q.y * ( matrix.x.z - matrix.z.x ) );
+    q.z *= sign<T>( q.z * ( matrix.y.x - matrix.x.y ) );
+    return q;
 }
 
 typedef QuaternionT<float> Quaternion;

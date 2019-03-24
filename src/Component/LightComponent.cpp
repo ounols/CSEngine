@@ -6,6 +6,10 @@
 COMPONENT_CONSTRUCTOR(LightComponent) {
 	
 	LightMgr::getInstance()->Register(this);
+
+	m_light = new SLight();
+
+	SetLightType(DIRECTIONAL);
 }
 
 
@@ -21,13 +25,25 @@ void LightComponent::Exterminate() {
 
 
 void LightComponent::Init() {
-	m_light = new SLight();
-
-	SetLightType(DIRECTIONAL);
 }
 
 
 void LightComponent::Tick(float elapsedTime) {
+	if(m_isSunRising && m_type == DIRECTIONAL) {
+		float value = m_light->direction.y;
+		float bright = (value < 0.2) ? (value - 0.2f)*2 + 1 : 1;
+		if(bright < 0) bright = 0;
+		if(value < 0) value = 0;
+
+		float color0 = (0.4f * (1 - value) + 0.4f) * bright;
+		float color1 = (0.3f * value + 0.3f) * bright;
+
+		float color2 = value * 0.07f + 0.03f;
+
+		m_light->diffuseColor = vec4{color0, color1, color1, 1};
+		m_light->ambientColor = vec4{color2, color2, color2, 1};
+		m_light->specularColor = vec4{value, value, value, 1};
+	}
 }
 
 
@@ -102,5 +118,26 @@ void LightComponent::SetAttenuationFactor(float Kc, float Kl, float Kq) const {
 void LightComponent::SetLightPosition() const {
 
 	m_light->position = static_cast<TransformComponent*>(gameObject->GetTransform())->GetPosition();
+
+}
+
+vec4 LightComponent::GetDirection(vec4 direction) const {
+	return m_light->direction;
+}
+
+vec4 LightComponent::GetColorAmbient(vec4 color) const {
+	return m_light->ambientColor;
+}
+
+vec4 LightComponent::GetColorDiffuse(vec4 color) const {
+	return m_light->diffuseColor;
+}
+
+vec4 LightComponent::GetColorSpecular(vec4 color) const {
+	return m_light->specularColor;
+}
+
+void LightComponent::SetSunrising(bool active) {
+	m_isSunRising = active;
 
 }

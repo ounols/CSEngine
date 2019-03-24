@@ -37,12 +37,12 @@ SGameObject::~SGameObject() {
 
 void SGameObject::Init() {
 
-    for (auto component : m_components) {
-        if (component == nullptr) continue;
-
-        component->Init();
-
-    }
+//    for (auto component : m_components) {
+//        if (component == nullptr) continue;
+//
+//        component->Init();
+//
+//    }
 
 }
 
@@ -142,7 +142,7 @@ bool SGameObject::DeleteComponent(SComponent* component) {
     for (auto m_component : m_components) {
         if (m_component == nullptr) continue;
 
-        if (std::addressof(component) == std::addressof(m_component)) {
+        if (component == m_component) {
 
             auto iCompObj = std::find(m_components.begin(), m_components.end(), m_component);
 
@@ -186,8 +186,30 @@ void SGameObject::UpdateComponent(float elapsedTime) {
     for (const auto& component : m_components) {
         if (component == nullptr) continue;
 
+        if(m_status == INIT) {
+            component->Init();
+            continue;
+        }
+
         if (component->GetIsEnable())
             component->Tick(elapsedTime);
+    }
+
+    if(m_status == INIT)
+        m_status = IDLE;
+
+}
+
+void SGameObject::SetUndestroyable(bool enable) {
+
+    SObject::SetUndestroyable(enable);
+
+    for(auto component : m_components) {
+        component->SetUndestroyable(enable);
+    }
+
+    for(auto child : m_children) {
+        child->SetUndestroyable(enable);
     }
 }
 

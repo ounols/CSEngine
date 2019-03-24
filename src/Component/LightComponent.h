@@ -21,10 +21,17 @@ public:
 	void SetColorDiffuse(vec4 color) const;
 	void SetColorSpecular(vec4 color) const;
 
+	vec4 GetDirection(vec4 direction) const;
+	vec4 GetColorAmbient(vec4 color) const;
+	vec4 GetColorDiffuse(vec4 color) const;
+	vec4 GetColorSpecular(vec4 color) const;
+
 	//for Positional Light and Spot Light
 	void SetLightRadius(float radius) const;
 	void SetAttenuationFactor(vec3 att) const;
 	void SetAttenuationFactor(float Kc, float Kl, float Kq) const;
+
+	void SetSunrising(bool active);
 
 
 	SLight* GetLight() const {
@@ -58,6 +65,7 @@ public:
 
 private:
 	SLight* m_light = nullptr;
+	bool m_isSunRising = false;
 
 };
 

@@ -1,3 +1,4 @@
+#include "../AssetsDef.h"
 #include "XML.h"
 
 /************************************************************************************************************************************************/
@@ -179,13 +180,14 @@ const XNode& XNode::getChild(const char* name) const {
 
 int XFILE::read(std::string& buffer) {
     buffer.clear();
-    int c;
-    while ((c = fgetc(file)) != EOF) {
+    for (;file_index < file.length(); file_index++) {
+        //file_index++;
+        char c = file[file_index];
         if (c == '>') {
-            c = fgetc(file); // get the next character to check what kind of a line this is
+            file_index++; // get the next character to check what kind of a line this is
 
-            if (c != EOF && c != '\n') // move back if we have not reached the end of the file or line
-                fseek(file, -1, SEEK_CUR);
+//            if (file_index >= file.length() && c != '\n') // move back if we have not reached the end of the file or line
+//                file_index--;
 
             return XML_NODE; // this must be a node since this statement was ended by '>'
         } else if (c == '<' && buffer.length() > 0) {
@@ -194,7 +196,7 @@ int XFILE::read(std::string& buffer) {
         {
             if (c == ' ' && buffer.length() == 0)
                 continue;
-            buffer += (char) c;
+            buffer += c;
         }
     }
 
@@ -203,9 +205,17 @@ int XFILE::read(std::string& buffer) {
 
 XFILE::XFILE(const char* str) // read the file into the node heirchy
 {
-    this->file = fopen(str, "r");
-    if (file == NULL) {
+//    this->file = fopen(str, "r");
+//    if (file == NULL) {
+//        printf("XML file [%s] not found!\n", str);
+//        throw -1;
+//    }
+
+    this->file = CSE::OpenAssetsTxtFile(str);
+    if (file.empty()) {
+#ifndef __ANDROID__
         printf("XML file [%s] not found!\n", str);
+#endif
         throw -1;
     }
 }
@@ -275,5 +285,5 @@ const XNode* XFILE::getRoot() {
 }
 
 XFILE::~XFILE() {
-    fclose(this->file);
+//    fclose(this->file);
 }

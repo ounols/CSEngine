@@ -138,7 +138,7 @@ GLuint OGLMgr::createProgram(const GLchar* vertexSource, const GLchar* fragmentS
                 if (buf) {
 
                     glGetProgramInfoLog(program, bufLength, NULL, buf);
-                    //std::cout << "Could not link program:\n" << buf << '\n';
+                    std::cout << "Could not link program:\n" << buf << '\n';
                     //LOGE("Could not link program:\n%s\n", buf);
                     free(buf);
 
@@ -187,22 +187,31 @@ void OGLMgr::AttachProgramHandle(int shaderID) {
     gProgramhandle->Uniforms.ModelNoCameraMatrix = glGetUniformLocation(program, "u_modelViewNoCameraMatrix");
     gProgramhandle->Uniforms.Modelview = glGetUniformLocation(program, "u_modelViewMatrix");
     gProgramhandle->Uniforms.NormalMatrix = glGetUniformLocation(program, "u_normalMatrix");
-    gProgramhandle->Uniforms.LightPosition = glGetUniformLocation(program, "u_lightPosition");
-    gProgramhandle->Uniforms.DiffuseLight = glGetUniformLocation(program, "u_diffuseLight");
-    gProgramhandle->Uniforms.AmbientLight = glGetUniformLocation(program, "u_ambientLight");
-    gProgramhandle->Uniforms.SpecularLight = glGetUniformLocation(program, "u_specularLight");
+
     gProgramhandle->Uniforms.AmbientMaterial = glGetUniformLocation(program, "u_ambientMaterial");
     gProgramhandle->Uniforms.SpecularMaterial = glGetUniformLocation(program, "u_specularMaterial");
     gProgramhandle->Uniforms.Shininess = glGetUniformLocation(program, "u_shininess");
-    gProgramhandle->Uniforms.LightMode = glGetUniformLocation(program, "u_lightMode");
     gProgramhandle->Uniforms.Interpolation_z = glGetUniformLocation(program, "u_interpolation_z");
-    gProgramhandle->Uniforms.AttenuationFactor = glGetUniformLocation(program, "u_attenuationFactor");
-    gProgramhandle->Uniforms.IsAttenuation = glGetUniformLocation(program, "u_isAttenuation");
-    gProgramhandle->Uniforms.LightRadius = glGetUniformLocation(program, "u_lightRadius");
-    gProgramhandle->Uniforms.SpotDirection = glGetUniformLocation(program, "u_spotDirection");
-    gProgramhandle->Uniforms.SpotExponent = glGetUniformLocation(program, "u_spotExponent");
-    gProgramhandle->Uniforms.SpotCutOffAngle = glGetUniformLocation(program, "u_spotCutOffAngle");
-    gProgramhandle->Uniforms.IsDirectional = glGetUniformLocation(program, "u_isDirectional");
+
+    gProgramhandle->Uniforms.LightsSize = glGetUniformLocation(program, "u_lightsSize");
+
+
+    for(int i = 0; i < MAX_LIGHTS; i++) {
+        gProgramhandle->Uniforms.LightPosition[i] = glGetUniformLocation(program, ("u_lightPosition[" + std::to_string(i) +"]").c_str());
+        gProgramhandle->Uniforms.DiffuseLight[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_diffuseLight").c_str());
+        gProgramhandle->Uniforms.AmbientLight[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_ambientLight").c_str());
+        gProgramhandle->Uniforms.SpecularLight[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_specularLight").c_str());
+
+        gProgramhandle->Uniforms.AttenuationFactor[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_attenuationFactor").c_str());
+        gProgramhandle->Uniforms.IsAttenuation[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_isAttenuation").c_str());
+        gProgramhandle->Uniforms.LightRadius[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_lightRadius").c_str());
+        gProgramhandle->Uniforms.SpotDirection[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_spotDirection").c_str());
+        gProgramhandle->Uniforms.SpotExponent[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_spotExponent").c_str());
+        gProgramhandle->Uniforms.SpotCutOffAngle[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_spotCutOffAngle").c_str());
+        gProgramhandle->Uniforms.IsDirectional[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_isDirectional").c_str());
+        gProgramhandle->Uniforms.LightMode[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_lightMode").c_str());
+
+    }
 
 }
 
@@ -230,7 +239,7 @@ GLuint OGLMgr::loadShader(GLenum shaderType, const char* pSource) {
                 if (buf) {
                     glGetShaderInfoLog(shader, infoLen, NULL, buf);
                     //LOGE("Could not compile shader %d:\n%s\n", shaderType, buf);
-                    //std::cout << "Could not compile shader:\n" << buf << '\n';
+                    std::cout << "Could not compile shader:\n" << buf << '\n';
 #ifdef WIN32
                     OutputDebugStringA(buf);
 #endif
@@ -272,7 +281,7 @@ void OGLMgr::setFragmentShader(GLchar* fragmentSource) {
 
 void OGLMgr::Render(float elapsedTime) {
 
-    glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
+    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     ////VBO 언바인딩

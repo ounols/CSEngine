@@ -289,7 +289,8 @@ Joint* DAELoader::extractMainJointData(XNode jointNode, bool isRoot) {
         }
     }
 
-    if(index < 0) return nullptr;
+    if(index < 0)
+        return nullptr;
 
     std::vector<float> matrixData = jointNode.getChild("matrix").value.toFloatVector();
     mat4 matrix = mat4(&matrixData[0]);
@@ -378,6 +379,17 @@ void DAELoader::AttachDataToObjSurface() {
     m_obj->MakeIndices(sizeIndices, &m_indices[0]);
     m_obj->setJointIDs(m_f_jointIDs);
     m_obj->setWeights(m_f_weights);
+}
+
+SPrefab* DAELoader::GeneratePrefab() {
+
+    SPrefab* prefab = new SPrefab();
+    SGameObject* root = new SGameObject("");
+    prefab->SetGameObject(root);
+
+    DAEConvertSGameObject::GetJoints(root, m_skeletonData->getHeadJoint());
+
+    return nullptr;
 }
 
 

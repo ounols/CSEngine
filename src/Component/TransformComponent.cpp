@@ -50,6 +50,13 @@ Quaternion TransformComponent::GetRotation() const {
     return m_rotation.Multiplied(parent);
 }
 
+void TransformComponent::SetMatrix(mat4 matrix) {
+    m_position = vec3{ matrix.w.x, matrix.w.y, matrix.w.z };
+    m_scale   = vec3{ matrix.x.x, matrix.y.y, matrix.z.z };
+    m_rotation = Quaternion::ToQuaternion(matrix);
+
+}
+
 mat4 TransformComponent::GetFinalMatrix() const {
     mat4 scale = mat4::Scale(m_scale.x, m_scale.y, m_scale.z);
     mat4 translation = mat4::Translate(m_position.x, m_position.y, m_position.z);
@@ -67,3 +74,15 @@ mat4 TransformComponent::GetFinalMatrix() const {
 
     return scale * rotation * translation * parentMatrix;
 }
+
+SComponent* TransformComponent::Clone(SGameObject* object) {
+    INIT_COMPONENT_CLONE(TransformComponent, clone);
+
+    clone->m_position = vec3(m_position);
+    clone->m_scale = vec3(m_scale);
+    clone->m_rotation = Quaternion(m_rotation);
+
+    return clone;
+}
+
+

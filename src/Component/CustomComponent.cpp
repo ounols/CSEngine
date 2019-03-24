@@ -165,3 +165,18 @@ void CustomComponent::Log(const char* log) {
 SGameObject* CustomComponent::GetGameObject() const {
 	return gameObject;
 }
+
+SComponent* CustomComponent::Clone(SGameObject* object) {
+	INIT_COMPONENT_CLONE(CustomComponent, clone);
+
+	clone->m_funcSetCSEngine = m_funcSetCSEngine;
+	clone->m_funcInit = m_funcInit;
+	clone->m_funcTick = m_funcTick;
+	clone->m_funcExterminate = m_funcExterminate;
+
+	if(!m_className.empty()) {
+		clone->SetClassName(m_className);
+	}
+
+	return clone;
+}
