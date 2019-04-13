@@ -4,13 +4,6 @@ COMPONENT_CONSTRUCTOR(AnimatorComponent) {
 
 }
 
-AnimatorComponent::AnimatorComponent(const AnimatorComponent& src) : SComponent(src) {
-    m_animationTime = src.m_animationTime;
-    m_currentAnimation = src.m_currentAnimation;
-    m_entity = src.m_entity;
-    m_startTime = src.m_startTime;
-}
-
 
 AnimatorComponent::~AnimatorComponent() {
 
@@ -51,10 +44,12 @@ void AnimatorComponent::PlayAnimation(Animation* animation) {
 }
 
 void AnimatorComponent::UpdateAnimationTime(float elapsedTime) {
-    m_animationTime += elapsedTime - m_startTime;
+//    m_animationTime += elapsedTime - m_startTime;
+    m_animationTime += 0.01f;
+    float length = m_currentAnimation->GetLength();
 
-    if(m_animationTime > m_currentAnimation->GetLength()) {
-        m_animationTime = (int)m_animationTime % (int)m_currentAnimation->GetLength();
+    if(m_animationTime > length) {
+        m_animationTime -= (m_animationTime / length) * length;
     }
 
     m_startTime = elapsedTime;
@@ -63,56 +58,78 @@ void AnimatorComponent::UpdateAnimationTime(float elapsedTime) {
 
 
 std::map<std::string, mat4> AnimatorComponent::calculateCurrentAnimationPose() {
-    std::vector<KeyFrame> frames = getPreviousAndNextFrames();
+    std::vector<KeyFrame*> frames = getPreviousAndNextFrames();
     float progression = CalculateProgression(frames[0], frames[1]);
     return InterpolatePoses(frames[0], frames[1], progression);
 }
 
-void AnimatorComponent::applyPoseToJoints(std::map<std::string, mat4> currentPose, JointComponent* joint,
+void AnimatorComponent::applyPoseToJoints(std::map<std::string, mat4>& currentPose, JointComponent* joint,
                                           mat4 parentTransform) {
     SGameObject* object = joint->GetGameObject();
     mat4 currentLocalTransform = currentPose[object->GetName()];
     mat4 currentTransform = parentTransform * currentLocalTransform;
     for (auto child : object->GetChildren()) {
-        applyPoseToJoints(currentPose, child->GetComponent<JointComponent>(), currentTransform);
+        auto joint_component = child->GetComponent<JointComponent>();
+        if(joint_component != nullptr)
+            applyPoseToJoints(currentPose, joint_component, currentTransform);
     }
     currentTransform *= joint->GetInverseTransformMatrix();
     joint->SetAnimationMatrix(currentTransform);
 }
 
-std::vector<KeyFrame> AnimatorComponent::getPreviousAndNextFrames() {
+std::vector<KeyFrame*> AnimatorComponent::getPreviousAndNextFrames() {
     auto allFrames = m_currentAnimation->GetKeyFrames();
-    KeyFrame previousFrame = allFrames[0];
-    KeyFrame nextFrame = allFrames[0];
+    KeyFrame* previousFrame = allFrames[0];
+    KeyFrame* nextFrame = allFrames[0];
     for (int i = 1; i < allFrames.size(); i++) {
         nextFrame = allFrames[i];
-        if (nextFrame.GetTimeStamp() > m_animationTime) {
+        if (nextFrame->GetTimeStamp() > m_animationTime) {
             break;
         }
         previousFrame = allFrames[i];
     }
 
-    std::vector<KeyFrame> result;
+    std::vector<KeyFrame*> result;
     result.push_back(previousFrame);
     result.push_back(nextFrame);
     return result;
 }
 
-float AnimatorComponent::CalculateProgression(KeyFrame previous, KeyFrame next) {
-    float totalTime = next.GetTimeStamp() - previous.GetTimeStamp();
-    float currentTime = m_animationTime - previous.GetTimeStamp();
+float AnimatorComponent::CalculateProgression(KeyFrame* previous, KeyFrame* next) {
+    float totalTime = next->GetTimeStamp() - previous->GetTimeStamp();
+    float currentTime = m_animationTime - previous->GetTimeStamp();
     return currentTime / totalTime;
 }
 
-std::map<std::string, mat4> AnimatorComponent::InterpolatePoses(KeyFrame previousFrame, KeyFrame nextFrame, float t) {
+std::map<std::string, mat4> AnimatorComponent::InterpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float t) {
     std::map<std::string, mat4> currentPose;
-    for (const auto& frame : previousFrame.GetJointKeyFrames()) {
+    for (const auto& frame : previousFrame->GetJointKeyFrames()) {
         const auto jointName = frame.first;
-        JointTransform previousTransform = frame.second;
-        JointTransform nextTransform = nextFrame.GetJointKeyFrames().at(jointName);
-        JointTransform currentTransform = JointTransform::Interpolate(t, previousTransform, nextTransform);
+        JointTransform* previousTransform = frame.second;
+        JointTransform* nextTransform = nextFrame->GetJointKeyFrames().at(jointName);
+        JointTransform currentTransform = JointTransform::Interpolate(t, *previousTransform, *nextTransform);
         currentPose[jointName] = currentTransform.GetLocalMatrix();
     }
     return currentPose;
+}
+
+SComponent* AnimatorComponent::Clone(SGameObject* object) {
+    INIT_COMPONENT_CLONE(AnimatorComponent, clone);
+
+    clone->m_animationTime = m_animationTime;
+    clone->m_startTime = m_startTime;
+    clone->m_currentAnimation = m_currentAnimation;
+
+    return clone;
+}
+
+void AnimatorComponent::CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
+                                      std::map<SComponent*, SComponent*> lists_comp) {
+    if (src == nullptr) return;
+    AnimatorComponent* convert = dynamic_cast<AnimatorComponent*>(src);
+
+    //Copy Components
+    FIND_COMP_REFERENCE(m_entity, convert, DrawableSkinnedMeshComponent);
+
 }
 

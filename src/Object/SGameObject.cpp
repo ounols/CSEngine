@@ -49,6 +49,7 @@ void SGameObject::Init() {
 
 void SGameObject::Tick(float elapsedTime) {
     if (!isEnable) return;
+    if (isPrefab()) return;
     UpdateComponent(elapsedTime);
 
 }
@@ -186,7 +187,7 @@ void SGameObject::UpdateComponent(float elapsedTime) {
     for (const auto& component : m_components) {
         if (component == nullptr) continue;
 
-        if(m_status == INIT) {
+        if (m_status == INIT) {
             component->Init();
             continue;
         }
@@ -195,7 +196,7 @@ void SGameObject::UpdateComponent(float elapsedTime) {
             component->Tick(elapsedTime);
     }
 
-    if(m_status == INIT)
+    if (m_status == INIT)
         m_status = IDLE;
 
 }
@@ -204,13 +205,24 @@ void SGameObject::SetUndestroyable(bool enable) {
 
     SObject::SetUndestroyable(enable);
 
-    for(auto component : m_components) {
+    for (auto component : m_components) {
         component->SetUndestroyable(enable);
     }
 
-    for(auto child : m_children) {
+    for (auto child : m_children) {
         child->SetUndestroyable(enable);
     }
+}
+
+bool SGameObject::isPrefab() const {
+
+    if(m_isPrefab || m_parent == nullptr) return m_isPrefab;
+
+    return m_parent->isPrefab();
+}
+
+void SGameObject::SetIsPrefab(bool m_isPrefab) {
+    SGameObject::m_isPrefab = m_isPrefab;
 }
 
 

@@ -2,7 +2,9 @@
 #include "../MoreString.h"
 #include "DAEUtil/DAEConvertSGameObject.h"
 #include <iostream>
-#include <algorithm>
+#include "../../Component/DrawableSkinnedMeshComponent.h"
+#include "../../Component/RenderComponent.h"
+
 
 const mat4 CORRECTION = mat4::RotateX(90) /*mat4::Identity()*/;
 
@@ -16,6 +18,12 @@ DAELoader::DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type) {
     }
 
     Load(path, type);
+
+    if (type == ANIMATION || type == ALL) {
+        m_animationLoader = new DAEAnimationLoader();
+        m_animationLoader->Load(path, m_name);
+
+    }
 }
 
 DAELoader::~DAELoader() {
@@ -23,6 +31,19 @@ DAELoader::~DAELoader() {
 }
 
 void DAELoader::Load(const char* path, LOAD_TYPE type) {
+
+    {
+        std::string path_str = path;
+        std::size_t index = path_str.rfind("/");
+        if (index == std::string::npos) {
+            index = path_str.rfind("\\");
+        }
+        std::size_t name_index = path_str.rfind(".");
+
+        m_name = path_str.substr(index + 1, name_index - index - 2);
+
+    }
+
     m_root = XFILE(path).getRoot();
     XNode collada = m_root->getChild("COLLADA");
 
@@ -60,6 +81,7 @@ void DAELoader::Exterminate() {
     m_vertices.clear();
 
     SAFE_DELETE(m_skinningData);
+    SAFE_DELETE(m_animationLoader);
 //    m_skeletonData->Destroy();
 }
 
@@ -282,20 +304,20 @@ Joint* DAELoader::extractMainJointData(XNode jointNode, bool isRoot) {
     std::string nameId = jointNode.getAttribute("id").value;
     int index = -1;
     auto jointOrders = m_skinningData->get_jointOrder();
-    for(int i = 0; i < jointOrders.size(); ++i) {
-        if(trim(jointOrders[i]) == nameId) {
+    for (int i = 0; i < jointOrders.size(); ++i) {
+        if (trim(jointOrders[i]) == nameId) {
             index = i;
             break;
         }
     }
 
-    if(index < 0)
+    if (index < 0)
         return nullptr;
 
     std::vector<float> matrixData = jointNode.getChild("matrix").value.toFloatVector();
     mat4 matrix = mat4(&matrixData[0]);
     matrix = matrix.Transposed();
-    if(isRoot){
+    if (isRoot) {
         //because in Blender z is up, but in our game y is up.
         matrix *= CORRECTION;
     }
@@ -307,10 +329,9 @@ Joint* DAELoader::loadJointData(XNode jointNode, bool isRoot) {
     Joint* joint = extractMainJointData(jointNode, isRoot);
 
     try {
-        XNode nodes = jointNode.getChild("node");
 
-        for(XNode childNode : nodes.children){
-            if(childNode.name == "node") {
+        for (XNode childNode : jointNode.children) {
+            if (childNode.name == "node") {
                 joint->addChild(loadJointData(childNode, false));
             }
         }
@@ -321,15 +342,13 @@ Joint* DAELoader::loadJointData(XNode jointNode, bool isRoot) {
 }
 
 
-
-
 void DAELoader::ConvertDataToVectors() {
     {
         int size = m_vertices.size();
         m_f_vertices.resize(size * 3);
         m_f_normals.resize(size * 3);
         m_f_texUVs.resize(size * 2);
-        if(m_isSkinning) {
+        if (m_isSkinning) {
             m_f_jointIDs.resize(size * 3);
             m_f_weights.resize(size * 3);
         }
@@ -355,7 +374,7 @@ void DAELoader::ConvertDataToVectors() {
         m_f_normals[i * 3 + 1] = normalVector.y;
         m_f_normals[i * 3 + 2] = normalVector.z;
 
-        if(!m_isSkinning) continue;
+        if (!m_isSkinning) continue;
 
         VertexSkinData* weights = currentVertex.getWeightsData();
         m_f_jointIDs[i * 3] = weights->getJointIDs()[0];
@@ -375,21 +394,40 @@ void DAELoader::AttachDataToObjSurface() {
 
     // std::cout << "size vertices : " << sizeVertex << "\nsize indices : " << sizeIndices << '\n';
 
-    m_obj->MakeVertices(sizeVertex, &m_f_vertices[0], &m_f_normals[0]);
+    std::vector<float> jointIds(m_f_jointIDs.begin(), m_f_jointIDs.end());
+
+    m_obj->MakeVertices(sizeVertex, &m_f_vertices[0], &m_f_normals[0], nullptr, &m_f_weights[0], &jointIds[0]);
     m_obj->MakeIndices(sizeIndices, &m_indices[0]);
-    m_obj->setJointIDs(m_f_jointIDs);
-    m_obj->setWeights(m_f_weights);
 }
 
 SPrefab* DAELoader::GeneratePrefab() {
 
     SPrefab* prefab = new SPrefab();
-    SGameObject* root = new SGameObject("");
+    SGameObject* root = new SGameObject(m_name);
     prefab->SetGameObject(root);
 
-    DAEConvertSGameObject::GetJoints(root, m_skeletonData->getHeadJoint());
+    SGameObject* joint_root = new SGameObject("Armature");
+    root->AddChild(joint_root);
+    DAEConvertSGameObject::CreateJoints(joint_root, m_skeletonData->getHeadJoint());
 
-    return nullptr;
+    SGameObject* mesh_root = new SGameObject("mesh");
+    root->AddChild(mesh_root);
+    auto mesh_component = mesh_root->CreateComponent<DrawableSkinnedMeshComponent>();
+    mesh_component->SetMesh(*m_obj);
+
+    mesh_component->SetRootJoint(joint_root->GetChildren()[0], m_skeletonData->getJointCount());
+
+    mesh_root->CreateComponent<RenderComponent>();
+    mesh_root->GetComponent<RenderComponent>()->SetShaderHandle(0);
+//    mesh_root->GetComponent<RenderComponent>()->SetIsEnable(false);
+
+    mesh_root->CreateComponent<MaterialComponent>();
+
+    SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,
+                                                                       m_animationLoader->GetAnimation());
+
+
+    return prefab;
 }
 
 

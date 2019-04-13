@@ -13,13 +13,13 @@ public:
 
 	SComponent* Clone(SGameObject* object) override;
 
-	bool SetMesh(const SISurface& meshSurface);
+	virtual bool SetMesh(const SISurface& meshSurface);
 
 protected:
 	virtual void CreateMeshBuffers(const SISurface& surface);
 
 protected:
-	GLStaticMeshID m_meshId;
+	GLMeshID m_meshId;
 
 public:
 	friend class RenderComponent;

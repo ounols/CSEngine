@@ -50,7 +50,7 @@ SGameObject* SCloneFactory::Clone(SGameObject* object, SGameObject* parent) {
 
     CloningObjects(object, clone_component, clone_object, parent);
 
-    SGameObject* cloneObject_root = clone_object.begin()->second;
+    SGameObject* cloneObject_root = clone_object[object];
 
 
     for(auto component_pair : clone_component) {
@@ -67,7 +67,7 @@ void CloningObjects(SGameObject* object, std::map<SComponent*, SComponent*>& clo
     if(object == nullptr) return;
 
     //게임 오브젝트 복사
-    SGameObject* cloneObject = new SGameObject(object->GetName() + "_copy");
+    SGameObject* cloneObject = new SGameObject(object->GetName() + "");
     clone_obj[object] = cloneObject;
     cloneObject->SetIsEnable(object->GetIsEnable());
 

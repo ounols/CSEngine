@@ -55,6 +55,8 @@ void RenderMgr::Render(float elapsedTime) const {
 			glEnableVertexAttribArray(handler.Attributes.Position);
 			glEnableVertexAttribArray(handler.Attributes.Normal);
 			glEnableVertexAttribArray(handler.Attributes.TextureCoord);
+			glEnableVertexAttribArray(handler.Attributes.Weight);
+			glEnableVertexAttribArray(handler.Attributes.JointId);
 
 			render->SetMatrix(camera, projection);
 			render->Render(elapsedTime);
@@ -62,6 +64,8 @@ void RenderMgr::Render(float elapsedTime) const {
 			glDisableVertexAttribArray(handler.Attributes.Position);
 			glDisableVertexAttribArray(handler.Attributes.Normal);
 			glDisableVertexAttribArray(handler.Attributes.TextureCoord);
+			glDisableVertexAttribArray(handler.Attributes.Weight);
+			glDisableVertexAttribArray(handler.Attributes.JointId);
 
 		}
 

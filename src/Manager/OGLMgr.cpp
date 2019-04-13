@@ -183,6 +183,10 @@ void OGLMgr::AttachProgramHandle(int shaderID) {
     gProgramhandle->Attributes.Normal = glGetAttribLocation(program, "a_normal");
     gProgramhandle->Attributes.DiffuseMaterial = glGetAttribLocation(program, "a_diffuseMaterial");
     gProgramhandle->Attributes.TextureCoord = glGetAttribLocation(program, "a_textureCoordIn");
+    gProgramhandle->Attributes.Weight = glGetAttribLocation(program, "a_weights");
+    gProgramhandle->Attributes.JointId = glGetAttribLocation(program, "a_jointIndices");
+
+
     gProgramhandle->Uniforms.Projection = glGetUniformLocation(program, "u_projectionMatrix");
     gProgramhandle->Uniforms.ModelNoCameraMatrix = glGetUniformLocation(program, "u_modelViewNoCameraMatrix");
     gProgramhandle->Uniforms.Modelview = glGetUniformLocation(program, "u_modelViewMatrix");
@@ -194,6 +198,7 @@ void OGLMgr::AttachProgramHandle(int shaderID) {
     gProgramhandle->Uniforms.Interpolation_z = glGetUniformLocation(program, "u_interpolation_z");
 
     gProgramhandle->Uniforms.LightsSize = glGetUniformLocation(program, "u_lightsSize");
+    gProgramhandle->Uniforms.IsSkinning = glGetUniformLocation(program, "u_isSkinning");
 
 
     for(int i = 0; i < MAX_LIGHTS; i++) {
@@ -212,6 +217,8 @@ void OGLMgr::AttachProgramHandle(int shaderID) {
         gProgramhandle->Uniforms.LightMode[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_lightMode").c_str());
 
     }
+
+    gProgramhandle->Uniforms.JointMatrix = glGetUniformLocation(program, "u_jointMatrix");
 
 }
 

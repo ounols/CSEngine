@@ -33,10 +33,10 @@ private:
 private:
 	DrawableStaticMeshComponent* m_mesh;
 	MaterialComponent* m_material;
-	const vec3* m_position;
-	const vec3* m_scale;
-	const Quaternion* m_rotation;
+
+	bool m_isSkinned = false;
 
 
+    void SetJointMatrix();
 };
 

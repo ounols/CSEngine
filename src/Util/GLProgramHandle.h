@@ -6,6 +6,7 @@
 
 #define HANDLE_NULL -1
 #define MAX_LIGHTS 16
+#define MAX_JOINTS 50
 
 struct GLUniformHandles {
 	GLuint Modelview = HANDLE_NULL;
@@ -30,6 +31,8 @@ struct GLUniformHandles {
 	GLint SpotCutOffAngle[MAX_LIGHTS] = { HANDLE_NULL };
 	GLint IsDirectional[MAX_LIGHTS] = { HANDLE_NULL };
 	GLint LightsSize = HANDLE_NULL;
+	GLint JointMatrix = { HANDLE_NULL };
+	GLint IsSkinning = HANDLE_NULL;
 };
 
 struct GLAttributeHandles {
@@ -38,6 +41,8 @@ struct GLAttributeHandles {
 	GLint Normal = HANDLE_NULL;
 	GLint DiffuseMaterial = HANDLE_NULL;
 	GLint TextureCoord = HANDLE_NULL;
+	GLint Weight = HANDLE_NULL;
+	GLint JointId = HANDLE_NULL;
 };
 
 class GLProgramHandle : public SObject {

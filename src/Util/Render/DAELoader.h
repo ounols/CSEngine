@@ -7,6 +7,7 @@
 #include "../XML/XML.h"
 #include "DAEUtil/Vertex.h"
 #include "MeshSurface.h"
+#include "DAEAnimationLoader.h"
 
 class DAELoader {
 public:
@@ -94,12 +95,14 @@ private:
 
     SkinningData* m_skinningData = nullptr;
     Skeleton* m_skeletonData = nullptr;
+    DAEAnimationLoader* m_animationLoader = nullptr;
 
-private:
 
     int m_maxWeight = 3;
     int m_jointSize = 0;
 
     bool m_isSkinning = false;
+
+    std::string m_name;
 
 };

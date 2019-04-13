@@ -31,9 +31,13 @@ void FirstDemoScene::Init() {
 	//DAE test
 	std::string path = CSE::AssetsPath() + "model.dae";
 	DAELoader* daeLoader = new DAELoader(path.c_str(), nullptr, DAELoader::ALL);
-	daeLoader->GeneratePrefab();
+
+//	daeLoader->GeneratePrefab();
 
 	SGameObject* aa = new SGameObject();
+
+
+
 	aa->CreateComponent<DrawableSkinnedMeshComponent>();
 	aa->GetComponent<DrawableSkinnedMeshComponent>()->SetMesh(*(daeLoader->GetMesh()));
 	aa->CreateComponent<MaterialComponent>();
@@ -44,7 +48,7 @@ void FirstDemoScene::Init() {
 	aa->GetComponent<RenderComponent>()->SetShaderHandle(0);
 	float scale = 0.07f;
 	aa->GetTransform()->m_scale = vec3{scale, scale, scale};
-	// aa->GetTransform()->m_rotation.x = 90.f; 
+	// aa->GetTransform()->m_rotation.x = 90.f;
 	aa->GetTransform()->m_position.y = -0.3f;
 	aa->CreateComponent<CustomComponent>();
 	aa->GetComponent<CustomComponent>()->SetClassName("TestScript");
@@ -53,10 +57,10 @@ void FirstDemoScene::Init() {
 	// cube = daeLoader->GetMesh();
 	// cube->SetUndestroyable(false);
 	
-	SAFE_DELETE(daeLoader);
+
 
 	//Managing Memory Test
-	SGameObject* a = new SGameObject();
+	SGameObject* a = new SGameObject("camera");
 	SGameObject* b = new SGameObject();
 	d = new SGameObject();
 
@@ -74,6 +78,12 @@ void FirstDemoScene::Init() {
 	c->GetComponent<RenderComponent>()->SetIsEnable(false);
 	c->CreateComponent<CustomComponent>();
 	c->GetComponent<CustomComponent>()->SetClassName("TestScript");
+
+	SGameObject* testing = new SGameObject("root");
+
+	SGameObject* ab = daeLoader->GeneratePrefab()->Clone(vec3{1.f, -0.3f, 0.f}, testing);
+	ab->GetTransform()->m_scale = vec3{ 0.1f, 0.1f, 0.1f };
+	SAFE_DELETE(daeLoader);
 
 	c2 = new SGameObject();
 	// c2->AddComponent(c->GetComponent<DrawableStaticMeshComponent>());
@@ -145,7 +155,7 @@ void FirstDemoScene::Init() {
 
 	a->CreateComponent<CameraComponent>();
 	a->GetTransform()->m_position = vec3{ 0, 0, 3.f };
-	a->GetComponent<CameraComponent>()->SetTarget(d);
+	a->GetComponent<CameraComponent>()->SetTarget(ab);
 	//===============
 }
 

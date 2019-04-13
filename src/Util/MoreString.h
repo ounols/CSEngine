@@ -13,8 +13,9 @@ static std::string ReplaceAll(std::string& str, const std::string& from, const s
     return str;
 }
 
-static std::string ReplaceFunction(std::string& str, const std::string& from, const std::string& from2, const std::string& to,
-                            const std::string& to2) {
+static std::string
+ReplaceFunction(std::string& str, const std::string& from, const std::string& from2, const std::string& to,
+                const std::string& to2) {
     size_t start_pos = 0; //string 처음부터 검사
     size_t start_pos2 = 0;
     while ((start_pos = str.find(from, start_pos)) != std::string::npos)  //from을 찾을 수 없을 때까지
@@ -40,4 +41,20 @@ static std::string trim(const std::string& str) {
     }
     size_t last = str.find_last_not_of(' ');
     return str.substr(first, (last - first + 1));
+}
+
+static std::vector<std::string> split(const std::string& s, char seperator) {
+    std::vector<std::string> output;
+
+    std::string::size_type prev_pos = 0, pos = 0;
+
+    while ((pos = s.find(seperator, pos)) != std::string::npos) {
+        std::string substring(s.substr(prev_pos, pos - prev_pos));
+        output.push_back(substring);
+        prev_pos = ++pos;
+    }
+
+    output.push_back(s.substr(prev_pos, pos - prev_pos)); // Last word
+
+    return output;
 }

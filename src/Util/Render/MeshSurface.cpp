@@ -6,13 +6,13 @@ MeshSurface::MeshSurface() {}
 
 MeshSurface::MeshSurface(int sizeVert, float* vertices, float* normals): m_faceSize(0), m_vertexSize(0), m_indexSize(-1) {
 
-	MakeVertices(sizeVert, vertices, normals);
+	MakeVertices(sizeVert, vertices, normals, nullptr, nullptr, nullptr);
 }
 
 
 MeshSurface::MeshSurface(int sizeVert, float* vertices, float* normals, float* texCoords): m_faceSize(0), m_vertexSize(0), m_indexSize(-1) {
 
-	MakeVertices(sizeVert, vertices, normals, texCoords);
+	MakeVertices(sizeVert, vertices, normals, texCoords, nullptr, nullptr);
 
 }
 
@@ -21,28 +21,30 @@ MeshSurface::~MeshSurface() {
 
 }
 
-bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords) {
+bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords, float* weights, float* jointIds) {
 	if(!m_Verts.empty()) return false;
 
 	struct Vertex {
 		vec3 Position;
 		vec3 Normal;
 		vec2 TexCoord;
+		vec3 Weight;
+		vec3 JointId;
 	};
 	
 
-	m_Verts.resize(sizeVert * 8);
+	m_Verts.resize(sizeVert * 14);
 
 	Vertex* vertex_tmp = reinterpret_cast<Vertex*>(&m_Verts[0]);
 
 	for (int i = 0; i < sizeVert; ++i) {
-		vertex_tmp->Position.x = static_cast<float>(*(vertices)++);
-		vertex_tmp->Position.y = static_cast<float>(*(vertices)++);
-		vertex_tmp->Position.z = static_cast<float>(*(vertices)++);
+		vertex_tmp->Position.x = *(vertices)++;
+		vertex_tmp->Position.y = *(vertices)++;
+		vertex_tmp->Position.z = *(vertices)++;
 
-		vertex_tmp->Normal.x = static_cast<float>(*(normals)++);
-		vertex_tmp->Normal.y = static_cast<float>(*(normals)++);
-		vertex_tmp->Normal.z = static_cast<float>(*(normals)++);
+		vertex_tmp->Normal.x = *(normals)++;
+		vertex_tmp->Normal.y = *(normals)++;
+		vertex_tmp->Normal.z = *(normals)++;
 
 		// std::cout << "{ " << vertex_tmp->Position.x << ", " << vertex_tmp->Position.y << ", " << vertex_tmp->Position.z << " }, ";
 		
@@ -52,8 +54,26 @@ bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, fl
 			vertex_tmp->TexCoord.y = 0;
 		}
 		else {
-			vertex_tmp->TexCoord.x = static_cast<float>(*(texCoords)++);
-			vertex_tmp->TexCoord.y = static_cast<float>(*(texCoords)++);
+			vertex_tmp->TexCoord.x = *(texCoords)++;
+			vertex_tmp->TexCoord.y = *(texCoords)++;
+		}
+
+		if(weights == nullptr) {
+			vertex_tmp->Weight.Set(0, 0, 0);
+		}
+		else {
+			vertex_tmp->Weight.x = *(weights)++;
+			vertex_tmp->Weight.y = *(weights)++;
+			vertex_tmp->Weight.z = *(weights)++;
+		}
+
+		if(jointIds == nullptr) {
+			vertex_tmp->JointId.Set(0, 0, 0);
+		}
+		else {
+			vertex_tmp->JointId.x = *(jointIds)++;
+			vertex_tmp->JointId.y = *(jointIds)++;
+			vertex_tmp->JointId.z = *(jointIds)++;
 		}
 
 
@@ -110,7 +130,7 @@ int MeshSurface::GetTriangleIndexCount() const {
 
 void MeshSurface::GenerateVertices(std::vector<float>& vertices, unsigned char flags) const {
 
-	vertices.resize(GetVertexCount() * 8); // xzy + xyz + st
+	vertices.resize(GetVertexCount() * 14); // xzy + xyz + st
 
 	vertices = m_Verts;
 
@@ -195,18 +215,18 @@ void MeshSurface::Destroy() {
 
 }
 
-const std::vector<int>& MeshSurface::getJointIDs() const {
-	return m_jointIDs;
-}
-
-void MeshSurface::setJointIDs(const std::vector<int>& m_jointIDs) {
-	MeshSurface::m_jointIDs = m_jointIDs;
-}
-
-const std::vector<float>& MeshSurface::getWeights() const {
-	return m_weights;
-}
-
-void MeshSurface::setWeights(const std::vector<float>& m_weights) {
-	MeshSurface::m_weights = m_weights;
-}
+//const std::vector<int>& MeshSurface::GetJointIDs() const {
+//	return m_jointIDs;
+//}
+//
+//void MeshSurface::setJointIDs(const std::vector<int>& m_jointIDs) {
+//	MeshSurface::m_jointIDs = m_jointIDs;
+//}
+//
+//const std::vector<float>& MeshSurface::GetWeights() const {
+//	return m_weights;
+//}
+//
+//void MeshSurface::setWeights(const std::vector<float>& m_weights) {
+//	MeshSurface::m_weights = m_weights;
+//}

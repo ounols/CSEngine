@@ -4,13 +4,21 @@
 
 #pragma once
 
+#include "../../Render/DAEAnimationLoader.h"
 #include "../../../Object/SGameObject.h"
 
+class KeyFrame;
+class JointTransform;
 
 class DAEConvertSGameObject {
 public:
     DAEConvertSGameObject();
     ~DAEConvertSGameObject();
 
-    static SGameObject* GetJoints(SGameObject* parent, Joint* data);
+    static SGameObject* CreateJoints(SGameObject* parent, Joint* data);
+    static SGameObject* CreateAnimation(SGameObject* parent, SGameObject* mesh, AnimationData* animationData);
+
+private:
+    static KeyFrame* CreateKeyFrame(KeyFrameData* data);
+    static JointTransform* CreateTransform(JointTransformData* data);
 };

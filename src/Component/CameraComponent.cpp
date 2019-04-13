@@ -85,7 +85,7 @@ void CameraComponent::CopyReference(SComponent* src, std::map<SGameObject*, SGam
     CameraComponent* convert = static_cast<CameraComponent*>(src);
 
     //Copy GameObjects
-    FIND_REFERENCE(m_targetObject, convert);
+    FIND_OBJ_REFERENCE(m_targetObject, convert);
 
 }
 

@@ -91,6 +91,11 @@ private:
     TransformInterface* m_transform;
     bool isEnable = true;
     STATUS m_status = INIT;
+    bool m_isPrefab = false;
+public:
+    bool isPrefab() const;
+
+    void SetIsPrefab(bool m_isPrefab);
 };
 
 

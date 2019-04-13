@@ -7,10 +7,15 @@
 
 #define Transform static_cast<TransformInterface*>(gameObject->GetTransform())
 #define COMPONENT_CONSTRUCTOR(CLASSNAME) CLASSNAME::CLASSNAME() : SComponent(#CLASSNAME)
-#define FIND_REFERENCE(obj, src) \
+#define FIND_OBJ_REFERENCE(obj, src) \
 {                           \
     auto targetObject = lists_obj.find(src->obj);    \
     obj = (targetObject != lists_obj.end()) ? targetObject->second : src->obj;    \
+}
+#define FIND_COMP_REFERENCE(comp, src, componentName) \
+{                           \
+    auto targetObject = lists_comp.find(src->comp);    \
+    comp = (targetObject != lists_comp.end()) ? dynamic_cast<componentName*>(targetObject->second) : src->comp;    \
 }
 
 #define INIT_COMPONENT_CLONE(className, cloneName) \

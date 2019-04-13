@@ -6,7 +6,6 @@
 class AnimatorComponent : public SComponent {
 public:
     AnimatorComponent();
-	AnimatorComponent(const AnimatorComponent& src);
 
 	~AnimatorComponent();
 
@@ -14,7 +13,12 @@ public:
 	void Tick(float elapsedTime) override;
 	void Exterminate() override;
 
-    void SetMesh(DrawableSkinnedMeshComponent* mesh);
+	SComponent* Clone(SGameObject* object) override;
+
+	void CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
+					   std::map<SComponent*, SComponent*> lists_comp) override;
+
+	void SetMesh(DrawableSkinnedMeshComponent* mesh);
     // void SetAnimation(Animation* animation);
 
     void PlayAnimation(Animation* animation);
@@ -23,10 +27,10 @@ public:
 private:
     void UpdateAnimationTime(float elapsedTime);
     std::map<std::string, mat4> calculateCurrentAnimationPose();
-    void applyPoseToJoints(std::map<std::string, mat4> currentPose, JointComponent* joint, mat4 parentTransform);
-    std::vector<KeyFrame> getPreviousAndNextFrames();
-    float CalculateProgression(KeyFrame previous, KeyFrame next);
-    std::map<std::string, mat4> InterpolatePoses(KeyFrame previousFrame, KeyFrame nextFrame, float t);
+    void applyPoseToJoints(std::map<std::string, mat4>& currentPose, JointComponent* joint, mat4 parentTransform);
+    std::vector<KeyFrame*> getPreviousAndNextFrames();
+    float CalculateProgression(KeyFrame* previous, KeyFrame* next);
+    std::map<std::string, mat4> InterpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float t);
 private:
 
     float m_animationTime = -1;
