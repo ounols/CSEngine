@@ -35,7 +35,6 @@ private:
 
     float m_animationTime = -1;
     float m_startTime = -1;
-    int test = 0;
 
     DrawableSkinnedMeshComponent* m_entity = nullptr;
     Animation* m_currentAnimation = nullptr;
