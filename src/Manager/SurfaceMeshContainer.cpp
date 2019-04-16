@@ -2,12 +2,11 @@
 
 
 SurfaceMeshContainer::SurfaceMeshContainer() {
-	SetUndestroyable(true);
+    SetUndestroyable(true);
 }
 
 
 SurfaceMeshContainer::~SurfaceMeshContainer() {}
-
 
 
 void SurfaceMeshContainer::Exterminate() {

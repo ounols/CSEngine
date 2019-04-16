@@ -33,9 +33,9 @@ bool DrawableStaticMeshComponent::SetMesh(const SISurface& meshSurface) {
 
 	if (m_meshId.m_vertexSize != -1 || m_meshId.m_vertexBuffer != -1) return false;
 
-	if (meshSurface.m_staticMeshId.m_vertexSize != -1
-		|| meshSurface.m_staticMeshId.m_vertexBuffer != -1) {
-		m_meshId = meshSurface.m_staticMeshId;
+	if (meshSurface.m_meshId.m_vertexSize != -1
+		|| meshSurface.m_meshId.m_vertexBuffer != -1) {
+		m_meshId = meshSurface.m_meshId;
 		return true;
 
 	}
@@ -80,19 +80,25 @@ void DrawableStaticMeshComponent::CreateMeshBuffers(const SISurface& surface) {
 			indexCount * 3 * sizeof(GLushort),
 			&indices[0],
 			GL_STATIC_DRAW);
-
 	}
 
 
 	//Pulling data
-	surface.m_staticMeshId.m_vertexBuffer = vertexBuffer;
-	surface.m_staticMeshId.m_vertexSize = vertexCount;
-	surface.m_staticMeshId.m_indexBuffer = indexBuffer;
-	surface.m_staticMeshId.m_indexSize = indexCount;
+	surface.m_meshId.m_vertexBuffer = vertexBuffer;
+	surface.m_meshId.m_vertexSize = vertexCount;
+	surface.m_meshId.m_indexBuffer = indexBuffer;
+	surface.m_meshId.m_indexSize = indexCount;
 
-	m_meshId = surface.m_staticMeshId;
+	m_meshId = surface.m_meshId;
 
 	//Unbinding
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+}
+
+SComponent* DrawableStaticMeshComponent::Clone(SGameObject* object) {
+    INIT_COMPONENT_CLONE(DrawableStaticMeshComponent, comp);
+
+    comp->m_meshId = m_meshId;
+	return comp;
 }

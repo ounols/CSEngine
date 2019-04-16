@@ -12,6 +12,8 @@ public:
 	void Init() override;
 	void Tick(float elapsedTime) override;
 
+	SComponent* Clone(SGameObject* object) override;
+
 	void SetClassName(std::string name);
 	std::string SGetClassName() const;
 

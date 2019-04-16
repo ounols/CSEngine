@@ -4,15 +4,15 @@ cmake_minimum_required(VERSION 3.4.1)
 
 PROJECT(CSEngine.app)
 SET(CMAKE_VERBOSE_MAKEFILE true)
-SET(CMAKE_CXX_STANDARD 11)
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
+#SET(CMAKE_CXX_STANDARD 11)
+set(CMAKE_BUILD_TYPE Debug)
 
 link_directories(/usr/lib)
 link_directories(/usr/lib32)
 link_directories(/usr/local/lib)
 
-find_package(glfw3 REQUIRED)
-find_package(OpenGL REQUIRED)
+#find_package(glfw3 REQUIRED)
+#find_package(OpenGL REQUIRED)
 
 
 
@@ -27,7 +27,9 @@ find_package(OpenGL REQUIRED)
 file(GLOB CSENGINE_SRC
                         "../../src/*.*"
                         "../../src/*/*.*"
-                        "../../src/*/*/*.*")
+                        "../../src/*/*/*.*"
+                        "../../src/*/*/*/*.*"
+        )
 
 file(GLOB SQUIRREL_SRC
                         "../../External/Squirrel/lib/sqstdlib/*.*"

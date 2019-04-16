@@ -11,6 +11,9 @@ public:
 	void Tick(float elapsedTime) const;
 	
 	void SetScene(Scene* scene);
+
+	Scene* GetCurrentScene() const;
+
 private:
 	Scene* m_scene = nullptr;
 };

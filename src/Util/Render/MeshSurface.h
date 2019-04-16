@@ -2,13 +2,13 @@
 #include "RenderInterfaces.h"
 #include "../Vector.h"
 
-class ObjSurface : public SISurface {
+class MeshSurface : public SISurface {
 public:
-	ObjSurface();
-	ObjSurface(int sizeVert, float* vertices, float* normals);
-	ObjSurface(int sizeVert, float* vertices, float* normals, float* texCoords);
-	ObjSurface(int sizeVert, int sizeIndic, float* vertices, float* normals, float* texCoords, float* indices);
-	~ObjSurface();
+	MeshSurface();
+	MeshSurface(int sizeVert, float* vertices, float* normals);
+	MeshSurface(int sizeVert, float* vertices, float* normals, float* texCoords);
+//	MeshSurface(int sizeVert, int sizeIndic, float* vertices, float* normals, float* texCoords, float* indices);
+	~MeshSurface() override;
 
 	int GetVertexCount() const override;
 	int GetLineIndexCount() const override;
@@ -16,7 +16,13 @@ public:
 	void GenerateVertices(std::vector<float>& vertices, unsigned char flags) const override;
 	void GenerateLineIndices(std::vector<unsigned short>& indices) const override;
 	void GenerateTriangleIndices(std::vector<unsigned short>& indices) const override;
-	static vec3 GenerateTopTriangle(vec3 v0, vec3 v1, vec3 v2);
+
+//    const std::vector<int>& GetJointIDs() const;
+//    void setJointIDs(const std::vector<int>& m_jointIDs);
+//    const std::vector<float>& GetWeights() const;
+//    void setWeights(const std::vector<float>& m_weights);
+
+    static vec3 GenerateTopTriangle(vec3 v0, vec3 v1, vec3 v2);
 	static vec3 GenerateBottomTriangle(vec3 v0, vec3 v1, vec3 v2);
 	static vec3 LerpFilter(vec3 v0, vec3 v1, float kCoff);
 
@@ -24,7 +30,7 @@ public:
 	void Exterminate() override;
 	void Destroy();
 
-	bool MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords = nullptr);
+	bool MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords, float* weights, float* jointIds);
 	bool MakeIndices(int sizeIndic, int* indices);
 
 private:
@@ -34,5 +40,7 @@ private:
 
 	std::vector<float> m_Verts;
 	std::vector<unsigned short> m_Indics;
+//	std::vector<int> m_jointIDs;
+//	std::vector<float> m_weights;
 };
 

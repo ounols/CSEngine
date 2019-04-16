@@ -5,11 +5,14 @@
 #include "../../Manager/SurfaceMeshContainer.h"
 #include "../Matrix.h"
 
-struct GLStaticMeshID {
+struct GLMeshID {
 	int m_vertexBuffer = -1;
 	int m_indexBuffer = -1;
 	int m_vertexSize = -1;
 	int m_indexSize = -1;
+
+	int m_jointId = -1;
+	int m_weight = -1;
 };
 
 
@@ -31,7 +34,7 @@ public:
 	virtual void GenerateTriangleIndices(std::vector<unsigned short>& indices) const = 0;
 	
 public:
-	mutable GLStaticMeshID m_staticMeshId;
+	mutable GLMeshID m_meshId;
 
 };
 
@@ -44,8 +47,8 @@ public:
 	virtual void Render(float elapsedTime) = 0;
 
 protected:
-	GLProgramHandle* handler;
-	bool isRenderActive = true;
+	GLProgramHandle* handler = nullptr;
+	bool isRenderActive = false;
 
 public:
 	friend class RenderContainer;

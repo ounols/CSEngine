@@ -69,3 +69,19 @@ vec3 MaterialComponent::GetSpecularMaterial() const {
 float MaterialComponent::GetShininess() const {
 	return m_shininess;
 }
+
+SComponent* MaterialComponent::Clone(SGameObject* object) {
+    INIT_COMPONENT_CLONE(MaterialComponent, clone);
+
+    clone->m_ambientMaterial = m_ambientMaterial;
+    clone->m_specularMaterial = m_specularMaterial;
+    clone->m_diffuseMaterial = m_diffuseMaterial;
+    clone->m_shininess = m_shininess;
+
+    return clone;
+}
+
+void MaterialComponent::CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
+                                      std::map<SComponent*, SComponent*> lists_comp) {
+    return;
+}

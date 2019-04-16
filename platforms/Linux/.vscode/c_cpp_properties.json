@@ -3,7 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/../../src"
+                "${workspaceFolder}/../../src", "${workspaceFolder}/../../External/Squirrel/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

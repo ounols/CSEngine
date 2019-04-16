@@ -14,6 +14,8 @@ public:
 	void Init() override;
 	void Tick(float elapsedTime) override;
 
+	SComponent* Clone(SGameObject* object) override;
+
 
 	void SetMatrix(mat4 camera, mat4 projection) override;
 	void Render(float elapsedTime) override;
@@ -31,10 +33,10 @@ private:
 private:
 	DrawableStaticMeshComponent* m_mesh;
 	MaterialComponent* m_material;
-	const vec3* m_position;
-	const vec3* m_scale;
-	const vec3* m_rotation;
 
-	
+	bool m_isSkinned = false;
+
+
+    void SetJointMatrix();
 };
 

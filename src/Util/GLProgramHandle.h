@@ -5,29 +5,34 @@
 #include "../Manager/ShaderProgramContainer.h"
 
 #define HANDLE_NULL -1
+#define MAX_LIGHTS 16
+#define MAX_JOINTS 60
 
 struct GLUniformHandles {
 	GLuint Modelview = HANDLE_NULL;
 	GLuint ModelNoCameraMatrix = HANDLE_NULL;
 	GLuint Projection = HANDLE_NULL;
 	GLuint NormalMatrix = HANDLE_NULL;
-	GLuint LightPosition = HANDLE_NULL;
+	GLint LightPosition[MAX_LIGHTS] = { HANDLE_NULL };
 	GLint AmbientMaterial = HANDLE_NULL;
 	GLint SpecularMaterial = HANDLE_NULL;
 	GLint Shininess = HANDLE_NULL;
 	GLint TextureMode = HANDLE_NULL;
-	GLint DiffuseLight = HANDLE_NULL;
-	GLint AmbientLight = HANDLE_NULL;
-	GLint SpecularLight = HANDLE_NULL;
-	GLint LightMode = HANDLE_NULL;
+	GLint DiffuseLight[MAX_LIGHTS] = { HANDLE_NULL };
+	GLint AmbientLight[MAX_LIGHTS] = { HANDLE_NULL };
+	GLint SpecularLight[MAX_LIGHTS] = { HANDLE_NULL };
+	GLint LightMode[MAX_LIGHTS] = { HANDLE_NULL };
 	GLint Interpolation_z = HANDLE_NULL;
-	GLint AttenuationFactor = HANDLE_NULL;
-	GLint IsAttenuation = HANDLE_NULL;
-	GLint LightRadius = HANDLE_NULL;
-	GLint SpotDirection = HANDLE_NULL;
-	GLint SpotExponent = HANDLE_NULL;
-	GLint SpotCutOffAngle = HANDLE_NULL;
-	GLint IsDirectional = HANDLE_NULL;
+	GLint AttenuationFactor[MAX_LIGHTS] = { HANDLE_NULL };
+	GLint IsAttenuation[MAX_LIGHTS] = { HANDLE_NULL };
+	GLint LightRadius[MAX_LIGHTS] = { HANDLE_NULL };
+	GLint SpotDirection[MAX_LIGHTS] = { HANDLE_NULL };
+	GLint SpotExponent[MAX_LIGHTS] = { HANDLE_NULL };
+	GLint SpotCutOffAngle[MAX_LIGHTS] = { HANDLE_NULL };
+	GLint IsDirectional[MAX_LIGHTS] = { HANDLE_NULL };
+	GLint LightsSize = HANDLE_NULL;
+	GLint JointMatrix = { HANDLE_NULL };
+	GLint IsSkinning = HANDLE_NULL;
 };
 
 struct GLAttributeHandles {
@@ -36,6 +41,8 @@ struct GLAttributeHandles {
 	GLint Normal = HANDLE_NULL;
 	GLint DiffuseMaterial = HANDLE_NULL;
 	GLint TextureCoord = HANDLE_NULL;
+	GLint Weight = HANDLE_NULL;
+	GLint JointId = HANDLE_NULL;
 };
 
 class GLProgramHandle : public SObject {

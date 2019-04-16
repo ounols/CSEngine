@@ -7,6 +7,8 @@
 #elif __ANDROID__
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,__VA_ARGS__)
 #include <android/log.h>
+#elif __linux__
+#include <iostream>
 #endif
 
 using namespace CSE;
@@ -53,6 +55,8 @@ void CustomComponent::Init() {
 		m_isError = true;
 #ifdef WIN32
 		OutputDebugString(Sqrat::LastErrorString(Sqrat::DefaultVM::Get()).c_str());
+#elif __linux__
+		std::cout << Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) << '\n';
 #endif
 	}
 
@@ -73,6 +77,8 @@ void CustomComponent::Tick(float elapsedTime) {
 		m_isError = true;
 #ifdef WIN32
 		OutputDebugString(Sqrat::LastErrorString(Sqrat::DefaultVM::Get()).c_str());
+#elif __linux__
+		std::cout << Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) << '\n';
 #endif
 	}
 
@@ -93,6 +99,8 @@ void CustomComponent::RegisterScript() {
 		m_funcSetCSEngine = -1;
 #ifdef WIN32
 		OutputDebugString(Sqrat::LastErrorString(Sqrat::DefaultVM::Get()).c_str());
+#elif __linux__
+		std::cout << Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) << '\n';
 #endif
 	}
 
@@ -145,6 +153,10 @@ void CustomComponent::Log(const char* log) {
 #elif __ANDROID__
     std::string log_str = "SCEngineScript/" + m_className;
 	LOGD(log_str.c_str(), "%s", log);
+#elif __linux__
+	std::string log_str = "[Log/";
+	log_str.append(m_className + "] : " + log + '\n');
+	std::cout << log_str.c_str();
 #endif
 
 }
@@ -152,4 +164,19 @@ void CustomComponent::Log(const char* log) {
 
 SGameObject* CustomComponent::GetGameObject() const {
 	return gameObject;
+}
+
+SComponent* CustomComponent::Clone(SGameObject* object) {
+	INIT_COMPONENT_CLONE(CustomComponent, clone);
+
+	clone->m_funcSetCSEngine = m_funcSetCSEngine;
+	clone->m_funcInit = m_funcInit;
+	clone->m_funcTick = m_funcTick;
+	clone->m_funcExterminate = m_funcExterminate;
+
+	if(!m_className.empty()) {
+		clone->SetClassName(m_className);
+	}
+
+	return clone;
 }

@@ -1,29 +1,50 @@
 //#version 100
+#define MAX_LIGHTS 16
+
 precision highp float;
 precision highp int;
 
+struct U_LightSource {
+    vec4 u_diffuseLight;
+    vec4 u_ambientLight;
+    vec4 u_specularLight;
+
+    int u_lightMode;
+    int u_isDirectional;
+
+    /**Attenuation Factor**/
+    int u_isAttenuation;
+    vec3 u_attenuationFactor;
+    float u_lightRadius;
+
+};
+
+
+
 //Uniforms
-uniform vec4 u_diffuseLight;
-uniform vec4 u_ambientLight;
-uniform vec4 u_specularLight;
+//uniform vec4 u_diffuseLight;
+//uniform vec4 u_ambientLight;
+//uniform vec4 u_specularLight;
 uniform vec3 u_ambientMaterial;//AmbientMaterial;
 uniform vec3 u_specularMaterial;//SpecularMaterial;
 uniform float u_shininess;
+uniform U_LightSource u_lightSources[MAX_LIGHTS];
+uniform lowp int u_lightsSize;
 
-uniform lowp int u_lightMode;
-uniform lowp int u_isDirectional;
+//uniform lowp int u_lightMode;
+//uniform lowp int u_isDirectional;
 /**Attenuation Factor**/
-uniform lowp int u_isAttenuation;
-uniform vec3 u_attenuationFactor;
-uniform float u_lightRadius;
+//uniform lowp int u_isAttenuation;
+//uniform vec3 u_attenuationFactor;
+//uniform float u_lightRadius;
 
 
 //Varying
 varying mediump vec3 v_eyespaceNormal;//EyespaceNormal;
-varying highp vec3 v_lightPosition;
+varying vec3 v_lightPosition[MAX_LIGHTS];
 varying lowp vec3 v_diffuse;//Diffuse;
 //varying mediump vec2 v_textureCoordOut;
-varying highp float v_distance;
+varying float v_distance[MAX_LIGHTS];
 varying vec3 v_vertPosition;
 
 
@@ -43,61 +64,71 @@ const lowp int MODE_COMPLETE = 123;
 
 
 //Functions
-vec3 calcLightDif();
-vec3 calcLightAmb();
-vec3 calcLightSpec();
-float calcLightAtt();
+vec3 calcLightDif(int index);
+vec3 calcLightAmb(int index);
+vec3 calcLightSpec(int index);
+float calcLightAtt(int index);
 
 
 void main(void) {
 	
 	vec3 color = vec3(c_zero, c_zero, c_zero);
+	vec3 colors[MAX_LIGHTS];
 
-	bool isAtt = u_isDirectional == 0;
+	for(int i = 0; i < u_lightsSize; i++) {
+	    colors[i] = vec3(c_zero, c_zero, c_zero);
 
-	if (u_lightMode == MODE_DIF || u_lightMode == MODE_AMB_DIF || u_lightMode == MODE_DIF_SPEC ||
-		u_lightMode == MODE_COMPLETE) {
-		color += calcLightDif();
+	    bool isAtt = u_lightSources[i].u_isDirectional == 0;
+	    int lightMode = u_lightSources[i].u_lightMode;
+
+        	if (lightMode == MODE_DIF || lightMode == MODE_AMB_DIF || lightMode == MODE_DIF_SPEC ||
+        		lightMode == MODE_COMPLETE) {
+        		colors[i] += calcLightDif(i);
+        	}
+        	if (lightMode == MODE_AMB || lightMode == MODE_AMB_DIF || lightMode == MODE_AMB_SPEC ||
+        		lightMode == MODE_COMPLETE) {
+        		colors[i] += calcLightAmb(i);
+        	}
+        	if (lightMode == MODE_SPEC || lightMode == MODE_DIF_SPEC || lightMode == MODE_AMB_SPEC ||
+        		lightMode == MODE_COMPLETE) {
+        		colors[i] += calcLightSpec(i);
+        	}
+
+        	//Attenuation Factor
+        	colors[i] *= calcLightAtt(i);
 	}
-	if (u_lightMode == MODE_AMB || u_lightMode == MODE_AMB_DIF || u_lightMode == MODE_AMB_SPEC ||
-		u_lightMode == MODE_COMPLETE) {
-		color += calcLightAmb();
-	}
-	if (u_lightMode == MODE_SPEC || u_lightMode == MODE_DIF_SPEC || u_lightMode == MODE_AMB_SPEC ||
-		u_lightMode == MODE_COMPLETE) {
-		color += calcLightSpec();
-	}
 
-	//Attenuation Factor
-	color *= calcLightAtt();
+    for(int i = 0; i < u_lightsSize; i++) {
+        color += colors[i];
+    }
 
 
-	gl_FragColor = vec4(color, 0.8);
+	gl_FragColor = vec4(color, 1.0);
 
 }
 
 // only diffuse light
-vec3 calcLightDif() {
+vec3 calcLightDif(int index) {
 	vec3 N = normalize(v_eyespaceNormal);
-	vec3 L = normalize(v_lightPosition);
+	vec3 L = normalize(v_lightPosition[index]);
 	float df = max(c_zero, dot(N, L));
 
-	return vec3(u_diffuseLight) * v_diffuse * df;
+	return vec3(u_lightSources[index].u_diffuseLight) * v_diffuse * df;
 }
 
 // only ambient light
-vec3 calcLightAmb() {
-	vec3 globalAmbient = vec3(u_ambientLight) * vec3(0.05); // * gl_LightSource[0].ambient
-	vec3 ambient = u_ambientMaterial * vec3(u_ambientLight);
+vec3 calcLightAmb(int index) {
+	vec3 globalAmbient = vec3(u_lightSources[index].u_ambientLight) * vec3(0.05); // * gl_LightSource[0].ambient
+	vec3 ambient = u_ambientMaterial * vec3(u_lightSources[index].u_ambientLight);
 
 	return globalAmbient + ambient;
 }
 
 // only specular light
-vec3 calcLightSpec() {
+vec3 calcLightSpec(int index) {
 
 	vec3 N = normalize(v_eyespaceNormal);
-	vec3 L = normalize(v_lightPosition);
+	vec3 L = normalize(v_lightPosition[index]);
 	vec3 E = vec3(c_zero, c_zero, c_one);
 	vec3 H = normalize(L + E);
 	vec3 R = reflect(-L, N);
@@ -107,27 +138,27 @@ vec3 calcLightSpec() {
 
 	sf = pow(sf, u_shininess);
 
-	return (u_specularMaterial * vec3(u_specularLight) * sf);
+	return (u_specularMaterial * vec3(u_lightSources[index].u_specularLight) * sf);
 }
 
 // only attenuation Factor
-float calcLightAtt() {
+float calcLightAtt(int index) {
 
-	if (u_isAttenuation != 1) return c_one;
+	if (u_lightSources[index].u_isAttenuation != 1) return c_one;
 
-	float dist = v_distance;
+	float dist = v_distance[index];
 	float att = c_one;
 
 	float d = max(dist, c_zero);
 
-	float Kc = u_attenuationFactor.x;
-	float Kl = u_attenuationFactor.y;
-	float Kq = u_attenuationFactor.z;
+	float Kc = u_lightSources[index].u_attenuationFactor.x;
+	float Kl = u_lightSources[index].u_attenuationFactor.y;
+	float Kq = u_lightSources[index].u_attenuationFactor.z;
 
 	att = c_one / (Kc + (Kl * d) + (Kq * d * d));
 
 	if (att == c_one) {
-		float r = u_lightRadius;
+		float r = u_lightSources[index].u_lightRadius;
 		d = max(dist - r, c_zero);
 		//L = normalize(L / dist);
 
@@ -137,7 +168,6 @@ float calcLightAtt() {
 		att = c_one / (denom*denom);
 	}
 
-	//����������� ������� ������ �׳� ����
 	if (att <= c_zero) return c_one;
 
 	return att;

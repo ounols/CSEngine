@@ -234,6 +234,154 @@ public:
 		return m;
 	}
 
+	static Matrix4<T> Invert(Matrix4<T> m) {
+		Matrix4<T> inv;
+		T det;
+
+		inv.MAT4_XX = m.MAT4_YY  * m.MAT4_ZZ * m.MAT4_WW - 
+				m.MAT4_YY  * m.MAT4_ZW * m.MAT4_WZ - 
+				m.MAT4_ZY  * m.MAT4_YZ  * m.MAT4_WW + 
+				m.MAT4_ZY  * m.MAT4_YW  * m.MAT4_WZ +
+				m.MAT4_WY * m.MAT4_YZ  * m.MAT4_ZW - 
+				m.MAT4_WY * m.MAT4_YW  * m.MAT4_ZZ;
+
+		inv.MAT4_YX = -m.MAT4_YX  * m.MAT4_ZZ * m.MAT4_WW + 
+				m.MAT4_YX  * m.MAT4_ZW * m.MAT4_WZ + 
+				m.MAT4_ZX  * m.MAT4_YZ  * m.MAT4_WW - 
+				m.MAT4_ZX  * m.MAT4_YW  * m.MAT4_WZ - 
+				m.MAT4_WX * m.MAT4_YZ  * m.MAT4_ZW + 
+				m.MAT4_WX * m.MAT4_YW  * m.MAT4_ZZ;
+
+		inv.MAT4_ZX = m.MAT4_YX  * m.MAT4_ZY * m.MAT4_WW - 
+				m.MAT4_YX  * m.MAT4_ZW * m.MAT4_WY - 
+				m.MAT4_ZX  * m.MAT4_YY * m.MAT4_WW + 
+				m.MAT4_ZX  * m.MAT4_YW * m.MAT4_WY + 
+				m.MAT4_WX * m.MAT4_YY * m.MAT4_ZW - 
+				m.MAT4_WX * m.MAT4_YW * m.MAT4_ZY;
+
+		inv.MAT4_WX = -m.MAT4_YX  * m.MAT4_ZY * m.MAT4_WZ + 
+				m.MAT4_YX  * m.MAT4_ZZ * m.MAT4_WY +
+				m.MAT4_ZX  * m.MAT4_YY * m.MAT4_WZ - 
+				m.MAT4_ZX  * m.MAT4_YZ * m.MAT4_WY - 
+				m.MAT4_WX * m.MAT4_YY * m.MAT4_ZZ + 
+				m.MAT4_WX * m.MAT4_YZ * m.MAT4_ZY;
+
+		inv.MAT4_XY = -m.MAT4_XY  * m.MAT4_ZZ * m.MAT4_WW + 
+				m.MAT4_XY  * m.MAT4_ZW * m.MAT4_WZ + 
+				m.MAT4_ZY  * m.MAT4_XZ * m.MAT4_WW - 
+				m.MAT4_ZY  * m.MAT4_XW * m.MAT4_WZ - 
+				m.MAT4_WY * m.MAT4_XZ * m.MAT4_ZW + 
+				m.MAT4_WY * m.MAT4_XW * m.MAT4_ZZ;
+
+		inv.MAT4_YY = m.MAT4_XX  * m.MAT4_ZZ * m.MAT4_WW - 
+				m.MAT4_XX  * m.MAT4_ZW * m.MAT4_WZ - 
+				m.MAT4_ZX  * m.MAT4_XZ * m.MAT4_WW + 
+				m.MAT4_ZX  * m.MAT4_XW * m.MAT4_WZ + 
+				m.MAT4_WX * m.MAT4_XZ * m.MAT4_ZW - 
+				m.MAT4_WX * m.MAT4_XW * m.MAT4_ZZ;
+
+		inv.MAT4_ZY = -m.MAT4_XX  * m.MAT4_ZY * m.MAT4_WW + 
+				m.MAT4_XX  * m.MAT4_ZW * m.MAT4_WY + 
+				m.MAT4_ZX  * m.MAT4_XY * m.MAT4_WW - 
+				m.MAT4_ZX  * m.MAT4_XW * m.MAT4_WY - 
+				m.MAT4_WX * m.MAT4_XY * m.MAT4_ZW + 
+				m.MAT4_WX * m.MAT4_XW * m.MAT4_ZY;
+
+		inv.MAT4_WY = m.MAT4_XX  * m.MAT4_ZY * m.MAT4_WZ - 
+				m.MAT4_XX  * m.MAT4_ZZ * m.MAT4_WY - 
+				m.MAT4_ZX  * m.MAT4_XY * m.MAT4_WZ + 
+				m.MAT4_ZX  * m.MAT4_XZ * m.MAT4_WY + 
+				m.MAT4_WX * m.MAT4_XY * m.MAT4_ZZ - 
+				m.MAT4_WX * m.MAT4_XZ * m.MAT4_ZY;
+
+		inv.MAT4_XZ = m.MAT4_XY  * m.MAT4_YZ * m.MAT4_WW - 
+				m.MAT4_XY  * m.MAT4_YW * m.MAT4_WZ - 
+				m.MAT4_YY  * m.MAT4_XZ * m.MAT4_WW + 
+				m.MAT4_YY  * m.MAT4_XW * m.MAT4_WZ + 
+				m.MAT4_WY * m.MAT4_XZ * m.MAT4_YW - 
+				m.MAT4_WY * m.MAT4_XW * m.MAT4_YZ;
+
+		inv.MAT4_YZ = -m.MAT4_XX  * m.MAT4_YZ * m.MAT4_WW + 
+				m.MAT4_XX  * m.MAT4_YW * m.MAT4_WZ + 
+				m.MAT4_YX  * m.MAT4_XZ * m.MAT4_WW - 
+				m.MAT4_YX  * m.MAT4_XW * m.MAT4_WZ - 
+				m.MAT4_WX * m.MAT4_XZ * m.MAT4_YW + 
+				m.MAT4_WX * m.MAT4_XW * m.MAT4_YZ;
+
+		inv.MAT4_ZZ = m.MAT4_XX  * m.MAT4_YY * m.MAT4_WW - 
+				m.MAT4_XX  * m.MAT4_YW * m.MAT4_WY - 
+				m.MAT4_YX  * m.MAT4_XY * m.MAT4_WW + 
+				m.MAT4_YX  * m.MAT4_XW * m.MAT4_WY + 
+				m.MAT4_WX * m.MAT4_XY * m.MAT4_YW - 
+				m.MAT4_WX * m.MAT4_XW * m.MAT4_YY;
+
+		inv.MAT4_WZ = -m.MAT4_XX  * m.MAT4_YY * m.MAT4_WZ + 
+				m.MAT4_XX  * m.MAT4_YZ * m.MAT4_WY + 
+				m.MAT4_YX  * m.MAT4_XY * m.MAT4_WZ - 
+				m.MAT4_YX  * m.MAT4_XZ * m.MAT4_WY - 
+				m.MAT4_WX * m.MAT4_XY * m.MAT4_YZ + 
+				m.MAT4_WX * m.MAT4_XZ * m.MAT4_YY;
+
+		inv.MAT4_XW = -m.MAT4_XY * m.MAT4_YZ * m.MAT4_ZW + 
+				m.MAT4_XY * m.MAT4_YW * m.MAT4_ZZ + 
+				m.MAT4_YY * m.MAT4_XZ * m.MAT4_ZW - 
+				m.MAT4_YY * m.MAT4_XW * m.MAT4_ZZ - 
+				m.MAT4_ZY * m.MAT4_XZ * m.MAT4_YW + 
+				m.MAT4_ZY * m.MAT4_XW * m.MAT4_YZ;
+
+		inv.MAT4_YW = m.MAT4_XX * m.MAT4_YZ * m.MAT4_ZW - 
+				m.MAT4_XX * m.MAT4_YW * m.MAT4_ZZ - 
+				m.MAT4_YX * m.MAT4_XZ * m.MAT4_ZW + 
+				m.MAT4_YX * m.MAT4_XW * m.MAT4_ZZ + 
+				m.MAT4_ZX * m.MAT4_XZ * m.MAT4_YW - 
+				m.MAT4_ZX * m.MAT4_XW * m.MAT4_YZ;
+
+		inv.MAT4_ZW = -m.MAT4_XX * m.MAT4_YY * m.MAT4_ZW + 
+				m.MAT4_XX * m.MAT4_YW * m.MAT4_ZY + 
+				m.MAT4_YX * m.MAT4_XY * m.MAT4_ZW - 
+				m.MAT4_YX * m.MAT4_XW * m.MAT4_ZY - 
+				m.MAT4_ZX * m.MAT4_XY * m.MAT4_YW + 
+				m.MAT4_ZX * m.MAT4_XW * m.MAT4_YY;
+
+		inv.MAT4_WW = m.MAT4_XX * m.MAT4_YY * m.MAT4_ZZ - 
+				m.MAT4_XX * m.MAT4_YZ * m.MAT4_ZY - 
+				m.MAT4_YX * m.MAT4_XY * m.MAT4_ZZ + 
+				m.MAT4_YX * m.MAT4_XZ * m.MAT4_ZY + 
+				m.MAT4_ZX * m.MAT4_XY * m.MAT4_YZ - 
+				m.MAT4_ZX * m.MAT4_XZ * m.MAT4_YY;
+
+		det = m.MAT4_XX * inv.MAT4_XX + m.MAT4_XY * inv.MAT4_YX + m.MAT4_XZ * inv.MAT4_ZX + m.MAT4_XW * inv.MAT4_WX;
+
+		if (det == 0)
+			return Identity();
+
+		det = 1.0 / det;
+
+		Matrix4<T> invOut;
+
+		invOut.MAT4_XX = inv.MAT4_XX * det;
+		invOut.MAT4_XY = inv.MAT4_XY * det;
+		invOut.MAT4_XZ = inv.MAT4_XZ * det;
+		invOut.MAT4_XW = inv.MAT4_XW * det;
+
+		invOut.MAT4_YX = inv.MAT4_YX * det;
+		invOut.MAT4_YY = inv.MAT4_YY * det;
+		invOut.MAT4_YZ = inv.MAT4_YZ * det;
+		invOut.MAT4_YW = inv.MAT4_YW * det;
+
+		invOut.MAT4_ZX = inv.MAT4_ZX * det;
+		invOut.MAT4_ZY = inv.MAT4_ZY * det;
+		invOut.MAT4_ZZ = inv.MAT4_ZZ * det;
+		invOut.MAT4_ZW = inv.MAT4_ZW * det;
+
+		invOut.MAT4_WX = inv.MAT4_WX * det;
+		invOut.MAT4_WY = inv.MAT4_WY * det;
+		invOut.MAT4_WZ = inv.MAT4_WZ * det;
+		invOut.MAT4_WW = inv.MAT4_WW * det;
+
+		return invOut;
+	}
+
 	static Matrix4<T> Frustum(T tLeft, T tRight, T tBottom, T tTop, T tNear, T tFar) {
 		T a = 2 * tNear / (tRight - tLeft);
 		T b = 2 * tNear / (tTop - tBottom);

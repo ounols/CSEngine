@@ -186,6 +186,12 @@ public:
 			z * (1 - t) + v.z * t);
 	}
 
+	static Vector3 Lerp(float t, const Vector3& a, Vector3& b) {
+		return Vector3(a.x * (1 - t) + b.x * t,
+			a.y * (1 - t) + b.y * t,
+			a.z * (1 - t) + b.z * t);
+	}
+
 	const T* Pointer() const {
 		return &x;
 	}
@@ -232,6 +238,13 @@ public:
 			y * (1 - t) + v.y * t,
 			z * (1 - t) + v.z * t,
 			w * (1 - t) + v.w * t);
+	}
+
+	Vector4 Lerp(float t, const Vector4& a, const Vector4& b) const {
+		return Vector4(a.x * (1 - t) + b.x * t,
+			a.y * (1 - t) + b.y * t,
+			a.z * (1 - t) + b.z * t,
+			a.w * (1 - t) + b.w * t);
 	}
 
 	Vector4 operator+(const Vector4& v) const {

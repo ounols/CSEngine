@@ -15,6 +15,11 @@ public:
 	void Init() override;
 	void Tick(float elapsedTime) override;
 
+	SComponent* Clone(SGameObject* object) override;
+
+	void CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
+						   std::map<SComponent*, SComponent*> lists_comp) override;
+
 	mat4 GetCameraMatrix() const {
 		return m_cameraMatrix;
 	}

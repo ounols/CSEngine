@@ -1,22 +1,25 @@
 #pragma once
 #include "SComponent.h"
-#include "../Util/Render/ObjSurface.h"
+#include "Util/Render/MeshSurface.h"
 
 class DrawableStaticMeshComponent : public SComponent {
 public:
 	DrawableStaticMeshComponent();
-	~DrawableStaticMeshComponent();
+	virtual ~DrawableStaticMeshComponent();
 
 	void Init() override;
 	void Tick(float elapsedTime) override;
 	void Exterminate() override;
-	bool SetMesh(const SISurface& meshSurface);
 
-private:
-	void CreateMeshBuffers(const SISurface& surface);
+	SComponent* Clone(SGameObject* object) override;
 
-private:
-	GLStaticMeshID m_meshId;
+	virtual bool SetMesh(const SISurface& meshSurface);
+
+protected:
+	virtual void CreateMeshBuffers(const SISurface& surface);
+
+protected:
+	GLMeshID m_meshId;
 
 public:
 	friend class RenderComponent;
