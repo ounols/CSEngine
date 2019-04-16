@@ -53,7 +53,7 @@ private:
         }
     }
 
-    float saveTopWeights(std::vector<float> topWeightsArray) {
+    float saveTopWeights(std::vector<float>& topWeightsArray) {
         float total = 0;
         for (int i = 0; i < topWeightsArray.size(); i++) {
             topWeightsArray[i] = m_weights.at(i);
@@ -65,7 +65,7 @@ private:
     void refillWeightList(std::vector<float> topWeights, float total) {
         m_weights.clear();
         for (int i = 0; i < topWeights.size(); i++) {
-            m_weights.push_back(std::fminf(topWeights[i] / total, 1));
+            m_weights.push_back(std::fmin(topWeights[i] / total, 1));
         }
     }
 

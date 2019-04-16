@@ -12,8 +12,11 @@ class TestScript extends SCEngineScript {
 		ambient.Set(0.3, 0.3, 0);
 		local diffuse = vec4();
 		diffuse.Set(1, 1, 0.5, 1);
-		materialComp.SetDiffuse(diffuse);
-		materialComp.SetAmbient(ambient);
+		if(materialComp != null) {
+			materialComp.SetDiffuse(diffuse);
+			materialComp.SetAmbient(ambient);
+		}
+
 
 		
 		Log("light component : " + lightComp);			//???? ????????? ???????? ??????? null

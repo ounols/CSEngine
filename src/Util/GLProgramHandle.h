@@ -6,7 +6,7 @@
 
 #define HANDLE_NULL -1
 #define MAX_LIGHTS 16
-#define MAX_JOINTS 50
+#define MAX_JOINTS 60
 
 struct GLUniformHandles {
 	GLuint Modelview = HANDLE_NULL;

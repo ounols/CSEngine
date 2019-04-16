@@ -106,7 +106,8 @@ public:
     mat4 GetLocalMatrix() {
         mat4 mat;
         mat = mat4::Translate(m_position.x, m_position.y, m_position.z);
-        mat *= mat4(m_rotation.ToMatrix());
+        mat = m_rotation.ToMatrix4() * mat;
+
 
         return mat;
     }

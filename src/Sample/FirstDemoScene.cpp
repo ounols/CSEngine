@@ -29,34 +29,35 @@ void FirstDemoScene::Init() {
 	//===============
 
 	//DAE test
-	std::string path = CSE::AssetsPath() + "model.dae";
+	std::string path = CSE::AssetsPath() + "stormtrooper.dae";
 	DAELoader* daeLoader = new DAELoader(path.c_str(), nullptr, DAELoader::ALL);
 
 //	daeLoader->GeneratePrefab();
 
-	SGameObject* aa = new SGameObject();
-
-
-
-	aa->CreateComponent<DrawableSkinnedMeshComponent>();
-	aa->GetComponent<DrawableSkinnedMeshComponent>()->SetMesh(*(daeLoader->GetMesh()));
-	aa->CreateComponent<MaterialComponent>();
-	aa->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 0 });
-	aa->GetComponent<MaterialComponent>()->SetShininess(40);
-
-	aa->CreateComponent<RenderComponent>();
-	aa->GetComponent<RenderComponent>()->SetShaderHandle(0);
-	float scale = 0.07f;
-	aa->GetTransform()->m_scale = vec3{scale, scale, scale};
+//	SGameObject* aa = new SGameObject();
+//
+//
+//
+//	aa->CreateComponent<DrawableStaticMeshComponent>();
+//	aa->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*(daeLoader->GetMesh()));
+//	aa->CreateComponent<MaterialComponent>();
+//	aa->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 0 });
+//	aa->GetComponent<MaterialComponent>()->SetShininess(40);
+//
+//	aa->CreateComponent<RenderComponent>();
+//	aa->GetComponent<RenderComponent>()->SetShaderHandle(0);
+//	float scale = 0.1f;
+//	aa->GetTransform()->m_scale = vec3{scale, scale, scale};
 	// aa->GetTransform()->m_rotation.x = 90.f;
-	aa->GetTransform()->m_position.y = -0.3f;
-	aa->CreateComponent<CustomComponent>();
-	aa->GetComponent<CustomComponent>()->SetClassName("TestScript");
-	aa->SetName("dae mesh");
+//	aa->GetTransform()->m_position.y = -0.3f;
+//	aa->CreateComponent<CustomComponent>();
+//	aa->GetComponent<CustomComponent>()->SetClassName("TestScript");
+//	aa->SetName("dae mesh");
+//	aa->GetComponent<RenderComponent>()->SetIsEnable(false);
 
 	// cube = daeLoader->GetMesh();
 	// cube->SetUndestroyable(false);
-	
+
 
 
 	//Managing Memory Test
@@ -81,8 +82,10 @@ void FirstDemoScene::Init() {
 
 	SGameObject* testing = new SGameObject("root");
 
-	SGameObject* ab = daeLoader->GeneratePrefab()->Clone(vec3{1.f, -0.3f, 0.f}, testing);
-	ab->GetTransform()->m_scale = vec3{ 0.1f, 0.1f, 0.1f };
+	SGameObject* ab = daeLoader->GeneratePrefab()->Clone(vec3{0, -0.4f, 0}, testing);
+	ab->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
+	ab->CreateComponent<CustomComponent>();
+	ab->GetComponent<CustomComponent>()->SetClassName("TestScript");
 	SAFE_DELETE(daeLoader);
 
 	c2 = new SGameObject();
@@ -136,9 +139,9 @@ void FirstDemoScene::Init() {
 
 	d->SetName("light");
 	d->CreateComponent<LightComponent>();
-	d->GetTransform()->m_position = vec3{ 0.f, 5.f, -8.f };
-	d->GetTransform()->m_scale = vec3{ 4.f, 4.f, 4.f };
-	aa->AddChild(d);
+	d->GetTransform()->m_position = vec3{ 2.f, 2.f, -2.f };
+	d->GetTransform()->m_scale = vec3{ 2.f, 2.f, 2.f };
+	ab->AddChild(d);
 	d->GetComponent<LightComponent>()->SetDirection(vec4{ 1.f, 0.5f, 1.f, 1.0f });
 	d->GetComponent<LightComponent>()->SetColorAmbient(vec4{ 0.0f, 0.0f, 0.0f, 1 });
 	d->GetComponent<LightComponent>()->DisableSpecular = false;
@@ -155,7 +158,7 @@ void FirstDemoScene::Init() {
 
 	a->CreateComponent<CameraComponent>();
 	a->GetTransform()->m_position = vec3{ 0, 0, 3.f };
-	a->GetComponent<CameraComponent>()->SetTarget(ab);
+	a->GetComponent<CameraComponent>()->SetTarget(d);
 	//===============
 }
 

@@ -4,7 +4,7 @@ precision highp int;
 
 #define MAX_LIGHTS 16
 #define MAX_WEIGHTS 3
-#define MAX_JOINTS 50
+#define MAX_JOINTS 60
 
 struct U_LightSource {
     vec4 u_diffuseLight;
@@ -59,8 +59,29 @@ const lowp float c_zero = 0.0;
 const lowp float c_one = 1.0;
 
 void main(void) {
-	
-	v_eyespaceNormal = u_normalMatrix * a_normal;
+	vec4 position_final = vec4(0.0);
+	vec4 normal_final = vec4(0.0);
+
+	//skinning
+    if(u_isSkinning == 1) {
+        vec4 totalNormal = vec4(0.0);
+
+        for(int i=0; i<MAX_WEIGHTS; i++) {
+            mat4 jointTransform = u_jointMatrix[int(a_jointIndices[i])];
+            vec4 posePosition = jointTransform * a_position;
+            position_final += posePosition * a_weights[i];
+
+            vec4 worldNormal = jointTransform * vec4(a_normal, 0.0);
+            normal_final += worldNormal * a_weights[i];
+        }
+        position_final = vec4(position_final.xyz, 1.0);
+    } else {
+        position_final = a_position;
+        normal_final = vec4(a_normal, 0);
+    }
+
+
+	v_eyespaceNormal = u_normalMatrix * normal_final.xyz;
 	v_diffuse = a_diffuseMaterial;
 
 
@@ -72,7 +93,7 @@ void main(void) {
         	if(u_lightSources[i].u_isDirectional == 1) {
         		positionLight = vec4(c_zero, c_zero, c_zero, c_one);
         	}else {
-        		positionLight = u_modelViewNoCameraMatrix * a_position;
+        		positionLight = u_modelViewNoCameraMatrix * position_final;
         	}
 
         	//for positional light
@@ -87,42 +108,7 @@ void main(void) {
 	//v_vertPosition = vec3(vertPosition) / vertPosition.w;
 
 
-    if(u_isSkinning == 1) {
-        vec4 totalLocalPos = vec4(0.0);
-        vec4 totalNormal = vec4(0.0);
-
-        for(int i=0; i<MAX_WEIGHTS; i++) {
-            mat4 jointTransform = u_jointMatrix[int(a_jointIndices[i])];
-            vec4 posePosition = jointTransform * vec4(a_position.xyz, 1.0);
-            totalLocalPos += posePosition * a_weights[i];
-
-            vec4 worldNormal = jointTransform * vec4(a_normal, 0.0);
-            totalNormal += worldNormal * a_weights[i];
-            v_eyespaceNormal = u_normalMatrix * totalNormal.xyz;
-        }
-
-        gl_Position = u_projectionMatrix * u_modelViewMatrix * vec4(totalLocalPos.xyz, 1.0);
-    }
-	else {
-		//vertex position
-    	gl_Position = u_projectionMatrix * u_modelViewMatrix * a_position;
-	}
+    //vertex position
+    gl_Position = u_projectionMatrix * u_modelViewMatrix * position_final;
 
 }
-
-//if(u_isSkinning == 1) {
-//        vec4 totalLocalPos = vec4(0.0);
-//        vec4 totalNormal = vec4(0.0);
-//
-//        for(int i=0; i<MAX_WEIGHTS; i++) {
-//            mat4 jointTransform = u_jointMatrix[int(a_jointIndices[i])];
-//            vec4 posePosition = jointTransform * vec4(a_position.xyz, 1.0);
-//            totalLocalPos += posePosition * a_weights[i];
-//
-//            vec4 worldNormal = jointTransform * vec4(a_normal, 0.0);
-//            totalNormal += worldNormal * a_weights[i];
-//            v_eyespaceNormal = u_normalMatrix * totalNormal.xyz;
-//        }
-//
-//        gl_Position = u_projectionMatrix * u_modelViewMatrix * vec4(totalLocalPos.xyz, 1.0);
-//    }

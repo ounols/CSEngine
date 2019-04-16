@@ -6,7 +6,7 @@
 #include "DAEAnimationLoader.h"
 #include "../MoreString.h"
 
-const mat4 CORRECTION = mat4::RotateX(90) /*mat4::Identity()*/;
+const mat4 CORRECTION = /*mat4::RotateX(90)*/ mat4::Identity();
 
 
 DAEAnimationLoader::DAEAnimationLoader() {
@@ -54,7 +54,7 @@ void DAEAnimationLoader::LoadAnimation() {
 
 std::string DAEAnimationLoader::findRootJointName() {
     XNode skeleton = m_joint.getChild("visual_scene").getNodeByAttribute("node", "id", "Armature");
-    return skeleton.getChild("node").getAttribute("id").toString();
+    return skeleton.getChild("node").getAttribute("id").value;
 }
 
 std::vector<float> DAEAnimationLoader::getKeyTimes() {
@@ -103,12 +103,12 @@ void DAEAnimationLoader::processTransforms(std::string jointName, std::vector<fl
         }
 
         mat4 transform = mat4(&matrixData[0]);
+        transform = transform.Transposed();
 
         if (root) {
             //because up axis in Blender is different to up axis in game
             transform *= CORRECTION;
         }
-//        keyFrames[i].addJointTransform(new JointTransformData(jointName, transform));
 
         keyFrames[i]->jointTransforms.push_back(new JointTransformData(jointName, transform));
     }

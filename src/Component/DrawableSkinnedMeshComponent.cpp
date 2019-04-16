@@ -76,12 +76,14 @@ bool DrawableSkinnedMeshComponent::AttachJointMatrix(const GLProgramHandle* hand
     std::vector<float> result;
 
     for(mat4 matrix : joints) {
-        for(int i = 0; i < 16; i++)
+        for(int i = 0; i < 16; i++) {
             result.push_back(matrix.Pointer()[i]);
 
+        }
     }
 
     glUniformMatrix4fv(handle->Uniforms.JointMatrix, MAX_JOINTS, 0, &result[0]);
+
     return true;
 }
 

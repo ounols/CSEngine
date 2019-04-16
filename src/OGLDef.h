@@ -4,6 +4,7 @@
 
 #include <Windows.h>
 #include <gl/glew.h>
+#include <iostream>
 
 
 #elif __ANDROID__
@@ -18,5 +19,17 @@
 
 // #include <GL/glew.h>
 #include <GLES2/gl2.h>
+#include <iostream>
 
 #endif
+
+static void checkGlError(const char* op) {
+    int error = glGetError();
+    if(error != GL_NO_ERROR) {
+#ifdef __ANDROID__
+
+#else
+      std::cout << op << ": glError " << error << '\n';
+#endif
+    }
+}

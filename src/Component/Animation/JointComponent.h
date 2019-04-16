@@ -31,8 +31,11 @@ public:
     }
     void calcInverseBindTransform(mat4 parentTransform);
 
+    void SetBindLocalMatrix(mat4 mat);
+
 private:
     int m_id;
     mat4 m_animatedMatrix;
     mat4 m_inverseTransformMatrix;
+    mat4 m_localBindMatrix;
 };

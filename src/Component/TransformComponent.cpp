@@ -62,7 +62,7 @@ mat4 TransformComponent::GetFinalMatrix() const {
     mat4 translation = mat4::Translate(m_position.x, m_position.y, m_position.z);
     //юс╫ц rotation
     // mat4 rotationY = mat4::RotateY(m_rotation.y);
-    mat4 rotation = mat4(m_rotation.ToMatrix());
+    mat4 rotation = mat4(m_rotation.ToMatrix3());
     // vec3 rotation_vec = m_rotation.ToEulerAngle();
     // mat4 rotation = mat4::RotateX(rotation_vec.x) * mat4::RotateY(rotation_vec.y) * mat4::RotateZ(rotation_vec.z);
 

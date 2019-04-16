@@ -6,7 +6,7 @@
 #include "../../Component/RenderComponent.h"
 
 
-const mat4 CORRECTION = mat4::RotateX(90) /*mat4::Identity()*/;
+const mat4 CORRECTION = /*mat4::RotateX(90)*/ mat4::Identity();
 
 
 DAELoader::DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type) {
@@ -422,6 +422,8 @@ SPrefab* DAELoader::GeneratePrefab() {
 //    mesh_root->GetComponent<RenderComponent>()->SetIsEnable(false);
 
     mesh_root->CreateComponent<MaterialComponent>();
+    mesh_root->GetComponent<MaterialComponent>()->SetDiffuseMaterial(vec4{ 0.7f, 0.6f, 1, 1 });
+    mesh_root->GetComponent<MaterialComponent>()->SetShininess(40);
 
     SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,
                                                                        m_animationLoader->GetAnimation());

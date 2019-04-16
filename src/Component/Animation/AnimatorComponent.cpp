@@ -44,8 +44,7 @@ void AnimatorComponent::PlayAnimation(Animation* animation) {
 }
 
 void AnimatorComponent::UpdateAnimationTime(float elapsedTime) {
-//    m_animationTime += elapsedTime - m_startTime;
-    m_animationTime += 0.01f;
+    m_animationTime += (elapsedTime - m_startTime) / 1000.f;
     float length = m_currentAnimation->GetLength();
 
     if(m_animationTime > length) {
@@ -67,13 +66,13 @@ void AnimatorComponent::applyPoseToJoints(std::map<std::string, mat4>& currentPo
                                           mat4 parentTransform) {
     SGameObject* object = joint->GetGameObject();
     mat4 currentLocalTransform = currentPose[object->GetName()];
-    mat4 currentTransform = parentTransform * currentLocalTransform;
+    mat4 currentTransform = currentLocalTransform * parentTransform;
     for (auto child : object->GetChildren()) {
         auto joint_component = child->GetComponent<JointComponent>();
         if(joint_component != nullptr)
             applyPoseToJoints(currentPose, joint_component, currentTransform);
     }
-    currentTransform *= joint->GetInverseTransformMatrix();
+    currentTransform = joint->GetInverseTransformMatrix() * currentTransform;
     joint->SetAnimationMatrix(currentTransform);
 }
 
@@ -106,7 +105,7 @@ std::map<std::string, mat4> AnimatorComponent::InterpolatePoses(KeyFrame* previo
     for (const auto& frame : previousFrame->GetJointKeyFrames()) {
         const auto jointName = frame.first;
         JointTransform* previousTransform = frame.second;
-        JointTransform* nextTransform = nextFrame->GetJointKeyFrames().at(jointName);
+        JointTransform* nextTransform = nextFrame->GetJointKeyFrames()[jointName];
         JointTransform currentTransform = JointTransform::Interpolate(t, *previousTransform, *nextTransform);
         currentPose[jointName] = currentTransform.GetLocalMatrix();
     }

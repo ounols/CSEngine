@@ -11,7 +11,7 @@ class directionalLight extends SCEngineScript {
     function Tick(elapsedTime) {
         count += 0.01;
         local direction = vec4();
-//        local a = sin(count);
+        local a = sin(count);
         direction.Set(sin(count), cos(count), 0, 1);
         lightComp.SetDirection(direction);
     }

@@ -2,8 +2,6 @@
 // Created by ounols on 19. 2. 9.
 //
 
-#include <Component/MaterialComponent.h>
-#include <Component/RenderComponent.h>
 #include "../../Animation/Joint.h"
 #include "../../../Component/Animation/JointComponent.h"
 #include "../../../Component/Animation/AnimatorComponent.h"
@@ -23,22 +21,9 @@ SGameObject* DAEConvertSGameObject::CreateJoints(SGameObject* parent, Joint* dat
     if (parent == nullptr) return nullptr;
 
     SGameObject* jointObject = new SGameObject(data->GetName());
-    jointObject->GetComponent<TransformComponent>()->SetMatrix(data->GetBindLocalTransform());
     JointComponent* joint = jointObject->CreateComponent<JointComponent>();
     joint->SetID(data->GetIndex());
-    joint->SetAnimationMatrix(data->GetBindLocalTransform());
-
-    //============
-    SGameObject* joint_render = new SGameObject(data->GetName() + "_renderer");
-    jointObject->AddChild(joint_render);
-    joint_render->GetTransform()->m_scale = vec3{ 4, 4, 4 };
-    joint_render->CreateComponent<DrawableStaticMeshComponent>();
-    joint_render->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*(ResMgr::getInstance()->GetSurfaceMesh(1)));
-    joint_render->CreateComponent<MaterialComponent>();
-    joint_render->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
-    joint_render->CreateComponent<RenderComponent>();
-    joint_render->GetComponent<RenderComponent>()->SetShaderHandle(0);
-    //============
+    joint->SetBindLocalMatrix(data->GetBindLocalTransform());
 
     for (Joint* child : data->GetChildren()) {
         CreateJoints(jointObject, child);
