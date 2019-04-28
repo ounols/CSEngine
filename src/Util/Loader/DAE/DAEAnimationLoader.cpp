@@ -2,9 +2,9 @@
 // Created by ounols on 19. 3. 31.
 //
 
-#include "../../MacroDef.h"
+#include "../../../MacroDef.h"
 #include "DAEAnimationLoader.h"
-#include "../MoreString.h"
+#include "../../MoreString.h"
 
 const mat4 CORRECTION = /*mat4::RotateX(90)*/ mat4::Identity();
 

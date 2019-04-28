@@ -5,6 +5,7 @@
 #include "SPrefabContainer.h"
 #include "AnimationContainer.h"
 #include "CameraMgr.h"
+#include "TextureContainer.h"
 
 IMPLEMENT_SINGLETON(ResMgr);
 
@@ -27,6 +28,7 @@ void ResMgr::Init() {
     m_containers.push_back(new SkeletonContainer());
     m_containers.push_back(new SPrefabContainer());
     m_containers.push_back(new AnimationContainer());
+    m_containers.push_back(new TextureContainer());
 
 }
 

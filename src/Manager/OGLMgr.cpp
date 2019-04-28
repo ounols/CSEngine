@@ -199,6 +199,7 @@ void OGLMgr::AttachProgramHandle(int shaderID) {
 
     gProgramhandle->Uniforms.LightsSize = glGetUniformLocation(program, "u_lightsSize");
     gProgramhandle->Uniforms.IsSkinning = glGetUniformLocation(program, "u_isSkinning");
+    gProgramhandle->Uniforms.TextureSampler2D = glGetUniformLocation(program, "u_sampler_2d");
 
 
     for(int i = 0; i < MAX_LIGHTS; i++) {
@@ -294,6 +295,8 @@ void OGLMgr::Render(float elapsedTime) {
     ////VBO 언바인딩
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    glEnable(GL_TEXTURE_2D);
 
 
 }

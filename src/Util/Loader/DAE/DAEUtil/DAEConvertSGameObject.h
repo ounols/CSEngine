@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "../../Render/DAEAnimationLoader.h"
-#include "../../../Object/SGameObject.h"
+#include "../../../Animation/Joint.h"
+#include "../DAEAnimationLoader.h"
+#include "../../../../Object/SGameObject.h"
 
 class KeyFrame;
 class JointTransform;

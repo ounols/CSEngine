@@ -22,28 +22,20 @@ struct U_LightSource {
 
 
 //Uniforms
-//uniform vec4 u_diffuseLight;
-//uniform vec4 u_ambientLight;
-//uniform vec4 u_specularLight;
 uniform vec3 u_ambientMaterial;//AmbientMaterial;
 uniform vec3 u_specularMaterial;//SpecularMaterial;
 uniform float u_shininess;
 uniform U_LightSource u_lightSources[MAX_LIGHTS];
 uniform lowp int u_lightsSize;
+uniform sampler2D u_sampler_2d;
 
-//uniform lowp int u_lightMode;
-//uniform lowp int u_isDirectional;
-/**Attenuation Factor**/
-//uniform lowp int u_isAttenuation;
-//uniform vec3 u_attenuationFactor;
-//uniform float u_lightRadius;
 
 
 //Varying
 varying mediump vec3 v_eyespaceNormal;//EyespaceNormal;
 varying vec3 v_lightPosition[MAX_LIGHTS];
 varying lowp vec3 v_diffuse;//Diffuse;
-//varying mediump vec2 v_textureCoordOut;
+varying mediump vec2 v_textureCoordOut;
 varying float v_distance[MAX_LIGHTS];
 varying vec3 v_vertPosition;
 
@@ -102,8 +94,9 @@ void main(void) {
         color += colors[i];
     }
 
+    lowp vec3 texture_2d = texture2D(u_sampler_2d, v_textureCoordOut).xyz;
 
-	gl_FragColor = vec4(color, 1.0);
+	gl_FragColor = vec4(color, 1.0) * vec4(texture_2d, 1.0);
 
 }
 

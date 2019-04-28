@@ -6,7 +6,7 @@
 
 #include <vector>
 #include <string>
-#include "../../../MacroDef.h"
+#include "../../../../MacroDef.h"
 
 class SkinningData {
 public:

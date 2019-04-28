@@ -5,7 +5,7 @@
 #pragma once
 
 
-#include "../Matrix.h"
+#include "../../Matrix.h"
 #include "../XML/XML.h"
 
 struct JointTransformData {

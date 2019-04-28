@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../../Object/SPrefab.h"
+#include "Object/SPrefab.h"
 #include "DAEUtil/VertexSkinData.h"
 #include "DAEUtil/SkinningData.h"
-#include "Util/Animation/Skeleton.h"
+#include "../../Animation/Skeleton.h"
 #include "../XML/XML.h"
 #include "DAEUtil/Vertex.h"
-#include "MeshSurface.h"
+#include "../../Render/MeshSurface.h"
 #include "DAEAnimationLoader.h"
 
 class DAELoader {
@@ -19,7 +19,8 @@ public:
 
     ~DAELoader();
 
-    void Load(const char* path, LOAD_TYPE type);
+    void Load(const char* path, LOAD_TYPE type, const char* texture_path = nullptr);
+    void LoadTexture(const char* filePath);
 
     MeshSurface* GetMesh() const {
         return m_obj;
@@ -44,6 +45,8 @@ private:
     void ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWeight);
 
     void ReadNormals(XNode data);
+
+    void ReadUVs(XNode data);
 
     void AssembleVertices(XNode data);
 
@@ -85,6 +88,7 @@ private:
 
     std::vector<Vertex*> m_vertices;
     std::vector<vec3> m_normals;
+    std::vector<vec2> m_texUVs;
     std::vector<int> m_indices;
 
     std::vector<float> m_f_vertices;
@@ -104,5 +108,6 @@ private:
     bool m_isSkinning = false;
 
     std::string m_name;
+    int m_texture_id = -1;
 
 };

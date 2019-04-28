@@ -17,7 +17,7 @@ struct GLUniformHandles {
 	GLint AmbientMaterial = HANDLE_NULL;
 	GLint SpecularMaterial = HANDLE_NULL;
 	GLint Shininess = HANDLE_NULL;
-	GLint TextureMode = HANDLE_NULL;
+	GLint TextureSampler2D = HANDLE_NULL;
 	GLint DiffuseLight[MAX_LIGHTS] = { HANDLE_NULL };
 	GLint AmbientLight[MAX_LIGHTS] = { HANDLE_NULL };
 	GLint SpecularLight[MAX_LIGHTS] = { HANDLE_NULL };

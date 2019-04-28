@@ -26,6 +26,10 @@ void MaterialComponent::AttachMaterials(const GLProgramHandle* handle) const {
 	glVertexAttrib4fv(handle->Attributes.DiffuseMaterial, m_diffuseMaterial.Pointer());
 	glUniform1f(handle->Uniforms.Shininess, m_shininess);
 
+	if(m_texture != nullptr) {
+		m_texture->Bind(handle);
+	}
+
 }
 
 
@@ -47,7 +51,9 @@ void MaterialComponent::SetDiffuseMaterial(vec4 diffuse_material) {
 	m_diffuseMaterial = diffuse_material;
 }
 
-
+void MaterialComponent::SetTexture(STexture* texture) {
+	m_texture = texture;
+}
 
 vec4 MaterialComponent::GetDiffuseMaterial() const {
 	return m_diffuseMaterial;
@@ -70,6 +76,10 @@ float MaterialComponent::GetShininess() const {
 	return m_shininess;
 }
 
+STexture* MaterialComponent::GetTexture() const {
+	return m_texture;
+}
+
 SComponent* MaterialComponent::Clone(SGameObject* object) {
     INIT_COMPONENT_CLONE(MaterialComponent, clone);
 
@@ -77,6 +87,7 @@ SComponent* MaterialComponent::Clone(SGameObject* object) {
     clone->m_specularMaterial = m_specularMaterial;
     clone->m_diffuseMaterial = m_diffuseMaterial;
     clone->m_shininess = m_shininess;
+    clone->m_texture = m_texture;
 
     return clone;
 }

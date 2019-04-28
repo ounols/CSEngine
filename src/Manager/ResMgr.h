@@ -40,6 +40,8 @@ public:
     template<class CONTAINER, class TYPE>
     TYPE* GetObject(int id) const;
 
+    template<class CONTAINER, class TYPE>
+    int GetID(TYPE* object) const;
 
     template<class CONTAINER, class TYPE>
     int GetSize() const;
@@ -102,6 +104,15 @@ TYPE* ResMgr::GetObject(int id) const {
     }
 
     return nullptr;
+}
+
+template<class CONTAINER, class TYPE>
+int ResMgr::GetID(TYPE* object) const {
+    for (auto container : m_containers) {
+        if (dynamic_cast<CONTAINER*>(container)) {
+            return static_cast<SContainer<TYPE*>*>(container)->GetID(object);
+        }
+    }
 }
 
 

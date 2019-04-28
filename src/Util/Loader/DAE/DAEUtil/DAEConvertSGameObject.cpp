@@ -2,11 +2,11 @@
 // Created by ounols on 19. 2. 9.
 //
 
-#include "../../Animation/Joint.h"
-#include "../../../Component/Animation/JointComponent.h"
-#include "../../../Component/Animation/AnimatorComponent.h"
-#include "../../../Component/TransformComponent.h"
 #include "DAEConvertSGameObject.h"
+#include "../../../Animation/Joint.h"
+#include "../../../../Component/Animation/JointComponent.h"
+#include "../../../../Component/Animation/AnimatorComponent.h"
+#include "../../../../Component/TransformComponent.h"
 
 DAEConvertSGameObject::DAEConvertSGameObject() {
 

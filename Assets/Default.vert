@@ -23,12 +23,12 @@ struct U_LightSource {
 
 
 // Attributes
-attribute vec4 a_position;//Position;
+attribute vec4 a_position;
 attribute vec3 a_normal;
 attribute vec3 a_diffuseMaterial;
 attribute vec3 a_jointIndices;
 attribute vec3 a_weights;
-//attribute vec2 a_textureCoordIn;
+attribute vec2 a_textureCoordIn;
 
 // Uniforms
 uniform mat4 u_projectionMatrix;//Projection;
@@ -49,7 +49,7 @@ uniform lowp int u_lightsSize;
 varying vec3 v_eyespaceNormal;//EyespaceNormal
 varying vec3 v_diffuse;//Diffuse;
 varying vec3 v_lightPosition[MAX_LIGHTS];
-//varying vec2 v_textureCoordOut;
+varying vec2 v_textureCoordOut;
 varying float v_distance[MAX_LIGHTS];
 //varying vec3 v_vertPosition;
 
@@ -83,6 +83,7 @@ void main(void) {
 
 	v_eyespaceNormal = u_normalMatrix * normal_final.xyz;
 	v_diffuse = a_diffuseMaterial;
+	v_textureCoordOut = a_textureCoordIn;
 
 
     for(int i = 0; i < u_lightsSize; i++) {
