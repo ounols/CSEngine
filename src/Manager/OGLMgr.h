@@ -12,8 +12,6 @@ public:
 	void setBuffers();
 	void setupEGLGraphics(GLuint width, GLuint height);
 
-	static GLuint createProgram(const GLchar* vertexSource, const GLchar* fragmentSource);
-	static GLuint createProgramfromFile(const GLchar* vertexPath, const GLchar* fragmentPath);
 	static void AttachProgramHandle(int shaderID);
 	void setVertexShader(GLchar* vertexSource);
 	void setFragmentShader(GLchar* fragmentSource);
@@ -24,7 +22,6 @@ public:
 	void releaseBuffers();
 
 private:
-	static GLuint loadShader(GLenum shaderType, const char *pSource);
 	void setProjectionRatio();
 
 private:

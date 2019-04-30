@@ -3,6 +3,7 @@
 #include "../Util/GLProgramHandle.h"
 #include "../Util/AssetsDef.h"
 #include "CameraMgr.h"
+#include "../Util/Render/ShaderUtil.h"
 
 #ifdef __linux__
 
@@ -14,8 +15,8 @@ using namespace CSE;
 
 OGLMgr::OGLMgr() : m_projectionRatio(-1), m_programId(-1) {
 
-    m_vertexShader = OpenAssetsTxtFile(AssetsPath() + "Default.vert");
-    m_fragmentShader = OpenAssetsTxtFile(AssetsPath() + "Default.frag");
+    m_vertexShader = OpenAssetsTxtFile(AssetsPath() + "PBR.vert");
+    m_fragmentShader = OpenAssetsTxtFile(AssetsPath() + "PBR.frag");
 
 }
 
@@ -27,23 +28,8 @@ OGLMgr::~OGLMgr() {
 
 void OGLMgr::setShaderProgram(int id = HANDLE_NULL) {
 
-    GLProgramHandle* gProgramhandle;
-
-    if (id == HANDLE_NULL) {
-        //기본값 쉐이더 적용
-        gProgramhandle = new GLProgramHandle();
-        m_programId = RESMGR->GetSize<ShaderProgramContainer, GLProgramHandle>() - 1;
-
-        gProgramhandle->Program = createProgram(m_vertexShader.c_str(), m_fragmentShader.c_str());
-        if (!gProgramhandle->Program) {
-            return;
-        }
-    } else {
-        //커스텀 쉐이더 적용
-        gProgramhandle = RESMGR->getShaderProgramHandle(id);
-        m_programId = id;
-    }
-
+    GLProgramHandle* gProgramhandle = ShaderUtil::CreateProgramHandle(m_vertexShader.c_str(), m_fragmentShader.c_str());
+    m_programId = ResMgr::getInstance()->GetID<ShaderProgramContainer, GLProgramHandle>(gProgramhandle);
     //const auto m_program = gProgramhandle->Program;
 
     AttachProgramHandle(m_programId);
@@ -102,72 +88,6 @@ void OGLMgr::setupEGLGraphics(GLuint width, GLuint height) {
 }
 
 
-GLuint OGLMgr::createProgram(const GLchar* vertexSource, const GLchar* fragmentSource) {
-
-
-    GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vertexSource);
-    if (!vertexShader) {
-        return 0;
-    }
-
-    GLuint pixelShader = loadShader(GL_FRAGMENT_SHADER, fragmentSource);
-    if (!pixelShader) {
-        return 0;
-    }
-
-    GLuint program = glCreateProgram();
-
-    if (program) {
-
-        //쉐이더를 attach 합니다.
-        glAttachShader(program, vertexShader);
-        glAttachShader(program, pixelShader);
-        glLinkProgram(program);
-
-        GLint linkStatus = GL_FALSE;
-        glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
-        if (linkStatus != GL_TRUE) {
-
-            GLint bufLength = 0;
-            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufLength);
-
-            if (bufLength) {
-
-                auto buf = static_cast<char*>(malloc(bufLength));
-
-                if (buf) {
-
-                    glGetProgramInfoLog(program, bufLength, NULL, buf);
-                    std::cout << "Could not link program:\n" << buf << '\n';
-                    //LOGE("Could not link program:\n%s\n", buf);
-                    free(buf);
-
-                }
-            }
-
-            glDeleteProgram(program);
-            program = 0;
-
-        }
-
-        glDetachShader(program, vertexShader);
-        glDetachShader(program, pixelShader);
-
-    }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(pixelShader);
-
-    return program;
-
-}
-
-
-GLuint OGLMgr::createProgramfromFile(const GLchar* vertexPath, const GLchar* fragmentPath) {
-
-    return 0;
-}
-
 
 void OGLMgr::AttachProgramHandle(int shaderID) {
 
@@ -179,90 +99,51 @@ void OGLMgr::AttachProgramHandle(int shaderID) {
 
     glUseProgram(program);
 
-    gProgramhandle->Attributes.Position = glGetAttribLocation(program, "a_position");
-    gProgramhandle->Attributes.Normal = glGetAttribLocation(program, "a_normal");
-    gProgramhandle->Attributes.DiffuseMaterial = glGetAttribLocation(program, "a_diffuseMaterial");
-    gProgramhandle->Attributes.TextureCoord = glGetAttribLocation(program, "a_textureCoordIn");
-    gProgramhandle->Attributes.Weight = glGetAttribLocation(program, "a_weights");
-    gProgramhandle->Attributes.JointId = glGetAttribLocation(program, "a_jointIndices");
+//    gProgramhandle->Attributes.Position = glGetAttribLocation(program, "a_position");
+    gProgramhandle->AttributeLocation(gProgramhandle->Attributes.Position, "a_position");
+    gProgramhandle->AttributeLocation(gProgramhandle->Attributes.Normal, "a_normal");
+    gProgramhandle->AttributeLocation(gProgramhandle->Attributes.DiffuseMaterial, "a_diffuseMaterial");
+    gProgramhandle->AttributeLocation(gProgramhandle->Attributes.TextureCoord, "a_textureCoordIn");
+    gProgramhandle->AttributeLocation(gProgramhandle->Attributes.Weight, "a_weights");
+    gProgramhandle->AttributeLocation(gProgramhandle->Attributes.JointId, "a_jointIndices");
 
 
-    gProgramhandle->Uniforms.Projection = glGetUniformLocation(program, "u_projectionMatrix");
-    gProgramhandle->Uniforms.ModelNoCameraMatrix = glGetUniformLocation(program, "u_modelViewNoCameraMatrix");
-    gProgramhandle->Uniforms.Modelview = glGetUniformLocation(program, "u_modelViewMatrix");
-    gProgramhandle->Uniforms.NormalMatrix = glGetUniformLocation(program, "u_normalMatrix");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.Projection, "u_projectionMatrix");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.ModelNoCameraMatrix, "u_modelViewNoCameraMatrix");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.Modelview, "u_modelViewMatrix");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.NormalMatrix, "u_normalMatrix");
 
-    gProgramhandle->Uniforms.AmbientMaterial = glGetUniformLocation(program, "u_ambientMaterial");
-    gProgramhandle->Uniforms.SpecularMaterial = glGetUniformLocation(program, "u_specularMaterial");
-    gProgramhandle->Uniforms.Shininess = glGetUniformLocation(program, "u_shininess");
-    gProgramhandle->Uniforms.Interpolation_z = glGetUniformLocation(program, "u_interpolation_z");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.AmbientMaterial, "u_ambientMaterial");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.SpecularMaterial, "u_specularMaterial");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.Shininess, "u_shininess");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.Interpolation_z, "u_interpolation_z");
 
-    gProgramhandle->Uniforms.LightsSize = glGetUniformLocation(program, "u_lightsSize");
-    gProgramhandle->Uniforms.IsSkinning = glGetUniformLocation(program, "u_isSkinning");
-    gProgramhandle->Uniforms.TextureSampler2D = glGetUniformLocation(program, "u_sampler_2d");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.LightsSize, "u_lightsSize");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.IsSkinning, "u_isSkinning");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.TextureSampler2D, "u_sampler_2d");
 
 
     for(int i = 0; i < MAX_LIGHTS; i++) {
-        gProgramhandle->Uniforms.LightPosition[i] = glGetUniformLocation(program, ("u_lightPosition[" + std::to_string(i) +"]").c_str());
-        gProgramhandle->Uniforms.DiffuseLight[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_diffuseLight").c_str());
-        gProgramhandle->Uniforms.AmbientLight[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_ambientLight").c_str());
-        gProgramhandle->Uniforms.SpecularLight[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_specularLight").c_str());
+        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.LightPosition[i], ("u_lightPosition[" + std::to_string(i) +"]").c_str());
+        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.DiffuseLight[i], ("u_lightSources[" + std::to_string(i) +"].u_diffuseLight").c_str());
+        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.AmbientLight[i], ("u_lightSources[" + std::to_string(i) +"].u_ambientLight").c_str());
+        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.SpecularLight[i], ("u_lightSources[" + std::to_string(i) +"].u_specularLight").c_str());
 
-        gProgramhandle->Uniforms.AttenuationFactor[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_attenuationFactor").c_str());
-        gProgramhandle->Uniforms.IsAttenuation[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_isAttenuation").c_str());
-        gProgramhandle->Uniforms.LightRadius[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_lightRadius").c_str());
-        gProgramhandle->Uniforms.SpotDirection[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_spotDirection").c_str());
-        gProgramhandle->Uniforms.SpotExponent[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_spotExponent").c_str());
-        gProgramhandle->Uniforms.SpotCutOffAngle[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_spotCutOffAngle").c_str());
-        gProgramhandle->Uniforms.IsDirectional[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_isDirectional").c_str());
-        gProgramhandle->Uniforms.LightMode[i] = glGetUniformLocation(program, ("u_lightSources[" + std::to_string(i) +"].u_lightMode").c_str());
+        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.AttenuationFactor[i], ("u_lightSources[" + std::to_string(i) +"].u_attenuationFactor").c_str());
+        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.IsAttenuation[i], ("u_lightSources[" + std::to_string(i) +"].u_isAttenuation").c_str());
+        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.LightRadius[i], ("u_lightSources[" + std::to_string(i) +"].u_lightRadius").c_str());
+        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.SpotDirection[i], ("u_lightSources[" + std::to_string(i) +"].u_spotDirection").c_str());
+        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.SpotExponent[i], ("u_lightSources[" + std::to_string(i) +"].u_spotExponent").c_str());
+        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.SpotCutOffAngle[i], ("u_lightSources[" + std::to_string(i) +"].u_spotCutOffAngle").c_str());
+        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.IsDirectional[i], ("u_lightSources[" + std::to_string(i) +"].u_isDirectional").c_str());
+        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.LightMode[i], ("u_lightSources[" + std::to_string(i) +"].u_lightMode").c_str());
 
     }
 
-    gProgramhandle->Uniforms.JointMatrix = glGetUniformLocation(program, "u_jointMatrix");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.JointMatrix, "u_jointMatrix");
 
 }
 
-
-GLuint OGLMgr::loadShader(GLenum shaderType, const char* pSource) {
-
-    GLuint shader = glCreateShader(shaderType);
-
-    if (shader) {
-
-        glShaderSource(shader, 1, &pSource, nullptr);
-        glCompileShader(shader);
-        GLint compiled = 0;
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
-
-        if (!compiled) {
-
-            GLint infoLen = 0;
-            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
-
-            if (infoLen) {
-
-                auto buf = static_cast<char*>(malloc(infoLen));
-
-                if (buf) {
-                    glGetShaderInfoLog(shader, infoLen, NULL, buf);
-                    //LOGE("Could not compile shader %d:\n%s\n", shaderType, buf);
-                    std::cout << "Could not compile shader:\n" << buf << '\n';
-#ifdef WIN32
-                    OutputDebugStringA(buf);
-#endif
-                    free(buf);
-                }
-
-                glDeleteShader(shader);
-                shader = 0;
-            }
-        }
-    }
-
-    return shader;
-
-}
 
 
 void OGLMgr::setProjectionRatio() {

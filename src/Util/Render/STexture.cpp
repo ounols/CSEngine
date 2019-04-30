@@ -4,7 +4,7 @@
 
 #include "../../OGLDef.h"
 #include "STexture.h"
-#include "lodepng.h"
+#include "stb_image.h"
 
 #include "../../Manager/TextureContainer.h"
 #include "../../Manager/ResMgr.h"
@@ -89,7 +89,7 @@ void STexture::Bind(const GLProgramHandle* handle) {
     }
 
     glBindTexture(GL_TEXTURE_2D, m_id);
-    glUniform1i(handle->Uniforms.TextureSampler2D, 0);
+    glUniform1i(handle->Uniforms.TextureSampler2D, GL_TEXTURE0);
 }
 
 

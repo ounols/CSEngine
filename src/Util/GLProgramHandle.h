@@ -9,10 +9,10 @@
 #define MAX_JOINTS 60
 
 struct GLUniformHandles {
-	GLuint Modelview = HANDLE_NULL;
-	GLuint ModelNoCameraMatrix = HANDLE_NULL;
-	GLuint Projection = HANDLE_NULL;
-	GLuint NormalMatrix = HANDLE_NULL;
+	GLint Modelview = HANDLE_NULL;
+	GLint ModelNoCameraMatrix = HANDLE_NULL;
+	GLint Projection = HANDLE_NULL;
+	GLint NormalMatrix = HANDLE_NULL;
 	GLint LightPosition[MAX_LIGHTS] = { HANDLE_NULL };
 	GLint AmbientMaterial = HANDLE_NULL;
 	GLint SpecularMaterial = HANDLE_NULL;
@@ -58,6 +58,18 @@ public:
 
 
 	void Exterminate() override {
+	}
+
+	void AttributeLocation(GLint& target, const char* location) {
+		glUseProgram(Program);
+
+		target = glGetAttribLocation(Program, location);
+	}
+
+	void UniformLocation(GLint& target, const char* location) {
+		glUseProgram(Program);
+
+		target = glGetUniformLocation(Program, location);
 	}
 
 
