@@ -15,8 +15,8 @@ using namespace CSE;
 
 OGLMgr::OGLMgr() : m_projectionRatio(-1), m_programId(-1) {
 
-    m_vertexShader = OpenAssetsTxtFile(AssetsPath() + "PBR.vert");
-    m_fragmentShader = OpenAssetsTxtFile(AssetsPath() + "PBR.frag");
+    m_vertexShader = OpenAssetsTxtFile(AssetsPath() + "Shader/PBR/PBR.vert");
+    m_fragmentShader = OpenAssetsTxtFile(AssetsPath() + "Shader/PBR/PBR.frag");
 
 }
 
@@ -121,6 +121,7 @@ void OGLMgr::AttachProgramHandle(int shaderID) {
     gProgramhandle->UniformLocation(gProgramhandle->Uniforms.LightsSize, "u_lightsSize");
     gProgramhandle->UniformLocation(gProgramhandle->Uniforms.IsSkinning, "u_isSkinning");
     gProgramhandle->UniformLocation(gProgramhandle->Uniforms.TextureSampler2D, "u_sampler_2d");
+    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.TextureIrradianceCube, "u_sampler_irradiance");
 
 
     for(int i = 0; i < MAX_LIGHTS; i++) {

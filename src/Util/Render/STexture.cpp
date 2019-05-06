@@ -1,13 +1,16 @@
 //
 // Created by ounols on 19. 4. 18.
 //
+#define STB_IMAGE_IMPLEMENTATION
 
 #include "../../OGLDef.h"
 #include "STexture.h"
-#include "stb_image.h"
+
+#include "../Loader/STB/stb_image.h"
 
 #include "../../Manager/TextureContainer.h"
 #include "../../Manager/ResMgr.h"
+
 
 STexture::STexture() {
     ResMgr::getInstance()->Register<TextureContainer, STexture>(this);
@@ -17,34 +20,36 @@ STexture::~STexture() {
 
 }
 
-bool STexture::Load(const char* path, STexture::TYPE type) {
+bool STexture::LoadFile(const char* path) {
 
     if(m_id != 0) return false;
 
-    std::vector<unsigned char> image;
 
-    if(type == PNG) {
-        unsigned error = lodepng::decode(image, m_width, m_height, path);
-        if(error != 0) {
-            return false;
-        }
-    }
+    unsigned char *data = stbi_load(path, &m_width, &m_height, &m_channels, 0);
 
-    return Load(image, type);
+    return Load(data);
 }
+bool STexture::Load(unsigned char* data) {
 
-bool STexture::Load(std::vector<unsigned char> data, STexture::TYPE type) {
-
-    if(m_id != 0) return false;
+    if(m_id != 0) {
+        stbi_image_free(data);
+        return false;
+    }
 
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data[0]);
+    GLuint channel = GL_RGB;
+    if(m_channels == 4) channel = GL_RGBA;
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, channel, m_width, m_height, 0, channel, GL_UNSIGNED_BYTE, data);
 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    stbi_image_free(data);
     return true;
 }
 
@@ -61,14 +66,14 @@ bool STexture::LoadEmpty() {
 }
 
 
-bool STexture::Reload(const char* path, TYPE type) {
+bool STexture::ReloadFile(const char* path) {
     Release();
-    Load(path, type);
+    LoadFile(path);
 }
 
-bool STexture::Reload(std::vector<unsigned char> data, STexture::TYPE type) {
+bool STexture::Reload(unsigned char* data) {
     Release();
-    Load(data, type);
+    Load(data);
 }
 
 void STexture::Release() {
@@ -83,13 +88,14 @@ void STexture::Exterminate() {
 //    ResMgr::getInstance()->Remove<TextureContainer, STexture>(this);
 }
 
-void STexture::Bind(const GLProgramHandle* handle) {
+void STexture::Bind(const GLProgramHandle* handle, int layout) {
     if(m_id == 0) {
         LoadEmpty();
     }
+    glUniform1i(handle->Uniforms.TextureSampler2D, layout);
 
+    glActiveTexture(GL_TEXTURE0 + layout);
     glBindTexture(GL_TEXTURE_2D, m_id);
-    glUniform1i(handle->Uniforms.TextureSampler2D, GL_TEXTURE0);
 }
 
 

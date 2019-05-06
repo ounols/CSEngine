@@ -3,6 +3,7 @@
 #include "../SObject.h"
 #include "../Manager/ResMgr.h"
 #include "../Manager/ShaderProgramContainer.h"
+#include "Matrix.h"
 
 #define HANDLE_NULL -1
 #define MAX_LIGHTS 16
@@ -17,7 +18,8 @@ struct GLUniformHandles {
 	GLint AmbientMaterial = HANDLE_NULL;
 	GLint SpecularMaterial = HANDLE_NULL;
 	GLint Shininess = HANDLE_NULL;
-	GLint TextureSampler2D = HANDLE_NULL;
+    GLint TextureSampler2D = HANDLE_NULL;
+    GLint TextureIrradianceCube = HANDLE_NULL;
 	GLint DiffuseLight[MAX_LIGHTS] = { HANDLE_NULL };
 	GLint AmbientLight[MAX_LIGHTS] = { HANDLE_NULL };
 	GLint SpecularLight[MAX_LIGHTS] = { HANDLE_NULL };
@@ -58,6 +60,7 @@ public:
 
 
 	void Exterminate() override {
+	    glDeleteProgram(Program);
 	}
 
 	void AttributeLocation(GLint& target, const char* location) {
@@ -71,6 +74,26 @@ public:
 
 		target = glGetUniformLocation(Program, location);
 	}
+
+	void SetUniformInt(const char* location, int value) {
+	    glUseProgram(Program);
+        glUniform1i(glGetUniformLocation(Program, location), value);
+	}
+
+	void SetUniformFloat(const char* location, float value) {
+        glUseProgram(Program);
+        glUniform1f(glGetUniformLocation(Program, location), value);
+	}
+
+    void SetUniformMat4(const char* location, mat4& value) {
+        glUseProgram(Program);
+        glUniform4fv(glGetUniformLocation(Program, location), 1, value.Pointer());
+    }
+
+    void SetUniformMat3(const char* location, mat3& value) {
+        glUseProgram(Program);
+        glUniform3fv(glGetUniformLocation(Program, location), 1, value.Pointer());
+    }
 
 
 	GLuint Program;

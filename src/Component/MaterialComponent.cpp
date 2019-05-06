@@ -1,3 +1,4 @@
+#include "../Manager/TextureContainer.h"
 #include "MaterialComponent.h"
 
 
@@ -12,6 +13,9 @@ void MaterialComponent::Exterminate() {
 
 
 void MaterialComponent::Init() {
+    if(m_irradianceTexture == nullptr) {
+        m_irradianceTexture = ResMgr::getInstance()->GetObject<TextureContainer, SCubeTexture>(3);
+    }
 }
 
 
@@ -26,9 +30,13 @@ void MaterialComponent::AttachMaterials(const GLProgramHandle* handle) const {
 	glVertexAttrib4fv(handle->Attributes.DiffuseMaterial, m_diffuseMaterial.Pointer());
 	glUniform1f(handle->Uniforms.Shininess, m_shininess);
 
-	if(m_texture != nullptr) {
-		m_texture->Bind(handle);
+	if(m_albedoTexture != nullptr) {
+        m_albedoTexture->Bind(handle, 0);
 	}
+
+    if(m_irradianceTexture != nullptr) {
+        m_irradianceTexture->Bind(handle, 1);
+    }
 
 }
 
@@ -52,7 +60,7 @@ void MaterialComponent::SetDiffuseMaterial(vec4 diffuse_material) {
 }
 
 void MaterialComponent::SetTexture(STexture* texture) {
-	m_texture = texture;
+	m_albedoTexture = texture;
 }
 
 vec4 MaterialComponent::GetDiffuseMaterial() const {
@@ -77,7 +85,7 @@ float MaterialComponent::GetShininess() const {
 }
 
 STexture* MaterialComponent::GetTexture() const {
-	return m_texture;
+	return m_albedoTexture;
 }
 
 SComponent* MaterialComponent::Clone(SGameObject* object) {
@@ -87,7 +95,7 @@ SComponent* MaterialComponent::Clone(SGameObject* object) {
     clone->m_specularMaterial = m_specularMaterial;
     clone->m_diffuseMaterial = m_diffuseMaterial;
     clone->m_shininess = m_shininess;
-    clone->m_texture = m_texture;
+    clone->m_albedoTexture = m_albedoTexture;
 
     return clone;
 }

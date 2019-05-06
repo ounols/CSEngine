@@ -36,8 +36,8 @@ file(GLOB SQUIRREL_SRC
                         "../../External/Squirrel/lib/sqstdlib/*.*"
                         "../../External/Squirrel/lib/squirrel/*.*")
 
-file(GLOB STB_SRC
-        "../../External/stb/*.*")
+#file(GLOB STB_SRC
+#        "../../External/stb/*.*")
 
 # file(GLOB GL3W_SRC "gl3w/*.c")
 
@@ -53,14 +53,13 @@ add_library( SquirrelLib
             ${SQUIRREL_SRC})
 
 
-add_executable(CSEngine.app CSEngine_Linux_glfw.cpp ${STB_SRC} ${CSENGINE_SRC})
+add_executable(CSEngine.app CSEngine_Linux_glfw.cpp ${CSENGINE_SRC})
 
 #헤더파일 위치
 include_directories(/usr/include)
 include_directories(/usr/local/include)
 include_directories(../../src)
 include_directories(../../External/Squirrel/include)
-include_directories(../../External/lodepng)
 # include_directories(/gl3w)
 
 

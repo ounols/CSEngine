@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <Util/Render/PBRShaderLoader.h>
 #include "FirstDemoScene.h"
 #include "../Component/LightComponent.h"
 #include "../Component/DrawableSkinnedMeshComponent.h"
@@ -33,6 +34,11 @@ void FirstDemoScene::Init() {
 	std::string path_tex = CSE::AssetsPath() + "Stormtrooper_D.png";
 	DAELoader* daeLoader = new DAELoader(path.c_str(), nullptr, DAELoader::ALL);
 	daeLoader->LoadTexture(path_tex.c_str());
+
+	PBRShaderLoader* asdfasdf = new PBRShaderLoader();
+
+	asdfasdf->LoadShader();
+	SAFE_DELETE(asdfasdf);
 
 //	daeLoader->GeneratePrefab();
 

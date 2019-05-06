@@ -42,5 +42,6 @@ private:
 	std::vector<unsigned short> m_Indics;
 //	std::vector<int> m_jointIDs;
 //	std::vector<float> m_weights;
+
 };
 

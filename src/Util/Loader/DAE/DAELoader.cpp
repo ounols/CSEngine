@@ -73,7 +73,7 @@ void DAELoader::LoadTexture(const char* filePath) {
     if(filePath == nullptr) return;
 
     STexture* texture = new STexture();
-    texture->Load(filePath, STexture::PNG);
+    texture->LoadFile(filePath);
     m_texture_id = ResMgr::getInstance()->GetID<TextureContainer, STexture>(texture);
 }
 

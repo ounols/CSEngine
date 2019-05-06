@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Util/Render/STexture.h"
+#include "../Util/Render/SCubeTexture.h"
 #include "SComponent.h"
 #include "../Util/GLProgramHandle.h"
 
@@ -39,7 +39,8 @@ private:
 	vec3 m_specularMaterial = vec3{ 1, 1, 1 };
 	vec4 m_diffuseMaterial = vec4{ 0.75f, 0.75f, 0.75f, 1 };
 	float m_shininess = 128;
-	STexture* m_texture = nullptr;
+    STexture* m_albedoTexture = nullptr;
+    SCubeTexture* m_irradianceTexture = nullptr;
 
 };
 
