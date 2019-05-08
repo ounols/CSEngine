@@ -5,7 +5,7 @@
 class LightComponent : public SComponent {
 
 public:
-	enum LIGHT{ NONE, DIRECTIONAL, POINT, SPOT };
+	enum LIGHT{ NONE = 0, DIRECTIONAL = 1, POINT = 2, SPOT = 3 };
 public:
 	LightComponent();
 	~LightComponent();

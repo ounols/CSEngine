@@ -1,102 +1,92 @@
 #pragma once
+
 #include "../OGLDef.h"
 #include "../SObject.h"
 #include "../Manager/ResMgr.h"
 #include "../Manager/ShaderProgramContainer.h"
 #include "Matrix.h"
 
+#include <map>
+
 #define HANDLE_NULL -1
 #define MAX_LIGHTS 16
 #define MAX_JOINTS 60
 
 struct GLUniformHandles {
-	GLint Modelview = HANDLE_NULL;
-	GLint ModelNoCameraMatrix = HANDLE_NULL;
-	GLint Projection = HANDLE_NULL;
-	GLint NormalMatrix = HANDLE_NULL;
-	GLint LightPosition[MAX_LIGHTS] = { HANDLE_NULL };
-	GLint AmbientMaterial = HANDLE_NULL;
-	GLint SpecularMaterial = HANDLE_NULL;
-	GLint Shininess = HANDLE_NULL;
-    GLint TextureSampler2D = HANDLE_NULL;
-    GLint TextureIrradianceCube = HANDLE_NULL;
-	GLint DiffuseLight[MAX_LIGHTS] = { HANDLE_NULL };
-	GLint AmbientLight[MAX_LIGHTS] = { HANDLE_NULL };
-	GLint SpecularLight[MAX_LIGHTS] = { HANDLE_NULL };
-	GLint LightMode[MAX_LIGHTS] = { HANDLE_NULL };
-	GLint Interpolation_z = HANDLE_NULL;
-	GLint AttenuationFactor[MAX_LIGHTS] = { HANDLE_NULL };
-	GLint IsAttenuation[MAX_LIGHTS] = { HANDLE_NULL };
-	GLint LightRadius[MAX_LIGHTS] = { HANDLE_NULL };
-	GLint SpotDirection[MAX_LIGHTS] = { HANDLE_NULL };
-	GLint SpotExponent[MAX_LIGHTS] = { HANDLE_NULL };
-	GLint SpotCutOffAngle[MAX_LIGHTS] = { HANDLE_NULL };
-	GLint IsDirectional[MAX_LIGHTS] = { HANDLE_NULL };
-	GLint LightsSize = HANDLE_NULL;
-	GLint JointMatrix = { HANDLE_NULL };
-	GLint IsSkinning = HANDLE_NULL;
+    GLint Modelview = HANDLE_NULL;
+    GLint ModelNoCameraMatrix = HANDLE_NULL;
+    GLint Projection = HANDLE_NULL;
+    GLint NormalMatrix = HANDLE_NULL;
+    GLint LightPosition = HANDLE_NULL;
+    GLint LightType = HANDLE_NULL;
+    GLint LightRadius = HANDLE_NULL;
+    GLint JointMatrix = HANDLE_NULL;
+    GLint IsSkinning = HANDLE_NULL;
 };
 
 struct GLAttributeHandles {
-	GLint Position = HANDLE_NULL;
-	GLint Color = HANDLE_NULL;
-	GLint Normal = HANDLE_NULL;
-	GLint DiffuseMaterial = HANDLE_NULL;
-	GLint TextureCoord = HANDLE_NULL;
-	GLint Weight = HANDLE_NULL;
-	GLint JointId = HANDLE_NULL;
+    GLint Position = HANDLE_NULL;
+//    GLint Color = HANDLE_NULL;
+    GLint Normal = HANDLE_NULL;
+//    GLint DiffuseMaterial = HANDLE_NULL;
+    GLint TextureCoord = HANDLE_NULL;
+    GLint Weight = HANDLE_NULL;
+    GLint JointId = HANDLE_NULL;
 };
 
 class GLProgramHandle : public SObject {
 public:
-	GLProgramHandle() : Program(HANDLE_NULL) {
-		ResMgr::getInstance()->Register<ShaderProgramContainer, GLProgramHandle>(this);
-		SetUndestroyable(true);
-	}
+    GLProgramHandle();
 
 
-	~GLProgramHandle() {
-	}
+    ~GLProgramHandle();
 
 
-	void Exterminate() override {
-	    glDeleteProgram(Program);
-	}
+    void Exterminate() override;
 
-	void AttributeLocation(GLint& target, const char* location) {
-		glUseProgram(Program);
-
-		target = glGetAttribLocation(Program, location);
-	}
-
-	void UniformLocation(GLint& target, const char* location) {
-		glUseProgram(Program);
-
-		target = glGetUniformLocation(Program, location);
-	}
-
-	void SetUniformInt(const char* location, int value) {
-	    glUseProgram(Program);
-        glUniform1i(glGetUniformLocation(Program, location), value);
-	}
-
-	void SetUniformFloat(const char* location, float value) {
-        glUseProgram(Program);
-        glUniform1f(glGetUniformLocation(Program, location), value);
-	}
-
-    void SetUniformMat4(const char* location, mat4& value) {
-        glUseProgram(Program);
-        glUniform4fv(glGetUniformLocation(Program, location), 1, value.Pointer());
+    void SetProgram(GLuint program) {
+        Program = program;
     }
 
-    void SetUniformMat3(const char* location, mat3& value) {
-        glUseProgram(Program);
-        glUniform3fv(glGetUniformLocation(Program, location), 1, value.Pointer());
+    GLint AttributeLocation(const char* location) const {
+        auto pair = AttributesList.find(location);
+        return pair == AttributesList.end() ? -1 : pair->second;
     }
 
+    GLint UniformLocation(const char* location) const {
+        auto pair = UniformsList.find(location);
+        return pair == UniformsList.end() ? -1 : pair->second;
+    }
 
-	GLuint Program;
-	GLAttributeHandles Attributes;
-	GLUniformHandles Uniforms;
+    void SetAttribVec3(std::string location, vec3& value);
+
+    void SetAttribVec4(std::string location, vec4& value);
+
+    void SetUniformInt(std::string location, int value);
+
+    void SetUniformFloat(std::string location, float value);
+
+    void SetUniformMat4(std::string location, mat4& value);
+
+    void SetUniformMat3(std::string location, mat3& value);
+
+
+    void GetAttributesList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag);
+
+    void GetUniformsList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag);
+
+private:
+    static std::string getImplementName(std::map<std::string, std::string>& list, std::string name);
+
+    static bool isExist(std::string src, std::string target, std::map<std::string, std::string>& variablesList) {
+        return src.find(variablesList[target]) != std::string::npos;
+    }
+
+public:
+    GLuint Program;
+    GLAttributeHandles Attributes;
+    GLUniformHandles Uniforms;
+
+    std::map<std::string, int> AttributesList;
+    std::map<std::string, int> UniformsList;
 };

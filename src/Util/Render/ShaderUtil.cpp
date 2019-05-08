@@ -3,6 +3,7 @@
 //
 
 #include "ShaderUtil.h"
+#include "../MoreString.h"
 
 
 
@@ -25,8 +26,19 @@ GLProgramHandle* ShaderUtil::CreateProgramHandle(const GLchar* vertexSource, con
         return nullptr;
     }
 
+    //Find important variables from shader.
+    auto variables_vert = GetImportantVariables(vertexSource);
+    auto variables_frag = GetImportantVariables(fragmentSource);
+
     gProgramhandle = new GLProgramHandle();
-    gProgramhandle->Program = program;
+    gProgramhandle->SetProgram(program);
+    //Get all variables from shader.
+    gProgramhandle->GetAttributesList(variables_vert, variables_frag);
+    gProgramhandle->GetUniformsList(variables_vert, variables_frag);
+
+    //Binding important variables to engine.
+    BindVariables(variables_vert, gProgramhandle);
+    BindVariables(variables_frag, gProgramhandle);
 
     return gProgramhandle;
 }
@@ -130,4 +142,62 @@ GLuint ShaderUtil::loadShader(GLenum shaderType, const char* pSource) {
     }
 
     return shader;
+}
+
+std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLchar* source) {
+    std::map<std::string, std::string> variables;
+
+    std::vector<std::string> str_line = split(source, ';');
+
+    std::string type_str = "";
+
+    for(auto line : str_line) {
+        line += ';';
+        auto result = split(line, '\n');
+
+        for(auto str : result) {
+            int start_index = 0;
+            int end_index = 0;
+            if((start_index = str.find("//[")) != std::string::npos) {
+                start_index += 3;
+                end_index = str.find("]//");
+                type_str = str.substr(start_index, end_index - 3);
+                continue;
+            }
+
+            int eoc_index = 0;
+            if(type_str != "" && (eoc_index = str.find(';')) != std::string::npos) {
+                int start_index = str.substr(0, eoc_index).rfind(' ');
+                int end_index = str.rfind('[');
+                end_index = end_index == std::string::npos ? eoc_index : end_index;
+                auto detail = trim(str.substr(start_index, end_index - start_index));
+                variables[type_str] = detail;
+                type_str.clear();
+            }
+        }
+
+    }
+
+    return variables;
+}
+
+void ShaderUtil::BindVariables(std::map<std::string, std::string> variables, GLProgramHandle* handle) {
+
+    if(handle == nullptr) return;
+
+    handle->Attributes.Position = handle->AttributeLocation("POSITION");
+    handle->Attributes.Normal = handle->AttributeLocation("NORMAL");
+    handle->Attributes.JointId = handle->AttributeLocation("JOINT_INDICES");
+    handle->Attributes.Weight = handle->AttributeLocation("WEIGHTS");
+    handle->Attributes.TextureCoord = handle->AttributeLocation("TEX_UV");
+
+    handle->Uniforms.Projection = handle->UniformLocation("PROJECTION_MATRIX");
+    handle->Uniforms.Modelview = handle->UniformLocation("MODELVIEW_MATRIX");
+    handle->Uniforms.ModelNoCameraMatrix = handle->UniformLocation("MODELVIEW_NOCAMERA_MATRIX");
+    handle->Uniforms.NormalMatrix = handle->UniformLocation("NORMAL_MATRIX");
+    handle->Uniforms.IsSkinning = handle->UniformLocation("SKINNING_MODE");
+    handle->Uniforms.JointMatrix = handle->UniformLocation("JOINT_MATRIX");
+    handle->Uniforms.LightPosition = handle->UniformLocation("LIGHT_POSITION");
+    handle->Uniforms.LightType = handle->UniformLocation("LIGHT_TYPE");
+    handle->Uniforms.LightRadius = handle->UniformLocation("LIGHT_RADIUS");
 }

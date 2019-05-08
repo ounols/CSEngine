@@ -5,32 +5,18 @@
 precision highp float;
 precision highp int;
 
-struct U_LightSource {
-    vec4 u_diffuseLight;
-    vec4 u_ambientLight;
-    vec4 u_specularLight;
-
-    int u_lightMode;
-    int u_isDirectional;
-
-    /**Attenuation Factor**/
-    int u_isAttenuation;
-    vec3 u_attenuationFactor;
-    float u_lightRadius;
-
-};
-
-
 
 //Uniforms
-uniform vec3 u_ambientMaterial;//AmbientMaterial;
-uniform vec3 u_specularMaterial;//SpecularMaterial;
-uniform float u_shininess;
-uniform U_LightSource u_lightSources[MAX_LIGHTS];
-uniform lowp int u_lightsSize;
+//[TEX2D_ALBEDO]//
 uniform sampler2D u_sampler_2d;
+//[TEXCUBE_IRRADIANCE]//
 uniform samplerCube u_sampler_irradiance;
-
+//[LIGHT_TYPE]//
+uniform int u_lightType[MAX_LIGHTS];
+//[LIGHT_RADIUS]//
+uniform float u_lightRadius[MAX_LIGHTS];
+//[LIGHT_COLOR]//
+uniform vec3 u_lightColor[MAX_LIGHTS];
 
 
 //Varying
@@ -69,11 +55,10 @@ void main(void) {
 	vec3 color = vec3(c_zero, c_zero, c_zero);
 	vec3 colors[MAX_LIGHTS];
 
-	for(int i = 0; i < u_lightsSize; i++) {
+	for(int i = 0; i < MAX_LIGHTS; i++) {
 	    colors[i] = vec3(c_zero, c_zero, c_zero);
 
-	    bool isAtt = u_lightSources[i].u_isDirectional == 0;
-	    int lightMode = u_lightSources[i].u_lightMode;
+	    int lightMode = MODE_COMPLETE;
 
         	if (lightMode == MODE_DIF || lightMode == MODE_AMB_DIF || lightMode == MODE_DIF_SPEC ||
         		lightMode == MODE_COMPLETE) {
@@ -92,7 +77,7 @@ void main(void) {
         	colors[i] *= calcLightAtt(i);
 	}
 
-    for(int i = 0; i < u_lightsSize; i++) {
+    for(int i = 0; i < MAX_LIGHTS; i++) {
         color += colors[i];
     }
 
@@ -104,64 +89,59 @@ void main(void) {
 
 // only diffuse light
 vec3 calcLightDif(int index) {
-	vec3 N = normalize(v_eyespaceNormal);
-	vec3 L = normalize(v_lightPosition[index]);
-	float df = max(c_zero, dot(N, L));
-
-	return vec3(u_lightSources[index].u_diffuseLight) * v_diffuse * df;
+//	vec3 N = normalize(v_eyespaceNormal);
+//	vec3 L = normalize(v_lightPosition[index]);
+//	float df = max(c_zero, dot(N, L));
+//
+//	return vec3(u_lightSources[index].u_diffuseLight) * v_diffuse * df;
+	return vec3(1);
 }
 
 // only ambient light
 vec3 calcLightAmb(int index) {
-	vec3 globalAmbient = vec3(u_lightSources[index].u_ambientLight) * vec3(0.05); // * gl_LightSource[0].ambient
-	vec3 ambient = u_ambientMaterial * vec3(u_lightSources[index].u_ambientLight);
-
-	return globalAmbient + ambient;
+//	vec3 globalAmbient = vec3(u_lightSources[index].u_ambientLight) * vec3(0.05); // * gl_LightSource[0].ambient
+//	vec3 ambient = u_ambientMaterial * vec3(u_lightSources[index].u_ambientLight);
+//
+//	return globalAmbient + ambient;
+	return vec3(1);
 }
 
 // only specular light
 vec3 calcLightSpec(int index) {
 
-	vec3 N = normalize(v_eyespaceNormal);
-	vec3 L = normalize(v_lightPosition[index]);
-	vec3 E = vec3(c_zero, c_zero, c_one);
-	vec3 H = normalize(L + E);
-	vec3 R = reflect(-L, N);
-
-	//float sf = max(c_zero, dot(N, H));	// Blinn model
-	float sf = max(c_zero, dot(R, E));		// Phong model
-
-	sf = pow(sf, u_shininess);
-
-	return (u_specularMaterial * vec3(u_lightSources[index].u_specularLight) * sf);
+//	vec3 N = normalize(v_eyespaceNormal);
+//	vec3 L = normalize(v_lightPosition[index]);
+//	vec3 E = vec3(c_zero, c_zero, c_one);
+//	vec3 H = normalize(L + E);
+//	vec3 R = reflect(-L, N);
+//
+//	//float sf = max(c_zero, dot(N, H));	// Blinn model
+//	float sf = max(c_zero, dot(R, E));		// Phong model
+//
+//	sf = pow(sf, u_shininess);
+//
+//	return (u_specularMaterial * vec3(u_lightSources[index].u_specularLight) * sf);
+	return vec3(1);
 }
 
 // only attenuation Factor
 float calcLightAtt(int index) {
 
-	if (u_lightSources[index].u_isAttenuation != 1) return c_one;
+	if (u_lightType[index] > 1) return c_one;
 
 	float dist = v_distance[index];
 	float att = c_one;
 
 	float d = max(dist, c_zero);
 
-	float Kc = u_lightSources[index].u_attenuationFactor.x;
-	float Kl = u_lightSources[index].u_attenuationFactor.y;
-	float Kq = u_lightSources[index].u_attenuationFactor.z;
+	float r = u_lightRadius[index];
+	d = max(dist - r, c_zero);
+	//L = normalize(L / dist);
 
-	att = c_one / (Kc + (Kl * d) + (Kq * d * d));
+	// calculate basic attenuation
+	float denom = d / r + 1.0;
 
-	if (att == c_one) {
-		float r = u_lightSources[index].u_lightRadius;
-		d = max(dist - r, c_zero);
-		//L = normalize(L / dist);
-
-		// calculate basic attenuation
-		float denom = d / r + 1.0;
-
-		att = c_one / (denom*denom);
-	}
+	att = c_one / (denom*denom);
 
 	if (att <= c_zero) return c_one;
 

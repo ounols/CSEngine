@@ -40,12 +40,12 @@ bool SCubeTexture::CreateCubeTexture(int size) {
     return true;
 }
 
-void SCubeTexture::Bind(const GLProgramHandle* handle, int layout) {
+void SCubeTexture::Bind(GLint location, int layout) {
     if (m_id == 0) {
         return;
     }
 
-    glUniform1i(handle->Uniforms.TextureIrradianceCube, layout);
+    glUniform1i(location, layout);
 
     glActiveTexture(GL_TEXTURE0 + layout);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);

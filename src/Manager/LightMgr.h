@@ -10,12 +10,12 @@ public:
 
 	void AttachLightToShader(const GLProgramHandle* handle) const;
 
-private:
-	void AttachDirectionalLight(const GLProgramHandle* handle, const SLight* light, int index) const;
-	void AttachPositionalLight(const GLProgramHandle* handle, const SLight* light, int index) const;
-
-
-	static void SetLightMode(const GLProgramHandle* handle, const LightComponent* light, int index);
+//private:
+//	void AttachDirectionalLight(const GLProgramHandle* handle, const SLight* light, int index) const;
+//	void AttachPositionalLight(const GLProgramHandle* handle, const SLight* light, int index) const;
+//
+//
+//	static void SetLightMode(const GLProgramHandle* handle, const LightComponent* light, int index);
 
 };
 

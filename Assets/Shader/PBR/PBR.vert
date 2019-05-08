@@ -25,22 +25,33 @@ struct U_LightSource {
 
 
 // Attributes
+//[POSITION]//
 in vec4 a_position;
+//[NORMAL]//
 in vec3 a_normal;
 in vec3 a_diffuseMaterial;
+//[JOINT_INDICES]//
 in vec3 a_jointIndices;
+//[WEIGHTS]//
 in vec3 a_weights;
+//[TEX_UV]//
 in vec2 a_textureCoordIn;
 
 // Uniforms
+//[PROJECTION_MATRIX]//
 uniform mat4 u_projectionMatrix;//Projection;
+//[MODELVIEW_MATRIX]//
 uniform mat4 u_modelViewMatrix;//Modelview;
+//[MODELVIEW_NOCAMERA_MATRIX]//
 uniform mat4 u_modelViewNoCameraMatrix;//Modelview - no camera matrix;
+//[NORMAL_MATRIX]//
 uniform mat3 u_normalMatrix;//NormalMatrix;
+//[LIGHT_POSITION]//
 uniform vec4 u_lightPosition[MAX_LIGHTS];//LightPosition;
+//[JOINT_MATRIX]//
 uniform mat4 u_jointMatrix[MAX_JOINTS];
 
-
+//[SKINNING_MODE]//
 uniform lowp int u_isSkinning;
 uniform lowp int u_isDirectional[MAX_LIGHTS];
 uniform U_LightSource u_lightSources[MAX_LIGHTS];

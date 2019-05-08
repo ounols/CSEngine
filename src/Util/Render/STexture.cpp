@@ -88,11 +88,11 @@ void STexture::Exterminate() {
 //    ResMgr::getInstance()->Remove<TextureContainer, STexture>(this);
 }
 
-void STexture::Bind(const GLProgramHandle* handle, int layout) {
+void STexture::Bind(GLint location, int layout) {
     if(m_id == 0) {
         LoadEmpty();
     }
-    glUniform1i(handle->Uniforms.TextureSampler2D, layout);
+    glUniform1i(location, layout);
 
     glActiveTexture(GL_TEXTURE0 + layout);
     glBindTexture(GL_TEXTURE_2D, m_id);

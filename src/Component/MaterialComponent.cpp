@@ -2,7 +2,9 @@
 #include "MaterialComponent.h"
 
 
-COMPONENT_CONSTRUCTOR(MaterialComponent) {}
+COMPONENT_CONSTRUCTOR(MaterialComponent) {
+
+}
 
 
 MaterialComponent::~MaterialComponent() {}
@@ -25,17 +27,23 @@ void MaterialComponent::Tick(float elapsedTime) {
 
 void MaterialComponent::AttachMaterials(const GLProgramHandle* handle) const {
 
-	glUniform3fv(handle->Uniforms.AmbientMaterial, 1, m_ambientMaterial.Pointer());
-	glUniform3fv(handle->Uniforms.SpecularMaterial, 1, m_specularMaterial.Pointer());
-	glVertexAttrib4fv(handle->Attributes.DiffuseMaterial, m_diffuseMaterial.Pointer());
-	glUniform1f(handle->Uniforms.Shininess, m_shininess);
+//    if(!m_isPBR) {
+//        glUniform3fv(handle->Uniforms.AmbientMaterial, 1, m_ambientMaterial.Pointer());
+//        glUniform3fv(handle->Uniforms.SpecularMaterial, 1, m_specularMaterial.Pointer());
+//        handle->SetAttribVec4("")
+//        glUniform1f(handle->Uniforms.Shininess, m_shininess);
+//
+//    }
+
+
+
 
 	if(m_albedoTexture != nullptr) {
-        m_albedoTexture->Bind(handle, 0);
+        m_albedoTexture->Bind(handle->UniformLocation("TEX2D_ALBEDO"), 0);
 	}
 
     if(m_irradianceTexture != nullptr) {
-        m_irradianceTexture->Bind(handle, 1);
+        m_irradianceTexture->Bind(0, 1);
     }
 
 }

@@ -69,12 +69,12 @@ void PBRShaderLoader::LoadShader() {
 
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
     glUseProgram(m_equirectangularToCubemapShader->Program);
-    m_equirectangularToCubemapShader->UniformLocation(m_equirectangularToCubemapShader->Uniforms.TextureSampler2D,
-                                                      "u_equirectangularMap");
+//    m_equirectangularToCubemapShader->UniformLocation(m_equirectangularToCubemapShader->Uniforms.TextureSampler2D,
+//                                                      "u_equirectangularMap");
 //    m_equirectangularToCubemapShader->SetUniformInt("u_equirectangularMap", 0);
     m_equirectangularToCubemapShader->SetUniformMat4("u_projectionMatrix", captureProjection);
 
-    m_hdrTexture->Bind(m_equirectangularToCubemapShader, 0);
+    m_hdrTexture->Bind(0, 0);
 
     glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
@@ -104,11 +104,11 @@ void PBRShaderLoader::LoadShader() {
     // pbr: solve diffuse integral by convolution to create an irradiance (cube)map.
     // -----------------------------------------------------------------------------
     glUseProgram(m_irradianceShader->Program);
-    m_irradianceShader->UniformLocation(m_irradianceShader->Uniforms.TextureIrradianceCube,
-                                        "u_environmentMap");
+//    m_irradianceShader->UniformLocation(m_irradianceShader->Uniforms.TextureIrradianceCube,
+//                                        "u_environmentMap");
 //    m_irradianceShader->SetUniformInt("u_environmentMap", 0);
     m_irradianceShader->SetUniformMat4("u_projectionMatrix", captureProjection);
-    m_envTexture->Bind(m_irradianceShader);
+    m_envTexture->Bind(0, 0);
 
     glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);

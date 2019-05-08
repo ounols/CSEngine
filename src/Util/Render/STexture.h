@@ -29,7 +29,7 @@ public:
     void Release();
     void Exterminate() override;
 
-    virtual void Bind(const GLProgramHandle* handle, int layout = 0);
+    virtual void Bind(GLint location, int layout);
 
 protected:
     int m_width = 0;

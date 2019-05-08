@@ -15,7 +15,7 @@ public:
 
     bool CreateCubeTexture(int size = 512);
 
-    void Bind(const GLProgramHandle* handle, int layout = 0) override;
+    void Bind(GLint location, int layout) override;
     void GenerateMipmap();
 
 };

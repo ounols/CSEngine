@@ -181,9 +181,9 @@ void RenderComponent::SetMaterials() const {
         vec3 m_specularMaterial = vec3{1, 1, 1};
         float m_shininess = 128;
 
-        glUniform3fv(handler->Uniforms.AmbientMaterial, 1, m_ambientMaterial.Pointer());
-        glUniform3fv(handler->Uniforms.SpecularMaterial, 1, m_specularMaterial.Pointer());
-        glUniform1f(handler->Uniforms.Shininess, m_shininess);
+//        glUniform3fv(handler->Uniforms.AmbientMaterial, 1, m_ambientMaterial.Pointer());
+//        glUniform3fv(handler->Uniforms.SpecularMaterial, 1, m_specularMaterial.Pointer());
+//        glUniform1f(handler->Uniforms.Shininess, m_shininess);
 
     } else {
         m_material->AttachMaterials(handler);

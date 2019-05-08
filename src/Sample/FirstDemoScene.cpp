@@ -35,10 +35,10 @@ void FirstDemoScene::Init() {
 	DAELoader* daeLoader = new DAELoader(path.c_str(), nullptr, DAELoader::ALL);
 	daeLoader->LoadTexture(path_tex.c_str());
 
-	PBRShaderLoader* asdfasdf = new PBRShaderLoader();
-
-	asdfasdf->LoadShader();
-	SAFE_DELETE(asdfasdf);
+//	PBRShaderLoader* asdfasdf = new PBRShaderLoader();
+//
+//	asdfasdf->LoadShader();
+//	SAFE_DELETE(asdfasdf);
 
 //	daeLoader->GeneratePrefab();
 
