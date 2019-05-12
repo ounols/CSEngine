@@ -7,6 +7,7 @@ precision highp int;
 in vec3 v_worldPositon;
 out vec4 FragColor;
 
+//[EnvironmentMap]//
 uniform samplerCube u_environmentMap;
 
 

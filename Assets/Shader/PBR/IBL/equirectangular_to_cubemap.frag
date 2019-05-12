@@ -6,6 +6,7 @@ precision highp int;
 in vec3 v_worldPositon;
 out vec4 FragColor;
 
+//[EquirectangularMap]//
 uniform sampler2D u_equirectangularMap;
 
 const vec2 invAtan = vec2(0.1591, 0.3183);

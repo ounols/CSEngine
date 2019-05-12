@@ -13,6 +13,7 @@
 
 
 STexture::STexture() {
+    SetUndestroyable(true);
     ResMgr::getInstance()->Register<TextureContainer, STexture>(this);
 }
 

@@ -69,17 +69,17 @@ void PBRShaderLoader::LoadShader() {
 
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
     glUseProgram(m_equirectangularToCubemapShader->Program);
-//    m_equirectangularToCubemapShader->UniformLocation(m_equirectangularToCubemapShader->Uniforms.TextureSampler2D,
-//                                                      "u_equirectangularMap");
-//    m_equirectangularToCubemapShader->SetUniformInt("u_equirectangularMap", 0);
-    m_equirectangularToCubemapShader->SetUniformMat4("u_projectionMatrix", captureProjection);
+    auto equirectangularMap = m_equirectangularToCubemapShader->UniformLocation("EquirectangularMap");
 
-    m_hdrTexture->Bind(0, 0);
+    m_equirectangularToCubemapShader->SetUniformInt("EquirectangularMap", 0);
+    m_equirectangularToCubemapShader->SetUniformMat4("PROJECTION_MATRIX", captureProjection);
+
+    m_hdrTexture->Bind(equirectangularMap, 0);
 
     glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (unsigned int i = 0; i < 6; ++i) {
-        m_equirectangularToCubemapShader->SetUniformMat4("u_viewMatrix", captureViews[i]);
+        m_equirectangularToCubemapShader->SetUniformMat4("VIEW_MATRIX", captureViews[i]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                                m_envTexture->GetID(), 0);
 
@@ -104,16 +104,15 @@ void PBRShaderLoader::LoadShader() {
     // pbr: solve diffuse integral by convolution to create an irradiance (cube)map.
     // -----------------------------------------------------------------------------
     glUseProgram(m_irradianceShader->Program);
-//    m_irradianceShader->UniformLocation(m_irradianceShader->Uniforms.TextureIrradianceCube,
-//                                        "u_environmentMap");
-//    m_irradianceShader->SetUniformInt("u_environmentMap", 0);
-    m_irradianceShader->SetUniformMat4("u_projectionMatrix", captureProjection);
-    m_envTexture->Bind(0, 0);
+    auto environmentMap = m_irradianceShader->UniformLocation("EnvironmentMap");
+    m_irradianceShader->SetUniformInt("EnvironmentMap", 0);
+    m_irradianceShader->SetUniformMat4("PROJECTION_MATRIX", captureProjection);
+    m_envTexture->Bind(environmentMap, 0);
 
     glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (unsigned int i = 0; i < 6; ++i) {
-        m_irradianceShader->SetUniformMat4("u_viewMatrix", captureViews[i]);
+        m_irradianceShader->SetUniformMat4("VIEW_MATRIX", captureViews[i]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                                m_irradianceMap->GetID(), 0);
 

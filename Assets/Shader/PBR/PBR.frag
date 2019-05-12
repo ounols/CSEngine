@@ -27,6 +27,9 @@ uniform float u_metallic;
 uniform float u_roughness;
 //[FLOAT_AO]//
 uniform float u_ao;
+//[FLOAT_IRRADIANCE]//
+uniform vec3 u_irradiance;
+
 
 //[LIGHT_TYPE]//
 uniform int u_lightType[MAX_LIGHTS];
@@ -56,11 +59,12 @@ const float PI = 3.14159265359;
 
 
 //Functions
-float calcLightAtt(int index);
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float DistributionPhong(vec3 N, vec3 H, float roughness);
+float DistributionGGXMobile(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
+float GeometrySmith_Fast(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 fresnelSchlick(float cosTheta, vec3 F0);
 
 //Macro Functions
@@ -71,18 +75,13 @@ float ClampedPow(float X, float Y) {
 
 void main(void) {
 
-	vec3 albedo     = u_albedo.r < 0.0 ? pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2)) : u_albedo;
-//	float metallic  = u_metallic < 0.0 ? texture2D(u_sampler_metallic, v_textureCoordOut).r : u_metallic;
-//	float roughness = u_roughness < 0.0 ? texture2D(u_sampler_roughness, v_textureCoordOut).r : u_roughness;
-//	float ao        = u_ao < 0.0 ? texture2D(u_sampler_ao, v_textureCoordOut).r : u_ao;
-
-//	vec3 albedo     = vec3(0.5, 1.0, 0.0);
-	float metallic  = 0.7;
-	float roughness = 0.4;
-	float ao        = 1.0;
+	vec3 albedo     = u_albedo.x < 0.0 ? pow(texture(u_sampler_albedo, v_textureCoordOut).xyz, vec3(2.2)) : u_albedo;
+	float metallic  = u_metallic < 0.0 ? texture2D(u_sampler_metallic, v_textureCoordOut).r : u_metallic;
+	float roughness = u_roughness < 0.0 ? texture2D(u_sampler_roughness, v_textureCoordOut).r : u_roughness;
+	float ao        = u_ao < 0.0 ? texture2D(u_sampler_ao, v_textureCoordOut).r : u_ao;
 
 	vec3 N = normalize(v_eyespaceNormal);
-	vec3 V = normalize(v_eyespaceNormal - v_worldPosition);
+	vec3 V0 = normalize(N - v_worldPosition);
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
@@ -95,9 +94,9 @@ void main(void) {
 	for(int i = 0; i < u_lightSize; i++) {
 
 		// calculate per-light radiance
+		vec3 V = (u_lightType[i] > 1) ? V0 : N;
 		vec3 L = v_lightPosition[i];
 		vec3 H = normalize(V + L);
-		//float attenuation = calcLightAtt(i);
 		float distance = v_distance[i];
 		float attenuation = 1.0 / (distance * distance);
 		vec3 radiance = u_lightColor[i] * attenuation;
@@ -131,9 +130,8 @@ void main(void) {
 
 	}
 
-	// ambient lighting (note that the next IBL tutorial will replace
-	// this ambient lighting with environment lighting).
-	vec3 ambient = vec3(0.03) * albedo * ao;
+	vec3 irradiance = u_irradiance.r < 0.0 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
+	vec3 ambient = irradiance * albedo * ao;
 
 	vec3 color = ambient + Lo;
 
@@ -145,29 +143,6 @@ void main(void) {
 	FragColor = vec4(color, 1.0);
 
 }
-// only attenuation Factor
-float calcLightAtt(int index) {
-
-	if (u_lightType[index] > 1) return c_one;
-
-	float dist = v_distance[index];
-	float att = c_one;
-
-	float d = max(dist, c_zero);
-
-	float r = u_lightRadius[index];
-	d = max(dist - r, c_zero);
-	//L = normalize(L / dist);
-
-	// calculate basic attenuation
-	float denom = d / r + 1.0;
-
-	att = c_one / (denom*denom);
-
-	if (att <= c_zero) return c_one;
-
-	return att;
-}
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
 	float m = roughness * roughness;
@@ -175,6 +150,20 @@ float DistributionGGX(vec3 N, vec3 H, float roughness) {
 	float NoH = max(dot(N, H), 0.0);
 	float d = ( NoH * m2 - NoH ) * NoH + 1.0;	// 2 mad
 	return m2 / ( PI * d * d );
+}
+
+float DistributionGGXMobile(vec3 N, vec3 H, float roughness) {
+	// Walter et al. 2007, "Microfacet Models for Refraction through Rough Surfaces"
+
+	vec3 NxH = cross(v_eyespaceNormal, H);
+	float NoH = max(dot(N, H), 0.0);
+	float oneMinusNoHSquared = dot(NxH, NxH);
+
+
+	float a = NoH * roughness;
+	float k = roughness / (oneMinusNoHSquared + a * a);
+	float d = k * k * (1.0 / PI);
+	return d;
 }
 
 // [Blinn 1977, "Models of light reflection for computer synthesized pictures"]
@@ -204,6 +193,14 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
 	float ggx1 = GeometrySchlickGGX(NdotL, roughness);
 
 	return ggx1 * ggx2;
+}
+
+float GeometrySmith_Fast(vec3 N, vec3 V, vec3 L, float roughness) {
+	// Hammon 2017, "PBR Diffuse Lighting for GGX+Smith Microsurfaces"
+	float NoV = max(dot(N, V), 0.0);
+	float NoL = max(dot(N, L), 0.0);
+	float v = 0.5 / mix(2.0 * NoL * NoV, NoL + NoV, roughness);
+	return v;
 }
 // ----------------------------------------------------------------------------
 vec3 fresnelSchlick(float cosTheta, vec3 F0) {

@@ -28,44 +28,44 @@ void MaterialComponent::Tick(float elapsedTime) {
 
 void MaterialComponent::AttachMaterials(const GLProgramHandle* handle) const {
 
-//    if(!m_isPBR) {
-//        glUniform3fv(handle->Uniforms.AmbientMaterial, 1, m_ambientMaterial.Pointer());
-//        glUniform3fv(handle->Uniforms.SpecularMaterial, 1, m_specularMaterial.Pointer());
-//        handle->SetAttribVec4("")
-//        glUniform1f(handle->Uniforms.Shininess, m_shininess);
-//
-//    }
-
-    if(m_shaderId.fAlbedo == HANDLE_NULL) {
+    if(!m_shaderId.isInited) {
        SetShaderIds(handle);
     }
 
+    unsigned short layout = 0;
+
     //albedo
     if(m_albedoTexture != nullptr) {
-        m_albedoTexture->Bind(m_shaderId.texAlbedo, 0);
+        m_albedoTexture->Bind(m_shaderId.texAlbedo, layout);
         glUniform3fv(m_shaderId.fAlbedo, 1, VEC3_NONE.Pointer());
+        layout++;
     }
 	else {
         glUniform3fv(m_shaderId.fAlbedo, 1, m_albedoMaterial.Pointer());
 	}
 
 	//metallic
-    if(!AttachTexture(m_metallicTexture, m_shaderId.texMetallic, m_shaderId.fMetallic)) {
+    if(!AttachTexture(m_metallicTexture, m_shaderId.texMetallic, m_shaderId.fMetallic, layout)) {
         glUniform1f(m_shaderId.fMetallic, m_metallicMaterial);
     }
 
     //roughness
-    if(!AttachTexture(m_roughnessTexture, m_shaderId.texRoughness, m_shaderId.fRoughness)) {
+    if(!AttachTexture(m_roughnessTexture, m_shaderId.texRoughness, m_shaderId.fRoughness, layout)) {
         glUniform1f(m_shaderId.fRoughness, m_roughnessMaterial);
     }
 
     //AO
-    if(!AttachTexture(m_aoTexture, m_shaderId.texAo, m_shaderId.fAo)) {
+    if(!AttachTexture(m_aoTexture, m_shaderId.texAo, m_shaderId.fAo, layout)) {
         glUniform1f(m_shaderId.fAo, m_aoMaterial);
     }
 
+    //irradiance
     if(m_irradianceTexture != nullptr) {
-        m_irradianceTexture->Bind(0, 1);
+        m_irradianceTexture->Bind(m_shaderId.texIrradiance, layout);
+        glUniform3fv(m_shaderId.fIrradiance, 1, VEC3_NONE.Pointer());
+    }
+    else {
+        glUniform3fv(m_shaderId.fIrradiance, 1, m_irradianceMaterial.Pointer());
     }
 
 }
@@ -74,7 +74,18 @@ void MaterialComponent::AttachMaterials(const GLProgramHandle* handle) const {
 SComponent* MaterialComponent::Clone(SGameObject* object) {
     INIT_COMPONENT_CLONE(MaterialComponent, clone);
 
+    clone->m_albedoTexture = m_albedoTexture;
+    clone->m_metallicTexture = m_metallicTexture;
+    clone->m_roughnessTexture = m_roughnessTexture;
+    clone->m_aoTexture = m_aoTexture;
 
+    clone->m_albedoMaterial = m_albedoMaterial;
+    clone->m_metallicMaterial = m_metallicMaterial;
+    clone->m_roughnessMaterial = m_roughnessMaterial;
+    clone->m_aoMaterial = m_aoMaterial;
+
+    clone->m_irradianceTexture = m_irradianceTexture;
+    clone->m_irradianceMaterial = m_irradianceMaterial;
 
     return clone;
 }
@@ -89,24 +100,29 @@ void MaterialComponent::SetShaderIds(const GLProgramHandle* handle) const {
     m_shaderId.fMetallic = handle->UniformLocation("FLOAT_METALLIC");
     m_shaderId.fRoughness = handle->UniformLocation("FLOAT_ROUGHNESS");
     m_shaderId.fAo = handle->UniformLocation("FLOAT_AO");
+    m_shaderId.fIrradiance = handle->UniformLocation("FLOAT_IRRADIANCE");
 
     m_shaderId.texAlbedo = handle->UniformLocation("TEX2D_ALBEDO");
     m_shaderId.texMetallic = handle->UniformLocation("TEX2D_METALLIC");
     m_shaderId.texRoughness = handle->UniformLocation("TEX2D_ROUGHNESS");
     m_shaderId.texAo = handle->UniformLocation("TEX2D_AO");
+    m_shaderId.texIrradiance = handle->UniformLocation("TEXCUBE_IRRADIANCE");
+
+    m_shaderId.isInited = true;
 }
 
-bool MaterialComponent::AttachTexture(STexture* texture, int tex_id, int mtrl_id) const {
+bool MaterialComponent::AttachTexture(STexture* texture, int tex_id, int mtrl_id, unsigned short& layout) const {
     if(texture != nullptr) {
-        texture->Bind(tex_id, 0);
+        texture->Bind(tex_id, layout);
         glUniform1f(mtrl_id, -1);
+        layout++;
         return true;
     }
     return false;
 }
 
 void MaterialComponent::SetAlbedo(vec3 albedo) {
-    m_albedoMaterial = vec3(albedo);
+    m_albedoMaterial = albedo;
 }
 
 void MaterialComponent::SetAlbedoTexture(STexture* albedo) {

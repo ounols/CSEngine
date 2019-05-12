@@ -11,11 +11,15 @@ private:
         int texMetallic = -1;
         int texRoughness = -1;
         int texAo = -1;
+        int texIrradiance = -1;
 
         int fAlbedo = -1;
         int fMetallic = -1;
         int fRoughness = -1;
         int fAo = -1;
+        int fIrradiance = -1;
+
+        bool isInited = false;
     };
 public:
     MaterialComponent();
@@ -51,7 +55,7 @@ public:
 
 private:
     void SetShaderIds(const GLProgramHandle* handle) const;
-    bool AttachTexture(STexture* texture, int tex_id, int mtrl_id) const;
+    bool AttachTexture(STexture* texture, int tex_id, int mtrl_id, unsigned short& layout) const;
 
 private:
     //Materials
@@ -61,11 +65,13 @@ private:
     STexture* m_aoTexture = nullptr;
 
     vec3 m_albedoMaterial = vec3{ 0.5f, 0.5f, 0.5f };
-    float m_metallicMaterial = 0;
-    float m_roughnessMaterial = 0;
-    float m_aoMaterial = 0;
+    float m_metallicMaterial = 0.7f;
+    float m_roughnessMaterial = 0.4f;
+    float m_aoMaterial = 1.0f;
 
     SCubeTexture* m_irradianceTexture = nullptr;
+    vec3 m_irradianceMaterial = vec3{ 0.03f, 0.03f, 0.03f };
+
 
     //Shader ID
     mutable ShaderID m_shaderId;
