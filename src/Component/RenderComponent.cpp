@@ -52,7 +52,7 @@ void RenderComponent::Tick(float elapsedTime) {
 }
 
 
-void RenderComponent::SetMatrix(mat4 camera, mat4 projection) {
+void RenderComponent::SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) {
 
     // //model-view
     // mat4 scale = mat4::Scale(m_scale->x, m_scale->y, m_scale->z);
@@ -65,10 +65,10 @@ void RenderComponent::SetMatrix(mat4 camera, mat4 projection) {
     mat4 modelView = modelNoCameraView * camera;
     glUniformMatrix4fv(handler->Uniforms.Modelview, 1, 0, modelView.Pointer());
     glUniformMatrix4fv(handler->Uniforms.ModelNoCameraMatrix, 1, 0, modelNoCameraView.Pointer());
-
+    glUniform3fv(handler->Uniforms.CameraPosition, 1, cameraPosition.Pointer());
 
     //normal matrix
-    glUniformMatrix3fv(handler->Uniforms.NormalMatrix, 1, 0, modelView.ToMat3().Pointer());
+//    glUniformMatrix3fv(handler->Uniforms.NormalMatrix, 1, 0, modelView.ToMat3().Pointer());
 
 
     //projection transform

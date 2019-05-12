@@ -16,10 +16,12 @@ struct GLUniformHandles {
     GLint Modelview = HANDLE_NULL;
     GLint ModelNoCameraMatrix = HANDLE_NULL;
     GLint Projection = HANDLE_NULL;
-    GLint NormalMatrix = HANDLE_NULL;
+    GLint CameraPosition = HANDLE_NULL;
     GLint LightPosition = HANDLE_NULL;
     GLint LightType = HANDLE_NULL;
     GLint LightRadius = HANDLE_NULL;
+    GLint LightColor = HANDLE_NULL;
+    GLint LightSize = HANDLE_NULL;
     GLint JointMatrix = HANDLE_NULL;
     GLint IsSkinning = HANDLE_NULL;
 };

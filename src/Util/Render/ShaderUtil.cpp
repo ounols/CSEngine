@@ -194,10 +194,12 @@ void ShaderUtil::BindVariables(std::map<std::string, std::string> variables, GLP
     handle->Uniforms.Projection = handle->UniformLocation("PROJECTION_MATRIX");
     handle->Uniforms.Modelview = handle->UniformLocation("MODELVIEW_MATRIX");
     handle->Uniforms.ModelNoCameraMatrix = handle->UniformLocation("MODELVIEW_NOCAMERA_MATRIX");
-    handle->Uniforms.NormalMatrix = handle->UniformLocation("NORMAL_MATRIX");
+    handle->Uniforms.CameraPosition = handle->UniformLocation("CAMERA_POSITION");
     handle->Uniforms.IsSkinning = handle->UniformLocation("SKINNING_MODE");
     handle->Uniforms.JointMatrix = handle->UniformLocation("JOINT_MATRIX");
     handle->Uniforms.LightPosition = handle->UniformLocation("LIGHT_POSITION");
     handle->Uniforms.LightType = handle->UniformLocation("LIGHT_TYPE");
     handle->Uniforms.LightRadius = handle->UniformLocation("LIGHT_RADIUS");
+    handle->Uniforms.LightSize = handle->UniformLocation("LIGHT_SIZE");
+    handle->Uniforms.LightColor = handle->UniformLocation("LIGHT_COLOR");
 }

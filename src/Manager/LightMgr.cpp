@@ -24,6 +24,8 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 
     std::vector<float> lightPosition;
     std::vector<int> lightType;
+    std::vector<float> lightRadius;
+    std::vector<float> lightColor;
 
 	int i = 0;
 	for(const auto& light : m_objects) {
@@ -57,11 +59,19 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 		}
 
 		lightType.push_back(type);
+		lightRadius.push_back(lightObject->radius);
+        lightColor.push_back(lightObject->color.x);
+        lightColor.push_back(lightObject->color.y);
+        lightColor.push_back(lightObject->color.z);
+
 		i++;
 	}
 
-	glUniform4fv(handle->Uniforms.LightPosition, MAX_LIGHTS, &lightPosition[0]);
-	glUniform1iv(handle->Uniforms.LightType, MAX_LIGHTS, &lightType[0]);
+    glUniform4fv(handle->Uniforms.LightPosition, MAX_LIGHTS, &lightPosition[0]);
+    glUniform3fv(handle->Uniforms.LightColor, MAX_LIGHTS, &lightColor[0]);
+    glUniform1iv(handle->Uniforms.LightType, MAX_LIGHTS, &lightType[0]);
+    glUniform1fv(handle->Uniforms.LightRadius, MAX_LIGHTS, &lightRadius[0]);
+	glUniform1i(handle->Uniforms.LightSize, m_objects.size());
 
 }
 

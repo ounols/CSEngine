@@ -40,9 +40,9 @@ void LightComponent::Tick(float elapsedTime) {
 
 		float color2 = value * 0.07f + 0.03f;
 
-		m_light->diffuseColor = vec4{color0, color1, color1, 1};
-		m_light->ambientColor = vec4{color2, color2, color2, 1};
-		m_light->specularColor = vec4{value, value, value, 1};
+//		m_light->diffuseColor = vec4{color0, color1, color1, 1};
+//		m_light->ambientColor = vec4{color2, color2, color2, 1};
+//		m_light->specularColor = vec4{value, value, value, 1};
 	}
 }
 
@@ -76,23 +76,11 @@ void LightComponent::SetDirection(vec4 direction) const {
 }
 
 
-void LightComponent::SetColorAmbient(vec4 color) const {
-	m_light->ambientColor = color;
+
+void LightComponent::SetColor(vec3 color) const {
+	m_light->color = color;
 
 }
-
-
-void LightComponent::SetColorDiffuse(vec4 color) const {
-	m_light->diffuseColor = color;
-
-}
-
-
-void LightComponent::SetColorSpecular(vec4 color) const {
-	m_light->specularColor = color;
-
-}
-
 
 void LightComponent::SetLightRadius(float radius) const {
 
@@ -125,18 +113,9 @@ vec4 LightComponent::GetDirection(vec4 direction) const {
 	return m_light->direction;
 }
 
-vec4 LightComponent::GetColorAmbient(vec4 color) const {
-	return m_light->ambientColor;
+vec3 LightComponent::GetColor() const {
+	return m_light->color;
 }
-
-vec4 LightComponent::GetColorDiffuse(vec4 color) const {
-	return m_light->diffuseColor;
-}
-
-vec4 LightComponent::GetColorSpecular(vec4 color) const {
-	return m_light->specularColor;
-}
-
 void LightComponent::SetSunrising(bool active) {
 	m_isSunRising = active;
 

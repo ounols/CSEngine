@@ -3,9 +3,7 @@
 
 struct BaseLight {
 
-	vec4 ambientColor = vec4{ 0, 0, 0, 0 };
-	vec4 diffuseColor = vec4{ 1, 1, 1, 1 };
-	vec4 specularColor = vec4{ 1, 1, 1, 1 };
+	vec3 color = vec3{2, 2, 2};
 
 
 };

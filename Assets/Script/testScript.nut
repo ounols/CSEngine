@@ -13,8 +13,10 @@ class TestScript extends SCEngineScript {
 		local diffuse = vec4();
 		diffuse.Set(1, 1, 0.5, 1);
 		if(materialComp != null) {
-			materialComp.SetDiffuse(diffuse);
-			materialComp.SetAmbient(ambient);
+			materialComp.SetRoughness(0.025);
+			materialComp.SetMetallic(0.5);
+			//materialComp.SetDiffuse(diffuse);
+			//materialComp.SetAmbient(ambient);
 		}
 
 

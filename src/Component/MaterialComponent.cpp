@@ -1,6 +1,7 @@
 #include "../Manager/TextureContainer.h"
 #include "MaterialComponent.h"
 
+const vec3 VEC3_NONE = vec3{ -1, -1, -1 };
 
 COMPONENT_CONSTRUCTOR(MaterialComponent) {
 
@@ -35,12 +36,33 @@ void MaterialComponent::AttachMaterials(const GLProgramHandle* handle) const {
 //
 //    }
 
+    if(m_shaderId.fAlbedo == HANDLE_NULL) {
+       SetShaderIds(handle);
+    }
 
-
-
-	if(m_albedoTexture != nullptr) {
-        m_albedoTexture->Bind(handle->UniformLocation("TEX2D_ALBEDO"), 0);
+    //albedo
+    if(m_albedoTexture != nullptr) {
+        m_albedoTexture->Bind(m_shaderId.texAlbedo, 0);
+        glUniform3fv(m_shaderId.fAlbedo, 1, VEC3_NONE.Pointer());
+    }
+	else {
+        glUniform3fv(m_shaderId.fAlbedo, 1, m_albedoMaterial.Pointer());
 	}
+
+	//metallic
+    if(!AttachTexture(m_metallicTexture, m_shaderId.texMetallic, m_shaderId.fMetallic)) {
+        glUniform1f(m_shaderId.fMetallic, m_metallicMaterial);
+    }
+
+    //roughness
+    if(!AttachTexture(m_roughnessTexture, m_shaderId.texRoughness, m_shaderId.fRoughness)) {
+        glUniform1f(m_shaderId.fRoughness, m_roughnessMaterial);
+    }
+
+    //AO
+    if(!AttachTexture(m_aoTexture, m_shaderId.texAo, m_shaderId.fAo)) {
+        glUniform1f(m_shaderId.fAo, m_aoMaterial);
+    }
 
     if(m_irradianceTexture != nullptr) {
         m_irradianceTexture->Bind(0, 1);
@@ -49,61 +71,10 @@ void MaterialComponent::AttachMaterials(const GLProgramHandle* handle) const {
 }
 
 
-void MaterialComponent::SetMaterialAmbient(vec3 color) {
-	m_ambientMaterial = color;
-}
-
-
-void MaterialComponent::SetMaterialSpecular(vec3 color) {
-	m_specularMaterial = color;
-}
-
-
-void MaterialComponent::SetShininess(float value) {
-	m_shininess = value;
-}
-
-void MaterialComponent::SetDiffuseMaterial(vec4 diffuse_material) {
-	m_diffuseMaterial = diffuse_material;
-}
-
-void MaterialComponent::SetTexture(STexture* texture) {
-	m_albedoTexture = texture;
-}
-
-vec4 MaterialComponent::GetDiffuseMaterial() const {
-	return m_diffuseMaterial;
-}
-
-
-
-
-vec3 MaterialComponent::GetAmbientMaterial() const {
-	return m_ambientMaterial;
-}
-
-
-vec3 MaterialComponent::GetSpecularMaterial() const {
-	return m_specularMaterial;
-}
-
-
-float MaterialComponent::GetShininess() const {
-	return m_shininess;
-}
-
-STexture* MaterialComponent::GetTexture() const {
-	return m_albedoTexture;
-}
-
 SComponent* MaterialComponent::Clone(SGameObject* object) {
     INIT_COMPONENT_CLONE(MaterialComponent, clone);
 
-    clone->m_ambientMaterial = m_ambientMaterial;
-    clone->m_specularMaterial = m_specularMaterial;
-    clone->m_diffuseMaterial = m_diffuseMaterial;
-    clone->m_shininess = m_shininess;
-    clone->m_albedoTexture = m_albedoTexture;
+
 
     return clone;
 }
@@ -111,4 +82,61 @@ SComponent* MaterialComponent::Clone(SGameObject* object) {
 void MaterialComponent::CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
                                       std::map<SComponent*, SComponent*> lists_comp) {
     return;
+}
+
+void MaterialComponent::SetShaderIds(const GLProgramHandle* handle) const {
+    m_shaderId.fAlbedo = handle->UniformLocation("FLOAT_ALBEDO");
+    m_shaderId.fMetallic = handle->UniformLocation("FLOAT_METALLIC");
+    m_shaderId.fRoughness = handle->UniformLocation("FLOAT_ROUGHNESS");
+    m_shaderId.fAo = handle->UniformLocation("FLOAT_AO");
+
+    m_shaderId.texAlbedo = handle->UniformLocation("TEX2D_ALBEDO");
+    m_shaderId.texMetallic = handle->UniformLocation("TEX2D_METALLIC");
+    m_shaderId.texRoughness = handle->UniformLocation("TEX2D_ROUGHNESS");
+    m_shaderId.texAo = handle->UniformLocation("TEX2D_AO");
+}
+
+bool MaterialComponent::AttachTexture(STexture* texture, int tex_id, int mtrl_id) const {
+    if(texture != nullptr) {
+        texture->Bind(tex_id, 0);
+        glUniform1f(mtrl_id, -1);
+        return true;
+    }
+    return false;
+}
+
+void MaterialComponent::SetAlbedo(vec3 albedo) {
+    m_albedoMaterial = vec3(albedo);
+}
+
+void MaterialComponent::SetAlbedoTexture(STexture* albedo) {
+    m_albedoTexture = albedo;
+    m_albedoMaterial = VEC3_NONE;
+}
+
+void MaterialComponent::SetMetallic(float metallic) {
+    m_metallicMaterial = metallic;
+}
+
+void MaterialComponent::SetMetallicTexture(STexture* metallic) {
+    m_metallicTexture = metallic;
+    m_metallicMaterial = -1;
+}
+
+void MaterialComponent::SetRoughness(float roughness) {
+    m_roughnessMaterial = roughness;
+}
+
+void MaterialComponent::SetRoughnessTexture(STexture* roughness) {
+    m_roughnessTexture = roughness;
+    m_roughnessMaterial = -1;
+}
+
+void MaterialComponent::SetAo(float ao) {
+    m_aoMaterial = ao;
+}
+
+void MaterialComponent::SetAoTexture(STexture* ao) {
+    m_aoTexture = ao;
+    m_aoMaterial = -1;
 }

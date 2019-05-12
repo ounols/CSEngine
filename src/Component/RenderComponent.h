@@ -17,7 +17,7 @@ public:
 	SComponent* Clone(SGameObject* object) override;
 
 
-	void SetMatrix(mat4 camera, mat4 projection) override;
+	void SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) override;
 	void Render(float elapsedTime) override;
 
 	void SetShaderHandle(int id);

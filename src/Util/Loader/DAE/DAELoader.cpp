@@ -70,7 +70,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type, const char* texture_path)
 
 
 void DAELoader::LoadTexture(const char* filePath) {
-    if(filePath == nullptr) return;
+    if (filePath == nullptr) return;
 
     STexture* texture = new STexture();
     texture->LoadFile(filePath);
@@ -125,7 +125,8 @@ void DAELoader::LoadGeometry(XNode root_g) {
     XNode meshData = root_g.getChild("geometry").getChild("mesh");
 
     //RAW data
-    ReadPositions(meshData, m_skinningData->get_verticesSkinData());
+    ReadPositions(meshData,
+                  m_skeletonData == nullptr ? std::vector<VertexSkinData*>() : m_skinningData->get_verticesSkinData());
     ReadNormals(meshData);
     ReadUVs(meshData);
 
@@ -156,7 +157,7 @@ void DAELoader::ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWei
 
         // vec4 position = vec4{ x, y, z, 1 };
         mat4 transform = mat4::Translate(x, y, z) * CORRECTION;
-        m_vertices.push_back(new Vertex(m_vertices.size(), vec3{transform.w.x, transform.w.y, transform.w.z},
+        m_vertices.push_back(new Vertex(m_vertices.size(), vec3{ transform.w.x, transform.w.y, transform.w.z },
                                         m_isSkinning ? vertexWeight.at(m_vertices.size()) : nullptr));
     }
 
@@ -178,7 +179,7 @@ void DAELoader::ReadNormals(XNode data) {
         mat4 transform = mat4::Translate(x, y, z) * CORRECTION;
         // std::cout << "{ " << x << ", " << y << ", " << z << " }, ";
         // Matrix4f.transform(CORRECTION, normal, normal);
-        m_normals.push_back(vec3{transform.w.x, transform.w.y, transform.w.z});
+        m_normals.push_back(vec3{ transform.w.x, transform.w.y, transform.w.z });
 
     }
 
@@ -193,11 +194,11 @@ void DAELoader::ReadUVs(XNode data) {
     int uvSize = std::stoi(texData.getAttribute("count").value);
     auto uvs = texData.value.toFloatVector();
 
-    for(int i = 0; i < uvSize/2; i++) {
+    for (int i = 0; i < uvSize / 2; i++) {
         float s = uvs[i * 2];
         float t = uvs[i * 2 + 1];
 
-        m_texUVs.push_back(vec2{s, t});
+        m_texUVs.push_back(vec2{ s, t });
     }
 
 
@@ -434,16 +435,29 @@ SPrefab* DAELoader::GeneratePrefab() {
     SGameObject* root = new SGameObject(m_name);
     prefab->SetGameObject(root);
 
-    SGameObject* joint_root = new SGameObject("Armature");
-    root->AddChild(joint_root);
-    DAEConvertSGameObject::CreateJoints(joint_root, m_skeletonData->getHeadJoint());
+    SGameObject* joint_root = nullptr;
+
+    if (m_isSkinning) {
+        joint_root = new SGameObject("Armature");
+        root->AddChild(joint_root);
+        DAEConvertSGameObject::CreateJoints(joint_root, m_skeletonData->getHeadJoint());
+    }
 
     SGameObject* mesh_root = new SGameObject("mesh");
     root->AddChild(mesh_root);
-    auto mesh_component = mesh_root->CreateComponent<DrawableSkinnedMeshComponent>();
+    DrawableStaticMeshComponent* mesh_component = nullptr;
+
+    if (m_isSkinning) {
+        mesh_component = mesh_root->CreateComponent<DrawableSkinnedMeshComponent>();
+    } else {
+        mesh_component = mesh_root->CreateComponent<DrawableStaticMeshComponent>();
+    }
+
     mesh_component->SetMesh(*m_obj);
 
-    mesh_component->SetRootJoint(joint_root->GetChildren()[0], m_skeletonData->getJointCount());
+    if (m_isSkinning)
+        dynamic_cast<DrawableSkinnedMeshComponent*>(mesh_component)->SetRootJoint(joint_root->GetChildren()[0],
+                                                                                  m_skeletonData->getJointCount());
 
     mesh_root->CreateComponent<RenderComponent>();
     mesh_root->GetComponent<RenderComponent>()->SetShaderHandle(0);
@@ -451,11 +465,13 @@ SPrefab* DAELoader::GeneratePrefab() {
 
     auto material = mesh_root->CreateComponent<MaterialComponent>();
 //    material->SetDiffuseMaterial(vec4{0.7f, 0.6f, 1, 1});
-    material->SetShininess(40);
-    material->SetTexture(ResMgr::getInstance()->GetObject<TextureContainer, STexture>(m_texture_id));
+//    material->SetShininess(40);
+    material->SetAlbedoTexture(ResMgr::getInstance()->GetObject<TextureContainer, STexture>(m_texture_id));
 
-    SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,
-                                                                       m_animationLoader->GetAnimation());
+    if (m_isSkinning) {
+        SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,
+                                                                           m_animationLoader->GetAnimation());
+    }
 
 
     return prefab;

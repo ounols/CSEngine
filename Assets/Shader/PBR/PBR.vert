@@ -8,20 +8,6 @@ precision highp int;
 #define MAX_WEIGHTS 3
 #define MAX_JOINTS 60
 
-struct U_LightSource {
-    vec4 u_diffuseLight;
-    vec4 u_ambientLight;
-    vec4 u_specularLight;
-
-    int u_lightMode;
-    int u_isDirectional;
-
-    /**Attenuation Factor**/
-    int u_isAttenuation;
-    vec3 u_attenuationFactor;
-    float u_lightRadius;
-
-};
 
 
 // Attributes
@@ -29,7 +15,6 @@ struct U_LightSource {
 in vec4 a_position;
 //[NORMAL]//
 in vec3 a_normal;
-in vec3 a_diffuseMaterial;
 //[JOINT_INDICES]//
 in vec3 a_jointIndices;
 //[WEIGHTS]//
@@ -44,26 +29,25 @@ uniform mat4 u_projectionMatrix;//Projection;
 uniform mat4 u_modelViewMatrix;//Modelview;
 //[MODELVIEW_NOCAMERA_MATRIX]//
 uniform mat4 u_modelViewNoCameraMatrix;//Modelview - no camera matrix;
-//[NORMAL_MATRIX]//
-uniform mat3 u_normalMatrix;//NormalMatrix;
 //[LIGHT_POSITION]//
 uniform vec4 u_lightPosition[MAX_LIGHTS];//LightPosition;
+//[LIGHT_SIZE]//
+uniform int u_lightSize;
+//[LIGHT_TYPE]//
+uniform int u_lightType[MAX_LIGHTS];
 //[JOINT_MATRIX]//
 uniform mat4 u_jointMatrix[MAX_JOINTS];
 
 //[SKINNING_MODE]//
 uniform lowp int u_isSkinning;
-uniform lowp int u_isDirectional[MAX_LIGHTS];
-uniform U_LightSource u_lightSources[MAX_LIGHTS];
-uniform lowp int u_lightsSize;
 
 
 // Varying
 out vec3 v_eyespaceNormal;//EyespaceNormal
-out vec3 v_diffuse;//Diffuse;
 out vec3 v_lightPosition[MAX_LIGHTS];
 out vec2 v_textureCoordOut;
 out float v_distance[MAX_LIGHTS];
+out vec3 v_worldPosition;
 //varying vec3 v_vertPosition;
 
 
@@ -94,17 +78,17 @@ void main(void) {
     }
 
 
-	v_eyespaceNormal = u_normalMatrix * normal_final.xyz;
-	v_diffuse = a_diffuseMaterial;
+	v_eyespaceNormal = mat3(u_modelViewNoCameraMatrix) * normal_final.xyz;
 	v_textureCoordOut = a_textureCoordIn;
+    v_worldPosition = vec3(u_modelViewNoCameraMatrix * position_final);
 
 
-    for(int i = 0; i < u_lightsSize; i++) {
+    for(int i = 0; i < u_lightSize; i++) {
         	vec4 positionLight;
         	vec4 directionLight = u_lightPosition[i];
 
         	//direction & position light
-        	if(u_lightSources[i].u_isDirectional == 1) {
+        	if(u_lightType[i] == 1) {
         		positionLight = vec4(c_zero, c_zero, c_zero, c_one);
         	}else {
         		positionLight = u_modelViewNoCameraMatrix * position_final;

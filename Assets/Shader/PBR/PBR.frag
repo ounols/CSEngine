@@ -8,16 +8,36 @@ precision highp int;
 
 //Uniforms
 //[TEX2D_ALBEDO]//
-uniform sampler2D u_sampler_2d;
+uniform sampler2D u_sampler_albedo;
+//[TEX2D_METALLIC]//
+uniform sampler2D u_sampler_metallic;
+//[TEX2D_ROUGHNESS]//
+uniform sampler2D u_sampler_roughness;
+//[TEX2D_AO]//
+uniform sampler2D u_sampler_ao;
+
 //[TEXCUBE_IRRADIANCE]//
 uniform samplerCube u_sampler_irradiance;
+
+//[FLOAT_ALBEDO]//
+uniform vec3 u_albedo;
+//[FLOAT_METALLIC]//
+uniform float u_metallic;
+//[FLOAT_ROUGHNESS]//
+uniform float u_roughness;
+//[FLOAT_AO]//
+uniform float u_ao;
+
 //[LIGHT_TYPE]//
 uniform int u_lightType[MAX_LIGHTS];
 //[LIGHT_RADIUS]//
 uniform float u_lightRadius[MAX_LIGHTS];
 //[LIGHT_COLOR]//
 uniform vec3 u_lightColor[MAX_LIGHTS];
-
+//[LIGHT_SIZE]//
+uniform int u_lightSize;
+//[CAMERA_POSITION]//
+uniform vec3 u_cameraPosition;
 
 //Varying
 in mediump vec3 v_eyespaceNormal;//EyespaceNormal;
@@ -25,105 +45,106 @@ in vec3 v_lightPosition[MAX_LIGHTS];
 in lowp vec3 v_diffuse;//Diffuse;
 in mediump vec2 v_textureCoordOut;
 in float v_distance[MAX_LIGHTS];
-in vec3 v_vertPosition;
+in vec3 v_worldPosition;
 
 out vec4 FragColor;
 
 //Defined
 const lowp float c_zero = 0.0;
 const lowp float c_one = 1.0;
-
-const lowp int MODE_AMB = 1;
-const lowp int MODE_DIF = 2;
-const lowp int MODE_SPEC = 3;
-const lowp int MODE_AMB_DIF = 12;
-const lowp int MODE_AMB_SPEC = 13;
-const lowp int MODE_DIF_SPEC = 23;
-const lowp int MODE_COMPLETE = 123;
-
+const float PI = 3.14159265359;
 
 
 //Functions
-vec3 calcLightDif(int index);
-vec3 calcLightAmb(int index);
-vec3 calcLightSpec(int index);
 float calcLightAtt(int index);
+float DistributionGGX(vec3 N, vec3 H, float roughness);
+float DistributionPhong(vec3 N, vec3 H, float roughness);
+float GeometrySchlickGGX(float NdotV, float roughness);
+float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
+vec3 fresnelSchlick(float cosTheta, vec3 F0);
+
+//Macro Functions
+float ClampedPow(float X, float Y) {
+	return pow(max(abs(X),0.000001f),Y);
+}
 
 
 void main(void) {
-	
-	vec3 color = vec3(c_zero, c_zero, c_zero);
-	vec3 colors[MAX_LIGHTS];
 
-	for(int i = 0; i < MAX_LIGHTS; i++) {
-	    colors[i] = vec3(c_zero, c_zero, c_zero);
+	vec3 albedo     = u_albedo.r < 0.0 ? pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2)) : u_albedo;
+//	float metallic  = u_metallic < 0.0 ? texture2D(u_sampler_metallic, v_textureCoordOut).r : u_metallic;
+//	float roughness = u_roughness < 0.0 ? texture2D(u_sampler_roughness, v_textureCoordOut).r : u_roughness;
+//	float ao        = u_ao < 0.0 ? texture2D(u_sampler_ao, v_textureCoordOut).r : u_ao;
 
-	    int lightMode = MODE_COMPLETE;
+//	vec3 albedo     = vec3(0.5, 1.0, 0.0);
+	float metallic  = 0.7;
+	float roughness = 0.4;
+	float ao        = 1.0;
 
-        	if (lightMode == MODE_DIF || lightMode == MODE_AMB_DIF || lightMode == MODE_DIF_SPEC ||
-        		lightMode == MODE_COMPLETE) {
-        		colors[i] += calcLightDif(i);
-        	}
-        	if (lightMode == MODE_AMB || lightMode == MODE_AMB_DIF || lightMode == MODE_AMB_SPEC ||
-        		lightMode == MODE_COMPLETE) {
-        		colors[i] += calcLightAmb(i);
-        	}
-        	if (lightMode == MODE_SPEC || lightMode == MODE_DIF_SPEC || lightMode == MODE_AMB_SPEC ||
-        		lightMode == MODE_COMPLETE) {
-        		colors[i] += calcLightSpec(i);
-        	}
+	vec3 N = normalize(v_eyespaceNormal);
+	vec3 V = normalize(v_eyespaceNormal - v_worldPosition);
 
-        	//Attenuation Factor
-        	colors[i] *= calcLightAtt(i);
+	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
+	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
+	vec3 F0 = vec3(0.04);
+	F0 = mix(F0, albedo, metallic);
+
+	// reflectance equation
+	vec3 Lo = vec3(0.0);
+
+	for(int i = 0; i < u_lightSize; i++) {
+
+		// calculate per-light radiance
+		vec3 L = v_lightPosition[i];
+		vec3 H = normalize(V + L);
+		//float attenuation = calcLightAtt(i);
+		float distance = v_distance[i];
+		float attenuation = 1.0 / (distance * distance);
+		vec3 radiance = u_lightColor[i] * attenuation;
+
+		// Cook-Torrance BRDF
+		float NDF = DistributionGGX(N, H, roughness);
+		float G   = GeometrySmith(N, V, L, roughness);
+		vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
+
+		vec3 nominator    = NDF * G * F;
+		float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
+		vec3 specular = nominator / max(denominator, 0.001); // prevent divide by zero for NdotV=0.0 or NdotL=0.0
+
+		// kS is equal to Fresnel
+		vec3 kS = F;
+
+		// for energy conservation, the diffuse and specular light can't
+		// be above 1.0 (unless the surface emits light); to preserve this
+		// relationship the diffuse component (kD) should equal 1.0 - kS.
+		vec3 kD = vec3(1.0) - kS;
+		// multiply kD by the inverse metalness such that only non-metals
+		// have diffuse lighting, or a linear blend if partly metal (pure metals
+		// have no diffuse light).
+		kD *= 1.0 - metallic;
+
+		// scale light by NdotL
+		float NdotL = max(dot(N, L), 0.0);
+
+		// add to outgoing radiance Lo
+		Lo += (kD * albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+
 	}
 
-    for(int i = 0; i < MAX_LIGHTS; i++) {
-        color += colors[i];
-    }
+	// ambient lighting (note that the next IBL tutorial will replace
+	// this ambient lighting with environment lighting).
+	vec3 ambient = vec3(0.03) * albedo * ao;
 
-    lowp vec3 diffuse = texture2D(u_sampler_2d, v_textureCoordOut).rgb;
+	vec3 color = ambient + Lo;
 
-	FragColor = vec4(color, 1.0) * vec4(diffuse, 1.0);
+	// HDR tonemapping
+	color = color / (color + vec3(1.0));
+	// gamma correct
+	color = pow(color, vec3(1.0/2.2));
+
+	FragColor = vec4(color, 1.0);
 
 }
-
-// only diffuse light
-vec3 calcLightDif(int index) {
-//	vec3 N = normalize(v_eyespaceNormal);
-//	vec3 L = normalize(v_lightPosition[index]);
-//	float df = max(c_zero, dot(N, L));
-//
-//	return vec3(u_lightSources[index].u_diffuseLight) * v_diffuse * df;
-	return vec3(1);
-}
-
-// only ambient light
-vec3 calcLightAmb(int index) {
-//	vec3 globalAmbient = vec3(u_lightSources[index].u_ambientLight) * vec3(0.05); // * gl_LightSource[0].ambient
-//	vec3 ambient = u_ambientMaterial * vec3(u_lightSources[index].u_ambientLight);
-//
-//	return globalAmbient + ambient;
-	return vec3(1);
-}
-
-// only specular light
-vec3 calcLightSpec(int index) {
-
-//	vec3 N = normalize(v_eyespaceNormal);
-//	vec3 L = normalize(v_lightPosition[index]);
-//	vec3 E = vec3(c_zero, c_zero, c_one);
-//	vec3 H = normalize(L + E);
-//	vec3 R = reflect(-L, N);
-//
-//	//float sf = max(c_zero, dot(N, H));	// Blinn model
-//	float sf = max(c_zero, dot(R, E));		// Phong model
-//
-//	sf = pow(sf, u_shininess);
-//
-//	return (u_specularMaterial * vec3(u_lightSources[index].u_specularLight) * sf);
-	return vec3(1);
-}
-
 // only attenuation Factor
 float calcLightAtt(int index) {
 
@@ -146,4 +167,45 @@ float calcLightAtt(int index) {
 	if (att <= c_zero) return c_one;
 
 	return att;
+}
+
+float DistributionGGX(vec3 N, vec3 H, float roughness) {
+	float m = roughness * roughness;
+	float m2 = m * m;
+	float NoH = max(dot(N, H), 0.0);
+	float d = ( NoH * m2 - NoH ) * NoH + 1.0;	// 2 mad
+	return m2 / ( PI * d * d );
+}
+
+// [Blinn 1977, "Models of light reflection for computer synthesized pictures"]
+float DistributionPhong(vec3 N, vec3 H, float roughness) {
+	float m = roughness * roughness;
+	float m2 = m * m;
+	float n = 2.0 / m2 - 2.0;
+	float NoH = max(dot(N, H), 0.0);
+
+	return (n + 2.0) / (2.0 * PI) * ClampedPow( NoH, n ); // 1 mad, 1 exp, 1 mul, 1 log
+}
+// ----------------------------------------------------------------------------
+float GeometrySchlickGGX(float NdotV, float roughness) {
+	float r = (roughness + 1.0);
+	float k = (r * r) / 8.0;
+
+	float nom   = NdotV;
+	float denom = NdotV * (1.0 - k) + k;
+
+	return nom / denom;
+}
+
+float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
+	float NdotV = max(dot(N, V), 0.0);
+	float NdotL = max(dot(N, L), 0.0);
+	float ggx2 = GeometrySchlickGGX(NdotV, roughness);
+	float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+
+	return ggx1 * ggx2;
+}
+// ----------------------------------------------------------------------------
+vec3 fresnelSchlick(float cosTheta, vec3 F0) {
+	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }

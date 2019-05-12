@@ -146,6 +146,15 @@ void CameraComponent::SetCameraMatrix() {
     m_cameraMatrix = mat4::LookAt(*m_eye, m_resultTarget, m_up);
 }
 
+mat4 CameraComponent::GetCameraMatrix() const {
+    return m_cameraMatrix;
+}
+
+vec3 CameraComponent::GetCameraPosition() const {
+    mat4 matrix = static_cast<TransformComponent*>(gameObject->GetTransform())->GetMatrix();
+    return vec3{matrix.w.x, matrix.w.y, matrix.w.z};
+}
+
 
 void CameraComponent::SetProjectionMatrix() {
 
@@ -160,4 +169,3 @@ void CameraComponent::SetProjectionMatrix() {
     m_isProjectionInited = true;
 
 }
-

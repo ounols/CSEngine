@@ -43,7 +43,7 @@ public:
 	SIRender() {}
 	virtual ~SIRender() {}
 
-	virtual void SetMatrix(mat4 camera, mat4 projection) = 0;
+	virtual void SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) = 0;
 	virtual void Render(float elapsedTime) = 0;
 
 protected:
