@@ -55,7 +55,7 @@ public:
 
 private:
     void SetShaderIds(const GLProgramHandle* handle) const;
-    bool AttachTexture(STexture* texture, int tex_id, int mtrl_id, unsigned short& layout) const;
+    bool AttachTexture(STexture* texture, int tex_id, int mtrl_id, unsigned short layout) const;
 
 private:
     //Materials

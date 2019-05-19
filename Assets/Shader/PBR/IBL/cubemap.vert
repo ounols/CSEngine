@@ -16,5 +16,5 @@ uniform mat4 u_viewMatrix;
 
 void main() {
     v_worldPositon = a_position;
-    gl_Position =  u_projectionMatrix * u_viewMatrix * vec4(v_worldPositon, 1.0);
+    gl_Position =  u_projectionMatrix * u_viewMatrix * vec4(v_worldPositon, 1.0f);
 }

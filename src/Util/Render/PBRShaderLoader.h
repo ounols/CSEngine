@@ -13,7 +13,9 @@ public:
     ~PBRShaderLoader();
 
     void LoadShader();
-
+private:
+    void LoadCubeVAO(GLProgramHandle* handler);
+    void RenderCubeVAO();
 private:
     GLProgramHandle* m_equirectangularToCubemapShader;
     GLProgramHandle* m_irradianceShader;
@@ -21,5 +23,8 @@ private:
     STexture* m_hdrTexture;
     SCubeTexture* m_envTexture;
     SCubeTexture* m_irradianceMap;
+
+    unsigned int m_cubeVBO;
+    unsigned int m_cubeVAO;
 };
 

@@ -24,7 +24,10 @@ private:
 	//===============
 	float startTIme = 0;
 	MeshSurface* cube;
+	MeshSurface* cubemap;
 
 	bool isUnvisible = false;
+    unsigned int cubeVAO = 0;
+    unsigned int cubeVBO = 0;
 };
 

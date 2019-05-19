@@ -75,7 +75,7 @@ float ClampedPow(float X, float Y) {
 
 void main(void) {
 
-	vec3 albedo     = u_albedo.x < 0.0 ? pow(texture(u_sampler_albedo, v_textureCoordOut).xyz, vec3(2.2)) : u_albedo;
+	vec3 albedo     = u_albedo.r < 0.0 ? pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2)) : u_albedo;
 	float metallic  = u_metallic < 0.0 ? texture2D(u_sampler_metallic, v_textureCoordOut).r : u_metallic;
 	float roughness = u_roughness < 0.0 ? texture2D(u_sampler_roughness, v_textureCoordOut).r : u_roughness;
 	float ao        = u_ao < 0.0 ? texture2D(u_sampler_ao, v_textureCoordOut).r : u_ao;
@@ -130,7 +130,15 @@ void main(void) {
 
 	}
 
-	vec3 irradiance = u_irradiance.r < 0.0 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
+	// ambient lighting (we now use IBL as the ambient term)
+//	vec3 kS = fresnelSchlick(max(dot(N, V0), 0.0), F0);
+//	vec3 kD = 1.0 - kS;
+//	kD *= 1.0 - metallic;
+//	vec3 irradiance = u_irradiance.r < 0.0 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);;
+//	vec3 diffuse      = irradiance * albedo;
+//	vec3 ambient = (kD * diffuse) * ao;
+
+	vec3 irradiance = u_irradiance.r < 0.00 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
 	vec3 ambient = irradiance * albedo * ao;
 
 	vec3 color = ambient + Lo;

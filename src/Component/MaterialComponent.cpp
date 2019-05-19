@@ -16,9 +16,9 @@ void MaterialComponent::Exterminate() {
 
 
 void MaterialComponent::Init() {
-    if(m_irradianceTexture == nullptr) {
-        m_irradianceTexture = ResMgr::getInstance()->GetObject<TextureContainer, SCubeTexture>(3);
-    }
+//    if(m_irradianceTexture == nullptr) {
+//        m_irradianceTexture = ResMgr::getInstance()->GetObject<TextureContainer, SCubeTexture>(3);
+//    }
 }
 
 
@@ -32,39 +32,39 @@ void MaterialComponent::AttachMaterials(const GLProgramHandle* handle) const {
        SetShaderIds(handle);
     }
 
-    unsigned short layout = 0;
 
     //albedo
     if(m_albedoTexture != nullptr) {
-        m_albedoTexture->Bind(m_shaderId.texAlbedo, layout);
+        m_albedoTexture->Bind(m_shaderId.texAlbedo, 0);
         glUniform3fv(m_shaderId.fAlbedo, 1, VEC3_NONE.Pointer());
-        layout++;
     }
 	else {
+        glUniform1i(m_shaderId.texAlbedo, 0);
         glUniform3fv(m_shaderId.fAlbedo, 1, m_albedoMaterial.Pointer());
 	}
 
 	//metallic
-    if(!AttachTexture(m_metallicTexture, m_shaderId.texMetallic, m_shaderId.fMetallic, layout)) {
+    if(!AttachTexture(m_metallicTexture, m_shaderId.texMetallic, m_shaderId.fMetallic, 1)) {
         glUniform1f(m_shaderId.fMetallic, m_metallicMaterial);
     }
 
     //roughness
-    if(!AttachTexture(m_roughnessTexture, m_shaderId.texRoughness, m_shaderId.fRoughness, layout)) {
+    if(!AttachTexture(m_roughnessTexture, m_shaderId.texRoughness, m_shaderId.fRoughness, 2)) {
         glUniform1f(m_shaderId.fRoughness, m_roughnessMaterial);
     }
 
     //AO
-    if(!AttachTexture(m_aoTexture, m_shaderId.texAo, m_shaderId.fAo, layout)) {
+    if(!AttachTexture(m_aoTexture, m_shaderId.texAo, m_shaderId.fAo, 3)) {
         glUniform1f(m_shaderId.fAo, m_aoMaterial);
     }
 
     //irradiance
     if(m_irradianceTexture != nullptr) {
-        m_irradianceTexture->Bind(m_shaderId.texIrradiance, layout);
+        m_irradianceTexture->Bind(m_shaderId.texIrradiance, 4);
         glUniform3fv(m_shaderId.fIrradiance, 1, VEC3_NONE.Pointer());
     }
     else {
+        glUniform1i(m_shaderId.texIrradiance, 4);
         glUniform3fv(m_shaderId.fIrradiance, 1, m_irradianceMaterial.Pointer());
     }
 
@@ -111,11 +111,11 @@ void MaterialComponent::SetShaderIds(const GLProgramHandle* handle) const {
     m_shaderId.isInited = true;
 }
 
-bool MaterialComponent::AttachTexture(STexture* texture, int tex_id, int mtrl_id, unsigned short& layout) const {
+bool MaterialComponent::AttachTexture(STexture* texture, int tex_id, int mtrl_id, unsigned short layout) const {
+    glUniform1i(tex_id, layout);
     if(texture != nullptr) {
         texture->Bind(tex_id, layout);
         glUniform1f(mtrl_id, -1);
-        layout++;
         return true;
     }
     return false;

@@ -74,6 +74,9 @@ void OGLMgr::setBuffers() {
 
 void OGLMgr::setupEGLGraphics(GLuint width, GLuint height) {
 
+    m_width = width;
+    m_height = height;
+
     setBuffers();
     setShaderProgram();
     setProjectionRatio();
@@ -98,50 +101,6 @@ void OGLMgr::AttachProgramHandle(int shaderID) {
     program = gProgramhandle->Program;
 
     glUseProgram(program);
-
-////    gProgramhandle->Attributes.Position = glGetAttribLocation(program, "a_position");
-//    gProgramhandle->Attributes.Position = gProgramhandle->AttributeLocation("a_position");
-//    gProgramhandle->Attributes.Normal = gProgramhandle->AttributeLocation("a_normal");
-////    gProgramhandle->Attributes.DiffuseMaterial = gProgramhandle->AttributeLocation("a_diffuseMaterial");
-//    gProgramhandle->Attributes.TextureCoord = gProgramhandle->AttributeLocation("a_textureCoordIn");
-//    gProgramhandle->Attributes.Weight = gProgramhandle->AttributeLocation("a_weights");
-//    gProgramhandle->Attributes.JointId = gProgramhandle->AttributeLocation("a_jointIndices");
-
-
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.Projection, "u_projectionMatrix");
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.ModelNoCameraMatrix, "u_modelViewNoCameraMatrix");
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.Modelview, "u_modelViewMatrix");
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.NormalMatrix, "u_normalMatrix");
-//
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.AmbientMaterial, "u_ambientMaterial");
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.SpecularMaterial, "u_specularMaterial");
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.Shininess, "u_shininess");
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.Interpolation_z, "u_interpolation_z");
-//
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.LightsSize, "u_lightsSize");
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.IsSkinning, "u_isSkinning");
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.TextureSampler2D, "u_sampler_2d");
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.TextureIrradianceCube, "u_sampler_irradiance");
-//
-//
-//    for(int i = 0; i < MAX_LIGHTS; i++) {
-//        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.LightPosition[i], ("u_lightPosition[" + std::to_string(i) +"]").c_str());
-//        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.DiffuseLight[i], ("u_lightSources[" + std::to_string(i) +"].u_diffuseLight").c_str());
-//        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.AmbientLight[i], ("u_lightSources[" + std::to_string(i) +"].u_ambientLight").c_str());
-//        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.SpecularLight[i], ("u_lightSources[" + std::to_string(i) +"].u_specularLight").c_str());
-//
-//        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.AttenuationFactor[i], ("u_lightSources[" + std::to_string(i) +"].u_attenuationFactor").c_str());
-//        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.IsAttenuation[i], ("u_lightSources[" + std::to_string(i) +"].u_isAttenuation").c_str());
-//        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.LightRadius[i], ("u_lightSources[" + std::to_string(i) +"].u_lightRadius").c_str());
-//        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.SpotDirection[i], ("u_lightSources[" + std::to_string(i) +"].u_spotDirection").c_str());
-//        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.SpotExponent[i], ("u_lightSources[" + std::to_string(i) +"].u_spotExponent").c_str());
-//        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.SpotCutOffAngle[i], ("u_lightSources[" + std::to_string(i) +"].u_spotCutOffAngle").c_str());
-//        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.IsDirectional[i], ("u_lightSources[" + std::to_string(i) +"].u_isDirectional").c_str());
-//        gProgramhandle->UniformLocation(gProgramhandle->Uniforms.LightMode[i], ("u_lightSources[" + std::to_string(i) +"].u_lightMode").c_str());
-//
-//    }
-//
-//    gProgramhandle->UniformLocation(gProgramhandle->Uniforms.JointMatrix, "u_jointMatrix");
 
 }
 

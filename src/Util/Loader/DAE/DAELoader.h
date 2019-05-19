@@ -83,7 +83,7 @@ private:
     void Exterminate();
 
 private:
-    const XNode* m_root;
+    const XNode* m_root{};
     MeshSurface* m_obj;
 
     std::vector<Vertex*> m_vertices;

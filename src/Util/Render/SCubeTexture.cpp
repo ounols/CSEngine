@@ -53,5 +53,6 @@ void SCubeTexture::Bind(GLint location, int layout) {
 }
 
 void SCubeTexture::GenerateMipmap() {
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 }

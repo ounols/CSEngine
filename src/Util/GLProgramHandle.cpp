@@ -61,20 +61,20 @@ void GLProgramHandle::SetUniformMat4(std::string location, mat4& value) {
     glUseProgram(Program);
     auto iter = UniformsList.find(location);
     if(iter != UniformsList.end()) {
-        glUniform4fv(iter->second, 1, value.Pointer());
+        glUniformMatrix4fv(iter->second, 1, 0, value.Pointer());
         return;
     }
-    glUniform4fv(glGetUniformLocation(Program, location.c_str()), 1, value.Pointer());
+    glUniformMatrix4fv(glGetUniformLocation(Program, location.c_str()), 1, 0, value.Pointer());
 }
 
 void GLProgramHandle::SetUniformMat3(std::string location, mat3& value) {
     glUseProgram(Program);
     auto iter = UniformsList.find(location);
     if(iter != UniformsList.end()) {
-        glUniform3fv(iter->second, 1, value.Pointer());
+        glUniformMatrix3fv(iter->second, 1, 0, value.Pointer());
         return;
     }
-    glUniform3fv(glGetUniformLocation(Program, location.c_str()), 1, value.Pointer());
+    glUniformMatrix3fv(glGetUniformLocation(Program, location.c_str()), 1, 0, value.Pointer());
 }
 
 void GLProgramHandle::GetAttributesList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag) {
