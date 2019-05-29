@@ -1,3 +1,4 @@
+#include <iostream>
 #include "MeshSurface.h"
 #include "../../Manager/MemoryMgr.h"
 // #include <iostream>
@@ -58,6 +59,12 @@ bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, fl
 		else {
 			vertex_tmp->TexCoord.x = *(texCoords)++;
 			vertex_tmp->TexCoord.y = *(texCoords)++;
+
+			if(vertex_tmp->TexCoord.x <= 0 || vertex_tmp->TexCoord.x >= 1) {
+			    std::cout << "tex error [" << i << "] : " << vertex_tmp->TexCoord.x << '\n';
+			}else {
+
+			}
 		}
 
 		if(weights == nullptr) {

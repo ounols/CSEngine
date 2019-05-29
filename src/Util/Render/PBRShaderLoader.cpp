@@ -115,13 +115,10 @@ GLint CreateShader(const char* v_path, const char* f_path, int& id) {
 
 void PBRShaderLoader::LoadShader() {
 
-    int equirectangularToCubemapShader = -1;
+    std::string cubemap_str = CSE::OpenAssetsTxtFile(CSE::AssetsPath() + "Shader/PBR/IBL/cubemap.vert");
+    std::string etc_str = CSE::OpenAssetsTxtFile(CSE::AssetsPath() + "Shader/PBR/IBL/equirectangular_to_cubemap.frag");
 
-    std::string cubemap_str = CSE::AssetsPath() + "Shader/PBR/IBL/2.1.2.cubemap.vs";
-    std::string etc_str = CSE::AssetsPath() + "Shader/PBR/IBL/2.1.2.equirectangular_to_cubemap.fs";
-
-    CreateShader(cubemap_str.c_str(), etc_str.c_str(), equirectangularToCubemapShader);
-//    m_equirectangularToCubemapShader = ShaderUtil::CreateProgramHandle(cubemap_str.c_str(),  etc_str.c_str());
+    m_equirectangularToCubemapShader = ShaderUtil::CreateProgramHandle(cubemap_str.c_str(),  etc_str.c_str());
 
 
     // pbr: setup framebuffer
@@ -129,13 +126,6 @@ void PBRShaderLoader::LoadShader() {
     unsigned int captureFBO;
     unsigned int captureRBO;
     unsigned int captureRBO_color;
-//    glGenFramebuffers(1, &captureFBO);
-//    glGenRenderbuffers(1, &captureRBO);
-//
-//    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-//    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-//    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 512, 512);
-//    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
     glDisable(GL_CULL_FACE);
 
@@ -156,83 +146,69 @@ void PBRShaderLoader::LoadShader() {
     // pbr: load the HDR environment map
     // ---------------------------------
     stbi_set_flip_vertically_on_load(true);
-    int width, height, nrComponents;
     std::string hdr_path = CSE::AssetsPath() + "Texture/hdr/newport_loft.hdr";
-    unsigned char *data = stbi_load(hdr_path.c_str(), &width, &height, &nrComponents, 0);
-    unsigned int hdrTexture;
-    if (data)
-    {
-        glGenTextures(1, &hdrTexture);
-        glBindTexture(GL_TEXTURE_2D, hdrTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); // note how we specify the texture's data value to be float
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_image_free(data);
-    }
-    else
-    {
-        std::cout << "Failed to load HDR image." << std::endl;
-    }
-    glBindTexture(GL_TEXTURE_2D, 0);
+    m_hdrTexture = new STexture();
+    m_hdrTexture->LoadFile(hdr_path.c_str());
 
     // pbr: setup cubemap to render to and attach to framebuffer
     // ---------------------------------------------------------
-    unsigned int envCubemap;
-    glGenTextures(1, &envCubemap);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-    for (GLuint i = 0; i < 6; ++i) {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_FLOAT, nullptr);
-    }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    m_envCubemap = new SCubeTexture();
+    m_envCubemap->CreateCubeTexture(512);
+//    unsigned int envCubemap;
+//    glGenTextures(1, &envCubemap);
+//    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+//    for (GLuint i = 0; i < 6; ++i) {
+//        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_FLOAT, nullptr);
+//    }
+//
+//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // pbr: set up projection and view matrices for capturing data onto the 6 cubemap face directions
     // ----------------------------------------------------------------------------------------------
-    glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
-    glm::mat4 captureViews[] =
+    mat4 captureProjection = mat4::Perspective(90.0f, 1.0f, 0.1f, 10.0f);
+    mat4 captureViews[] =
             {
-                    glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-                    glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-                    glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-                    glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-                    glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-                    glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+                    mat4::LookAt(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f,  0.0f,  0.0f), vec3(0.0f, -1.0f,  0.0f)),
+                    mat4::LookAt(vec3(0.0f, 0.0f, 0.0f), vec3(-1.0f,  0.0f,  0.0f), vec3(0.0f, -1.0f,  0.0f)),
+                    mat4::LookAt(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f,  1.0f,  0.0f), vec3(0.0f,  0.0f,  1.0f)),
+                    mat4::LookAt(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, -1.0f,  0.0f), vec3(0.0f,  0.0f, -1.0f)),
+                    mat4::LookAt(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f,  0.0f,  1.0f), vec3(0.0f, -1.0f,  0.0f)),
+                    mat4::LookAt(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f,  0.0f, -1.0f), vec3(0.0f, -1.0f,  0.0f))
             };
 
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
     // ----------------------------------------------------------------------
-    glUseProgram(equirectangularToCubemapShader);
-    glUniform1i(glGetUniformLocation(equirectangularToCubemapShader, "equirectangularMap"), 0);
-    glUniformMatrix4fv(glGetUniformLocation(equirectangularToCubemapShader, "projection"), 1, GL_FALSE, &captureProjection[0][0]);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, hdrTexture);
+    glUseProgram(m_equirectangularToCubemapShader->Program);
+    int hdrTextureLocation = m_equirectangularToCubemapShader->UniformLocation("EquirectangularMap");
+    m_equirectangularToCubemapShader->SetUniformMat4("PROJECTION_MATRIX", captureProjection);
+
+    m_hdrTexture->Bind(hdrTextureLocation, 0);
+
     LoadCubeVAO(nullptr);
     glGetError();
     glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (unsigned int i = 0; i < 6; ++i)
     {
-        glUniformMatrix4fv(glGetUniformLocation(equirectangularToCubemapShader, "view"), 1, GL_FALSE, &captureViews[i][0][0]);
+        m_equirectangularToCubemapShader->SetUniformMat4("VIEW_MATRIX", captureViews[i]);
 
 //        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-//                               envCubemap, 0);
+//                               m_envCubemap->GetID(), 0);
         glGetError();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         RenderCubeVAO();
         std::string save_str = CSE::AssetsPath() + "test" + std::to_string(i) + ".bmp";
         saveScreenshot(save_str.c_str());
     }
+
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glEnable(GL_CULL_FACE);
 }
-//#include "../../../Assets/cube.h"
+
 void PBRShaderLoader::LoadCubeVAO(GLProgramHandle* handler) {
     float vertices[] = {
             // back face

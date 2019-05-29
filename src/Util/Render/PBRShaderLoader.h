@@ -21,7 +21,7 @@ private:
     GLProgramHandle* m_irradianceShader;
 
     STexture* m_hdrTexture;
-    SCubeTexture* m_envTexture;
+    SCubeTexture* m_envCubemap;
     SCubeTexture* m_irradianceMap;
 
     unsigned int m_cubeVBO;

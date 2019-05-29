@@ -127,8 +127,33 @@ void DAELoader::LoadGeometry(XNode root_g) {
     //RAW data
     ReadPositions(meshData,
                   m_skeletonData == nullptr ? std::vector<VertexSkinData*>() : m_skinningData->get_verticesSkinData());
-    ReadNormals(meshData);
-    ReadUVs(meshData);
+
+
+    std::string normalsId = "";
+    std::string texCoordsId = "";
+
+    try{
+        XNode polylist = meshData.getChild("polylist");
+
+        normalsId = polylist.getNodeByAttribute("input", "semantic", "NORMAL")
+                .getAttribute("source").value.substr(1);
+        XNode childWithAttribute = polylist.getNodeByAttribute("input", "semantic", "TEXCOORD");
+        texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
+    }
+    catch (int error) {
+        try{
+            XNode triangles = meshData.getChild("triangles");
+
+            XNode normals = triangles.getNodeByAttribute("input", "semantic", "NORMAL");
+            normalsId = normals.getAttribute("source").value.substr(1);
+            XNode childWithAttribute = triangles.getNodeByAttribute("input", "semantic", "TEXCOORD");
+            texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
+        }
+        catch (int error) {}
+    }
+
+    ReadNormals(meshData, normalsId);
+    ReadUVs(meshData, texCoordsId);
 
     AssembleVertices(meshData);
 
@@ -163,10 +188,8 @@ void DAELoader::ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWei
 
 }
 
-void DAELoader::ReadNormals(XNode data) {
-    std::string normalsID = data.getChild("polylist").getNodeByAttribute("input", "semantic", "NORMAL").getAttribute(
-            "source").value.substr(1);
-    XNode normalsData = data.getNodeByAttribute("source", "id", normalsID.c_str()).getChild("float_array");
+void DAELoader::ReadNormals(XNode data, std::string normalsId) {
+    XNode normalsData = data.getNodeByAttribute("source", "id", normalsId.c_str()).getChild("float_array");
     int normalsSize = std::stoi(normalsData.getAttribute("count").value);
     std::vector<float> normals = normalsData.value.toFloatVector();
 
@@ -187,10 +210,8 @@ void DAELoader::ReadNormals(XNode data) {
 
 }
 
-void DAELoader::ReadUVs(XNode data) {
-    std::string texID = data.getChild("polylist").getNodeByAttribute("input", "semantic", "TEXCOORD").getAttribute(
-            "source").value.substr(1);
-    XNode texData = data.getNodeByAttribute("source", "id", texID.c_str()).getChild("float_array");
+void DAELoader::ReadUVs(XNode data, std::string texCoordsId) {
+    XNode texData = data.getNodeByAttribute("source", "id", texCoordsId.c_str()).getChild("float_array");
     int uvSize = std::stoi(texData.getAttribute("count").value);
     auto uvs = texData.value.toFloatVector();
 
@@ -213,18 +234,33 @@ void DAELoader::AssembleVertices(XNode data) {
 
     for (auto child : poly.children) {
         if (child.name == "input") {
-            typeCount++;
+            int offset = std::stoi(child.getAttribute("offset").value) + 1;
+            if(offset > typeCount) {
+                typeCount = offset;
+            }
         }
     }
 
     std::vector<int> indexData = poly.getChild("p").value.toIntegerVector();
+    int texcoordOffset = -1;
+    try {
+        XNode texSemantic = poly.getNodeByAttribute("input", "semantic", "TEXCOORD");
+        texcoordOffset = std::stoi(texSemantic.getAttribute("offset").value);
+    }
+    catch(int error) {
+        texcoordOffset = -1;
+    }
+
 
     // std::cout << "\n\ntypeCount : " << typeCount << '\n';
 
     for (int i = 0; i < indexData.size() / typeCount; i++) {
         int positionIndex = indexData[i * typeCount];
         int normalIndex = indexData[i * typeCount + 1];
-        int texCoordIndex = indexData[i * typeCount + 2];
+        int texCoordIndex = -1;
+        if(texcoordOffset != -1) {
+            texCoordIndex = indexData[i * typeCount + texcoordOffset];
+        }
         processVertex(positionIndex, normalIndex, texCoordIndex);
     }
 }
@@ -268,7 +304,7 @@ Vertex* DAELoader::dealWithAlreadyProcessedVertex(Vertex* previousVertex, int ne
 
 void DAELoader::removeUnusedVertices() {
     for (auto vertex : m_vertices) {
-        // vertex->averageTangents();
+         vertex->averageTangents();
         if (!vertex->isSet()) {
             vertex->setTextureIndex(0);
             vertex->setNormalIndex(0);

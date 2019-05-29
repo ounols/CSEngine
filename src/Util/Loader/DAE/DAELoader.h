@@ -44,9 +44,9 @@ private:
 //===================================================================
     void ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWeight);
 
-    void ReadNormals(XNode data);
+    void ReadNormals(XNode data, std::string normalsId);
 
-    void ReadUVs(XNode data);
+    void ReadUVs(XNode data, std::string texCoordsId);
 
     void AssembleVertices(XNode data);
 
