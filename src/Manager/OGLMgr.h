@@ -35,6 +35,6 @@ private:
 	std::string m_vertexShader;
 	std::string m_fragmentShader;
 
-	int m_programId;
+	std::string m_programName;
 };
 

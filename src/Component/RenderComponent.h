@@ -20,7 +20,7 @@ public:
 	void SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) override;
 	void Render(float elapsedTime) override;
 
-	void SetShaderHandle(int id);
+	void SetShaderHandle(std::string name);
 	void SetShaderHandle(GLProgramHandle* handle);
 
 

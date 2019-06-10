@@ -16,8 +16,12 @@ uniform sampler2D u_sampler_roughness;
 //[TEX2D_AO]//
 uniform sampler2D u_sampler_ao;
 
+//IBL
 //[TEXCUBE_IRRADIANCE]//
 uniform samplerCube u_sampler_irradiance;
+//[TEXCUBE_PREFILTER]//
+uniform samplerCube u_prefilterMap;
+uniform sampler2D u_brdfLUT;
 
 //[FLOAT_ALBEDO]//
 uniform vec3 u_albedo;
@@ -66,6 +70,7 @@ float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
 float GeometrySmith_Fast(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 fresnelSchlick(float cosTheta, vec3 F0);
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 
 //Macro Functions
 float ClampedPow(float X, float Y) {
@@ -82,6 +87,7 @@ void main(void) {
 
 	vec3 N = normalize(v_eyespaceNormal);
 	vec3 V0 = normalize(N - v_worldPosition);
+	vec3 R = reflect(-V0, N);
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
@@ -131,15 +137,22 @@ void main(void) {
 	}
 
 	// ambient lighting (we now use IBL as the ambient term)
-//	vec3 kS = fresnelSchlick(max(dot(N, V0), 0.0), F0);
-//	vec3 kD = 1.0 - kS;
-//	kD *= 1.0 - metallic;
-//	vec3 irradiance = u_irradiance.r < 0.0 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);;
-//	vec3 diffuse      = irradiance * albedo;
-//	vec3 ambient = (kD * diffuse) * ao;
+	vec3 kS = fresnelSchlick(max(dot(N, V0), 0.0), F0);
+	vec3 kD = 1.0 - kS;
+	kD *= 1.0 - metallic;
+	vec3 irradiance = u_irradiance.r < 0.0 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);;
+	vec3 diffuse      = irradiance * albedo;
 
-	vec3 irradiance = u_irradiance.r < 0.00 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
-	vec3 ambient = irradiance * albedo * ao;
+	// sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
+	const float MAX_REFLECTION_LOD = 4.0;
+	vec3 prefilteredColor = textureLod(u_prefilterMap, R,  roughness * MAX_REFLECTION_LOD).rgb;
+//	vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+	vec3 specular = prefilteredColor * (kS/* * brdf.x + brdf.y*/);
+
+	vec3 ambient = (kD * diffuse + specular) * ao;
+
+//	vec3 irradiance = u_irradiance.r < 0.00 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
+//	vec3 ambient = irradiance * albedo * ao;
 
 	vec3 color = ambient + Lo;
 
@@ -213,4 +226,8 @@ float GeometrySmith_Fast(vec3 N, vec3 V, vec3 L, float roughness) {
 // ----------------------------------------------------------------------------
 vec3 fresnelSchlick(float cosTheta, vec3 F0) {
 	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) {
+	return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
 }

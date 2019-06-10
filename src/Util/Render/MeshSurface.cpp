@@ -1,6 +1,6 @@
-#include <iostream>
 #include "MeshSurface.h"
 #include "../../Manager/MemoryMgr.h"
+#include "../../OGLDef.h"
 // #include <iostream>
 
 MeshSurface::MeshSurface() {}
@@ -59,12 +59,6 @@ bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, fl
 		else {
 			vertex_tmp->TexCoord.x = *(texCoords)++;
 			vertex_tmp->TexCoord.y = *(texCoords)++;
-
-			if(vertex_tmp->TexCoord.x <= 0 || vertex_tmp->TexCoord.x >= 1) {
-			    std::cout << "tex error [" << i << "] : " << vertex_tmp->TexCoord.x << '\n';
-			}else {
-
-			}
 		}
 
 		if(weights == nullptr) {
@@ -212,6 +206,11 @@ vec3 MeshSurface::LerpFilter(vec3 v0, vec3 v1, float kCoff) {
 
 
 void MeshSurface::Exterminate() {
+    const GLuint vertexBuffer = m_meshId.m_vertexBuffer;
+     const GLuint indexBuffer = m_meshId.m_indexBuffer;
+
+     glDeleteBuffers(1, &vertexBuffer);
+     glDeleteBuffers(1, &indexBuffer);
 }
 
 

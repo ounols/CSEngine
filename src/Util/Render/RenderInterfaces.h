@@ -2,7 +2,6 @@
 #include <vector>
 #include "../../SObject.h"
 #include "../../Manager/ResMgr.h"
-#include "../../Manager/SurfaceMeshContainer.h"
 #include "../Matrix.h"
 
 struct GLMeshID {
@@ -16,11 +15,10 @@ struct GLMeshID {
 };
 
 
-class SISurface : public SObject {
+class SISurface : public SResource {
 public:
 	
 	SISurface() {
-		ResMgr::getInstance()->Register<SurfaceMeshContainer, SISurface>(this);
 		SetUndestroyable(true);
 	}
 	virtual ~SISurface() {

@@ -12,12 +12,14 @@ private:
         int texRoughness = -1;
         int texAo = -1;
         int texIrradiance = -1;
+        int texPrefilter = -1;
 
         int fAlbedo = -1;
         int fMetallic = -1;
         int fRoughness = -1;
         int fAo = -1;
         int fIrradiance = -1;
+        int bPrefilter = -1;
 
         bool isInited = false;
     };
@@ -70,7 +72,9 @@ private:
     float m_aoMaterial = 1.0f;
 
     SCubeTexture* m_irradianceTexture = nullptr;
+    SCubeTexture* m_prefilterTexture = nullptr;
     vec3 m_irradianceMaterial = vec3{ 0.03f, 0.03f, 0.03f };
+    bool m_isPrefilter = false;
 
 
     //Shader ID

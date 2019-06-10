@@ -4,21 +4,17 @@
 
 #pragma once
 
-#include "SObject.h"
-#include "../../Manager/SkeletonContainer.h"
 #include "../../Manager/ResMgr.h"
 #include "Joint.h"
 
 
-class Skeleton : public SObject {
+class Skeleton : public SResource {
 public:
     Skeleton() {
-        ResMgr::getInstance()->Register<SkeletonContainer, Skeleton>(this);
         SetUndestroyable(true);
     }
 
     Skeleton(int jointCount, Joint* headJoint) : m_jointCount(jointCount), m_headJoint(headJoint) {
-        ResMgr::getInstance()->Register<SkeletonContainer, Skeleton>(this);
         if (isLoaded()) {
             m_isLoaded = true;
         }

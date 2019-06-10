@@ -13,7 +13,7 @@ public:
 
     ~SCubeTexture();
 
-    bool CreateCubeTexture(int size = 512);
+    bool InitTexture(int size) override;
 
     void Bind(GLint location, int layout) override;
     void GenerateMipmap();

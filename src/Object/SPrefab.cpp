@@ -3,12 +3,10 @@
 //
 
 #include "../Manager/SCloneFactory.h"
-#include "../Manager/SPrefabContainer.h"
 #include "../Manager/ResMgr.h"
 #include "SPrefab.h"
 
 SPrefab::SPrefab() {
-    ResMgr::getInstance()->Register<SPrefabContainer, SPrefab>(this);
 
 }
 

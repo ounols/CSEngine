@@ -3,11 +3,11 @@
 //
 
 #pragma once
-#include "../SObject.h"
+#include "../Object/SResource.h"
 #include "SGameObject.h"
 
 
-class SPrefab : public SObject {
+class SPrefab : public SResource {
 public:
     SPrefab();
     ~SPrefab();

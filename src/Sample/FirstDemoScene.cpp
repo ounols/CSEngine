@@ -87,7 +87,7 @@ void FirstDemoScene::Init() {
     c->GetComponent<MaterialComponent>()->SetAlbedo(vec3{1, 0, 0});
 
 	c->CreateComponent<RenderComponent>();
-	c->GetComponent<RenderComponent>()->SetShaderHandle(0);
+	c->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 	c->GetComponent<RenderComponent>()->SetIsEnable(false);
 	c->CreateComponent<CustomComponent>();
 	c->GetComponent<CustomComponent>()->SetClassName("TestScript");
@@ -112,7 +112,7 @@ void FirstDemoScene::Init() {
 
 	 
 	c2->CreateComponent<RenderComponent>();
-	c2->GetComponent<RenderComponent>()->SetShaderHandle(0);
+	c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
 	c3 = new SGameObject();
 	c3->CreateComponent<DrawableStaticMeshComponent>();
@@ -128,7 +128,7 @@ void FirstDemoScene::Init() {
 
 
 	c3->CreateComponent<RenderComponent>();
-	c3->GetComponent<RenderComponent>()->SetShaderHandle(0);
+	c3->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
 	auto c4 = SCloneFactory::Clone(c3, c3);
 //	c4->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 1 });
@@ -169,7 +169,7 @@ void FirstDemoScene::Init() {
 	d->GetComponent<MaterialComponent>()->SetAlbedo(vec3{ 1, 1, 1 });
 //	d->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
 	d->CreateComponent<RenderComponent>();
-	d->GetComponent<RenderComponent>()->SetShaderHandle(0);
+	d->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 	//d->GetComponent<LightComponent>()->DisableDiffuse = true;
 
 	a->CreateComponent<CameraComponent>();
@@ -224,7 +224,7 @@ void FirstDemoScene::switchingObject() {
 
 
 		c2->CreateComponent<RenderComponent>();
-		c2->GetComponent<RenderComponent>()->SetShaderHandle(0);
+		c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
 //        d->GetComponent<LightComponent>()->SetLightType(LightComponent::DIRECTIONAL);
 	}

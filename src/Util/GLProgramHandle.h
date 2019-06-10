@@ -1,9 +1,8 @@
 #pragma once
 
 #include "../OGLDef.h"
-#include "../SObject.h"
+#include "../Object/SResource.h"
 #include "../Manager/ResMgr.h"
-#include "../Manager/ShaderProgramContainer.h"
 #include "Matrix.h"
 
 #include <map>
@@ -36,7 +35,14 @@ struct GLAttributeHandles {
     GLint JointId = HANDLE_NULL;
 };
 
-class GLProgramHandle : public SObject {
+class GLProgramHandle : public SResource {
+public:
+    struct Element {
+        GLenum type = 0;
+        int id = HANDLE_NULL;
+    };
+
+    typedef std::map<std::string, GLProgramHandle::Element*> GLElementList;
 public:
     GLProgramHandle();
 
@@ -52,12 +58,12 @@ public:
 
     GLint AttributeLocation(const char* location) const {
         auto pair = AttributesList.find(location);
-        return pair == AttributesList.end() ? -1 : pair->second;
+        return pair == AttributesList.end() ? -1 : pair->second->id;
     }
 
     GLint UniformLocation(const char* location) const {
         auto pair = UniformsList.find(location);
-        return pair == UniformsList.end() ? -1 : pair->second;
+        return pair == UniformsList.end() ? -1 : pair->second->id;
     }
 
     void SetAttribVec3(std::string location, vec3& value);
@@ -73,22 +79,22 @@ public:
     void SetUniformMat3(std::string location, mat3& value);
 
 
-    void GetAttributesList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag);
+    void SetAttributesList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag);
 
-    void GetUniformsList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag);
+    void SetUniformsList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag);
+
+    GLElementList GetAttributesList();
+    GLElementList GetUniformsList();
 
 private:
     static std::string getImplementName(std::map<std::string, std::string>& list, std::string name);
 
-    static bool isExist(std::string src, std::string target, std::map<std::string, std::string>& variablesList) {
-        return src.find(variablesList[target]) != std::string::npos;
-    }
 
 public:
     GLuint Program;
     GLAttributeHandles Attributes;
     GLUniformHandles Uniforms;
 
-    std::map<std::string, int> AttributesList;
-    std::map<std::string, int> UniformsList;
+    GLElementList AttributesList;
+    GLElementList UniformsList;
 };

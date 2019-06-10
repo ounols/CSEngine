@@ -1,6 +1,7 @@
 #version 300 es
 precision highp float;
 precision highp int;
+
 layout (location = 0) in vec3 aPos;
 
 out vec3 v_worldPos;

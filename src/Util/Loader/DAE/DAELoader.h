@@ -108,6 +108,6 @@ private:
     bool m_isSkinning = false;
 
     std::string m_name;
-    int m_texture_id = -1;
+    std::string m_texture_name;
 
 };

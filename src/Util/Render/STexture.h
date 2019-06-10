@@ -7,9 +7,9 @@
 
 #include <vector>
 #include "../GLProgramHandle.h"
-#include "../../SObject.h"
+#include "../../Object/SResource.h"
 
-class STexture : public SObject {
+class STexture : public SResource {
 public:
     enum TYPE { PNG, UNKOWN };
 public:
@@ -26,6 +26,8 @@ public:
         return m_id;
     }
 
+    virtual bool InitTexture(int size);
+
     void Release();
     void Exterminate() override;
 
@@ -37,6 +39,7 @@ protected:
     int m_channels = 0;
 
     unsigned int m_id = 0;
+    std::string m_name;
 };
 
 

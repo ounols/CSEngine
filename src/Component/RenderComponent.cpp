@@ -141,9 +141,8 @@ void RenderComponent::Render(float elapsedTime) {
 }
 
 
-void RenderComponent::SetShaderHandle(int id) {
-
-    SetShaderHandle(ResMgr::getInstance()->getShaderProgramHandle(id));
+void RenderComponent::SetShaderHandle(std::string name) {
+    SetShaderHandle(ResMgr::getInstance()->GetObject<GLProgramHandle>(name));
 
 }
 

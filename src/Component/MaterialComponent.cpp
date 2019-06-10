@@ -1,4 +1,3 @@
-#include "../Manager/TextureContainer.h"
 #include "MaterialComponent.h"
 
 const vec3 VEC3_NONE = vec3{ -1, -1, -1 };
@@ -16,9 +15,12 @@ void MaterialComponent::Exterminate() {
 
 
 void MaterialComponent::Init() {
-//    if(m_irradianceTexture == nullptr) {
-//        m_irradianceTexture = ResMgr::getInstance()->GetObject<TextureContainer, SCubeTexture>(3);
-//    }
+    if(m_irradianceTexture == nullptr) {
+        m_irradianceTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("irradiance");
+    }
+    if(m_prefilterTexture == nullptr) {
+        m_prefilterTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("prefilter");
+    }
 }
 
 
@@ -66,6 +68,16 @@ void MaterialComponent::AttachMaterials(const GLProgramHandle* handle) const {
     else {
         glUniform1i(m_shaderId.texIrradiance, 4);
         glUniform3fv(m_shaderId.fIrradiance, 1, m_irradianceMaterial.Pointer());
+    }
+
+    //prefilter
+    if(m_prefilterTexture != nullptr) {
+        m_prefilterTexture->Bind(m_shaderId.texPrefilter, 5);
+        glUniform1i(m_shaderId.bPrefilter, 1);
+    }
+    else {
+        glUniform1i(m_shaderId.texIrradiance, 5);
+        glUniform1i(m_shaderId.bPrefilter, 0);
     }
 
 }

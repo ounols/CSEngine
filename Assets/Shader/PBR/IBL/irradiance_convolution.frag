@@ -4,7 +4,7 @@
 precision highp float;
 precision highp int;
 
-in vec3 v_worldPositon;
+in vec3 v_worldPos;
 out vec4 FragColor;
 
 //[EnvironmentMap]//
@@ -14,7 +14,7 @@ uniform samplerCube u_environmentMap;
 const float PI = 3.14159265359;
 
 void main() {
-    vec3 N = normalize(v_worldPositon);
+    vec3 N = normalize(v_worldPos);
 
     vec3 irradiance = vec3(0.0);
 

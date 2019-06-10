@@ -2,7 +2,6 @@
 #include "../../MoreString.h"
 #include "DAEUtil/DAEConvertSGameObject.h"
 #include <iostream>
-#include "../../../Manager/TextureContainer.h"
 #include "../../../Component/DrawableSkinnedMeshComponent.h"
 #include "../../../Component/RenderComponent.h"
 
@@ -73,8 +72,9 @@ void DAELoader::LoadTexture(const char* filePath) {
     if (filePath == nullptr) return;
 
     STexture* texture = new STexture();
+    texture->SetName("test.tex2D");
     texture->LoadFile(filePath);
-    m_texture_id = ResMgr::getInstance()->GetID<TextureContainer, STexture>(texture);
+    m_texture_name = texture->GetName();
 }
 
 void DAELoader::Exterminate() {
@@ -496,13 +496,13 @@ SPrefab* DAELoader::GeneratePrefab() {
                                                                                   m_skeletonData->getJointCount());
 
     mesh_root->CreateComponent<RenderComponent>();
-    mesh_root->GetComponent<RenderComponent>()->SetShaderHandle(0);
+    mesh_root->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 //    mesh_root->GetComponent<RenderComponent>()->SetIsEnable(false);
 
     auto material = mesh_root->CreateComponent<MaterialComponent>();
 //    material->SetDiffuseMaterial(vec4{0.7f, 0.6f, 1, 1});
 //    material->SetShininess(40);
-    material->SetAlbedoTexture(ResMgr::getInstance()->GetObject<TextureContainer, STexture>(m_texture_id));
+    material->SetAlbedoTexture(ResMgr::getInstance()->GetObject<STexture>("test.tex2D"));
 
     if (m_isSkinning) {
         SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,

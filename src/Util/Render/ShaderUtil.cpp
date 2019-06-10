@@ -33,8 +33,8 @@ GLProgramHandle* ShaderUtil::CreateProgramHandle(const GLchar* vertexSource, con
     gProgramhandle = new GLProgramHandle();
     gProgramhandle->SetProgram(program);
     //Get all variables from shader.
-    gProgramhandle->GetAttributesList(variables_vert, variables_frag);
-    gProgramhandle->GetUniformsList(variables_vert, variables_frag);
+    gProgramhandle->SetAttributesList(variables_vert, variables_frag);
+    gProgramhandle->SetUniformsList(variables_vert, variables_frag);
 
     //Binding important variables to engine.
     BindVariables(variables_vert, gProgramhandle);

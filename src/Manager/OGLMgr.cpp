@@ -13,7 +13,7 @@
 
 using namespace CSE;
 
-OGLMgr::OGLMgr() : m_projectionRatio(-1), m_programId(-1) {
+OGLMgr::OGLMgr() : m_projectionRatio(-1) {
 
     m_vertexShader = OpenAssetsTxtFile(AssetsPath() + "Shader/PBR/PBR.vert");
     m_fragmentShader = OpenAssetsTxtFile(AssetsPath() + "Shader/PBR/PBR.frag");
@@ -29,10 +29,11 @@ OGLMgr::~OGLMgr() {
 void OGLMgr::setShaderProgram(int id = HANDLE_NULL) {
 
     GLProgramHandle* gProgramhandle = ShaderUtil::CreateProgramHandle(m_vertexShader.c_str(), m_fragmentShader.c_str());
-    m_programId = ResMgr::getInstance()->GetID<ShaderProgramContainer, GLProgramHandle>(gProgramhandle);
+    gProgramhandle->SetName("PBR.shader");
+    m_programName = gProgramhandle->GetName();
     //const auto m_program = gProgramhandle->Program;
 
-    AttachProgramHandle(m_programId);
+    //AttachProgramHandle(m_programName);
 }
 
 
@@ -97,7 +98,7 @@ void OGLMgr::AttachProgramHandle(int shaderID) {
     GLProgramHandle* gProgramhandle;
     GLuint program;
 
-    gProgramhandle = RESMGR->getShaderProgramHandle(shaderID);
+    gProgramhandle = RESMGR->GetObject<GLProgramHandle>("PBR.shader");
     program = gProgramhandle->Program;
 
     glUseProgram(program);

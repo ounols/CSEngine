@@ -14,7 +14,7 @@ class TestScript2 extends SCEngineScript {
         diffuse.Set(1, 1, 0.3);
         if(materialComp != null) {
             materialComp.SetRoughness(0.2);
-            materialComp.SetMetallic(0.6);
+            materialComp.SetMetallic(0.2);
             materialComp.SetAlbedo(diffuse);
             //materialComp.SetDiffuse(diffuse);
             //materialComp.SetAmbient(ambient);

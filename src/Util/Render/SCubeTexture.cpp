@@ -6,7 +6,6 @@
 #include "../../OGLDef.h"
 
 
-#include "../../Manager/TextureContainer.h"
 #include "../../Manager/ResMgr.h"
 
 SCubeTexture::SCubeTexture() {
@@ -17,7 +16,7 @@ SCubeTexture::~SCubeTexture() {
 
 }
 
-bool SCubeTexture::CreateCubeTexture(int size) {
+bool SCubeTexture::InitTexture(int size) {
     if (m_id != 0) {
         return false;
     }
@@ -26,10 +25,9 @@ bool SCubeTexture::CreateCubeTexture(int size) {
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
 
     GLuint channel = GL_RGB;
-    if (m_channels == 4) channel = GL_RGBA;
 
     for (GLuint i = 0; i < 6; ++i) {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, channel, size, size, 0, channel, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, channel, size, size, 0, channel, GL_UNSIGNED_BYTE, nullptr);
     }
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
