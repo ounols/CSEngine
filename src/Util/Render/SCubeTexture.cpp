@@ -5,7 +5,6 @@
 #include "SCubeTexture.h"
 #include "../../OGLDef.h"
 
-
 #include "../../Manager/ResMgr.h"
 
 SCubeTexture::SCubeTexture() {
@@ -53,4 +52,8 @@ void SCubeTexture::Bind(GLint location, int layout) {
 void SCubeTexture::GenerateMipmap() {
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+}
+
+void SCubeTexture::Init(const AssetMgr::AssetReference* asset) {
+    STexture::Init(asset);
 }

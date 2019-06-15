@@ -11,7 +11,7 @@ public:
     ShaderUtil();
     ~ShaderUtil();
 
-    static GLProgramHandle* CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragmentSource);
+    static GLProgramHandle* CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragmentSource, GLProgramHandle* handle = nullptr);
 
     static GLuint createProgram(const GLchar* vertexSource, const GLchar* fragmentSource);
     static GLuint createProgram(GLuint vertexShader, GLuint fragmentShader);

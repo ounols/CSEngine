@@ -17,14 +17,14 @@ DAELoader::DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type) {
         m_obj = new MeshSurface();
     }
 
-    Load(path, type, nullptr);
+    Load(path, type);
 }
 
 DAELoader::~DAELoader() {
     Exterminate();
 }
 
-void DAELoader::Load(const char* path, LOAD_TYPE type, const char* texture_path) {
+void DAELoader::Load(const char* path, LOAD_TYPE type) {
 
     {
         std::string path_str = path;
@@ -52,6 +52,13 @@ void DAELoader::Load(const char* path, LOAD_TYPE type, const char* texture_path)
             m_isSkinning = false;
         }
 
+        try {
+            LoadTexturePath(collada.getChild("library_images"));
+        } catch(int error) {
+            std::cout << "passing texture...\n";
+        }
+
+
 
         //지오메트리를 불러옴
         LoadGeometry(collada.getChild("library_geometries"));
@@ -64,16 +71,14 @@ void DAELoader::Load(const char* path, LOAD_TYPE type, const char* texture_path)
 
     }
 
-    LoadTexture(texture_path);
+//    LoadTexture(texture_path);
 }
 
 
-void DAELoader::LoadTexture(const char* filePath) {
-    if (filePath == nullptr) return;
+void DAELoader::LoadTexture(const AssetMgr::AssetReference* asset) {
+    if (asset == nullptr) return;
 
-    STexture* texture = new STexture();
-    texture->SetName("test.tex2D");
-    texture->LoadFile(filePath);
+    STexture* texture = SResource::Create<STexture>(asset);
     m_texture_name = texture->GetName();
 }
 
@@ -405,6 +410,14 @@ Joint* DAELoader::loadJointData(XNode jointNode, bool isRoot) {
     return joint;
 }
 
+void DAELoader::LoadTexturePath(XNode imageNode) {
+    std::string path = imageNode.getChild("image").getChild("init_from").value;
+    path = trim(path);
+    auto asset = ResMgr::getInstance()->GetAssetReference(path);
+    if(asset == nullptr) return;
+
+    LoadTexture(asset);
+}
 
 void DAELoader::ConvertDataToVectors() {
     {
@@ -502,7 +515,7 @@ SPrefab* DAELoader::GeneratePrefab() {
     auto material = mesh_root->CreateComponent<MaterialComponent>();
 //    material->SetDiffuseMaterial(vec4{0.7f, 0.6f, 1, 1});
 //    material->SetShininess(40);
-    material->SetAlbedoTexture(ResMgr::getInstance()->GetObject<STexture>("test.tex2D"));
+    material->SetAlbedoTexture(ResMgr::getInstance()->GetObject<STexture>(m_texture_name));
 
     if (m_isSkinning) {
         SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,
@@ -512,10 +525,3 @@ SPrefab* DAELoader::GeneratePrefab() {
 
     return prefab;
 }
-
-
-
-
-
-
-

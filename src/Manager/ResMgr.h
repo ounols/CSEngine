@@ -44,6 +44,8 @@ public:
 
     std::string RemoveDuplicatingName(std::string name) const;
 
+    AssetMgr::AssetReference* GetAssetReference(std::string name) const;
+
 #ifdef __ANDROID__
     void SetAssetManager(AAssetManager* obj);
     AAssetManager* GetAssetManager();
@@ -62,7 +64,8 @@ template<class TYPE>
 TYPE* ResMgr::GetObject(std::string name) const {
     for (auto resource : m_resources) {
         if (dynamic_cast<TYPE*>(resource)) {
-            return static_cast<TYPE*>(resource);
+            if(name == resource->GetName())
+                return static_cast<TYPE*>(resource);
         }
     }
 

@@ -19,6 +19,9 @@ public:
 
     void Exterminate() override;
 
+protected:
+    void Init(const AssetMgr::AssetReference* asset) override;
+
 private:
     SGameObject* m_root = nullptr;
 };

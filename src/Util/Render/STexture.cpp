@@ -8,6 +8,7 @@
 
 #include "../Loader/STB/stb_image.h"
 #include "../../Manager/ResMgr.h"
+#include "../AssetsDef.h"
 
 
 STexture::STexture() {
@@ -20,16 +21,17 @@ STexture::~STexture() {
 
 bool STexture::LoadFile(const char* path) {
 
-    if(m_id != 0) return false;
+    if (m_id != 0) return false;
 
-    m_name = path;
-    unsigned char *data = stbi_load(path, &m_width, &m_height, &m_channels, 0);
+//    m_name = path;
+    unsigned char* data = stbi_load(path, &m_width, &m_height, &m_channels, 0);
 
     return Load(data);
 }
+
 bool STexture::Load(unsigned char* data) {
 
-    if(m_id != 0) {
+    if (m_id != 0) {
         stbi_image_free(data);
         return false;
     }
@@ -38,7 +40,7 @@ bool STexture::Load(unsigned char* data) {
     glBindTexture(GL_TEXTURE_2D, m_id);
 
     GLuint channel = GL_RGB;
-    if(m_channels == 4) channel = GL_RGBA;
+    if (m_channels == 4) channel = GL_RGBA;
 
     glTexImage2D(GL_TEXTURE_2D, 0, channel, m_width, m_height, 0, channel, GL_UNSIGNED_BYTE, data);
 
@@ -52,7 +54,7 @@ bool STexture::Load(unsigned char* data) {
 }
 
 bool STexture::LoadEmpty() {
-    if(m_id != 0) return false;
+    if (m_id != 0) return false;
 
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);
@@ -87,7 +89,7 @@ void STexture::Exterminate() {
 }
 
 void STexture::Bind(GLint location, int layout) {
-    if(m_id == 0) {
+    if (m_id == 0) {
         LoadEmpty();
     }
     glUniform1i(location, layout);
@@ -114,6 +116,14 @@ bool STexture::InitTexture(int size) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     return true;
+}
+
+void STexture::Init(const AssetMgr::AssetReference* asset) {
+    std::string img_str = CSE::OpenAssetsTxtFile(asset->path);
+
+    auto data = stbi_load_from_memory(reinterpret_cast<const unsigned char*>(img_str.c_str()), img_str.length(),
+                                      &m_width, &m_height, &m_channels, 0);
+    Load(data);
 }
 
 

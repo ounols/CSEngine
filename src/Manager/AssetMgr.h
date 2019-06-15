@@ -9,12 +9,13 @@
 #include <vector>
 
 class AssetMgr {
-private:
-    enum TYPE { NONE, TEX_2D, TEX_CUBEMAP, MATERIAL, DAE, PREFAB, SCENE };
 public:
+    enum TYPE { NONE, TEX_2D, TEX_CUBEMAP, MATERIAL, DAE, PREFAB, SCENE, SCRIPT, TXT, SHADER, SHADER_HANDLE, INI };
+
     struct AssetReference {
         std::string path;
         std::string name;
+        std::string name_full;
         std::string extension;
         TYPE type = NONE;
     };
@@ -25,6 +26,8 @@ public:
     void Exterminate();
 
     void LoadAssets(bool isPacked);
+
+    AssetReference* GetAsset(std::string name) const;
 
 #ifdef __ANDROID__
     void SetAssetManager(AAssetManager* obj);

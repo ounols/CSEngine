@@ -16,10 +16,11 @@ ShaderUtil::~ShaderUtil() {
 }
 
 
-GLProgramHandle* ShaderUtil::CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragmentSource) {
+GLProgramHandle* ShaderUtil::CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragmentSource, GLProgramHandle* handle) {
     if(vertexSource == nullptr || fragmentSource == nullptr) return nullptr;
+    if(handle != nullptr && handle->Program != HANDLE_NULL) return nullptr;
 
-    GLProgramHandle* gProgramhandle = nullptr;
+    GLProgramHandle* gProgramhandle = handle;
 
     auto program = ShaderUtil::createProgram(vertexSource, fragmentSource);
     if (!program) {
@@ -30,7 +31,8 @@ GLProgramHandle* ShaderUtil::CreateProgramHandle(const GLchar* vertexSource, con
     auto variables_vert = GetImportantVariables(vertexSource);
     auto variables_frag = GetImportantVariables(fragmentSource);
 
-    gProgramhandle = new GLProgramHandle();
+    if(gProgramhandle == nullptr)
+        gProgramhandle = new GLProgramHandle();
     gProgramhandle->SetProgram(program);
     //Get all variables from shader.
     gProgramhandle->SetAttributesList(variables_vert, variables_frag);
@@ -170,7 +172,8 @@ std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLcha
                 int start_index = str.substr(0, eoc_index).rfind(' ');
                 int end_index = str.rfind('[');
                 end_index = end_index == std::string::npos ? eoc_index : end_index;
-                auto detail = trim(str.substr(start_index, end_index - start_index));
+                auto detail = str.substr(start_index, end_index - start_index);
+                detail = trim(detail);
                 variables[type_str] = detail;
                 type_str.clear();
             }

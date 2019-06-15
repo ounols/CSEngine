@@ -15,9 +15,6 @@ using namespace CSE;
 
 OGLMgr::OGLMgr() : m_projectionRatio(-1) {
 
-    m_vertexShader = OpenAssetsTxtFile(AssetsPath() + "Shader/PBR/PBR.vert");
-    m_fragmentShader = OpenAssetsTxtFile(AssetsPath() + "Shader/PBR/PBR.frag");
-
 }
 
 
@@ -26,14 +23,11 @@ OGLMgr::~OGLMgr() {
 }
 
 
-void OGLMgr::setShaderProgram(int id = HANDLE_NULL) {
+void OGLMgr::setShaderProgram() {
 
-    GLProgramHandle* gProgramhandle = ShaderUtil::CreateProgramHandle(m_vertexShader.c_str(), m_fragmentShader.c_str());
-    gProgramhandle->SetName("PBR.shader");
-    m_programName = gProgramhandle->GetName();
-    //const auto m_program = gProgramhandle->Program;
 
-    //AttachProgramHandle(m_programName);
+    SResource::Create<GLProgramHandle>("PBR.shader");
+
 }
 
 
@@ -93,20 +87,6 @@ void OGLMgr::setupEGLGraphics(GLuint width, GLuint height) {
 
 
 
-void OGLMgr::AttachProgramHandle(int shaderID) {
-
-    GLProgramHandle* gProgramhandle;
-    GLuint program;
-
-    gProgramhandle = RESMGR->GetObject<GLProgramHandle>("PBR.shader");
-    program = gProgramhandle->Program;
-
-    glUseProgram(program);
-
-}
-
-
-
 void OGLMgr::setProjectionRatio() {
     if (m_width > m_height)
         m_projectionRatio = (GLfloat) m_width / (GLfloat) m_height;
@@ -116,16 +96,6 @@ void OGLMgr::setProjectionRatio() {
 
     CameraMgr::getInstance()->SetProjectionRatio(m_projectionRatio);
 
-}
-
-
-void OGLMgr::setVertexShader(GLchar* vertexSource) {
-    m_vertexShader = vertexSource;
-}
-
-
-void OGLMgr::setFragmentShader(GLchar* fragmentSource) {
-    m_fragmentShader = fragmentSource;
 }
 
 

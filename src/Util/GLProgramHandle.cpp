@@ -2,6 +2,9 @@
 // Created by ounols on 19. 5. 8.
 //
 #include "GLProgramHandle.h"
+#include "AssetsDef.h"
+#include "MoreString.h"
+#include "Render/ShaderUtil.h"
 
 GLProgramHandle::GLProgramHandle() : Program(HANDLE_NULL) {
     SetUndestroyable(true);
@@ -162,6 +165,11 @@ GLProgramHandle::GLElementList GLProgramHandle::GetUniformsList() {
     return UniformsList;
 }
 
+
+void GLProgramHandle::SaveShader(std::string path) {
+    return;
+}
+
 std::string GLProgramHandle::getImplementName(std::map <std::string, std::string>& list, std::string name) {
 
     for(auto it = list.begin(); it != list.end(); it++) {
@@ -171,4 +179,28 @@ std::string GLProgramHandle::getImplementName(std::map <std::string, std::string
     }
 
     return "";
+}
+
+void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
+    //컴바인 쉐이더 로드
+    std::string shader_combine = CSE::OpenAssetsTxtFile(asset->path);
+
+    auto shader_combine_vector = split(shader_combine, ',');
+
+    if(shader_combine_vector.size() < 2) return;
+    m_vertShaderName = trim(shader_combine_vector.at(0));
+    m_fragShaderName = trim(shader_combine_vector.at(1));
+
+    //데이터 바이딩
+    auto vert_asset = ResMgr::getInstance()->GetAssetReference(m_vertShaderName);
+    auto frag_asset = ResMgr::getInstance()->GetAssetReference(m_fragShaderName);
+
+    std::string vert_str = CSE::OpenAssetsTxtFile(vert_asset->path);
+    std::string frag_str = CSE::OpenAssetsTxtFile(frag_asset->path);
+
+    if(vert_str.empty() || frag_str.empty()) return;
+
+    if(ShaderUtil::CreateProgramHandle(vert_str.c_str(), frag_str.c_str(), this) == nullptr) {
+        return;
+    }
 }

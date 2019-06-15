@@ -1,5 +1,6 @@
 #include "ResMgr.h"
 #include "CameraMgr.h"
+#include "MemoryMgr.h"
 
 IMPLEMENT_SINGLETON(ResMgr);
 
@@ -40,6 +41,8 @@ void ResMgr::Remove(SResource* m_object) {
     if (iObj != m_resources.end()) {
         m_resources.erase(iObj);
     }
+
+    MemoryMgr::getInstance()->ReleaseObject(m_object, true);
 }
 
 int ResMgr::GetSize() const {
@@ -64,6 +67,10 @@ std::string ResMgr::RemoveDuplicatingName(std::string name) const {
     }
 
     return name;
+}
+
+AssetMgr::AssetReference* ResMgr::GetAssetReference(std::string name) const {
+    return m_assetManager->GetAsset(name);
 }
 
 

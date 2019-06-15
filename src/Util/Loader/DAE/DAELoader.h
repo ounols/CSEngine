@@ -19,8 +19,8 @@ public:
 
     ~DAELoader();
 
-    void Load(const char* path, LOAD_TYPE type, const char* texture_path = nullptr);
-    void LoadTexture(const char* filePath);
+    void Load(const char* path, LOAD_TYPE type);
+    void LoadTexture(const AssetMgr::AssetReference* asset);
 
     MeshSurface* GetMesh() const {
         return m_obj;
@@ -76,6 +76,8 @@ private:
 
     Joint* loadJointData(XNode jointNode, bool isRoot);
     Joint* extractMainJointData(XNode jointNode, bool isRoot);
+
+    void LoadTexturePath(XNode imageNode);
 
 
     void AttachDataToObjSurface();

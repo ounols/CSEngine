@@ -8,13 +8,9 @@ class OGLMgr
 public:
 	OGLMgr();
 	~OGLMgr();
-	void setShaderProgram(int id);
+	void setShaderProgram();
 	void setBuffers();
 	void setupEGLGraphics(GLuint width, GLuint height);
-
-	static void AttachProgramHandle(int shaderID);
-	void setVertexShader(GLchar* vertexSource);
-	void setFragmentShader(GLchar* fragmentSource);
 
 	void Render(float elapsedTime);
 	void ResizeWindow(GLuint width, GLuint height);
@@ -31,10 +27,5 @@ private:
 	GLuint m_depthRenderbuffer = 0;
 	GLuint m_colorRenderbuffer = 0;
 	GLuint m_framebuffer = 0;
-
-	std::string m_vertexShader;
-	std::string m_fragmentShader;
-
-	std::string m_programName;
 };
 

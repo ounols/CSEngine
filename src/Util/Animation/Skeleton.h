@@ -46,6 +46,11 @@ public:
         SAFE_DELETE(m_headJoint);
     }
 
+protected:
+    void Init(const AssetMgr::AssetReference* asset) override {
+
+    }
+
 private:
     bool isLoaded() const {
         return m_jointCount > 0 && m_headJoint != nullptr;

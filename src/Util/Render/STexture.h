@@ -34,12 +34,14 @@ public:
     virtual void Bind(GLint location, int layout);
 
 protected:
+    virtual void Init(const AssetMgr::AssetReference* asset) override;
+
+protected:
     int m_width = 0;
     int m_height = 0;
     int m_channels = 0;
 
     unsigned int m_id = 0;
-    std::string m_name;
 };
 
 

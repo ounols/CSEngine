@@ -18,6 +18,8 @@ public:
     void Bind(GLint location, int layout) override;
     void GenerateMipmap();
 
+protected:
+    void Init(const AssetMgr::AssetReference* asset) override;
 };
 
 

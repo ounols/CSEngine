@@ -118,7 +118,7 @@ void PBRShaderLoader::LoadShader() {
     // pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
     // --------------------------------------------------------------------------------
     m_irradianceMap = new SCubeTexture();
-    m_irradianceMap->SetName("irradiance");
+    m_irradianceMap->SetName("irradiance.textureCubeMap");
     m_irradianceMap->InitTexture(32);
 
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);

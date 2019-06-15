@@ -29,6 +29,9 @@ public:
 	bool MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords, float* weights, float* jointIds);
 	bool MakeIndices(int sizeIndic, int* indices);
 
+protected:
+    void Init(const AssetMgr::AssetReference* asset) override;
+
 private:
 	mutable size_t m_faceSize;
 	mutable size_t m_vertexSize;

@@ -38,6 +38,11 @@ public:
         return m_keyframes;
     }
 
+protected:
+    void Init(const AssetMgr::AssetReference* asset) override {
+
+    }
+
 private:
     float m_length = 0;
     std::vector<KeyFrame*> m_keyframes;

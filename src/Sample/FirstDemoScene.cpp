@@ -31,9 +31,7 @@ void FirstDemoScene::Init() {
 
 	//DAE test
 	std::string path = CSE::AssetsPath() + "stormtrooper.dae";
-	std::string path_tex = CSE::AssetsPath() + "Stormtrooper_D.png";
 	DAELoader* daeLoader = new DAELoader(path.c_str(), nullptr, DAELoader::ALL);
-	daeLoader->LoadTexture(path_tex.c_str());
 
 	PBRShaderLoader* asdfasdf = new PBRShaderLoader();
 

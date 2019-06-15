@@ -140,7 +140,7 @@ void main(void) {
 	vec3 kS = fresnelSchlick(max(dot(N, V0), 0.0), F0);
 	vec3 kD = 1.0 - kS;
 	kD *= 1.0 - metallic;
-	vec3 irradiance = u_irradiance.r < 0.0 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);;
+	vec3 irradiance = u_irradiance.r < 0.0 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
 	vec3 diffuse      = irradiance * albedo;
 
 	// sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
@@ -149,7 +149,7 @@ void main(void) {
 //	vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
 	vec3 specular = prefilteredColor * (kS/* * brdf.x + brdf.y*/);
 
-	vec3 ambient = (kD * diffuse + specular) * ao;
+	vec3 ambient = (kD * diffuse /*+ specular*/) * ao;
 
 //	vec3 irradiance = u_irradiance.r < 0.00 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
 //	vec3 ambient = irradiance * albedo * ao;

@@ -9,6 +9,7 @@
 #include <iostream>
 
 #ifdef __linux__
+
 #include <sys/types.h>
 #include <dirent.h>
 
@@ -33,7 +34,7 @@ AssetMgr::~AssetMgr() {
 
 
 void AssetMgr::Exterminate() {
-    for(auto asset : m_assets) {
+    for (auto asset : m_assets) {
         SAFE_DELETE(asset);
     }
 
@@ -44,35 +45,46 @@ void AssetMgr::Exterminate() {
 
 void AssetMgr::LoadAssets(bool isPacked) {
 
-    if(!isPacked) {
+    if (!isPacked) {
         ReadDirectory(CSE::AssetsPath());
 
-
+        SetType();
     }
+}
+
+AssetMgr::AssetReference* AssetMgr::GetAsset(std::string name) const {
+    for(auto asset : m_assets) {
+        if(asset->name == name) return asset;
+        if(asset->path == name) return asset;
+        if(asset->name_full == name) return asset;
+    }
+
+    return nullptr;
 }
 
 void AssetMgr::ReadDirectory(std::string path) {
 #ifdef __linux__ //======================================
 
     DIR* dirp = opendir(path.c_str());
-    struct dirent * dp;
+    struct dirent* dp;
     while ((dp = readdir(dirp)) != nullptr) {
 
         std::string name = dp->d_name;
 
-        if(dp->d_type == DT_DIR) {
-            if(name == "." || name == "..") continue;
+        if (dp->d_type == DT_DIR) {
+            if (name == "." || name == "..") continue;
 
             ReadDirectory(path + name + '/');
             continue;
         }
 
         AssetReference* asset = new AssetReference();
-        asset->name = name;
         asset->path = path + name;
+        asset->name_full = name;
 
         auto name_strs = split(name, '.');
         asset->extension = name_strs[name_strs.size() - 1];
+        asset->name = name.substr(0, name.rfind('.'));
 
         m_assets.push_back(asset);
         std::cout << "[pkg] " << asset->name << " (" << asset->extension << ")\n";
@@ -98,20 +110,89 @@ void AssetMgr::ReadDirectory(std::string path) {
 
 void AssetMgr::SetType() {
 
-    for(auto asset : m_assets) {
+    for (auto asset : m_assets) {
         std::string type_str = asset->extension;
+        make_lower(type_str);
 
+        //차후 확장자 리스트를 제작하여 최적화
         //texture data
-        if(type_str == "jpg" || type_str == "png" || type_str == "dds" || type_str == "hdr") {
+        if (type_str == "jpg" || type_str == "png" || type_str == "dds" || type_str == "hdr") {
             asset->type = TEX_2D;
+            asset->name += ".texture";
             continue;
         }
 
         //cube map texture data
-        if(type_str == "cbmap") {
+        if (type_str == "cbmap") {
             asset->type = TEX_CUBEMAP;
+            asset->name += ".textureCubeMap";
             continue;
         }
+
+        //material data
+        if (type_str == "mat") {
+            asset->type = MATERIAL;
+            asset->name += ".material";
+            continue;
+        }
+
+        //DAE data
+        if (type_str == "dae") {
+            asset->type = DAE;
+            asset->name += ".dae";
+            continue;
+        }
+
+        //script data
+        if (type_str == "nut") {
+            asset->type = SCRIPT;
+            asset->name += ".script";
+            continue;
+        }
+
+        //shader part data
+        if (type_str == "vert" || type_str == "vs") {
+            asset->type = SHADER;
+            asset->name += ".vert";
+            continue;
+        }
+        if (type_str == "frag" || type_str == "fs") {
+            asset->type = SHADER;
+            asset->name += ".frag";
+            continue;
+        }
+
+        //shader part data
+        if (type_str == "shader") {
+            asset->type = SHADER_HANDLE;
+            asset->name += ".shader";
+            continue;
+        }
+
+        //prefab data
+        if (type_str == "prefab") {
+            asset->type = PREFAB;
+            asset->name += ".prefab";
+            continue;
+        }
+
+        //scene data
+        if (type_str == "scene") {
+            asset->type = SCENE;
+            asset->name += ".scene";
+            continue;
+        }
+
+        //ini data
+        if (type_str == "ini") {
+            asset->type = INI;
+            asset->name += ".ini";
+            continue;
+        }
+
+        //txt data
+        asset->type = TXT;
+        asset->name += ".text";
     }
 
 }

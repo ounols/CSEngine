@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 
 
 static std::string ReplaceAll(std::string& str, const std::string& from, const std::string& to) {
@@ -34,13 +35,9 @@ ReplaceFunction(std::string& str, const std::string& from, const std::string& fr
     return str;
 }
 
-static std::string trim(const std::string& str) {
-    size_t first = str.find_first_not_of(' ');
-    if (std::string::npos == first) {
-        return str;
-    }
-    size_t last = str.find_last_not_of(' ');
-    return str.substr(first, (last - first + 1));
+static std::string trim(std::string str) {
+    std::string r = str.erase(str.find_last_not_of(" \n\t\r") + 1);
+    return r.erase(0, r.find_first_not_of(" \n\t\r"));
 }
 
 static std::vector<std::string> split(const std::string& s, char seperator) {
@@ -57,4 +54,12 @@ static std::vector<std::string> split(const std::string& s, char seperator) {
     output.push_back(s.substr(prev_pos, pos - prev_pos)); // Last word
 
     return output;
+}
+
+static void make_upper(std::string& str) {
+    std::transform(str.begin(), str.end(), str.begin(), toupper);
+}
+
+static void make_lower(std::string& str) {
+    std::transform(str.begin(), str.end(), str.begin(), tolower);
 }

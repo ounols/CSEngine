@@ -16,10 +16,10 @@ void MaterialComponent::Exterminate() {
 
 void MaterialComponent::Init() {
     if(m_irradianceTexture == nullptr) {
-        m_irradianceTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("irradiance");
+        m_irradianceTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("irradiance.textureCubeMap");
     }
     if(m_prefilterTexture == nullptr) {
-        m_prefilterTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("prefilter");
+        m_prefilterTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("irradiance.textureCubeMap");
     }
 }
 

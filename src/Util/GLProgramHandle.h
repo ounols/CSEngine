@@ -86,6 +86,11 @@ public:
     GLElementList GetAttributesList();
     GLElementList GetUniformsList();
 
+    void SaveShader(std::string path);
+
+protected:
+    void Init(const AssetMgr::AssetReference* asset) override;
+
 private:
     static std::string getImplementName(std::map<std::string, std::string>& list, std::string name);
 
@@ -97,4 +102,7 @@ public:
 
     GLElementList AttributesList;
     GLElementList UniformsList;
+private:
+    std::string m_fragShaderName;
+    std::string m_vertShaderName;
 };

@@ -52,3 +52,7 @@ bool SPrefab::SetGameObject(SGameObject* obj) {
     return true;
 }
 
+void SPrefab::Init(const AssetMgr::AssetReference* asset) {
+    return;
+}
+

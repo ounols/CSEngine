@@ -219,3 +219,7 @@ void MeshSurface::Destroy() {
 	MemoryMgr::getInstance()->ReleaseObject(this);
 
 }
+
+void MeshSurface::Init(const AssetMgr::AssetReference* asset) {
+
+}
