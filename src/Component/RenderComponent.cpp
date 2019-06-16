@@ -52,7 +52,7 @@ void RenderComponent::Tick(float elapsedTime) {
 }
 
 
-void RenderComponent::SetMatrix(mat4 camera, mat4 projection) {
+void RenderComponent::SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) {
 
     // //model-view
     // mat4 scale = mat4::Scale(m_scale->x, m_scale->y, m_scale->z);
@@ -65,10 +65,10 @@ void RenderComponent::SetMatrix(mat4 camera, mat4 projection) {
     mat4 modelView = modelNoCameraView * camera;
     glUniformMatrix4fv(handler->Uniforms.Modelview, 1, 0, modelView.Pointer());
     glUniformMatrix4fv(handler->Uniforms.ModelNoCameraMatrix, 1, 0, modelNoCameraView.Pointer());
-
+    glUniform3fv(handler->Uniforms.CameraPosition, 1, cameraPosition.Pointer());
 
     //normal matrix
-    glUniformMatrix3fv(handler->Uniforms.NormalMatrix, 1, 0, modelView.ToMat3().Pointer());
+//    glUniformMatrix3fv(handler->Uniforms.NormalMatrix, 1, 0, modelView.ToMat3().Pointer());
 
 
     //projection transform
@@ -141,9 +141,8 @@ void RenderComponent::Render(float elapsedTime) {
 }
 
 
-void RenderComponent::SetShaderHandle(int id) {
-
-    SetShaderHandle(ResMgr::getInstance()->getShaderProgramHandle(id));
+void RenderComponent::SetShaderHandle(std::string name) {
+    SetShaderHandle(ResMgr::getInstance()->GetObject<GLProgramHandle>(name));
 
 }
 
@@ -181,9 +180,9 @@ void RenderComponent::SetMaterials() const {
         vec3 m_specularMaterial = vec3{1, 1, 1};
         float m_shininess = 128;
 
-        glUniform3fv(handler->Uniforms.AmbientMaterial, 1, m_ambientMaterial.Pointer());
-        glUniform3fv(handler->Uniforms.SpecularMaterial, 1, m_specularMaterial.Pointer());
-        glUniform1f(handler->Uniforms.Shininess, m_shininess);
+//        glUniform3fv(handler->Uniforms.AmbientMaterial, 1, m_ambientMaterial.Pointer());
+//        glUniform3fv(handler->Uniforms.SpecularMaterial, 1, m_specularMaterial.Pointer());
+//        glUniform1f(handler->Uniforms.Shininess, m_shininess);
 
     } else {
         m_material->AttachMaterials(handler);

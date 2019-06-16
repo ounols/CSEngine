@@ -3,11 +3,11 @@
 //
 
 #pragma once
-#include "../SObject.h"
+#include "../Object/SResource.h"
 #include "SGameObject.h"
 
 
-class SPrefab : public SObject {
+class SPrefab : public SResource {
 public:
     SPrefab();
     ~SPrefab();
@@ -18,6 +18,9 @@ public:
     bool SetGameObject(SGameObject* obj);
 
     void Exterminate() override;
+
+protected:
+    void Init(const AssetMgr::AssetReference* asset) override;
 
 private:
     SGameObject* m_root = nullptr;

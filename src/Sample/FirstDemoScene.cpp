@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <Util/Render/PBRShaderLoader.h>
 #include "FirstDemoScene.h"
 #include "../Component/LightComponent.h"
 #include "../Component/DrawableSkinnedMeshComponent.h"
@@ -30,9 +31,12 @@ void FirstDemoScene::Init() {
 
 	//DAE test
 	std::string path = CSE::AssetsPath() + "stormtrooper.dae";
-	std::string path_tex = CSE::AssetsPath() + "Stormtrooper_D.png";
 	DAELoader* daeLoader = new DAELoader(path.c_str(), nullptr, DAELoader::ALL);
-	daeLoader->LoadTexture(path_tex.c_str());
+
+	PBRShaderLoader* asdfasdf = new PBRShaderLoader();
+
+	asdfasdf->LoadShader();
+	SAFE_DELETE(asdfasdf);
 
 //	daeLoader->GeneratePrefab();
 
@@ -66,8 +70,8 @@ void FirstDemoScene::Init() {
 	SGameObject* a = new SGameObject("camera");
 	SGameObject* b = new SGameObject();
 	d = new SGameObject();
-	STexture* empty = new STexture();
-	empty->LoadEmpty();
+//	STexture* empty = new STexture();
+//	empty->LoadEmpty();
 
 	cube = new MeshSurface(CH02::teapot_smoothNumVerts, CH02::teapot_smoothVerts, CH02::teapot_smoothNormals);
 	cube->SetUndestroyable(false);
@@ -76,11 +80,12 @@ void FirstDemoScene::Init() {
 	c->CreateComponent<DrawableStaticMeshComponent>();
 	c->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 	c->CreateComponent<MaterialComponent>();
-	c->GetComponent<MaterialComponent>()->SetShininess(40);
-	c->GetComponent<MaterialComponent>()->SetTexture(empty);
+//	c->GetComponent<MaterialComponent>()->SetShininess(40);
+//	c->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
+    c->GetComponent<MaterialComponent>()->SetAlbedo(vec3{1, 0, 0});
 
 	c->CreateComponent<RenderComponent>();
-	c->GetComponent<RenderComponent>()->SetShaderHandle(0);
+	c->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 	c->GetComponent<RenderComponent>()->SetIsEnable(false);
 	c->CreateComponent<CustomComponent>();
 	c->GetComponent<CustomComponent>()->SetClassName("TestScript");
@@ -98,22 +103,22 @@ void FirstDemoScene::Init() {
 	c2->CreateComponent<DrawableStaticMeshComponent>();
 	c2->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 	c2->CreateComponent<MaterialComponent>();
-	c2->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
-	c2->GetComponent<MaterialComponent>()->SetTexture(empty);
+//	c2->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
+//	c2->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
 	c2->GetTransform()->m_position.y = 0.7f;
 
 
 	 
 	c2->CreateComponent<RenderComponent>();
-	c2->GetComponent<RenderComponent>()->SetShaderHandle(0);
+	c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
 	c3 = new SGameObject();
 	c3->CreateComponent<DrawableStaticMeshComponent>();
 	c3->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 	c3->CreateComponent<MaterialComponent>();
-	c3->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 0 });
-	c3->GetComponent<MaterialComponent>()->SetShininess(2);
-	c3->GetComponent<MaterialComponent>()->SetTexture(empty);
+//	c3->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 0 });
+//	c3->GetComponent<MaterialComponent>()->SetShininess(2);
+//	c3->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
 	c3->GetTransform()->m_position.y = -0.7f;
 
 	c3->CreateComponent<CustomComponent>();
@@ -121,11 +126,11 @@ void FirstDemoScene::Init() {
 
 
 	c3->CreateComponent<RenderComponent>();
-	c3->GetComponent<RenderComponent>()->SetShaderHandle(0);
+	c3->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
 	auto c4 = SCloneFactory::Clone(c3, c3);
-	c4->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 1 });
-	c4->GetComponent<MaterialComponent>()->SetTexture(empty);
+//	c4->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 1 });
+//	c4->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
     c4->GetTransform()->m_position.y = -0.1f;
     c4->GetTransform()->m_position.x = -2.f;
 	c4->GetTransform()->m_scale.Set(0.5, 0.5, 0.5);
@@ -151,18 +156,18 @@ void FirstDemoScene::Init() {
 	d->GetTransform()->m_scale = vec3{ 2.f, 2.f, 2.f };
 	ab->AddChild(d);
 	d->GetComponent<LightComponent>()->SetDirection(vec4{ 1.f, 0.5f, 1.f, 1.0f });
-	d->GetComponent<LightComponent>()->SetColorAmbient(vec4{ 0.0f, 0.0f, 0.0f, 1 });
+	d->GetComponent<LightComponent>()->SetColor(vec3{ 10, 10, 10 });
 	d->GetComponent<LightComponent>()->DisableSpecular = false;
 	d->GetComponent<LightComponent>()->SetLightType(LightComponent::POINT);
 	d->GetComponent<LightComponent>()->SetLightRadius(1);
 	d->CreateComponent<DrawableStaticMeshComponent>();
 	d->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 	d->CreateComponent<MaterialComponent>();
-	d->GetComponent<MaterialComponent>()->SetDiffuseMaterial(vec4{ 1, 1, 1, 1 });
-	d->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 1 });
-	d->GetComponent<MaterialComponent>()->SetTexture(empty);
+//	d->GetComponent<MaterialComponent>()->SetDiffuseMaterial(vec4{ 1, 1, 1, 1 });
+	d->GetComponent<MaterialComponent>()->SetAlbedo(vec3{ 1, 1, 1 });
+//	d->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
 	d->CreateComponent<RenderComponent>();
-	d->GetComponent<RenderComponent>()->SetShaderHandle(0);
+	d->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 	//d->GetComponent<LightComponent>()->DisableDiffuse = true;
 
 	a->CreateComponent<CameraComponent>();
@@ -211,13 +216,13 @@ void FirstDemoScene::switchingObject() {
 		c2->CreateComponent<DrawableStaticMeshComponent>();
 		c2->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 		c2->CreateComponent<MaterialComponent>();
-		c2->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
-		c2->GetComponent<MaterialComponent>()->SetMaterialSpecular(vec3{ 0, 0, 0 });
+//		c2->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
+//		c2->GetComponent<MaterialComponent>()->SetMaterialSpecular(vec3{ 0, 0, 0 });
 		c2->GetTransform()->m_position.y = 0.5f;
 
 
 		c2->CreateComponent<RenderComponent>();
-		c2->GetComponent<RenderComponent>()->SetShaderHandle(0);
+		c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
 //        d->GetComponent<LightComponent>()->SetLightType(LightComponent::DIRECTIONAL);
 	}

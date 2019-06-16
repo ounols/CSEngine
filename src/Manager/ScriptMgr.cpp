@@ -194,20 +194,16 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
 	;
 
 	COMPONENT_DEF(MaterialComponent)
-		.Func(_SC("SetAmbient"), &MaterialComponent::SetMaterialAmbient)
-		.Func(_SC("SetSpecular"), &MaterialComponent::SetMaterialSpecular)
-		.Func(_SC("SetDiffuse"), &MaterialComponent::SetDiffuseMaterial)
-		.Func(_SC("SetShininess"), &MaterialComponent::SetShininess);
+		.Func(_SC("SetAlbedo"), &MaterialComponent::SetAlbedo)
+		.Func(_SC("SetMetallic"), &MaterialComponent::SetMetallic)
+		.Func(_SC("SetRoughness"), &MaterialComponent::SetRoughness)
+		.Func(_SC("SetAO"), &MaterialComponent::SetAo);
 
 
 	COMPONENT_DEF(LightComponent)
 		.Func(_SC("SetLightType"), &LightComponent::SetLightType)
-		.Func(_SC("SetColorAmbient"), &LightComponent::SetColorAmbient)
-		.Func(_SC("SetColorDiffuse"), &LightComponent::SetColorDiffuse)
-		.Func(_SC("SetColorSpecular"), &LightComponent::SetColorSpecular)
-		.Func(_SC("GetColorAmbient"), &LightComponent::GetColorAmbient)
-		.Func(_SC("GetColorDiffuse"), &LightComponent::GetColorDiffuse)
-		.Func(_SC("GetColorSpecular"), &LightComponent::GetColorSpecular)
+		.Func(_SC("SetColor"), &LightComponent::SetColor)
+		.Func(_SC("GetColor"), &LightComponent::GetColor)
 		.Func(_SC("SetDirection"), &LightComponent::SetDirection)
 		.Func(_SC("GetDirection"), &LightComponent::GetDirection)
 	;

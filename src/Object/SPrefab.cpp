@@ -3,12 +3,10 @@
 //
 
 #include "../Manager/SCloneFactory.h"
-#include "../Manager/SPrefabContainer.h"
 #include "../Manager/ResMgr.h"
 #include "SPrefab.h"
 
 SPrefab::SPrefab() {
-    ResMgr::getInstance()->Register<SPrefabContainer, SPrefab>(this);
 
 }
 
@@ -52,5 +50,9 @@ bool SPrefab::SetGameObject(SGameObject* obj) {
     m_root->SetIsPrefab(true);
 
     return true;
+}
+
+void SPrefab::Init(const AssetMgr::AssetReference* asset) {
+    return;
 }
 

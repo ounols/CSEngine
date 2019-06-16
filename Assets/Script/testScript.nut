@@ -7,14 +7,15 @@ class TestScript extends SCEngineScript {
 	function Init(){
 		materialComp = gameobject.GetComponent<MaterialComponent>();
 		lightComp = gameobject.GetComponent<LightComponent>();
-		
-		ambient = vec3();
-		ambient.Set(0.3, 0.3, 0);
-		local diffuse = vec4();
-		diffuse.Set(1, 1, 0.5, 1);
+
+		local diffuse = vec3();
+		diffuse.Set(0, 1, 0);
 		if(materialComp != null) {
-			materialComp.SetDiffuse(diffuse);
-			materialComp.SetAmbient(ambient);
+			materialComp.SetRoughness(0.4);
+			materialComp.SetMetallic(0.4);
+			materialComp.SetAlbedo(diffuse);
+			//materialComp.SetDiffuse(diffuse);
+			//materialComp.SetAmbient(ambient);
 		}
 
 

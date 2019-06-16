@@ -29,6 +29,7 @@ MainProc::~MainProc()
 void MainProc::Init(GLuint width, GLuint height) {
 
 	m_oglMgr->setupEGLGraphics(width, height);
+	ResizeWindow(width, height);
 
 	m_scriptMgr->Init();
 	GameObjectMgr::getInstance()->Init();

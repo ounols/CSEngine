@@ -7,7 +7,7 @@
 #include <Manager/MainProc.h>
 #include <MacroDef.h>
 // #include <GL/glew.h>
-#define GLFW_INCLUDE_ES2
+#define GLFW_INCLUDE_ES3
 
 #include <GLFW/glfw3.h>
 
@@ -45,7 +45,7 @@ int main(void) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-    int width = 480;
+    int width = 1280;
     int height = 720;
 
     /* Create a windowed mode window and its OpenGL context */

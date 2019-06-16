@@ -1,5 +1,6 @@
 #include "MeshSurface.h"
 #include "../../Manager/MemoryMgr.h"
+#include "../../OGLDef.h"
 // #include <iostream>
 
 MeshSurface::MeshSurface() {}
@@ -42,12 +43,14 @@ bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, fl
 		vertex_tmp->Position.y = *(vertices)++;
 		vertex_tmp->Position.z = *(vertices)++;
 
-		vertex_tmp->Normal.x = *(normals)++;
-		vertex_tmp->Normal.y = *(normals)++;
-		vertex_tmp->Normal.z = *(normals)++;
-
-		// std::cout << "{ " << vertex_tmp->Position.x << ", " << vertex_tmp->Position.y << ", " << vertex_tmp->Position.z << " }, ";
-		
+		if(normals == nullptr) {
+		    vertex_tmp->Normal.Set(0, 0, 0);
+		}
+		else {
+            vertex_tmp->Normal.x = *(normals)++;
+            vertex_tmp->Normal.y = *(normals)++;
+            vertex_tmp->Normal.z = *(normals)++;
+		}
 
 		if (texCoords == nullptr) {
 			vertex_tmp->TexCoord.x = 0;
@@ -80,7 +83,6 @@ bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, fl
 		vertex_tmp++;
 	}
 
-	// std::cout << "\n\n";
 	m_vertexSize = sizeVert;
 	return true;
 }
@@ -95,14 +97,12 @@ bool MeshSurface::MakeIndices(int sizeIndic, int* indices) {
 	m_Indics.resize(sizeIndic * 3);
 
 	Index* index_tmp = reinterpret_cast<Index*>(&m_Indics[0]);
-	// std::cout << "\nsizeIndic : " << sizeIndic << "\n";
 
 	for(int i = 0; i < sizeIndic; ++i) {
 		index_tmp->index.x = static_cast<unsigned short>(*(indices)++);
 		index_tmp->index.y = static_cast<unsigned short>(*(indices)++);
 		index_tmp->index.z = static_cast<unsigned short>(*(indices)++);
 
-		// std::cout << "{ " << index_tmp->index.x << ", " << index_tmp->index.y << ", " << index_tmp->index.z << " }, ";
 		index_tmp++;
 	}
 
@@ -206,6 +206,11 @@ vec3 MeshSurface::LerpFilter(vec3 v0, vec3 v1, float kCoff) {
 
 
 void MeshSurface::Exterminate() {
+    const GLuint vertexBuffer = m_meshId.m_vertexBuffer;
+     const GLuint indexBuffer = m_meshId.m_indexBuffer;
+
+     glDeleteBuffers(1, &vertexBuffer);
+     glDeleteBuffers(1, &indexBuffer);
 }
 
 
@@ -215,18 +220,13 @@ void MeshSurface::Destroy() {
 
 }
 
-//const std::vector<int>& MeshSurface::GetJointIDs() const {
-//	return m_jointIDs;
-//}
-//
-//void MeshSurface::setJointIDs(const std::vector<int>& m_jointIDs) {
-//	MeshSurface::m_jointIDs = m_jointIDs;
-//}
-//
-//const std::vector<float>& MeshSurface::GetWeights() const {
-//	return m_weights;
-//}
-//
-//void MeshSurface::setWeights(const std::vector<float>& m_weights) {
-//	MeshSurface::m_weights = m_weights;
-//}
+void MeshSurface::Init(const AssetMgr::AssetReference* asset) {
+    AssetMgr::TYPE type = asset->type;
+
+    switch (type) {
+        case AssetMgr::DAE:
+            break;
+        default:
+            return;
+    }
+}

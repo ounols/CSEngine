@@ -45,7 +45,7 @@ namespace CSE {
 
 #endif
 #ifdef __ANDROID__
-
+// get lists : https://stackoverflow.com/questions/13317387/how-to-get-file-in-assets-from-android-ndk
 		AAssetManager* assetManager = RESMGR->GetAssetManager();
 		AAsset* asset = AAssetManager_open(assetManager, path.c_str(), AASSET_MODE_STREAMING);
 

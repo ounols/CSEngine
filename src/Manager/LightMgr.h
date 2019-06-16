@@ -1,7 +1,9 @@
 #pragma once
+
 #include "Base/SContainer.h"
 #include "../Component/LightComponent.h"
 #include "../Util/GLProgramHandle.h"
+#include "../Util/Render/SCubeTexture.h"
 
 class LightMgr : public SContainer<LightComponent*> {
 public:
@@ -11,11 +13,6 @@ public:
 	void AttachLightToShader(const GLProgramHandle* handle) const;
 
 private:
-	void AttachDirectionalLight(const GLProgramHandle* handle, const SLight* light, int index) const;
-	void AttachPositionalLight(const GLProgramHandle* handle, const SLight* light, int index) const;
-
-
-	static void SetLightMode(const GLProgramHandle* handle, const LightComponent* light, int index);
-
+    SCubeTexture* m_currentSkybox;
 };
 

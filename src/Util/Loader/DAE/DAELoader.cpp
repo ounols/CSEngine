@@ -2,7 +2,6 @@
 #include "../../MoreString.h"
 #include "DAEUtil/DAEConvertSGameObject.h"
 #include <iostream>
-#include "../../../Manager/TextureContainer.h"
 #include "../../../Component/DrawableSkinnedMeshComponent.h"
 #include "../../../Component/RenderComponent.h"
 
@@ -18,14 +17,14 @@ DAELoader::DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type) {
         m_obj = new MeshSurface();
     }
 
-    Load(path, type, nullptr);
+    Load(path, type);
 }
 
 DAELoader::~DAELoader() {
     Exterminate();
 }
 
-void DAELoader::Load(const char* path, LOAD_TYPE type, const char* texture_path) {
+void DAELoader::Load(const char* path, LOAD_TYPE type) {
 
     {
         std::string path_str = path;
@@ -53,6 +52,13 @@ void DAELoader::Load(const char* path, LOAD_TYPE type, const char* texture_path)
             m_isSkinning = false;
         }
 
+        try {
+            LoadTexturePath(collada.getChild("library_images"));
+        } catch(int error) {
+            std::cout << "passing texture...\n";
+        }
+
+
 
         //지오메트리를 불러옴
         LoadGeometry(collada.getChild("library_geometries"));
@@ -65,16 +71,15 @@ void DAELoader::Load(const char* path, LOAD_TYPE type, const char* texture_path)
 
     }
 
-    LoadTexture(texture_path);
+//    LoadTexture(texture_path);
 }
 
 
-void DAELoader::LoadTexture(const char* filePath) {
-    if(filePath == nullptr) return;
+void DAELoader::LoadTexture(const AssetMgr::AssetReference* asset) {
+    if (asset == nullptr) return;
 
-    STexture* texture = new STexture();
-    texture->Load(filePath, STexture::PNG);
-    m_texture_id = ResMgr::getInstance()->GetID<TextureContainer, STexture>(texture);
+    STexture* texture = SResource::Create<STexture>(asset);
+    m_texture_name = texture->GetName();
 }
 
 void DAELoader::Exterminate() {
@@ -125,9 +130,35 @@ void DAELoader::LoadGeometry(XNode root_g) {
     XNode meshData = root_g.getChild("geometry").getChild("mesh");
 
     //RAW data
-    ReadPositions(meshData, m_skinningData->get_verticesSkinData());
-    ReadNormals(meshData);
-    ReadUVs(meshData);
+    ReadPositions(meshData,
+                  m_skeletonData == nullptr ? std::vector<VertexSkinData*>() : m_skinningData->get_verticesSkinData());
+
+
+    std::string normalsId = "";
+    std::string texCoordsId = "";
+
+    try{
+        XNode polylist = meshData.getChild("polylist");
+
+        normalsId = polylist.getNodeByAttribute("input", "semantic", "NORMAL")
+                .getAttribute("source").value.substr(1);
+        XNode childWithAttribute = polylist.getNodeByAttribute("input", "semantic", "TEXCOORD");
+        texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
+    }
+    catch (int error) {
+        try{
+            XNode triangles = meshData.getChild("triangles");
+
+            XNode normals = triangles.getNodeByAttribute("input", "semantic", "NORMAL");
+            normalsId = normals.getAttribute("source").value.substr(1);
+            XNode childWithAttribute = triangles.getNodeByAttribute("input", "semantic", "TEXCOORD");
+            texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
+        }
+        catch (int error) {}
+    }
+
+    ReadNormals(meshData, normalsId);
+    ReadUVs(meshData, texCoordsId);
 
     AssembleVertices(meshData);
 
@@ -156,16 +187,14 @@ void DAELoader::ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWei
 
         // vec4 position = vec4{ x, y, z, 1 };
         mat4 transform = mat4::Translate(x, y, z) * CORRECTION;
-        m_vertices.push_back(new Vertex(m_vertices.size(), vec3{transform.w.x, transform.w.y, transform.w.z},
+        m_vertices.push_back(new Vertex(m_vertices.size(), vec3{ transform.w.x, transform.w.y, transform.w.z },
                                         m_isSkinning ? vertexWeight.at(m_vertices.size()) : nullptr));
     }
 
 }
 
-void DAELoader::ReadNormals(XNode data) {
-    std::string normalsID = data.getChild("polylist").getNodeByAttribute("input", "semantic", "NORMAL").getAttribute(
-            "source").value.substr(1);
-    XNode normalsData = data.getNodeByAttribute("source", "id", normalsID.c_str()).getChild("float_array");
+void DAELoader::ReadNormals(XNode data, std::string normalsId) {
+    XNode normalsData = data.getNodeByAttribute("source", "id", normalsId.c_str()).getChild("float_array");
     int normalsSize = std::stoi(normalsData.getAttribute("count").value);
     std::vector<float> normals = normalsData.value.toFloatVector();
 
@@ -178,7 +207,7 @@ void DAELoader::ReadNormals(XNode data) {
         mat4 transform = mat4::Translate(x, y, z) * CORRECTION;
         // std::cout << "{ " << x << ", " << y << ", " << z << " }, ";
         // Matrix4f.transform(CORRECTION, normal, normal);
-        m_normals.push_back(vec3{transform.w.x, transform.w.y, transform.w.z});
+        m_normals.push_back(vec3{ transform.w.x, transform.w.y, transform.w.z });
 
     }
 
@@ -186,18 +215,16 @@ void DAELoader::ReadNormals(XNode data) {
 
 }
 
-void DAELoader::ReadUVs(XNode data) {
-    std::string texID = data.getChild("polylist").getNodeByAttribute("input", "semantic", "TEXCOORD").getAttribute(
-            "source").value.substr(1);
-    XNode texData = data.getNodeByAttribute("source", "id", texID.c_str()).getChild("float_array");
+void DAELoader::ReadUVs(XNode data, std::string texCoordsId) {
+    XNode texData = data.getNodeByAttribute("source", "id", texCoordsId.c_str()).getChild("float_array");
     int uvSize = std::stoi(texData.getAttribute("count").value);
     auto uvs = texData.value.toFloatVector();
 
-    for(int i = 0; i < uvSize/2; i++) {
+    for (int i = 0; i < uvSize / 2; i++) {
         float s = uvs[i * 2];
         float t = uvs[i * 2 + 1];
 
-        m_texUVs.push_back(vec2{s, t});
+        m_texUVs.push_back(vec2{ s, t });
     }
 
 
@@ -212,18 +239,33 @@ void DAELoader::AssembleVertices(XNode data) {
 
     for (auto child : poly.children) {
         if (child.name == "input") {
-            typeCount++;
+            int offset = std::stoi(child.getAttribute("offset").value) + 1;
+            if(offset > typeCount) {
+                typeCount = offset;
+            }
         }
     }
 
     std::vector<int> indexData = poly.getChild("p").value.toIntegerVector();
+    int texcoordOffset = -1;
+    try {
+        XNode texSemantic = poly.getNodeByAttribute("input", "semantic", "TEXCOORD");
+        texcoordOffset = std::stoi(texSemantic.getAttribute("offset").value);
+    }
+    catch(int error) {
+        texcoordOffset = -1;
+    }
+
 
     // std::cout << "\n\ntypeCount : " << typeCount << '\n';
 
     for (int i = 0; i < indexData.size() / typeCount; i++) {
         int positionIndex = indexData[i * typeCount];
         int normalIndex = indexData[i * typeCount + 1];
-        int texCoordIndex = indexData[i * typeCount + 2];
+        int texCoordIndex = -1;
+        if(texcoordOffset != -1) {
+            texCoordIndex = indexData[i * typeCount + texcoordOffset];
+        }
         processVertex(positionIndex, normalIndex, texCoordIndex);
     }
 }
@@ -267,7 +309,7 @@ Vertex* DAELoader::dealWithAlreadyProcessedVertex(Vertex* previousVertex, int ne
 
 void DAELoader::removeUnusedVertices() {
     for (auto vertex : m_vertices) {
-        // vertex->averageTangents();
+         vertex->averageTangents();
         if (!vertex->isSet()) {
             vertex->setTextureIndex(0);
             vertex->setNormalIndex(0);
@@ -368,6 +410,14 @@ Joint* DAELoader::loadJointData(XNode jointNode, bool isRoot) {
     return joint;
 }
 
+void DAELoader::LoadTexturePath(XNode imageNode) {
+    std::string path = imageNode.getChild("image").getChild("init_from").value;
+    path = trim(path);
+    auto asset = ResMgr::getInstance()->GetAssetReference(path);
+    if(asset == nullptr) return;
+
+    LoadTexture(asset);
+}
 
 void DAELoader::ConvertDataToVectors() {
     {
@@ -434,36 +484,44 @@ SPrefab* DAELoader::GeneratePrefab() {
     SGameObject* root = new SGameObject(m_name);
     prefab->SetGameObject(root);
 
-    SGameObject* joint_root = new SGameObject("Armature");
-    root->AddChild(joint_root);
-    DAEConvertSGameObject::CreateJoints(joint_root, m_skeletonData->getHeadJoint());
+    SGameObject* joint_root = nullptr;
+
+    if (m_isSkinning) {
+        joint_root = new SGameObject("Armature");
+        root->AddChild(joint_root);
+        DAEConvertSGameObject::CreateJoints(joint_root, m_skeletonData->getHeadJoint());
+    }
 
     SGameObject* mesh_root = new SGameObject("mesh");
     root->AddChild(mesh_root);
-    auto mesh_component = mesh_root->CreateComponent<DrawableSkinnedMeshComponent>();
+    DrawableStaticMeshComponent* mesh_component = nullptr;
+
+    if (m_isSkinning) {
+        mesh_component = mesh_root->CreateComponent<DrawableSkinnedMeshComponent>();
+    } else {
+        mesh_component = mesh_root->CreateComponent<DrawableStaticMeshComponent>();
+    }
+
     mesh_component->SetMesh(*m_obj);
 
-    mesh_component->SetRootJoint(joint_root->GetChildren()[0], m_skeletonData->getJointCount());
+    if (m_isSkinning)
+        dynamic_cast<DrawableSkinnedMeshComponent*>(mesh_component)->SetRootJoint(joint_root->GetChildren()[0],
+                                                                                  m_skeletonData->getJointCount());
 
     mesh_root->CreateComponent<RenderComponent>();
-    mesh_root->GetComponent<RenderComponent>()->SetShaderHandle(0);
+    mesh_root->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 //    mesh_root->GetComponent<RenderComponent>()->SetIsEnable(false);
 
     auto material = mesh_root->CreateComponent<MaterialComponent>();
 //    material->SetDiffuseMaterial(vec4{0.7f, 0.6f, 1, 1});
-    material->SetShininess(40);
-    material->SetTexture(ResMgr::getInstance()->GetObject<TextureContainer, STexture>(m_texture_id));
+//    material->SetShininess(40);
+    material->SetAlbedoTexture(ResMgr::getInstance()->GetObject<STexture>(m_texture_name));
 
-    SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,
-                                                                       m_animationLoader->GetAnimation());
+    if (m_isSkinning) {
+        SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,
+                                                                           m_animationLoader->GetAnimation());
+    }
 
 
     return prefab;
 }
-
-
-
-
-
-
-

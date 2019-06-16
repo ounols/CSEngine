@@ -2,6 +2,8 @@
 
 #include "../MacroDef.h"
 #include "Base/SContainer.h"
+#include "../Object/SResource.h"
+#include "AssetMgr.h"
 
 #ifdef __ANDROID__
 #include <android/asset_manager.h>
@@ -27,28 +29,24 @@ public:
 
     void Exterminate();
 
-    template<class CONTAINER, class TYPE>
-    void Register(TYPE* m_object) const;
+    void Register(SResource* m_object);
 
-    template<class CONTAINER, class TYPE>
-    void Remove(TYPE* m_object) const;
+    void Remove(SResource* m_object);
 
-    GLProgramHandle* getShaderProgramHandle(int id) const;
+    template<class TYPE>
+    TYPE* GetObject(std::string name) const;
 
-    SISurface* GetSurfaceMesh(int id) const;
+    SResource* GetSResource(std::string name) const;
 
-    template<class CONTAINER, class TYPE>
-    TYPE* GetObject(int id) const;
+    int GetID(SResource* object) const;
 
-    template<class CONTAINER, class TYPE>
-    int GetID(TYPE* object) const;
-
-    template<class CONTAINER, class TYPE>
     int GetSize() const;
 
-
-    template<class CONTAINER, class TYPE>
     bool IsEmpty() const;
+
+    std::string RemoveDuplicatingName(std::string name) const;
+
+    AssetMgr::AssetReference* GetAssetReference(std::string name) const;
 
 #ifdef __ANDROID__
     void SetAssetManager(AAssetManager* obj);
@@ -59,84 +57,19 @@ public:
 
 
 private:
-    //ShaderProgramContainer* m_programContainer;
-    //SurfaceMeshContainer* m_surfaceMeshContainer;
-    std::vector<SIContainer*> m_containers;
-#ifdef __ANDROID__
-    AAssetManager* m_assetManager;
-    JNIEnv* m_env = nullptr;
-#endif
+    std::vector<SResource*> m_resources;
+    AssetMgr* m_assetManager;
 };
 
 
-template<class CONTAINER, class TYPE>
-void ResMgr::Register(TYPE* m_object) const {
-
-    for (auto container : m_containers) {
-        if (dynamic_cast<CONTAINER*>(container)) {
-            static_cast<SContainer<TYPE*>*>(container)->Register(m_object);
-            return;
-        }
-    }
-
-}
-
-
-template<class CONTAINER, class TYPE>
-void ResMgr::Remove(TYPE* m_object) const {
-
-    for (auto container : m_containers) {
-        if (dynamic_cast<CONTAINER*>(container)) {
-            static_cast<SContainer<TYPE*>*>(container)->Remove(m_object);
-            return;
-        }
-    }
-
-}
-
-
-template<class CONTAINER, class TYPE>
-TYPE* ResMgr::GetObject(int id) const {
-    for (auto container : m_containers) {
-        if (dynamic_cast<CONTAINER*>(container)) {
-            return static_cast<SContainer<TYPE*>*>(container)->Get(id);
+template<class TYPE>
+TYPE* ResMgr::GetObject(std::string name) const {
+    for (auto resource : m_resources) {
+        if (dynamic_cast<TYPE*>(resource)) {
+            if(name == resource->GetName())
+                return static_cast<TYPE*>(resource);
         }
     }
 
     return nullptr;
-}
-
-template<class CONTAINER, class TYPE>
-int ResMgr::GetID(TYPE* object) const {
-    for (auto container : m_containers) {
-        if (dynamic_cast<CONTAINER*>(container)) {
-            return static_cast<SContainer<TYPE*>*>(container)->GetID(object);
-        }
-    }
-}
-
-
-template<class CONTAINER, class TYPE>
-int ResMgr::GetSize() const {
-    for (auto container : m_containers) {
-        if (dynamic_cast<CONTAINER*>(container)) {
-            return static_cast<SContainer<TYPE*>*>(container)->getSize();
-        }
-    }
-
-    return 0;
-}
-
-
-template<class CONTAINER, class TYPE>
-bool ResMgr::IsEmpty() const {
-    for (auto container : m_containers) {
-        if (dynamic_cast<CONTAINER*>(container)) {
-            auto container_casted = static_cast<SContainer<TYPE*>*>(container);
-            return container_casted->getSize() == 0;
-        }
-    }
-
-    return true;
-
 }

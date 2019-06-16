@@ -19,8 +19,8 @@ public:
 
     ~DAELoader();
 
-    void Load(const char* path, LOAD_TYPE type, const char* texture_path = nullptr);
-    void LoadTexture(const char* filePath);
+    void Load(const char* path, LOAD_TYPE type);
+    void LoadTexture(const AssetMgr::AssetReference* asset);
 
     MeshSurface* GetMesh() const {
         return m_obj;
@@ -44,9 +44,9 @@ private:
 //===================================================================
     void ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWeight);
 
-    void ReadNormals(XNode data);
+    void ReadNormals(XNode data, std::string normalsId);
 
-    void ReadUVs(XNode data);
+    void ReadUVs(XNode data, std::string texCoordsId);
 
     void AssembleVertices(XNode data);
 
@@ -77,13 +77,15 @@ private:
     Joint* loadJointData(XNode jointNode, bool isRoot);
     Joint* extractMainJointData(XNode jointNode, bool isRoot);
 
+    void LoadTexturePath(XNode imageNode);
+
 
     void AttachDataToObjSurface();
 
     void Exterminate();
 
 private:
-    const XNode* m_root;
+    const XNode* m_root{};
     MeshSurface* m_obj;
 
     std::vector<Vertex*> m_vertices;
@@ -108,6 +110,6 @@ private:
     bool m_isSkinning = false;
 
     std::string m_name;
-    int m_texture_id = -1;
+    std::string m_texture_name;
 
 };

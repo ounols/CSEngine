@@ -4,7 +4,6 @@
 #include "../Matrix.h"
 #include "../Quaternion.h"
 #include "../../Manager/ResMgr.h"
-#include "../../Manager/AnimationContainer.h"
 #include "../../MacroDef.h"
 #include <vector>
 #include <map>
@@ -12,13 +11,11 @@
 
 class KeyFrame;
 
-class AnimationContainer;
 
-class Animation : public SObject {
+class Animation : public SResource {
 public:
     Animation(float totalTime, std::vector<KeyFrame*> keyframes) {
         SetUndestroyable(true);
-        ResMgr::getInstance()->Register<AnimationContainer, Animation>(this);
         m_length = totalTime;
         m_keyframes = keyframes;
     }
@@ -39,6 +36,11 @@ public:
 
     std::vector<KeyFrame*> GetKeyFrames() const {
         return m_keyframes;
+    }
+
+protected:
+    void Init(const AssetMgr::AssetReference* asset) override {
+
     }
 
 private:

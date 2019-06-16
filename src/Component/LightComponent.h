@@ -5,7 +5,7 @@
 class LightComponent : public SComponent {
 
 public:
-	enum LIGHT{ NONE, DIRECTIONAL, POINT, SPOT };
+	enum LIGHT{ NONE = 0, DIRECTIONAL = 1, POINT = 2, SPOT = 3 };
 public:
 	LightComponent();
 	~LightComponent();
@@ -17,14 +17,10 @@ public:
 
 	void SetLightType(LIGHT type);
 	void SetDirection(vec4 direction) const;
-	void SetColorAmbient(vec4 color) const;
-	void SetColorDiffuse(vec4 color) const;
-	void SetColorSpecular(vec4 color) const;
+	void SetColor(vec3 color) const;
 
 	vec4 GetDirection(vec4 direction) const;
-	vec4 GetColorAmbient(vec4 color) const;
-	vec4 GetColorDiffuse(vec4 color) const;
-	vec4 GetColorSpecular(vec4 color) const;
+	vec3 GetColor() const;
 
 	//for Positional Light and Spot Light
 	void SetLightRadius(float radius) const;

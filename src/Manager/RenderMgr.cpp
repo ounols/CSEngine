@@ -27,6 +27,7 @@ void RenderMgr::Render(float elapsedTime) const {
 		cameraComponent->GetCameraMatrix() : m_NoneCamera;
 	mat4 projection = (cameraComponent != nullptr) ?
 		cameraComponent->GetProjectionMatrix() : mat4::Identity();
+	vec3 cameraPosition = cameraComponent->GetCameraPosition();
 
 	ProgramRenderLayer programComp(m_rendersLayer.begin(), m_rendersLayer.end());
 
@@ -58,7 +59,7 @@ void RenderMgr::Render(float elapsedTime) const {
 			glEnableVertexAttribArray(handler.Attributes.Weight);
 			glEnableVertexAttribArray(handler.Attributes.JointId);
 
-			render->SetMatrix(camera, projection);
+            render->SetMatrix(camera, cameraPosition, projection);
 			render->Render(elapsedTime);
 
 			glDisableVertexAttribArray(handler.Attributes.Position);
