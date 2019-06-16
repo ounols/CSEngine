@@ -180,7 +180,7 @@ const XNode& XNode::getChild(const char* name) const {
 
 int XFILE::read(std::string& buffer) {
     buffer.clear();
-    for (;file_index < file.length(); file_index++) {
+    for (; file_index < file.length(); file_index++) {
         //file_index++;
         char c = file[file_index];
         if (c == '>') {
@@ -203,14 +203,7 @@ int XFILE::read(std::string& buffer) {
     return XML_EOF; // if we have reached here then the file is done being read
 }
 
-XFILE::XFILE(const char* str) // read the file into the node heirchy
-{
-//    this->file = fopen(str, "r");
-//    if (file == NULL) {
-//        printf("XML file [%s] not found!\n", str);
-//        throw -1;
-//    }
-
+XFILE::XFILE(const char* str) { // read the file into the node heirchy
     this->file = CSE::OpenAssetsTxtFile(str);
     if (file.empty()) {
 #ifndef __ANDROID__

@@ -36,6 +36,8 @@ public:
     template<class TYPE>
     TYPE* GetObject(std::string name) const;
 
+    SResource* GetSResource(std::string name) const;
+
     int GetID(SResource* object) const;
 
     int GetSize() const;

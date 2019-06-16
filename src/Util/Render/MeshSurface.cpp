@@ -221,5 +221,12 @@ void MeshSurface::Destroy() {
 }
 
 void MeshSurface::Init(const AssetMgr::AssetReference* asset) {
+    AssetMgr::TYPE type = asset->type;
 
+    switch (type) {
+        case AssetMgr::DAE:
+            break;
+        default:
+            return;
+    }
 }

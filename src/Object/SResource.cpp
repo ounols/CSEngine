@@ -35,3 +35,7 @@ void SResource::SetResource(const AssetMgr::AssetReference* asset) {
     SetName(asset->name);
     Init(asset);
 }
+
+SResource* SResource::GetResource(std::string name) {
+    return ResMgr::getInstance()->GetSResource(name);
+}

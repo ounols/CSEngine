@@ -73,6 +73,13 @@ AssetMgr::AssetReference* ResMgr::GetAssetReference(std::string name) const {
     return m_assetManager->GetAsset(name);
 }
 
+SResource* ResMgr::GetSResource(std::string name) const {
+    for(auto res : m_resources) {
+        if(res->GetName() == name) return res;
+    }
+    return nullptr;
+}
+
 
 #ifdef __ANDROID__
 
