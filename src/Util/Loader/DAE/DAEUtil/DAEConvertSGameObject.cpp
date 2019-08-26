@@ -34,7 +34,9 @@ SGameObject* DAEConvertSGameObject::CreateJoints(SGameObject* parent, Joint* dat
     return jointObject;
 }
 
-SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameObject* mesh, AnimationData* animationData) {
+SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameObject* mesh,
+                                                    AnimationData* animationData,
+                                                    std::string name) {
     if(parent == nullptr) return nullptr;
 
     SGameObject* animationObject = new SGameObject(parent->GetName() + "_animation");
@@ -47,7 +49,8 @@ SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameOb
         frames.push_back(CreateKeyFrame(animationData->keyFrames[i]));
     }
 
-    Animation* animation = new Animation(animationData->lengthSeconds, frames);
+    Animation* animation = SResource::Create<Animation>(name + ".model?animation");
+    animation->SetKeyframe(animationData->lengthSeconds, frames);
 
     animator->PlayAnimation(animation);
     animator->SetMesh(mesh->GetComponent<DrawableSkinnedMeshComponent>());

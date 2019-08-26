@@ -18,7 +18,11 @@ public:
 	void CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
 					   std::map<SComponent*, SComponent*> lists_comp) override;
 
-	void SetMesh(DrawableSkinnedMeshComponent* mesh);
+    void SetValue(std::string name_str, Arguments value) override;
+
+    std::string PrintValue() const override;
+
+    void SetMesh(DrawableSkinnedMeshComponent* mesh);
     // void SetAnimation(Animation* animation);
 
     void PlayAnimation(Animation* animation);

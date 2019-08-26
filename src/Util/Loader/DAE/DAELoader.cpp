@@ -41,7 +41,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
     m_root = XFILE(path).getRoot();
     XNode collada = m_root->getChild("COLLADA");
 
-    if (type == LOAD_TYPE::MESH || type == LOAD_TYPE::ALL) {
+    if (type == LOAD_TYPE::MESH || type == LOAD_TYPE::ALL || type == LOAD_TYPE::AUTO) {
         try {
             //스킨데이터를 불러옴
             LoadSkin(collada.getChild("library_controllers"));
@@ -59,15 +59,26 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
         }
 
 
+        try {
+            //지오메트리를 불러옴
+            LoadGeometry(collada.getChild("library_geometries"));
+        } catch(int error) {
+            std::cout << "passing geometry...\n";
+        }
 
-        //지오메트리를 불러옴
-        LoadGeometry(collada.getChild("library_geometries"));
     }
 
     //애니메이션 데이터를 불러옴
-    if (type == ANIMATION || type == ALL) {
-        m_animationLoader = new DAEAnimationLoader();
-        m_animationLoader->Load(path, m_name);
+    if (type == ANIMATION || type == ALL || type == AUTO) {
+
+        try {
+            m_animationLoader = new DAEAnimationLoader();
+            m_animationLoader->Load(path, m_name);
+        } catch(int error) {
+            SAFE_DELETE(m_animationLoader);
+            std::cout << "passing Animation...\n";
+        }
+
 
     }
 
@@ -519,7 +530,8 @@ SPrefab* DAELoader::GeneratePrefab() {
 
     if (m_isSkinning) {
         SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,
-                                                                           m_animationLoader->GetAnimation());
+                                                                           m_animationLoader->GetAnimation(),
+                                                                           m_name);
     }
 
 

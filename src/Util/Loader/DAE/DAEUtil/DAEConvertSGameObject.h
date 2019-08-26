@@ -17,7 +17,8 @@ public:
     ~DAEConvertSGameObject();
 
     static SGameObject* CreateJoints(SGameObject* parent, Joint* data);
-    static SGameObject* CreateAnimation(SGameObject* parent, SGameObject* mesh, AnimationData* animationData);
+    static SGameObject* CreateAnimation(SGameObject* parent, SGameObject* mesh, AnimationData* animationData,
+                                        std::string name);
 
 private:
     static KeyFrame* CreateKeyFrame(KeyFrameData* data);

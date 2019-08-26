@@ -1,5 +1,6 @@
 #pragma once
 #include "RenderInterfaces.h"
+#include "../../Object/SResource.h"
 #include "../Vector.h"
 
 class MeshSurface : public SISurface {
@@ -25,6 +26,7 @@ public:
 
 	void Exterminate() override;
 	void Destroy();
+
 
 	bool MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords, float* weights, float* jointIds);
 	bool MakeIndices(int sizeIndic, int* indices);

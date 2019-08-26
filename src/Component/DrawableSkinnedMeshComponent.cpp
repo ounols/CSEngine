@@ -1,4 +1,4 @@
-#include <Util/GLProgramHandle.h>
+#include "../Util/GLProgramHandle.h"
 #include "DrawableSkinnedMeshComponent.h"
 #include "../OGLDef.h"
 

@@ -132,3 +132,31 @@ void AnimatorComponent::CopyReference(SComponent* src, std::map<SGameObject*, SG
 
 }
 
+void AnimatorComponent::SetValue(std::string name_str, Arguments value) {
+    if(name_str == "m_animationTime") {
+        m_animationTime = std::stof(value[0]);
+    }
+    else if(name_str == "m_startTime") {
+        m_startTime = std::stof(value[0]);
+    }
+    else if(name_str == "m_currentAnimation") {
+        m_currentAnimation = SResource::Create<Animation>(value[0]);
+    }
+    else if(name_str == "m_entity") {
+        m_entity = gameObject->GetComponentByID<DrawableSkinnedMeshComponent>(value[0]);
+    }
+}
+
+std::string AnimatorComponent::PrintValue() const {
+
+    PRINT_START("component");
+
+    PRINT_VALUE(m_animationTime, m_animationTime);
+    PRINT_VALUE(m_startTime, m_startTime);
+    PRINT_VALUE(m_currentAnimation, ConvertSpaceStr(m_currentAnimation->GetID()));
+    PRINT_VALUE(m_entity, ConvertSpaceStr(m_entity->GetGameObject()->GetID(m_entity)));
+
+
+    PRINT_END("component");
+}
+

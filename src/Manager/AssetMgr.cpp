@@ -55,6 +55,7 @@ void AssetMgr::LoadAssets(bool isPacked) {
 AssetMgr::AssetReference* AssetMgr::GetAsset(std::string name) const {
     for(auto asset : m_assets) {
         if(asset->name == name) return asset;
+        if(asset->id == name) return asset;
         if(asset->path == name) return asset;
         if(asset->name_full == name) return asset;
     }
@@ -78,15 +79,7 @@ void AssetMgr::ReadDirectory(std::string path) {
             continue;
         }
 
-        AssetReference* asset = new AssetReference();
-        asset->path = path + name;
-        asset->name_full = name;
-
-        auto name_strs = split(name, '.');
-        asset->extension = name_strs[name_strs.size() - 1];
-        asset->name = name.substr(0, name.rfind('.'));
-
-        m_assets.push_back(asset);
+        AssetReference* asset = CreateAsset(path + name, name);
         std::cout << "[pkg] " << asset->name << " (" << asset->extension << ")\n";
     }
     closedir(dirp);
@@ -106,6 +99,28 @@ void AssetMgr::ReadDirectory(std::string path) {
         FindClose(hFind);
     }
 #endif //================================================
+}
+
+AssetMgr::AssetReference* AssetMgr::CreateAsset(std::string path, std::string name_full, std::string name) {
+    AssetReference* asset = new AssetReference();
+    asset->path = path;
+    asset->id =  "File:" + path.substr(CSE::AssetsPath().size());
+    asset->name_full = name_full;
+
+    if(name.empty()) {
+        name = name_full;
+        auto name_strs = split(name, '.');
+        asset->extension = name_strs[name_strs.size() - 1];
+        asset->name = name.substr(0, name.rfind('.'));
+    }
+    else {
+        asset->name = name;
+    }
+
+
+    m_assets.push_back(asset);
+
+    return asset;
 }
 
 void AssetMgr::SetType() {
@@ -139,7 +154,12 @@ void AssetMgr::SetType() {
         //DAE data
         if (type_str == "dae") {
             asset->type = DAE;
-            asset->name += ".dae";
+            asset->name += ".model";
+            {
+                AppendSubName(CreateAsset(asset->path, asset->name_full, asset->name), "animation");
+                AppendSubName(CreateAsset(asset->path, asset->name_full, asset->name), "skeleton");
+                AppendSubName(CreateAsset(asset->path, asset->name_full, asset->name), "mesh");
+            }
             continue;
         }
 
@@ -195,6 +215,13 @@ void AssetMgr::SetType() {
         asset->name += ".text";
     }
 
+}
+
+AssetMgr::AssetReference* AssetMgr::AppendSubName(AssetMgr::AssetReference* asset, std::string sub_name) {
+    std::string sub = '?' + sub_name;
+    asset->id += sub;
+    asset->name += sub;
+    return asset;
 }
 
 

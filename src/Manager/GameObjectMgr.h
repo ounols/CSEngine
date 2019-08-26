@@ -14,6 +14,7 @@ public:
 	void Update(float elapsedTime);
 	void DeleteGameObject(SGameObject* object);
 
-	SGameObject* Find(std::string name);
+	SGameObject* Find(std::string name) const;
+	SGameObject* FindByID(std::string id) const;
 
 };

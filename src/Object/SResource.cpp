@@ -2,6 +2,7 @@
 // Created by ounols on 19. 6. 10.
 //
 
+#include <iostream>
 #include "SResource.h"
 #include "../Manager/ResMgr.h"
 
@@ -31,6 +32,7 @@ void SResource::SetResource(const AssetMgr::AssetReference* asset) {
     if(m_isInited) return;
 
     m_isInited = true;
+    m_id = asset->id;
 
     SetName(asset->name);
     Init(asset);

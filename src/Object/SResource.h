@@ -19,6 +19,10 @@ public:
         return m_name.c_str();
     }
 
+    const char* GetID() const {
+        return m_id.c_str();
+    }
+
     void SetResource(std::string name);
     void SetResource(const AssetMgr::AssetReference* asset);
 
@@ -55,6 +59,7 @@ private:
     static SResource* GetResource(std::string name);
 private:
     std::string m_name;
+    std::string m_id;
     bool m_isInited = false;
 
 };

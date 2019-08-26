@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Object/SPrefab.h"
+#include "../../../Object/SPrefab.h"
 #include "DAEUtil/VertexSkinData.h"
 #include "DAEUtil/SkinningData.h"
 #include "../../Animation/Skeleton.h"
@@ -12,7 +12,7 @@
 class DAELoader {
 public:
     enum LOAD_TYPE {
-        ALL, MESH, ANIMATION, NOTHING
+        ALL, MESH, ANIMATION, AUTO, NOTHING
     };
 public:
     DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type = ALL);

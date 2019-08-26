@@ -1,6 +1,6 @@
 #include <iostream>
 #include <sstream>
-#include <Util/Render/PBRShaderLoader.h>
+#include "../Util/Render/PBRShaderLoader.h"
 #include "FirstDemoScene.h"
 #include "../Component/LightComponent.h"
 #include "../Component/DrawableSkinnedMeshComponent.h"
@@ -15,6 +15,8 @@
 #include "../Util/Loader/DAE/DAELoader.h"
 #include "../Util/AssetsDef.h"
 #include "../Manager/SCloneFactory.h"
+#include "../Util/Loader/MeshLoader.h"
+#include "../Util/Loader/SCENE/SSceneLoader.h"
 
 FirstDemoScene::FirstDemoScene() {
 	
@@ -30,8 +32,7 @@ void FirstDemoScene::Init() {
 	//===============
 
 	//DAE test
-	std::string path = CSE::AssetsPath() + "stormtrooper.dae";
-	DAELoader* daeLoader = new DAELoader(path.c_str(), nullptr, DAELoader::ALL);
+	SPrefab* stormtrooper = MeshLoader::LoadModel("stormtrooper.model");
 
 	PBRShaderLoader* asdfasdf = new PBRShaderLoader();
 
@@ -65,11 +66,15 @@ void FirstDemoScene::Init() {
 	// cube->SetUndestroyable(false);
 
 
+	SGameObject* root = new SGameObject("root");
 
 	//Managing Memory Test
 	SGameObject* a = new SGameObject("camera");
+	a->SetParent(root);
 	SGameObject* b = new SGameObject();
+	b->SetParent(root);
 	d = new SGameObject();
+	d->SetParent(root);
 //	STexture* empty = new STexture();
 //	empty->LoadEmpty();
 
@@ -77,6 +82,7 @@ void FirstDemoScene::Init() {
 	cube->SetUndestroyable(false);
 	b->Destroy();
 	c = new SGameObject();
+	c->SetParent(root);
 	c->CreateComponent<DrawableStaticMeshComponent>();
 	c->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 	c->CreateComponent<MaterialComponent>();
@@ -90,15 +96,16 @@ void FirstDemoScene::Init() {
 	c->CreateComponent<CustomComponent>();
 	c->GetComponent<CustomComponent>()->SetClassName("TestScript");
 
-	SGameObject* testing = new SGameObject("root");
+	SGameObject* testing = new SGameObject("root of mesh");
+	root->AddChild(testing);
 
-	SGameObject* ab = daeLoader->GeneratePrefab()->Clone(vec3{0, -0.4f, 0}, testing);
+	SGameObject* ab = stormtrooper->Clone(vec3{0, -0.4f, 0}, testing);
 	ab->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
 	ab->CreateComponent<CustomComponent>();
 	ab->GetComponent<CustomComponent>()->SetClassName("TestScript");
-	SAFE_DELETE(daeLoader);
 
 	c2 = new SGameObject();
+	c2->SetParent(root);
 	// c2->AddComponent(c->GetComponent<DrawableStaticMeshComponent>());
 	c2->CreateComponent<DrawableStaticMeshComponent>();
 	c2->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
@@ -113,6 +120,7 @@ void FirstDemoScene::Init() {
 	c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
 	c3 = new SGameObject();
+	c3->SetParent(root);
 	c3->CreateComponent<DrawableStaticMeshComponent>();
 	c3->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 	c3->CreateComponent<MaterialComponent>();
@@ -138,6 +146,7 @@ void FirstDemoScene::Init() {
 
 
 	SGameObject* direction = new SGameObject();
+	direction->SetParent(root);
 	direction->SetName("directional");
 	direction->GetTransform()->m_position = vec3{ 0.f, 1.f, 0.f };
 	direction->CreateComponent<LightComponent>();
@@ -174,6 +183,8 @@ void FirstDemoScene::Init() {
 	a->GetTransform()->m_position = vec3{ 0, 0, 3.f };
 	a->GetComponent<CameraComponent>()->SetTarget(d);
 	//===============
+
+    SSceneLoader::SavePrefab(root, CSE::AssetsPath() + "Scene/test_scene.scene");
 }
 
 

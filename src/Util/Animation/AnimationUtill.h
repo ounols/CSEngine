@@ -14,6 +14,10 @@ class KeyFrame;
 
 class Animation : public SResource {
 public:
+    Animation() {
+        SetUndestroyable(true);
+    }
+
     Animation(float totalTime, std::vector<KeyFrame*> keyframes) {
         SetUndestroyable(true);
         m_length = totalTime;
@@ -21,6 +25,11 @@ public:
     }
 
     ~Animation() {
+    }
+
+    void SetKeyframe(float totalTime, std::vector<KeyFrame*> keyframes) {
+        m_length = totalTime;
+        m_keyframes = keyframes;
     }
 
     void Exterminate() override {

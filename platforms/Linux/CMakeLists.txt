@@ -62,7 +62,7 @@ add_executable(CSEngine.app CSEngine_Linux_glfw.cpp ${CSENGINE_SRC})
 #헤더파일 위치
 include_directories(/usr/include)
 include_directories(/usr/local/include)
-include_directories(../../src)
+#include_directories(../../src)
 include_directories(../../External/Squirrel/include)
 include_directories(../../External/zip)
 # include_directories(/gl3w)
