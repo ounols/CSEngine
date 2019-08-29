@@ -20,7 +20,11 @@ public:
 	void CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
 						   std::map<SComponent*, SComponent*> lists_comp) override;
 
-	mat4 GetCameraMatrix() const;
+    void SetValue(std::string name_str, Arguments value) override;
+
+    std::string PrintValue() const override;
+
+    mat4 GetCameraMatrix() const;
 	vec3 GetCameraPosition() const;
 
 	mat4 GetProjectionMatrix() {

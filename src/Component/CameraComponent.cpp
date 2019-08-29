@@ -41,19 +41,11 @@ void CameraComponent::Tick(float elapsedTime) {
 }
 
 SComponent* CameraComponent::Clone(SGameObject* object) {
-//    CameraComponent* comp = nullptr;
-//    if (object == nullptr) {
-//        comp = new CameraComponent();
-//    } else {
-//        comp = object->CreateComponent<CameraComponent>();
-//    }
-
     INIT_COMPONENT_CLONE(CameraComponent, comp);
 
     comp->m_eye = m_eye;
     comp->m_target = m_target;
     comp->m_up = m_up;
-//    comp->m_targetObject = m_targetObject;
 
     comp->m_cameraMatrix = m_cameraMatrix;
     comp->m_projectionMatrix = m_projectionMatrix;
@@ -168,4 +160,12 @@ void CameraComponent::SetProjectionMatrix() {
 
     m_isProjectionInited = true;
 
+}
+
+void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
+
+}
+
+std::string CameraComponent::PrintValue() const {
+    return SComponent::PrintValue();
 }
