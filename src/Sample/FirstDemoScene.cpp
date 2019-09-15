@@ -66,7 +66,7 @@ void FirstDemoScene::Init() {
 	// cube->SetUndestroyable(false);
 
 
-	SGameObject* root = new SGameObject("root");
+	SGameObject* root = new SGameObject("ROOT_ROOT_ALALA");
 
 	//Managing Memory Test
 	SGameObject* a = new SGameObject("camera");

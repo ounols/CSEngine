@@ -86,13 +86,13 @@ SComponent* TransformComponent::Clone(SGameObject* object) {
 }
 
 void TransformComponent::SetValue(std::string name_str, Arguments value) {
-    if(name_str == "position") {
+    if(name_str == "m_position") {
         m_position = vec3(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]));
     }
-    else if(name_str == "scale") {
+    else if(name_str == "m_scale") {
         m_scale = vec3(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]));
     }
-    else if(name_str == "rotation") {
+    else if(name_str == "m_rotation") {
         m_rotation = Quaternion(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]), std::stof(value[3]));
     }
 }

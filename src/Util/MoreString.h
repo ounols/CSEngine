@@ -80,3 +80,14 @@ std::string appandAll(std::stringstream& sstream, T0 param0, Tn... paramN) {
     sstream << param0;
     return appandAll(sstream, paramN...);
 }
+
+static std::string ConvertSpaceStr(std::string str) {
+    auto n = str.find(' ');
+    if(n == std::string::npos) {
+        n = str.find("$nbsp:");
+        if(n != std::string::npos)
+            return ReplaceAll(str, "$nbsp:", " ");
+        return str;
+    }
+    return ReplaceAll(str, " ", "$nbsp:");
+}

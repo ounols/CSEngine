@@ -15,14 +15,19 @@ public:
     }
 
     Skeleton(int jointCount, Joint* headJoint) : m_jointCount(jointCount), m_headJoint(headJoint) {
-        if (isLoaded()) {
-            m_isLoaded = true;
-        }
+        SetUndestroyable(true);
+
     }
 
     ~Skeleton() {
         Exterminate();
     }
+
+    void SetJoint(int jointCount, Joint* headJoint) {
+        m_jointCount = jointCount;
+        m_headJoint = headJoint;
+    }
+
 
     int getJointCount() const {
         if(!isLoaded()) return -1;
@@ -48,7 +53,7 @@ public:
 
 protected:
     void Init(const AssetMgr::AssetReference* asset) override {
-
+        return;
     }
 
 private:
@@ -59,8 +64,6 @@ private:
 private:
     int m_jointCount;
     Joint* m_headJoint;
-
-    int m_isLoaded = false;
 };
 
 

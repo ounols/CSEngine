@@ -2,6 +2,7 @@
 #include "../SComponent.h"
 #include "../DrawableSkinnedMeshComponent.h"
 #include "../../Util/Animation/AnimationUtill.h"
+#include "../../Util/Animation/Animation.h"
 
 class AnimatorComponent : public SComponent {
 public:

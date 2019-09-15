@@ -5,6 +5,7 @@
 #include "../Manager/SCloneFactory.h"
 #include "../Manager/ResMgr.h"
 #include "SPrefab.h"
+#include "../Util/Loader/DAE/DAELoader.h"
 
 SPrefab::SPrefab() {
 
@@ -53,6 +54,15 @@ bool SPrefab::SetGameObject(SGameObject* obj) {
 }
 
 void SPrefab::Init(const AssetMgr::AssetReference* asset) {
+
+    AssetMgr::TYPE type = asset->type;
+
+    switch (type) {
+        case AssetMgr::DAE:
+            DAELoader::GeneratePrefab(asset->path.c_str(), nullptr, nullptr, nullptr, this);
+            break;
+    }
+
     return;
 }
 

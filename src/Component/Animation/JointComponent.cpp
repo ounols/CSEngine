@@ -92,30 +92,9 @@ void JointComponent::SetValue(std::string name_str, VariableBinder::Arguments va
 std::string JointComponent::PrintValue() const {
     PRINT_START("component");
 
-    {
-        mat4 m = m_inverseTransformMatrix;
-        PRINT_VALUE(m_inverseTransformMatrix, m.x.x, ' ', m.x.y, ' ', m.x.z, ' ', m.x.w, ' ',
-                m.y.x, ' ', m.y.y, ' ', m.y.z, ' ', m.y.w, ' ',
-                m.z.x, ' ', m.z.y, ' ', m.z.z, ' ', m.z.w, ' ',
-                m.w.x, ' ', m.w.y, ' ', m.w.z, ' ', m.w.w);
-
-    }
-    {
-        mat4 m = m_animatedMatrix;
-        PRINT_VALUE(m_animatedMatrix, m.x.x, ' ', m.x.y, ' ', m.x.z, ' ', m.x.w, ' ',
-                    m.y.x, ' ', m.y.y, ' ', m.y.z, ' ', m.y.w, ' ',
-                    m.z.x, ' ', m.z.y, ' ', m.z.z, ' ', m.z.w, ' ',
-                    m.w.x, ' ', m.w.y, ' ', m.w.z, ' ', m.w.w);
-
-    }
-    {
-        mat4 m = m_localBindMatrix;
-        PRINT_VALUE(m_localBindMatrix, m.x.x, ' ', m.x.y, ' ', m.x.z, ' ', m.x.w, ' ',
-                    m.y.x, ' ', m.y.y, ' ', m.y.z, ' ', m.y.w, ' ',
-                    m.z.x, ' ', m.z.y, ' ', m.z.z, ' ', m.z.w, ' ',
-                    m.w.x, ' ', m.w.y, ' ', m.w.z, ' ', m.w.w);
-
-    }
+    PRINT_VALUE_MAT4(m_inverseTransformMatrix);
+    PRINT_VALUE_MAT4(m_animatedMatrix);
+    PRINT_VALUE_MAT4(m_localBindMatrix);
 
     PRINT_END("component");
 }

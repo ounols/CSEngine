@@ -10,6 +10,9 @@
 
 #include "../Sample/FirstDemoScene.h"
 #include "ScriptMgr.h"
+#include "../Object/SScene.h"
+#include "../Util/Loader/SCENE/SSceneLoader.h"
+#include "../Util/AssetsDef.h"
 
 
 MainProc::MainProc()
@@ -34,7 +37,8 @@ void MainProc::Init(GLuint width, GLuint height) {
 	m_scriptMgr->Init();
 	GameObjectMgr::getInstance()->Init();
 
-	SceneMgr::getInstance()->SetScene(new FirstDemoScene());
+	SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/test.scene");
+	SceneMgr::getInstance()->SetScene(scene);
 
 
 	

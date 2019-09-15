@@ -7,6 +7,8 @@
 #include "../../../Animation/Joint.h"
 #include "../DAEAnimationLoader.h"
 #include "../../../../Object/SGameObject.h"
+#include "../../../Animation/AnimationUtill.h"
+#include "../../../Animation/Animation.h"
 
 class KeyFrame;
 class JointTransform;
@@ -18,7 +20,7 @@ public:
 
     static SGameObject* CreateJoints(SGameObject* parent, Joint* data);
     static SGameObject* CreateAnimation(SGameObject* parent, SGameObject* mesh, AnimationData* animationData,
-                                        std::string name);
+                                        std::string name, Animation* animation = nullptr);
 
 private:
     static KeyFrame* CreateKeyFrame(KeyFrameData* data);

@@ -9,55 +9,6 @@
 #include <map>
 #include <string>
 
-class KeyFrame;
-
-
-class Animation : public SResource {
-public:
-    Animation() {
-        SetUndestroyable(true);
-    }
-
-    Animation(float totalTime, std::vector<KeyFrame*> keyframes) {
-        SetUndestroyable(true);
-        m_length = totalTime;
-        m_keyframes = keyframes;
-    }
-
-    ~Animation() {
-    }
-
-    void SetKeyframe(float totalTime, std::vector<KeyFrame*> keyframes) {
-        m_length = totalTime;
-        m_keyframes = keyframes;
-    }
-
-    void Exterminate() override {
-        for(auto keyframe : m_keyframes) {
-            SAFE_DELETE(keyframe);
-        }
-        m_keyframes.clear();
-    }
-
-    float GetLength() const {
-        return m_length;
-    }
-
-    std::vector<KeyFrame*> GetKeyFrames() const {
-        return m_keyframes;
-    }
-
-protected:
-    void Init(const AssetMgr::AssetReference* asset) override {
-
-    }
-
-private:
-    float m_length = 0;
-    std::vector<KeyFrame*> m_keyframes;
-
-};
-
 
 class JointTransform;
 

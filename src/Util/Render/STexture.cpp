@@ -124,6 +124,7 @@ void STexture::Init(const AssetMgr::AssetReference* asset) {
     auto data = stbi_load_from_memory(reinterpret_cast<const unsigned char*>(img_str.c_str()), img_str.length(),
                                       &m_width, &m_height, &m_channels, 0);
     Load(data);
+
 }
 
 

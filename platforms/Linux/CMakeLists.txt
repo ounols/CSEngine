@@ -31,6 +31,7 @@ file(GLOB CSENGINE_SRC
                         "../../src/*/*/*/*.*"
                         "../../src/*/*/*/*/*.*"
                         "../../src/*/*/*/*/*/*.*"
+                        "../../src/*/*/*/*/*/*/*.*"
         )
 
 file(GLOB SQUIRREL_SRC

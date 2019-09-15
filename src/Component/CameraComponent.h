@@ -67,7 +67,7 @@ private:
 
 	//perspective
 	float m_pFov = 45.f;
-	const float* m_pRatio;
+	float* m_pRatio;
 
 	//Ortho
 	float m_oLeft = -1.f;

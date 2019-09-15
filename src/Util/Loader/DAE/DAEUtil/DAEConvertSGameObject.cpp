@@ -36,7 +36,7 @@ SGameObject* DAEConvertSGameObject::CreateJoints(SGameObject* parent, Joint* dat
 
 SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameObject* mesh,
                                                     AnimationData* animationData,
-                                                    std::string name) {
+                                                    std::string name, Animation* animation) {
     if(parent == nullptr) return nullptr;
 
     SGameObject* animationObject = new SGameObject(parent->GetName() + "_animation");
@@ -49,7 +49,10 @@ SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameOb
         frames.push_back(CreateKeyFrame(animationData->keyFrames[i]));
     }
 
-    Animation* animation = SResource::Create<Animation>(name + ".model?animation");
+    if(animation == nullptr)
+        animation = SResource::Create<Animation>(name + ".prefab?animation");
+    else
+        animation->LinkResource(name + ".prefab?animation");
     animation->SetKeyframe(animationData->lengthSeconds, frames);
 
     animator->PlayAnimation(animation);

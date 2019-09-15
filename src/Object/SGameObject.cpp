@@ -198,7 +198,7 @@ std::string SGameObject::GetID(SComponent* component) const {
 
     for (const auto comp : m_components) {
         if (component == comp) {
-            return GetID() + '/' + component->GetClassType();
+            return GetID() + '?' + component->GetClassType();
         }
         id++;
     }
@@ -209,12 +209,12 @@ std::string SGameObject::GetID(SComponent* component) const {
 
 SGameObject* SGameObject::Find(std::string name) const {
 
-    return GameObjectMgr::getInstance()->Find(name);
+    return GameObjectMgr::getInstance()->Find(ConvertSpaceStr(name));
 
 }
 
 SGameObject* SGameObject::FindByID(std::string id) {
-    return GameObjectMgr::getInstance()->FindByID(id);
+    return GameObjectMgr::getInstance()->FindByID(ConvertSpaceStr(id));
 }
 
 

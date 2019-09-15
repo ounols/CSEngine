@@ -154,11 +154,11 @@ void AssetMgr::SetType() {
         //DAE data
         if (type_str == "dae") {
             asset->type = DAE;
-            asset->name += ".model";
+            asset->name += ".prefab";
             {
-                AppendSubName(CreateAsset(asset->path, asset->name_full, asset->name), "animation");
-                AppendSubName(CreateAsset(asset->path, asset->name_full, asset->name), "skeleton");
-                AppendSubName(CreateAsset(asset->path, asset->name_full, asset->name), "mesh");
+                AppendSubName(CreateAsset(asset->path, asset->name_full, asset->name), "animation")->type = DAE;
+                AppendSubName(CreateAsset(asset->path, asset->name_full, asset->name), "skeleton")->type = DAE;
+                AppendSubName(CreateAsset(asset->path, asset->name_full, asset->name), "mesh")->type = DAE;
             }
             continue;
         }

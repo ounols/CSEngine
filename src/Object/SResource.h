@@ -7,6 +7,7 @@
 #include <string>
 #include "../Manager/AssetMgr.h"
 #include "../SObject.h"
+#include "../Manager/MemoryMgr.h"
 
 class SResource : public SObject {
 public:
@@ -23,12 +24,17 @@ public:
         return m_id.c_str();
     }
 
-    void SetResource(std::string name);
-    void SetResource(const AssetMgr::AssetReference* asset);
+    void LinkResource(AssetMgr::AssetReference* asset) {
+        SetResource(asset);
+    }
+
+    void LinkResource(std::string name) {
+        SetResource(name);
+    }
 
     template <class T>
-    static T* Create(std::string name, bool isForceCopy = false) {
-        if(!isForceCopy) {
+    static T* Create(std::string name, bool isForceCreate = false) {
+        if(!isForceCreate) {
             SResource* res = GetResource(name);
             if(res != nullptr) return static_cast<T*>(res);
         }
@@ -40,22 +46,25 @@ public:
     }
 
     template <class T>
-    static T* Create(const AssetMgr::AssetReference* asset, bool isForceCopy = false) {
+    static T* Create(const AssetMgr::AssetReference* asset, bool isForceCreate = false) {
         if(asset == nullptr) return nullptr;
-        if(!isForceCopy) {
+        if(!isForceCreate) {
             SResource* res = GetResource(asset->name);
             if(res != nullptr) return static_cast<T*>(res);
         }
         T* object = new T();
         SResource* res = object;
 
-        res->SetResource(asset->name);
+        res->SetResource(asset);
         return object;
     }
 
 protected:
     virtual void Init(const AssetMgr::AssetReference* asset) = 0;
 private:
+    void SetResource(std::string name);
+    void SetResource(const AssetMgr::AssetReference* asset);
+
     static SResource* GetResource(std::string name);
 private:
     std::string m_name;

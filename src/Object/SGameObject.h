@@ -129,7 +129,7 @@ T* SGameObject::GetComponentByID(std::string id) const {
     if(object == nullptr) return nullptr;
 
     auto components = object->GetComponents();
-    auto split_str = split(id, '&');
+    auto split_str = split(id, '?');
 
     for (auto component : components) {
         std:: string comp_id = GetID(component);
