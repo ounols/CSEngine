@@ -15,44 +15,26 @@ SComponent* MoreComponentFunc::CreateComponent(SGameObject* obj, std::string com
 
     SComponent* comp = nullptr;
 
-    if(component_type == "AnimatorComponent") {
+    if (component_type == "AnimatorComponent") {
         comp = obj->CreateComponent<AnimatorComponent>();
-    }
-
-    else if(component_type == "JointComponent") {
+    } else if (component_type == "JointComponent") {
         comp = obj->CreateComponent<JointComponent>();
-    }
-
-    else if(component_type == "CameraComponent") {
+    } else if (component_type == "CameraComponent") {
         comp = obj->CreateComponent<CameraComponent>();
-    }
-
-    else if(component_type == "CustomComponent") {
+    } else if (component_type == "CustomComponent") {
         comp = obj->CreateComponent<CustomComponent>();
-    }
-
-    else if(component_type == "DrawableSkinnedMeshComponent") {
+    } else if (component_type == "DrawableSkinnedMeshComponent") {
         comp = obj->CreateComponent<DrawableSkinnedMeshComponent>();
-    }
-
-    else if(component_type == "DrawableStaticMeshComponent") {
+    } else if (component_type == "DrawableStaticMeshComponent") {
         comp = obj->CreateComponent<DrawableStaticMeshComponent>();
-    }
-
-    else if(component_type == "LightComponent") {
+    } else if (component_type == "LightComponent") {
         comp = obj->CreateComponent<LightComponent>();
-    }
-
-    else if(component_type == "MaterialComponent") {
+    } else if (component_type == "MaterialComponent") {
         comp = obj->CreateComponent<MaterialComponent>();
-    }
-
-    else if(component_type == "RenderComponent") {
+    } else if (component_type == "RenderComponent") {
         comp = obj->CreateComponent<RenderComponent>();
-    }
-
-    else if(component_type == "TransformComponent") {
-        comp = obj->CreateComponent<TransformComponent>();
+    } else if (component_type == "TransformComponent") {
+        comp = obj->GetComponent<TransformComponent>();
     }
 
 

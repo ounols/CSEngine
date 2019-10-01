@@ -19,15 +19,15 @@ void SResource::SetName(std::string name) {
     m_name = ResMgr::getInstance()->RemoveDuplicatingName(name);
 }
 
-void SResource::SetResource(std::string name) {
+void SResource::SetResource(std::string name, bool isInit) {
     if(m_isInited) return;
 
     auto asset = ResMgr::getInstance()->GetAssetReference(name);
 
-    SetResource(asset);
+    SetResource(asset, isInit);
 }
 
-void SResource::SetResource(const AssetMgr::AssetReference* asset) {
+void SResource::SetResource(const AssetMgr::AssetReference* asset, bool isInit) {
     if(asset == nullptr) return;
     if(m_isInited) return;
 
@@ -35,7 +35,8 @@ void SResource::SetResource(const AssetMgr::AssetReference* asset) {
     m_id = asset->id;
 
     SetName(asset->name);
-    Init(asset);
+    if(isInit)
+        Init(asset);
 }
 
 SResource* SResource::GetResource(std::string name) {

@@ -51,8 +51,11 @@ public:
 
     std::string name;
     XValue value;
+    std::string raw;
     std::vector<XAttrib> attributes;
     std::vector<XNode> children;
+
+    int sub_index = -1;
 
     XNode();
 
@@ -74,9 +77,12 @@ private:
 
     int read(std::string& buffer);
 
+
 public:
+    XFILE(){}
     XFILE(const char* str); // read the file into the node heirchy
     const XNode* getRoot();
+    const XNode* loadBuffer(std::string buffer);
 
     ~XFILE();
 };

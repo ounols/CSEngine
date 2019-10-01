@@ -50,9 +50,8 @@ SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameOb
     }
 
     if(animation == nullptr)
-        animation = SResource::Create<Animation>(name + ".prefab?animation");
-    else
-        animation->LinkResource(name + ".prefab?animation");
+        animation = new Animation();
+    animation->LinkResource(name + ".prefab?animation");
     animation->SetKeyframe(animationData->lengthSeconds, frames);
 
     animator->PlayAnimation(animation);

@@ -13,10 +13,14 @@ class SComponent;
 
 class SGameObject : public SObject {
 private:
-    enum STATUS { IDLE, INIT, DESTROY, UNKOWN };
+    enum STATUS {
+        IDLE, INIT, DESTROY, UNKOWN
+    };
 public:
     SGameObject();
+
     SGameObject(const SGameObject& src);
+
     explicit SGameObject(std::string name);
 
     ~SGameObject();
@@ -35,11 +39,15 @@ public:
     void SetUndestroyable(bool enable) override;
 
     void AddChild(SGameObject* object);
+
     void RemoveChild(bool isAllLevel = false);
+
     void RemoveChild(SGameObject* object);
 
     SGameObject* GetParent() const;
+
     void SetParent(SGameObject* object);
+
     void RemoveParent();
 
     std::vector<SGameObject*> GetChildren() const;
@@ -50,23 +58,26 @@ public:
      */
     void AddComponent(SComponent* component);
 
-    template<class T>
+    template <class T>
     T* GetComponent();
-    template<class T>
+
+    template <class T>
     T* GetComponentByID(std::string id) const;
+
     std::vector<SComponent*> GetComponents() const;
+
     HSQOBJECT GetCustomComponent(const char* className);
 
     //template <class T>
     //bool DeleteComponent();
     bool DeleteComponent(SComponent* component);
 
-    template<class T>
+    template <class T>
     T* CreateComponent();
 
     SGameObject* Find(std::string name) const;
-    static SGameObject* FindByID(std::string id);
 
+    static SGameObject* FindByID(std::string id);
 
 
     std::string GetName() const {
@@ -74,6 +85,7 @@ public:
     }
 
     std::string GetID() const;
+
     std::string GetID(SComponent* component) const;
 
     void SetName(std::string name) {
@@ -103,14 +115,19 @@ private:
     bool isEnable = true;
     STATUS m_status = INIT;
     bool m_isPrefab = false;
+    std::string m_resourceID;
 public:
-    bool isPrefab() const;
+    bool isPrefab(bool OnlyThisObject = false) const;
 
     void SetIsPrefab(bool m_isPrefab);
+
+    std::string GetResourceID() const;
+
+    void SetResourceID(std::string resID, bool setChildren = false);
 };
 
 
-template<class T>
+template <class T>
 T* SGameObject::GetComponent() {
     for (auto component : m_components) {
         if (component == nullptr) continue;
@@ -126,14 +143,13 @@ template <class T>
 T* SGameObject::GetComponentByID(std::string id) const {
 
     auto object = FindByID(id);
-    if(object == nullptr) return nullptr;
+    if (object == nullptr) return nullptr;
 
     auto components = object->GetComponents();
     auto split_str = split(id, '?');
 
     for (auto component : components) {
-        std:: string comp_id = GetID(component);
-        if(id == comp_id) {
+        if (split_str[1] == component->GetClassType()) {
             return static_cast<T*>(component);
         }
     }
@@ -165,12 +181,12 @@ T* SGameObject::GetComponentByID(std::string id) const {
 //}
 
 
-template<class T>
+template <class T>
 T* SGameObject::CreateComponent() {
 
     T* component = new T();
     AddComponent(component);
-    if(m_status == IDLE)
+    if (m_status == IDLE)
         component->Init();
     return component;
 

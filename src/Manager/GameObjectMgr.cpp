@@ -55,10 +55,12 @@ SGameObject* GameObjectMgr::Find(std::string name) const {
 
 SGameObject* GameObjectMgr::FindByID(std::string id) const {
 
-    std::string obj_id = split(id, '&')[0];
+    std::string obj_id = split(id, '?')[0];
 
     for(auto object : m_objects) {
-        if (object->GetID() == obj_id)
+        if(object->isPrefab()) continue;
+        auto id_ = object->GetID();
+        if (id_ == obj_id)
             return object;
     }
 

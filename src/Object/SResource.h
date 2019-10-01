@@ -25,11 +25,11 @@ public:
     }
 
     void LinkResource(AssetMgr::AssetReference* asset) {
-        SetResource(asset);
+        SetResource(asset, false);
     }
 
     void LinkResource(std::string name) {
-        SetResource(name);
+        SetResource(name, false);
     }
 
     template <class T>
@@ -59,11 +59,18 @@ public:
         return object;
     }
 
+    template <class T>
+    static T* Get(std::string name) {
+        SResource* res = GetResource(name);
+        if(res != nullptr) return static_cast<T*>(res);
+        return nullptr;
+    }
+
 protected:
     virtual void Init(const AssetMgr::AssetReference* asset) = 0;
 private:
-    void SetResource(std::string name);
-    void SetResource(const AssetMgr::AssetReference* asset);
+    void SetResource(std::string name, bool isInit = true);
+    void SetResource(const AssetMgr::AssetReference* asset, bool isInit = true);
 
     static SResource* GetResource(std::string name);
 private:

@@ -33,11 +33,18 @@ public:
     static bool SavePrefab(SGameObject* root, std::string path);
 
 private:
-    static void ExploringScene(std::vector<NodeKey*>& objs, XNode node, std::vector<ComponentValue*>& comps);
+    static void ExploringScene(XNode node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps);
     static void LinkingID(std::vector<NodeKey*>& objs, SGameObject* root);
     static void LinkingRefernece(std::vector<ComponentValue*>& comps);
+    static void ExploringPrefab(XNode node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps,
+                                SScene* scene);
+    static void LinkingResourceID(XNode node, SGameObject* root, std::vector<NodeKey*>& objs,
+                                  std::vector<ComponentValue*>& comps);
 
-    static std::string GetGameObjectValue(SGameObject* obj);
+    static std::string GetGameObjectValue(SGameObject* obj, bool ignorePrefab = false);
+    static std::string ComparePrefab(SGameObject* obj);
+
+    static std::string PrintGameObject(SGameObject* obj);
 
     static bool Save(std::string buf, std::string path);
 };

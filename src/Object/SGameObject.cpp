@@ -96,6 +96,7 @@ void SGameObject::RemoveChild(bool isAllLevel) {
 
 
 void SGameObject::RemoveChild(SGameObject* object) {
+    if(object == nullptr) return;
     auto ob = std::find(m_children.begin(), m_children.end(), object);
     m_children.erase(ob);
     object->m_parent = nullptr;
@@ -110,6 +111,7 @@ void SGameObject::SetParent(SGameObject* object) {
 }
 
 void SGameObject::RemoveParent() {
+    if(m_parent == nullptr) return;
     m_parent->RemoveChild(this);
 }
 
@@ -209,12 +211,12 @@ std::string SGameObject::GetID(SComponent* component) const {
 
 SGameObject* SGameObject::Find(std::string name) const {
 
-    return GameObjectMgr::getInstance()->Find(ConvertSpaceStr(name));
+    return GameObjectMgr::getInstance()->Find(ConvertSpaceStr(name, true));
 
 }
 
 SGameObject* SGameObject::FindByID(std::string id) {
-    return GameObjectMgr::getInstance()->FindByID(ConvertSpaceStr(id));
+    return GameObjectMgr::getInstance()->FindByID(ConvertSpaceStr(id, true));
 }
 
 
@@ -263,15 +265,29 @@ void SGameObject::SetUndestroyable(bool enable) {
     }
 }
 
-bool SGameObject::isPrefab() const {
+bool SGameObject::isPrefab(bool OnlyThisObject) const {
 
-    if (m_isPrefab || m_parent == nullptr) return m_isPrefab;
+    if (m_isPrefab || m_parent == nullptr || OnlyThisObject) return m_isPrefab;
 
     return m_parent->isPrefab();
 }
 
 void SGameObject::SetIsPrefab(bool m_isPrefab) {
     SGameObject::m_isPrefab = m_isPrefab;
+}
+
+std::string SGameObject::GetResourceID() const {
+    return m_resourceID;
+}
+
+void SGameObject::SetResourceID(std::string resID, bool setChildren) {
+    m_resourceID = resID;
+
+    if(setChildren) {
+        for(auto child : m_children) {
+            child->SetResourceID(resID, setChildren);
+        }
+    }
 }
 
 

@@ -81,9 +81,9 @@ std::string appandAll(std::stringstream& sstream, T0 param0, Tn... paramN) {
     return appandAll(sstream, paramN...);
 }
 
-static std::string ConvertSpaceStr(std::string str) {
+static std::string ConvertSpaceStr(std::string str, bool SpaceNotChange = false) {
     auto n = str.find(' ');
-    if(n == std::string::npos) {
+    if(n == std::string::npos || SpaceNotChange) {
         n = str.find("$nbsp:");
         if(n != std::string::npos)
             return ReplaceAll(str, "$nbsp:", " ");

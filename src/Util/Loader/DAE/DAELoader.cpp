@@ -17,7 +17,7 @@ DAELoader::DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type, bool is
         m_obj = new MeshSurface();
     }
 
-    if(isLoad)
+    if (isLoad)
         Load(path, type);
 }
 
@@ -55,7 +55,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
 
         try {
             LoadTexturePath(collada.getChild("library_images"));
-        } catch(int error) {
+        } catch (int error) {
             std::cout << "passing texture...\n";
         }
 
@@ -63,7 +63,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
         try {
             //지오메트리를 불러옴
             LoadGeometry(collada.getChild("library_geometries"));
-        } catch(int error) {
+        } catch (int error) {
             std::cout << "passing geometry...\n";
         }
 
@@ -75,7 +75,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
         try {
             m_animationLoader = new DAEAnimationLoader();
             m_animationLoader->Load(path, m_name);
-        } catch(int error) {
+        } catch (int error) {
             SAFE_DELETE(m_animationLoader);
             std::cout << "passing Animation...\n";
         }
@@ -134,7 +134,7 @@ void DAELoader::LoadSkeleton(XNode root_s) {
 
 
     //SAFE_DELETE(m_skeletonData);
-    if(m_skeletonData == nullptr)
+    if (m_skeletonData == nullptr)
         m_skeletonData = new Skeleton(m_jointSize, headJoint);
     else
         m_skeletonData->SetJoint(m_jointSize, headJoint);
@@ -152,7 +152,7 @@ void DAELoader::LoadGeometry(XNode root_g) {
     std::string normalsId = "";
     std::string texCoordsId = "";
 
-    try{
+    try {
         XNode polylist = meshData.getChild("polylist");
 
         normalsId = polylist.getNodeByAttribute("input", "semantic", "NORMAL")
@@ -161,7 +161,7 @@ void DAELoader::LoadGeometry(XNode root_g) {
         texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
     }
     catch (int error) {
-        try{
+        try {
             XNode triangles = meshData.getChild("triangles");
 
             XNode normals = triangles.getNodeByAttribute("input", "semantic", "NORMAL");
@@ -255,7 +255,7 @@ void DAELoader::AssembleVertices(XNode data) {
     for (auto child : poly.children) {
         if (child.name == "input") {
             int offset = std::stoi(child.getAttribute("offset").value) + 1;
-            if(offset > typeCount) {
+            if (offset > typeCount) {
                 typeCount = offset;
             }
         }
@@ -267,7 +267,7 @@ void DAELoader::AssembleVertices(XNode data) {
         XNode texSemantic = poly.getNodeByAttribute("input", "semantic", "TEXCOORD");
         texcoordOffset = std::stoi(texSemantic.getAttribute("offset").value);
     }
-    catch(int error) {
+    catch (int error) {
         texcoordOffset = -1;
     }
 
@@ -278,7 +278,7 @@ void DAELoader::AssembleVertices(XNode data) {
         int positionIndex = indexData[i * typeCount];
         int normalIndex = indexData[i * typeCount + 1];
         int texCoordIndex = -1;
-        if(texcoordOffset != -1) {
+        if (texcoordOffset != -1) {
             texCoordIndex = indexData[i * typeCount + texcoordOffset];
         }
         processVertex(positionIndex, normalIndex, texCoordIndex);
@@ -324,7 +324,7 @@ Vertex* DAELoader::dealWithAlreadyProcessedVertex(Vertex* previousVertex, int ne
 
 void DAELoader::removeUnusedVertices() {
     for (auto vertex : m_vertices) {
-         vertex->averageTangents();
+        vertex->averageTangents();
         if (!vertex->isSet()) {
             vertex->setTextureIndex(0);
             vertex->setNormalIndex(0);
@@ -429,7 +429,7 @@ void DAELoader::LoadTexturePath(XNode imageNode) {
     std::string path = imageNode.getChild("image").getChild("init_from").value;
     path = trim(path);
     auto asset = ResMgr::getInstance()->GetAssetReference(path);
-    if(asset == nullptr) return;
+    if (asset == nullptr) return;
 
     LoadTexture(asset);
 }
@@ -495,7 +495,7 @@ void DAELoader::AttachDataToObjSurface() {
 
 SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
 
-    if(prefab == nullptr)
+    if (prefab == nullptr)
         prefab = new SPrefab();
     SGameObject* root = new SGameObject(m_name);
     prefab->SetGameObject(root);
@@ -545,7 +545,7 @@ SPrefab* DAELoader::GeneratePrefab(const char* path, Skeleton* skeleton, MeshSur
 
     DAELoader* loader = new DAELoader(path, mesh, AUTO, false);
     auto asset = ResMgr::getInstance()->GetAssetReference(path);
-    if(asset == nullptr) {
+    if (asset == nullptr) {
         SAFE_DELETE(loader);
         return nullptr;
     }
@@ -554,8 +554,8 @@ SPrefab* DAELoader::GeneratePrefab(const char* path, Skeleton* skeleton, MeshSur
     loader->m_resource_id = asset->id;
     loader->m_skeletonData = skeleton;
 
-    if(loader->m_skeletonData == nullptr) {
-        loader->m_skeletonData = SResource::Create<Skeleton>(prefab_id + "?skeleton");
+    if (loader->m_skeletonData == nullptr) {
+        loader->m_skeletonData = new Skeleton();
     }
 
     loader->m_obj->LinkResource(prefab_id + "?mesh");
@@ -563,7 +563,6 @@ SPrefab* DAELoader::GeneratePrefab(const char* path, Skeleton* skeleton, MeshSur
 
     loader->Load(path, AUTO);
     prefab = loader->GeneratePrefab(animation, prefab);
-
 
 
     SAFE_DELETE(loader);

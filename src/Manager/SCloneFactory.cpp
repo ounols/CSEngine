@@ -70,6 +70,8 @@ void CloningObjects(SGameObject* object, std::map<SComponent*, SComponent*>& clo
     SGameObject* cloneObject = new SGameObject(object->GetName() + "");
     clone_obj[object] = cloneObject;
     cloneObject->SetIsEnable(object->GetIsEnable());
+    cloneObject->SetIsPrefab(object->isPrefab(true));
+    cloneObject->SetResourceID(object->GetResourceID());
 
     //게임 컴포넌트 복사
     std::vector<SComponent*> target_component = object->GetComponents();
