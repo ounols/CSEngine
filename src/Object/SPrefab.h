@@ -18,9 +18,13 @@ public:
     bool SetGameObject(SGameObject* obj);
 
     void Exterminate() override;
+    SGameObject* GetRoot() const {
+        return m_root;
+    }
 
 protected:
     void Init(const AssetMgr::AssetReference* asset) override;
+    void GenerateResourceID(SGameObject* obj = nullptr);
 
 private:
     SGameObject* m_root = nullptr;

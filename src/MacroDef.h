@@ -40,3 +40,4 @@
 #define SAFE_DELETE_ARRAY(p) { if(p) delete[] (p); NULLPTR(p); }
 #define SAFE_DESTROY(p) { if(p) (p)->Destroy(); NULLPTR(p); }
 #define SAFE_RELEASE(p) { if(p) (p)->Release(); }
+

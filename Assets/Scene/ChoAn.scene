@@ -1,0 +1,11 @@
+<CSESCENE version = "1.0.0">
+
+<scene>
+<gameobject name="test">
+<component type="TransformComponent">
+<value name="SetPosition">0 0 0</value>
+</component>
+</gameobject>
+</scene>
+
+</CSESCENE>

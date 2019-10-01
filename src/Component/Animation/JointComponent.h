@@ -14,6 +14,10 @@ public:
 
     SComponent* Clone(SGameObject* object) override;
 
+    void SetValue(std::string name_str, Arguments value) override;
+
+    std::string PrintValue() const override;
+
     void SetAnimationMatrix(mat4 animation);
     mat4 GetAnimationMatrix() const {
         return m_animatedMatrix;

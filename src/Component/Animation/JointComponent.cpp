@@ -1,5 +1,6 @@
 #include "JointComponent.h"
 #include "../TransformComponent.h"
+#include "../../Object/SResource.h"
 
 COMPONENT_CONSTRUCTOR(JointComponent), m_id(-1), m_animatedMatrix(mat4::Identity()), m_inverseTransformMatrix(mat4::Identity()) {
     
@@ -59,4 +60,41 @@ SComponent* JointComponent::Clone(SGameObject* object) {
 
 void JointComponent::SetBindLocalMatrix(mat4 mat) {
     m_localBindMatrix = mat;
+}
+
+void JointComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
+    if(name_str == "m_inverseTransformMatrix") {
+        mat4 mat = mat4();
+        mat.x.Set(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]), std::stof(value[3]));
+        mat.y.Set(std::stof(value[4]), std::stof(value[5]), std::stof(value[6]), std::stof(value[7]));
+        mat.z.Set(std::stof(value[8]), std::stof(value[9]), std::stof(value[10]), std::stof(value[11]));
+        mat.w.Set(std::stof(value[12]), std::stof(value[13]), std::stof(value[14]), std::stof(value[15]));
+        m_inverseTransformMatrix = mat4(mat);
+    }
+    else if(name_str == "m_animatedMatrix") {
+        mat4 mat = mat4();
+        mat.x.Set(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]), std::stof(value[3]));
+        mat.y.Set(std::stof(value[4]), std::stof(value[5]), std::stof(value[6]), std::stof(value[7]));
+        mat.z.Set(std::stof(value[8]), std::stof(value[9]), std::stof(value[10]), std::stof(value[11]));
+        mat.w.Set(std::stof(value[12]), std::stof(value[13]), std::stof(value[14]), std::stof(value[15]));
+        m_animatedMatrix = mat4(mat);
+    }
+    else if(name_str == "m_localBindMatrix") {
+        mat4 mat = mat4();
+        mat.x.Set(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]), std::stof(value[3]));
+        mat.y.Set(std::stof(value[4]), std::stof(value[5]), std::stof(value[6]), std::stof(value[7]));
+        mat.z.Set(std::stof(value[8]), std::stof(value[9]), std::stof(value[10]), std::stof(value[11]));
+        mat.w.Set(std::stof(value[12]), std::stof(value[13]), std::stof(value[14]), std::stof(value[15]));
+        m_localBindMatrix = mat4(mat);
+    }
+}
+
+std::string JointComponent::PrintValue() const {
+    PRINT_START("component");
+
+    PRINT_VALUE_MAT4(m_inverseTransformMatrix);
+    PRINT_VALUE_MAT4(m_animatedMatrix);
+    PRINT_VALUE_MAT4(m_localBindMatrix);
+
+    PRINT_END("component");
 }

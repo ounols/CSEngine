@@ -7,7 +7,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
 #include "Loader/STB/stb_image_write.h"
-#include "OGLDef.h"
+#include "../OGLDef.h"
 
 static int saveScreenshot(const char* filename) {
     GLint viewport[4];

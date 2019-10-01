@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <sstream>
 #include <algorithm>
 
 
@@ -62,4 +63,31 @@ static void make_upper(std::string& str) {
 
 static void make_lower(std::string& str) {
     std::transform(str.begin(), str.end(), str.begin(), tolower);
+}
+
+template <typename T>
+std::string appandAll(std::stringstream& sstream, T param) {
+    sstream << param;
+    auto result = sstream.str();
+    sstream.str(std::string());
+    sstream.clear();
+
+    return result;
+}
+
+template <typename T0, typename ... Tn>
+std::string appandAll(std::stringstream& sstream, T0 param0, Tn... paramN) {
+    sstream << param0;
+    return appandAll(sstream, paramN...);
+}
+
+static std::string ConvertSpaceStr(std::string str, bool SpaceNotChange = false) {
+    auto n = str.find(' ');
+    if(n == std::string::npos || SpaceNotChange) {
+        n = str.find("$nbsp:");
+        if(n != std::string::npos)
+            return ReplaceAll(str, "$nbsp:", " ");
+        return str;
+    }
+    return ReplaceAll(str, " ", "$nbsp:");
 }

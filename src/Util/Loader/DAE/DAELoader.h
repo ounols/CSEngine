@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Object/SPrefab.h"
+#include "../../../Object/SPrefab.h"
 #include "DAEUtil/VertexSkinData.h"
 #include "DAEUtil/SkinningData.h"
 #include "../../Animation/Skeleton.h"
@@ -8,18 +8,22 @@
 #include "DAEUtil/Vertex.h"
 #include "../../Render/MeshSurface.h"
 #include "DAEAnimationLoader.h"
+#include "../../Animation/Animation.h"
+
+class Animation;
 
 class DAELoader {
 public:
     enum LOAD_TYPE {
-        ALL, MESH, ANIMATION, NOTHING
+        ALL, MESH, ANIMATION, AUTO, NOTHING
     };
 public:
-    DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type = ALL);
+    DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type = ALL, bool isLoad = true);
 
     ~DAELoader();
 
     void Load(const char* path, LOAD_TYPE type);
+
     void LoadTexture(const AssetMgr::AssetReference* asset);
 
     MeshSurface* GetMesh() const {
@@ -30,7 +34,10 @@ public:
         return m_skeletonData;
     }
 
-    SPrefab* GeneratePrefab();
+    SPrefab* GeneratePrefab(Animation* animation, SPrefab* prefab = nullptr);
+
+    static SPrefab* GeneratePrefab(const char* path, Skeleton* skeleton, MeshSurface* mesh, Animation* animation,
+                                   SPrefab* prefab = nullptr);
 
 private:
     void LoadSkin(XNode root_s);
@@ -75,6 +82,7 @@ private:
 //===================================================================
 
     Joint* loadJointData(XNode jointNode, bool isRoot);
+
     Joint* extractMainJointData(XNode jointNode, bool isRoot);
 
     void LoadTexturePath(XNode imageNode);
@@ -111,5 +119,7 @@ private:
 
     std::string m_name;
     std::string m_texture_name;
+
+    std::string m_resource_id;
 
 };

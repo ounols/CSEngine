@@ -1,7 +1,7 @@
 #pragma once
 #include "../Manager/Base/Scene.h"
 #include "../Object/SGameObject.h"
-#include "Util/Render/MeshSurface.h"
+#include "../Util/Render/MeshSurface.h"
 
 class FirstDemoScene : public Scene {
 public:

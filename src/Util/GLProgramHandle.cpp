@@ -203,4 +203,6 @@ void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
     if(ShaderUtil::CreateProgramHandle(vert_str.c_str(), frag_str.c_str(), this) == nullptr) {
         return;
     }
+
+    return;
 }

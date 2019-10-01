@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "MemoryMgr.h"
 #include "GameObjectMgr.h"
+#include "../Util/MoreString.h"
 
 IMPLEMENT_SINGLETON(GameObjectMgr);
 
@@ -41,7 +42,7 @@ void GameObjectMgr::DeleteGameObject(SGameObject* object) {
 }
 
 
-SGameObject* GameObjectMgr::Find(std::string name) {
+SGameObject* GameObjectMgr::Find(std::string name) const {
 
 	for(auto object : m_objects) {
 		if (object->GetName() == name)
@@ -50,4 +51,18 @@ SGameObject* GameObjectMgr::Find(std::string name) {
 
 	return nullptr;
 
+}
+
+SGameObject* GameObjectMgr::FindByID(std::string id) const {
+
+    std::string obj_id = split(id, '?')[0];
+
+    for(auto object : m_objects) {
+        if(object->isPrefab()) continue;
+        auto id_ = object->GetID();
+        if (id_ == obj_id)
+            return object;
+    }
+
+    return nullptr;
 }

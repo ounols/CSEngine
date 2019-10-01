@@ -13,7 +13,7 @@ SScene::~SScene() {
 }
 
 void SScene::Init() {
-//    InitGameObject(m_root);
+    InitGameObject(m_root);
 }
 
 void SScene::Tick(float elapsedTime) {

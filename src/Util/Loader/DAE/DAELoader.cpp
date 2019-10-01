@@ -9,7 +9,7 @@
 const mat4 CORRECTION = /*mat4::RotateX(90)*/ mat4::Identity();
 
 
-DAELoader::DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type) {
+DAELoader::DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type, bool isLoad) {
     if (type == NOTHING) return;
 
     m_obj = obj;
@@ -17,7 +17,8 @@ DAELoader::DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type) {
         m_obj = new MeshSurface();
     }
 
-    Load(path, type);
+    if (isLoad)
+        Load(path, type);
 }
 
 DAELoader::~DAELoader() {
@@ -41,7 +42,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
     m_root = XFILE(path).getRoot();
     XNode collada = m_root->getChild("COLLADA");
 
-    if (type == LOAD_TYPE::MESH || type == LOAD_TYPE::ALL) {
+    if (type == LOAD_TYPE::MESH || type == LOAD_TYPE::ALL || type == LOAD_TYPE::AUTO) {
         try {
             //스킨데이터를 불러옴
             LoadSkin(collada.getChild("library_controllers"));
@@ -54,20 +55,31 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
 
         try {
             LoadTexturePath(collada.getChild("library_images"));
-        } catch(int error) {
+        } catch (int error) {
             std::cout << "passing texture...\n";
         }
 
 
+        try {
+            //지오메트리를 불러옴
+            LoadGeometry(collada.getChild("library_geometries"));
+        } catch (int error) {
+            std::cout << "passing geometry...\n";
+        }
 
-        //지오메트리를 불러옴
-        LoadGeometry(collada.getChild("library_geometries"));
     }
 
     //애니메이션 데이터를 불러옴
-    if (type == ANIMATION || type == ALL) {
-        m_animationLoader = new DAEAnimationLoader();
-        m_animationLoader->Load(path, m_name);
+    if (type == ANIMATION || type == ALL || type == AUTO) {
+
+        try {
+            m_animationLoader = new DAEAnimationLoader();
+            m_animationLoader->Load(path, m_name);
+        } catch (int error) {
+            SAFE_DELETE(m_animationLoader);
+            std::cout << "passing Animation...\n";
+        }
+
 
     }
 
@@ -121,8 +133,11 @@ void DAELoader::LoadSkeleton(XNode root_s) {
     Joint* headJoint = loadJointData(headNode, true);
 
 
-    SAFE_DELETE(m_skeletonData);
-    m_skeletonData = new Skeleton(m_jointSize, headJoint);
+    //SAFE_DELETE(m_skeletonData);
+    if (m_skeletonData == nullptr)
+        m_skeletonData = new Skeleton(m_jointSize, headJoint);
+    else
+        m_skeletonData->SetJoint(m_jointSize, headJoint);
 
 }
 
@@ -137,7 +152,7 @@ void DAELoader::LoadGeometry(XNode root_g) {
     std::string normalsId = "";
     std::string texCoordsId = "";
 
-    try{
+    try {
         XNode polylist = meshData.getChild("polylist");
 
         normalsId = polylist.getNodeByAttribute("input", "semantic", "NORMAL")
@@ -146,7 +161,7 @@ void DAELoader::LoadGeometry(XNode root_g) {
         texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
     }
     catch (int error) {
-        try{
+        try {
             XNode triangles = meshData.getChild("triangles");
 
             XNode normals = triangles.getNodeByAttribute("input", "semantic", "NORMAL");
@@ -240,7 +255,7 @@ void DAELoader::AssembleVertices(XNode data) {
     for (auto child : poly.children) {
         if (child.name == "input") {
             int offset = std::stoi(child.getAttribute("offset").value) + 1;
-            if(offset > typeCount) {
+            if (offset > typeCount) {
                 typeCount = offset;
             }
         }
@@ -252,7 +267,7 @@ void DAELoader::AssembleVertices(XNode data) {
         XNode texSemantic = poly.getNodeByAttribute("input", "semantic", "TEXCOORD");
         texcoordOffset = std::stoi(texSemantic.getAttribute("offset").value);
     }
-    catch(int error) {
+    catch (int error) {
         texcoordOffset = -1;
     }
 
@@ -263,7 +278,7 @@ void DAELoader::AssembleVertices(XNode data) {
         int positionIndex = indexData[i * typeCount];
         int normalIndex = indexData[i * typeCount + 1];
         int texCoordIndex = -1;
-        if(texcoordOffset != -1) {
+        if (texcoordOffset != -1) {
             texCoordIndex = indexData[i * typeCount + texcoordOffset];
         }
         processVertex(positionIndex, normalIndex, texCoordIndex);
@@ -309,7 +324,7 @@ Vertex* DAELoader::dealWithAlreadyProcessedVertex(Vertex* previousVertex, int ne
 
 void DAELoader::removeUnusedVertices() {
     for (auto vertex : m_vertices) {
-         vertex->averageTangents();
+        vertex->averageTangents();
         if (!vertex->isSet()) {
             vertex->setTextureIndex(0);
             vertex->setNormalIndex(0);
@@ -414,7 +429,7 @@ void DAELoader::LoadTexturePath(XNode imageNode) {
     std::string path = imageNode.getChild("image").getChild("init_from").value;
     path = trim(path);
     auto asset = ResMgr::getInstance()->GetAssetReference(path);
-    if(asset == nullptr) return;
+    if (asset == nullptr) return;
 
     LoadTexture(asset);
 }
@@ -478,9 +493,10 @@ void DAELoader::AttachDataToObjSurface() {
     m_obj->MakeIndices(sizeIndices, &m_indices[0]);
 }
 
-SPrefab* DAELoader::GeneratePrefab() {
+SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
 
-    SPrefab* prefab = new SPrefab();
+    if (prefab == nullptr)
+        prefab = new SPrefab();
     SGameObject* root = new SGameObject(m_name);
     prefab->SetGameObject(root);
 
@@ -510,18 +526,45 @@ SPrefab* DAELoader::GeneratePrefab() {
 
     mesh_root->CreateComponent<RenderComponent>();
     mesh_root->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
-//    mesh_root->GetComponent<RenderComponent>()->SetIsEnable(false);
 
     auto material = mesh_root->CreateComponent<MaterialComponent>();
-//    material->SetDiffuseMaterial(vec4{0.7f, 0.6f, 1, 1});
-//    material->SetShininess(40);
     material->SetAlbedoTexture(ResMgr::getInstance()->GetObject<STexture>(m_texture_name));
 
     if (m_isSkinning) {
         SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,
-                                                                           m_animationLoader->GetAnimation());
+                                                                           m_animationLoader->GetAnimation(),
+                                                                           m_name, animation);
     }
 
 
+    return prefab;
+}
+
+SPrefab* DAELoader::GeneratePrefab(const char* path, Skeleton* skeleton, MeshSurface* mesh, Animation* animation,
+                                   SPrefab* prefab) {
+
+    DAELoader* loader = new DAELoader(path, mesh, AUTO, false);
+    auto asset = ResMgr::getInstance()->GetAssetReference(path);
+    if (asset == nullptr) {
+        SAFE_DELETE(loader);
+        return nullptr;
+    }
+    std::string prefab_id = asset->id;
+
+    loader->m_resource_id = asset->id;
+    loader->m_skeletonData = skeleton;
+
+    if (loader->m_skeletonData == nullptr) {
+        loader->m_skeletonData = new Skeleton();
+    }
+
+    loader->m_obj->LinkResource(prefab_id + "?mesh");
+    loader->m_skeletonData->LinkResource(prefab_id + "?skeleton");
+
+    loader->Load(path, AUTO);
+    prefab = loader->GeneratePrefab(animation, prefab);
+
+
+    SAFE_DELETE(loader);
     return prefab;
 }

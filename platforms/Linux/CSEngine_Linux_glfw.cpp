@@ -4,8 +4,8 @@
 // OpenGL SuperBible, 5th Edition
 // Nick Haemel
 
-#include <Manager/MainProc.h>
-#include <MacroDef.h>
+#include "../../src/Manager/MainProc.h"
+#include "../../src/MacroDef.h"
 // #include <GL/glew.h>
 #define GLFW_INCLUDE_ES3
 

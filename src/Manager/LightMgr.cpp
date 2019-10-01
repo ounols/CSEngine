@@ -67,6 +67,8 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 		i++;
 	}
 
+	if(i <= 0) return;
+
     glUniform4fv(handle->Uniforms.LightPosition, MAX_LIGHTS, &lightPosition[0]);
     glUniform3fv(handle->Uniforms.LightColor, MAX_LIGHTS, &lightColor[0]);
     glUniform1iv(handle->Uniforms.LightType, MAX_LIGHTS, &lightType[0]);

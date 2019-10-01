@@ -26,6 +26,10 @@ public:
     Quaternion GetRotation() const;
     void SetMatrix(mat4 matrix);
 
+    void SetValue(std::string name_str, Arguments value) override;
+
+    std::string PrintValue() const override;
+
 private:
     mat4 GetFinalMatrix() const;
 

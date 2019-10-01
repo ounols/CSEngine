@@ -1,6 +1,9 @@
 #include "MeshSurface.h"
 #include "../../Manager/MemoryMgr.h"
 #include "../../OGLDef.h"
+#include "../MoreString.h"
+#include "../../Object/SPrefab.h"
+#include "../Loader/DAE/DAELoader.h"
 // #include <iostream>
 
 MeshSurface::MeshSurface() {}
@@ -221,12 +224,21 @@ void MeshSurface::Destroy() {
 }
 
 void MeshSurface::Init(const AssetMgr::AssetReference* asset) {
-    AssetMgr::TYPE type = asset->type;
+
+    std::string parent_id = split(asset->id, '?')[0];
+    auto model = ResMgr::getInstance()->GetAssetReference(parent_id);
+    AssetMgr::TYPE type = model->type;
+
+    //프리팹에 모든 정보가 있으므로 아예 프리팹 새로 생성
+    SPrefab* prefab = nullptr;
 
     switch (type) {
         case AssetMgr::DAE:
+            prefab = DAELoader::GeneratePrefab(model->path.c_str(), nullptr, this, nullptr, nullptr);
             break;
         default:
-            return;
+            break;
     }
+
+    return;
 }

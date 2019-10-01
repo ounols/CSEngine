@@ -76,6 +76,7 @@ AssetMgr::AssetReference* ResMgr::GetAssetReference(std::string name) const {
 SResource* ResMgr::GetSResource(std::string name) const {
     for(auto res : m_resources) {
         if(res->GetName() == name) return res;
+        if(res->GetID() == name) return res;
     }
     return nullptr;
 }

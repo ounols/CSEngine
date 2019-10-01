@@ -1,4 +1,4 @@
-#include "Util/AssetsDef.h"
+#include "../../AssetsDef.h"
 #include "XML.h"
 
 /************************************************************************************************************************************************/
@@ -203,6 +203,15 @@ int XFILE::read(std::string& buffer) {
     return XML_EOF; // if we have reached here then the file is done being read
 }
 
+const XNode* XFILE::loadBuffer(std::string buffer) {
+    this->file = buffer;
+    if (file.empty()) {
+        throw -1;
+    }
+
+    return this->getRoot();
+}
+
 XFILE::XFILE(const char* str) { // read the file into the node heirchy
     this->file = CSE::OpenAssetsTxtFile(str);
     if (file.empty()) {
@@ -229,13 +238,14 @@ const XNode* XFILE::getRoot() {
             if (buffer.substr(1) != current->name) // confirm the node names match
                 printf("[WARNING]: Name mismatch: [%s] vs [%s]\n", buffer.substr(1).c_str(), current->name.c_str());
             current = current->parent;
-        } else if (ret == XML_VALUE) // if this is a value string, we simply set it to the current node
+        } else if (ret == XML_VALUE) { // if this is a value string, we simply set it to the current node
             current->value = buffer;
-
+        }
         else if (buffer.find(' ') == std::string::npos) // this node has no attributes, simply append it to the children
         {
             XNode node = XNode();
             node.name = buffer;
+            node.sub_index = file_index;
             node.parent = current;
             current->children.push_back(node);
 
@@ -251,6 +261,7 @@ const XNode* XFILE::getRoot() {
 
             char* token = strtok(str, " "); // start tokenizing
             XNode node = XNode();
+            node.sub_index = file_index;
             node.name = token; // the first token is the name
             node.parent = current;
 
@@ -272,6 +283,7 @@ const XNode* XFILE::getRoot() {
                 current = &current->children.back();
             free(str);
         }
+//        current->file_end = file_index;
     }
 
     return root;

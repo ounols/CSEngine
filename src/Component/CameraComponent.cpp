@@ -5,7 +5,7 @@
 
 COMPONENT_CONSTRUCTOR(CameraComponent), m_eye(nullptr), m_targetObject(nullptr) {
     CameraMgr::getInstance()->Register(this);
-    m_pRatio = CameraMgr::getInstance()->GetProjectionRatio();
+    m_pRatio = const_cast<float*>(CameraMgr::getInstance()->GetProjectionRatio());
 }
 
 
@@ -25,6 +25,7 @@ void CameraComponent::Init() {
     m_up = vec3(0, 1, 0);
 
     m_resultTarget = vec3();
+    m_pRatio = const_cast<float*>(CameraMgr::getInstance()->GetProjectionRatio());
 }
 
 
@@ -41,19 +42,11 @@ void CameraComponent::Tick(float elapsedTime) {
 }
 
 SComponent* CameraComponent::Clone(SGameObject* object) {
-//    CameraComponent* comp = nullptr;
-//    if (object == nullptr) {
-//        comp = new CameraComponent();
-//    } else {
-//        comp = object->CreateComponent<CameraComponent>();
-//    }
-
     INIT_COMPONENT_CLONE(CameraComponent, comp);
 
     comp->m_eye = m_eye;
     comp->m_target = m_target;
     comp->m_up = m_up;
-//    comp->m_targetObject = m_targetObject;
 
     comp->m_cameraMatrix = m_cameraMatrix;
     comp->m_projectionMatrix = m_projectionMatrix;
@@ -163,9 +156,70 @@ void CameraComponent::SetProjectionMatrix() {
 
     } else {
         m_projectionMatrix = mat4::Ortho(m_oLeft, m_oRight, m_oBottom, m_oTop, m_Near, m_Far);
-
     }
 
     m_isProjectionInited = true;
 
+}
+
+void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
+
+    if(name_str == "m_eye") {
+        m_eye = gameObject->GetComponentByID<TransformComponent>(value[0])->GetPosition();
+    }
+    else if(name_str == "m_target") {
+        SET_VEC3(m_target);
+    }
+    else if(name_str == "m_up") {
+        SET_VEC3(m_up);
+    }
+    else if(name_str == "m_targetObject") {
+        m_targetObject = gameObject->FindByID(value[0]);
+    }
+    else if(name_str == "m_cameraMatrix") {
+        SET_MAT4(m_cameraMatrix);
+    }
+    else if(name_str == "m_projectionMatrix") {
+        SET_MAT4(m_projectionMatrix);
+    }
+    else if(name_str == "m_type") {
+        if(value[0] == "PERSPECTIVE") {
+            m_type = PERSPECTIVE;
+        }
+        else {
+            m_type = ORTHO;
+        }
+    }
+    else if(name_str == "m_pFov") {
+        m_pFov = std::stof(value[0]);
+    }else if(name_str == "m_orthoValue") {
+        m_oLeft = std::stof(value[0]);
+        m_oRight = std::stof(value[1]);
+        m_oBottom = std::stof(value[2]);
+        m_oTop = std::stof(value[3]);
+
+    }
+    else if(name_str == "m_distance") {
+        m_Near = std::stof(value[0]);
+        m_Far = std::stof(value[1]);
+    }
+
+}
+
+std::string CameraComponent::PrintValue() const {
+    PRINT_START("component");
+
+    PRINT_VALUE(m_eye, ConvertSpaceStr(gameObject->GetID(gameObject->GetComponent<TransformComponent>())));
+    PRINT_VALUE_VEC3(m_target);
+    PRINT_VALUE_VEC3(m_up);
+    PRINT_VALUE(m_targetObject, m_targetObject == nullptr ? "" : ConvertSpaceStr(m_targetObject->GetID()));
+    PRINT_VALUE_MAT4(m_cameraMatrix);
+    PRINT_VALUE_MAT4(m_projectionMatrix);
+    PRINT_VALUE(m_type, m_type == PERSPECTIVE ? "PERSPECTIVE" : "ORTHO");
+    PRINT_VALUE(m_pFov, m_pFov);
+    PRINT_VALUE(m_orthoValue, m_oLeft, ' ', m_oRight, ' ', m_oBottom, ' ', m_oTop);
+    PRINT_VALUE(m_distance, m_Near, ' ' , m_Far);
+
+
+    PRINT_END("component");
 }

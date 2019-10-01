@@ -5,11 +5,12 @@
 #include "../Object/SGameObject.h"
 #include "SISComponent.h"
 #include "../Util/ComponentDef.h"
+#include "../Util/VariableBinder.h"
 
 
 class SGameObject;
 
-class SComponent : public SObject , public virtual SISComponent {
+class SComponent : public SObject , public virtual SISComponent, public VariableBinder {
 public:
 
 	explicit SComponent(std::string classType) : m_classType(classType) {
@@ -40,8 +41,11 @@ public:
 		return;
 	}
 
+    void SetValue(std::string name_str, Arguments value) override {}
 
-	void SetGameObject(SGameObject* object) {
+    std::string PrintValue() const override { return std::string(); }
+
+    void SetGameObject(SGameObject* object) {
 		gameObject = object;
 	}
 
@@ -63,13 +67,15 @@ public:
 		return m_classType;
 	}
 
+	void SetClassType(std::string type) {
+	    m_classType = type;
+	}
+
 protected:
 	SGameObject* gameObject = nullptr;
 	bool isEnable = true;
 
 	std::string m_classType;
 
-private:
-	int m_refId;
 };
 

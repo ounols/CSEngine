@@ -15,6 +15,7 @@ public:
     struct AssetReference {
         std::string path;
         std::string name;
+        std::string id;
         std::string name_full;
         std::string extension;
         TYPE type = NONE;
@@ -38,7 +39,9 @@ public:
 
 private:
     void ReadDirectory(std::string path);
+    AssetReference* CreateAsset(std::string path, std::string name_full, std::string name = "");
     void SetType();
+    AssetReference* AppendSubName(AssetReference* asset, std::string sub_name);
 
 private:
     std::vector<AssetReference*> m_assets;
