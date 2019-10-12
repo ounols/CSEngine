@@ -1,25 +1,29 @@
 #include "LightMgr.h"
 #include "../OGLDef.h"
 
-enum LIGHTMODE { None, Amb, Dif, Spec, AMbDif = 12, AmbSpec = 13, DifSpec = 23, AmbDifSpec = 123};
+using namespace CSE;
+
+enum LIGHTMODE {
+    None, Amb, Dif, Spec, AMbDif = 12, AmbSpec = 13, DifSpec = 23, AmbDifSpec = 123
+};
 
 IMPLEMENT_SINGLETON(LightMgr);
 
 LightMgr::LightMgr() {
-	
+
 }
 
 
 LightMgr::~LightMgr() {
-	
+
 }
 
 
 void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 
-	if (handle == nullptr) return;
+    if (handle == nullptr) return;
 
-	//라이트 갯수를 쉐이더에 넣어줌 (필요없따)
+    //라이트 갯수를 쉐이더에 넣어줌 (필요없따)
 //	glUniform1i(handle->Uniforms.LightsSize, m_objects.size());
 
     std::vector<float> lightPosition;
@@ -27,53 +31,55 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
     std::vector<float> lightRadius;
     std::vector<float> lightColor;
 
-	int i = 0;
-	for(const auto& light : m_objects) {
-		
-		if (light == nullptr) continue;
-		if (!light->GetIsEnable()) continue;
+    int i = 0;
+    for (const auto& light : m_objects) {
 
-		LightComponent::LIGHT type = light->m_type;
-		SLight* lightObject = light->GetLight();
+        if (light == nullptr) continue;
+        if (!light->GetIsEnable()) continue;
 
-		//LightMode
-		//SetLightMode(handle, light, i);
+        LightComponent::LIGHT type = light->m_type;
+        SLight* lightObject = light->GetLight();
 
-		switch (type) {
-			
-		case LightComponent::DIRECTIONAL:
-            lightPosition.push_back(lightObject->direction.x);
-            lightPosition.push_back(lightObject->direction.y);
-            lightPosition.push_back(lightObject->direction.z);
-            lightPosition.push_back(lightObject->direction.w);
-			break;
-		case LightComponent::POINT:
-            lightPosition.push_back(lightObject->position->x);
-            lightPosition.push_back(lightObject->position->y);
-            lightPosition.push_back(lightObject->position->z);
-            lightPosition.push_back(1.0f);
-			break;
-		case LightComponent::SPOT: break;
-		default: break;
+        //LightMode
+        //SetLightMode(handle, light, i);
 
-		}
+        switch (type) {
 
-		lightType.push_back(type);
-		lightRadius.push_back(lightObject->radius);
+            case LightComponent::DIRECTIONAL:
+                lightPosition.push_back(lightObject->direction.x);
+                lightPosition.push_back(lightObject->direction.y);
+                lightPosition.push_back(lightObject->direction.z);
+                lightPosition.push_back(lightObject->direction.w);
+                break;
+            case LightComponent::POINT:
+                lightPosition.push_back(lightObject->position->x);
+                lightPosition.push_back(lightObject->position->y);
+                lightPosition.push_back(lightObject->position->z);
+                lightPosition.push_back(1.0f);
+                break;
+            case LightComponent::SPOT:
+                break;
+            default:
+                break;
+
+        }
+
+        lightType.push_back(type);
+        lightRadius.push_back(lightObject->radius);
         lightColor.push_back(lightObject->color.x);
         lightColor.push_back(lightObject->color.y);
         lightColor.push_back(lightObject->color.z);
 
-		i++;
-	}
+        i++;
+    }
 
-	if(i <= 0) return;
+    if (i <= 0) return;
 
     glUniform4fv(handle->Uniforms.LightPosition, MAX_LIGHTS, &lightPosition[0]);
     glUniform3fv(handle->Uniforms.LightColor, MAX_LIGHTS, &lightColor[0]);
     glUniform1iv(handle->Uniforms.LightType, MAX_LIGHTS, &lightType[0]);
     glUniform1fv(handle->Uniforms.LightRadius, MAX_LIGHTS, &lightRadius[0]);
-	glUniform1i(handle->Uniforms.LightSize, m_objects.size());
+    glUniform1i(handle->Uniforms.LightSize, m_objects.size());
 
 }
 

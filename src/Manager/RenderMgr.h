@@ -3,18 +3,23 @@
 #include "RenderContainer.h"
 #include "CameraMgr.h"
 
-class RenderMgr : public RenderContainer {
-public:
-	DECLARE_SINGLETONE(RenderMgr);
-	~RenderMgr();
+namespace CSE {
 
-public:
-	void Init();
-	void Render(float elapsedTime) const;
+    class RenderMgr : public RenderContainer {
+    public:
+    DECLARE_SINGLETONE(RenderMgr);
 
-private:
-	void Exterminate();
+        ~RenderMgr();
 
-private:
-	mat4 m_NoneCamera;
-};
+    public:
+        void Init();
+
+        void Render(float elapsedTime) const;
+
+    private:
+        void Exterminate();
+
+    private:
+        mat4 m_NoneCamera;
+    };
+}

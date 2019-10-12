@@ -19,6 +19,8 @@
 
 #endif
 
+using namespace CSE;
+
 void Exploring(SGameObject* obj, int level = 0) {
 
     for (int i = 0; i < level; i++) {

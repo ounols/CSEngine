@@ -10,19 +10,26 @@
 #include "../../../Animation/AnimationUtill.h"
 #include "../../../Animation/Animation.h"
 
-class KeyFrame;
-class JointTransform;
+namespace CSE {
 
-class DAEConvertSGameObject {
-public:
-    DAEConvertSGameObject();
-    ~DAEConvertSGameObject();
+    class KeyFrame;
 
-    static SGameObject* CreateJoints(SGameObject* parent, Joint* data);
-    static SGameObject* CreateAnimation(SGameObject* parent, SGameObject* mesh, AnimationData* animationData,
-                                        std::string name, Animation* animation = nullptr);
+    class JointTransform;
 
-private:
-    static KeyFrame* CreateKeyFrame(KeyFrameData* data);
-    static JointTransform* CreateTransform(JointTransformData* data);
-};
+    class DAEConvertSGameObject {
+    public:
+        DAEConvertSGameObject();
+
+        ~DAEConvertSGameObject();
+
+        static SGameObject* CreateJoints(SGameObject* parent, Joint* data);
+
+        static SGameObject* CreateAnimation(SGameObject* parent, SGameObject* mesh, AnimationData* animationData,
+                                            std::string name, Animation* animation = nullptr);
+
+    private:
+        static KeyFrame* CreateKeyFrame(KeyFrameData* data);
+
+        static JointTransform* CreateTransform(JointTransformData* data);
+    };
+}

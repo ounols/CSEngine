@@ -6,6 +6,8 @@
 #include "MoreString.h"
 #include "Render/ShaderUtil.h"
 
+using namespace CSE;
+
 GLProgramHandle::GLProgramHandle() : Program(HANDLE_NULL) {
     SetUndestroyable(true);
 
@@ -18,12 +20,12 @@ GLProgramHandle::~GLProgramHandle() {
 void GLProgramHandle::Exterminate() {
     glDeleteProgram(Program);
 
-    for(auto element_pair : AttributesList) {
+    for (auto element_pair : AttributesList) {
         Element* element = element_pair.second;
         SAFE_DELETE(element);
     }
 
-    for(auto element_pair : UniformsList) {
+    for (auto element_pair : UniformsList) {
         Element* element = element_pair.second;
         SAFE_DELETE(element);
     }
@@ -32,7 +34,7 @@ void GLProgramHandle::Exterminate() {
 void GLProgramHandle::SetAttribVec3(std::string location, vec3& value) {
     glUseProgram(Program);
     auto iter = AttributesList.find(location);
-    if(iter != AttributesList.end()) {
+    if (iter != AttributesList.end()) {
         glVertexAttrib3fv(iter->second->id, value.Pointer());
         return;
     }
@@ -42,7 +44,7 @@ void GLProgramHandle::SetAttribVec3(std::string location, vec3& value) {
 void GLProgramHandle::SetAttribVec4(std::string location, vec4& value) {
     glUseProgram(Program);
     auto iter = AttributesList.find(location);
-    if(iter != AttributesList.end()) {
+    if (iter != AttributesList.end()) {
         glVertexAttrib4fv(iter->second->id, value.Pointer());
         return;
     }
@@ -52,7 +54,7 @@ void GLProgramHandle::SetAttribVec4(std::string location, vec4& value) {
 void GLProgramHandle::SetUniformInt(std::string location, int value) {
     glUseProgram(Program);
     auto iter = UniformsList.find(location);
-    if(iter != UniformsList.end()) {
+    if (iter != UniformsList.end()) {
         glUniform1i(iter->second->id, value);
         return;
     }
@@ -62,7 +64,7 @@ void GLProgramHandle::SetUniformInt(std::string location, int value) {
 void GLProgramHandle::SetUniformFloat(std::string location, float value) {
     glUseProgram(Program);
     auto iter = UniformsList.find(location);
-    if(iter != UniformsList.end()) {
+    if (iter != UniformsList.end()) {
         glUniform1f(iter->second->id, value);
         return;
     }
@@ -72,7 +74,7 @@ void GLProgramHandle::SetUniformFloat(std::string location, float value) {
 void GLProgramHandle::SetUniformMat4(std::string location, mat4& value) {
     glUseProgram(Program);
     auto iter = UniformsList.find(location);
-    if(iter != UniformsList.end()) {
+    if (iter != UniformsList.end()) {
         glUniformMatrix4fv(iter->second->id, 1, 0, value.Pointer());
         return;
     }
@@ -82,7 +84,7 @@ void GLProgramHandle::SetUniformMat4(std::string location, mat4& value) {
 void GLProgramHandle::SetUniformMat3(std::string location, mat3& value) {
     glUseProgram(Program);
     auto iter = UniformsList.find(location);
-    if(iter != UniformsList.end()) {
+    if (iter != UniformsList.end()) {
         glUniformMatrix3fv(iter->second->id, 1, 0, value.Pointer());
         return;
     }
@@ -106,9 +108,9 @@ void GLProgramHandle::SetAttributesList(std::map<std::string, std::string>& vert
         std::string imp_name = getImplementName(vert, name_str);
         auto& target = vert;
 
-        if(imp_name.empty()) {
+        if (imp_name.empty()) {
             imp_name = getImplementName(frag, name_str);
-            if(imp_name.empty()) continue;
+            if (imp_name.empty()) continue;
 
             target = frag;
         }
@@ -123,7 +125,8 @@ void GLProgramHandle::SetAttributesList(std::map<std::string, std::string>& vert
     }
 }
 
-void GLProgramHandle::SetUniformsList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag) {
+void
+GLProgramHandle::SetUniformsList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag) {
     GLint count = 0;
     GLsizei length = 0;
     GLint size = 0;
@@ -140,9 +143,9 @@ void GLProgramHandle::SetUniformsList(std::map<std::string, std::string>& vert, 
         std::string imp_name = getImplementName(vert, name_str);
         auto& target = vert;
 
-        if(imp_name.empty()) {
+        if (imp_name.empty()) {
             imp_name = getImplementName(frag, name_str);
-            if(imp_name.empty()) continue;
+            if (imp_name.empty()) continue;
 
             target = frag;
         }
@@ -170,10 +173,10 @@ void GLProgramHandle::SaveShader(std::string path) {
     return;
 }
 
-std::string GLProgramHandle::getImplementName(std::map <std::string, std::string>& list, std::string name) {
+std::string GLProgramHandle::getImplementName(std::map<std::string, std::string>& list, std::string name) {
 
-    for(auto it = list.begin(); it != list.end(); it++) {
-        if(name.find(it->second) != std::string::npos) {
+    for (auto it = list.begin(); it != list.end(); it++) {
+        if (name.find(it->second) != std::string::npos) {
             return it->first;
         }
     }
@@ -187,7 +190,7 @@ void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
 
     auto shader_combine_vector = split(shader_combine, ',');
 
-    if(shader_combine_vector.size() < 2) return;
+    if (shader_combine_vector.size() < 2) return;
     m_vertShaderName = trim(shader_combine_vector.at(0));
     m_fragShaderName = trim(shader_combine_vector.at(1));
 
@@ -198,9 +201,9 @@ void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
     std::string vert_str = CSE::OpenAssetsTxtFile(vert_asset->path);
     std::string frag_str = CSE::OpenAssetsTxtFile(frag_asset->path);
 
-    if(vert_str.empty() || frag_str.empty()) return;
+    if (vert_str.empty() || frag_str.empty()) return;
 
-    if(ShaderUtil::CreateProgramHandle(vert_str.c_str(), frag_str.c_str(), this) == nullptr) {
+    if (ShaderUtil::CreateProgramHandle(vert_str.c_str(), frag_str.c_str(), this) == nullptr) {
         return;
     }
 

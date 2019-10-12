@@ -1,4 +1,4 @@
-class TestScript2 extends SCEngineScript {
+class TestScript2 extends CSEngineScript {
 
     meshObj = null;
 	materialComp = null;

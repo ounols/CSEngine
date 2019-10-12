@@ -2,9 +2,12 @@
 #include "../Vector.h"
 #include "../Quaternion.h"
 
-struct TransformInterface {
+namespace CSE {
 
-	vec3 m_position;
-	Quaternion m_rotation;
-	vec3 m_scale;
-};
+    struct TransformInterface {
+
+        vec3 m_position;
+        Quaternion m_rotation;
+        vec3 m_scale;
+    };
+}

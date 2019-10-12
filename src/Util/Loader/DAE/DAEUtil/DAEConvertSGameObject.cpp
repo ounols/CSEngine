@@ -8,6 +8,8 @@
 #include "../../../../Component/Animation/AnimatorComponent.h"
 #include "../../../../Component/TransformComponent.h"
 
+using namespace CSE;
+
 DAEConvertSGameObject::DAEConvertSGameObject() {
 
 }
@@ -37,7 +39,7 @@ SGameObject* DAEConvertSGameObject::CreateJoints(SGameObject* parent, Joint* dat
 SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameObject* mesh,
                                                     AnimationData* animationData,
                                                     std::string name, Animation* animation) {
-    if(parent == nullptr) return nullptr;
+    if (parent == nullptr) return nullptr;
 
     SGameObject* animationObject = new SGameObject(parent->GetName() + "_animation");
     AnimatorComponent* animator = animationObject->CreateComponent<AnimatorComponent>();
@@ -45,11 +47,11 @@ SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameOb
     std::vector<KeyFrame*> frames;
     int length = animationData->keyFrames.size();
 
-    for(int i = 0; i < length; i++) {
+    for (int i = 0; i < length; i++) {
         frames.push_back(CreateKeyFrame(animationData->keyFrames[i]));
     }
 
-    if(animation == nullptr)
+    if (animation == nullptr)
         animation = new Animation();
     animation->LinkResource(name + ".prefab?animation");
     animation->SetKeyframe(animationData->lengthSeconds, frames);

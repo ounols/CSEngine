@@ -86,7 +86,6 @@ void OGLMgr::setupEGLGraphics(GLuint width, GLuint height) {
 }
 
 
-
 void OGLMgr::setProjectionRatio() {
     if (m_width > m_height)
         m_projectionRatio = (GLfloat) m_width / (GLfloat) m_height;

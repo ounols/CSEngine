@@ -2,19 +2,26 @@
 #include "../MacroDef.h"
 #include "GameObjectContainer.h"
 
-class SGameObject;
+namespace CSE {
 
-class GameObjectMgr : public GameObjectContainer {
-protected:
-	DECLARE_SINGLETONE(GameObjectMgr);
-	~GameObjectMgr();
+    class SGameObject;
 
-public:
-	void Init();
-	void Update(float elapsedTime);
-	void DeleteGameObject(SGameObject* object);
+    class GameObjectMgr : public GameObjectContainer {
+    protected:
+    DECLARE_SINGLETONE(GameObjectMgr);
 
-	SGameObject* Find(std::string name) const;
-	SGameObject* FindByID(std::string id) const;
+        ~GameObjectMgr();
 
-};
+    public:
+        void Init();
+
+        void Update(float elapsedTime);
+
+        void DeleteGameObject(SGameObject* object);
+
+        SGameObject* Find(std::string name) const;
+
+        SGameObject* FindByID(std::string id) const;
+
+    };
+}

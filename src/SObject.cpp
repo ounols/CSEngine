@@ -1,6 +1,7 @@
 #include "SObject.h"
 #include "Manager/MemoryMgr.h"
 
+using namespace CSE;
 
 SObject::SObject() {
 	// register this object to MemoryContainer class

@@ -6,21 +6,22 @@
 
 #include "STexture.h"
 
+namespace CSE {
 
-class SCubeTexture : public STexture {
-public:
-    SCubeTexture();
+    class SCubeTexture : public STexture {
+    public:
+        SCubeTexture();
 
-    ~SCubeTexture();
+        ~SCubeTexture();
 
-    bool InitTexture(int size) override;
+        bool InitTexture(int size) override;
 
-    void Bind(GLint location, int layout) override;
-    void GenerateMipmap();
+        void Bind(GLint location, int layout) override;
 
-protected:
-    void Init(const AssetMgr::AssetReference* asset) override;
-};
+        void GenerateMipmap();
 
+    protected:
+        void Init(const AssetMgr::AssetReference* asset) override;
+    };
 
-
+}

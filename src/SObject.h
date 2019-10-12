@@ -1,21 +1,25 @@
 #pragma once
 
-class SObject {
-public:
+namespace CSE {
 
-	SObject();
-	virtual ~SObject();
+    class SObject {
+    public:
 
-	virtual void Exterminate() = 0;
+        SObject();
 
-    virtual void SetUndestroyable(bool enable);
+        virtual ~SObject();
 
-    virtual void Destroy();
+        virtual void Exterminate() = 0;
 
-    virtual void __FORCE_DESTROY__();
+        virtual void SetUndestroyable(bool enable);
 
-private:
-	bool isUndestroyable = false;
-public:
-	friend class MemoryMgr;
-};
+        virtual void Destroy();
+
+        virtual void __FORCE_DESTROY__();
+
+    private:
+        bool isUndestroyable = false;
+    public:
+        friend class MemoryMgr;
+    };
+}

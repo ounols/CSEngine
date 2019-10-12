@@ -1,42 +1,51 @@
 #pragma once
+
 #include "SComponent.h"
 #include "../Util/Render/RenderInterfaces.h"
 #include "DrawableStaticMeshComponent.h"
 #include "MaterialComponent.h"
 
-class RenderComponent : public SComponent, public SIRender {
-public:
-	RenderComponent();
-	~RenderComponent();
+namespace CSE {
 
-	void Exterminate() override;
+    class RenderComponent : public SComponent, public SIRender {
+    public:
+        RenderComponent();
 
-	void Init() override;
-	void Tick(float elapsedTime) override;
+        ~RenderComponent();
 
-	SComponent* Clone(SGameObject* object) override;
+        void Exterminate() override;
 
+        void Init() override;
 
-	void SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) override;
-	void Render(float elapsedTime) override;
+        void Tick(float elapsedTime) override;
 
-	void SetShaderHandle(std::string name);
-	void SetShaderHandle(GLProgramHandle* handle);
+        SComponent* Clone(SGameObject* object) override;
 
 
-	void SetIsEnable(bool is_enable) override;
+        void SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) override;
 
-private:
-	void SetVectorInfomation();
-	void SetMaterials() const;
+        void Render(float elapsedTime) override;
 
-private:
-	DrawableStaticMeshComponent* m_mesh;
-	MaterialComponent* m_material;
+        void SetShaderHandle(std::string name);
 
-	bool m_isSkinned = false;
+        void SetShaderHandle(GLProgramHandle* handle);
 
 
-    void SetJointMatrix();
-};
+        void SetIsEnable(bool is_enable) override;
 
+    private:
+        void SetVectorInfomation();
+
+        void SetMaterials() const;
+
+    private:
+        DrawableStaticMeshComponent* m_mesh;
+        MaterialComponent* m_material;
+
+        bool m_isSkinned = false;
+
+
+        void SetJointMatrix();
+    };
+
+}

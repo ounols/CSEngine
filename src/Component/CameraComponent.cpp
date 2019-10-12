@@ -2,6 +2,7 @@
 #include "TransformComponent.h"
 #include "../Manager/CameraMgr.h"
 
+using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(CameraComponent), m_eye(nullptr), m_targetObject(nullptr) {
     CameraMgr::getInstance()->Register(this);
@@ -145,7 +146,7 @@ mat4 CameraComponent::GetCameraMatrix() const {
 
 vec3 CameraComponent::GetCameraPosition() const {
     mat4 matrix = static_cast<TransformComponent*>(gameObject->GetTransform())->GetMatrix();
-    return vec3{matrix.w.x, matrix.w.y, matrix.w.z};
+    return vec3{ matrix.w.x, matrix.w.y, matrix.w.z };
 }
 
 
@@ -164,42 +165,33 @@ void CameraComponent::SetProjectionMatrix() {
 
 void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
 
-    if(name_str == "m_eye") {
+    if (name_str == "m_eye") {
         m_eye = gameObject->GetComponentByID<TransformComponent>(value[0])->GetPosition();
-    }
-    else if(name_str == "m_target") {
+    } else if (name_str == "m_target") {
         SET_VEC3(m_target);
-    }
-    else if(name_str == "m_up") {
+    } else if (name_str == "m_up") {
         SET_VEC3(m_up);
-    }
-    else if(name_str == "m_targetObject") {
+    } else if (name_str == "m_targetObject") {
         m_targetObject = gameObject->FindByID(value[0]);
-    }
-    else if(name_str == "m_cameraMatrix") {
+    } else if (name_str == "m_cameraMatrix") {
         SET_MAT4(m_cameraMatrix);
-    }
-    else if(name_str == "m_projectionMatrix") {
+    } else if (name_str == "m_projectionMatrix") {
         SET_MAT4(m_projectionMatrix);
-    }
-    else if(name_str == "m_type") {
-        if(value[0] == "PERSPECTIVE") {
+    } else if (name_str == "m_type") {
+        if (value[0] == "PERSPECTIVE") {
             m_type = PERSPECTIVE;
-        }
-        else {
+        } else {
             m_type = ORTHO;
         }
-    }
-    else if(name_str == "m_pFov") {
+    } else if (name_str == "m_pFov") {
         m_pFov = std::stof(value[0]);
-    }else if(name_str == "m_orthoValue") {
+    } else if (name_str == "m_orthoValue") {
         m_oLeft = std::stof(value[0]);
         m_oRight = std::stof(value[1]);
         m_oBottom = std::stof(value[2]);
         m_oTop = std::stof(value[3]);
 
-    }
-    else if(name_str == "m_distance") {
+    } else if (name_str == "m_distance") {
         m_Near = std::stof(value[0]);
         m_Far = std::stof(value[1]);
     }
@@ -218,7 +210,7 @@ std::string CameraComponent::PrintValue() const {
     PRINT_VALUE(m_type, m_type == PERSPECTIVE ? "PERSPECTIVE" : "ORTHO");
     PRINT_VALUE(m_pFov, m_pFov);
     PRINT_VALUE(m_orthoValue, m_oLeft, ' ', m_oRight, ' ', m_oBottom, ' ', m_oTop);
-    PRINT_VALUE(m_distance, m_Near, ' ' , m_Far);
+    PRINT_VALUE(m_distance, m_Near, ' ', m_Far);
 
 
     PRINT_END("component");

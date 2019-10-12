@@ -17,6 +17,7 @@
 #include <sys/time.h>
 #include <math.h>
 
+using namespace CSE;
 
 float timeGetTime() {
     long ms; // Milliseconds

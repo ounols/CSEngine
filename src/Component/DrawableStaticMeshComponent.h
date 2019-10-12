@@ -1,26 +1,33 @@
 #pragma once
+
 #include "SComponent.h"
 #include "../Util/Render/MeshSurface.h"
 
-class DrawableStaticMeshComponent : public SComponent {
-public:
-	DrawableStaticMeshComponent();
-	virtual ~DrawableStaticMeshComponent();
+namespace CSE {
 
-	void Init() override;
-	void Tick(float elapsedTime) override;
-	void Exterminate() override;
+    class DrawableStaticMeshComponent : public SComponent {
+    public:
+        DrawableStaticMeshComponent();
 
-	SComponent* Clone(SGameObject* object) override;
+        virtual ~DrawableStaticMeshComponent();
 
-	virtual bool SetMesh(const SISurface& meshSurface);
+        void Init() override;
 
-protected:
-	virtual void CreateMeshBuffers(const SISurface& surface);
+        void Tick(float elapsedTime) override;
 
-protected:
-	GLMeshID m_meshId;
+        void Exterminate() override;
 
-public:
-	friend class RenderComponent;
-};
+        SComponent* Clone(SGameObject* object) override;
+
+        virtual bool SetMesh(const SISurface& meshSurface);
+
+    protected:
+        virtual void CreateMeshBuffers(const SISurface& surface);
+
+    protected:
+        GLMeshID m_meshId;
+
+    public:
+        friend class RenderComponent;
+    };
+}

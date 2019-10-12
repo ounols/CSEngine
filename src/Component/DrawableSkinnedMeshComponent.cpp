@@ -4,6 +4,8 @@
 
 #define MeshComponent DrawableSkinnedMeshComponent
 
+using namespace CSE;
+
 DrawableSkinnedMeshComponent::DrawableSkinnedMeshComponent() {
     m_classType = "DrawableSkinnedMeshComponent";
 }
@@ -25,17 +27,15 @@ JointComponent* DrawableSkinnedMeshComponent::GetRootJoint() {
 }
 
 
-
 std::vector<mat4> DrawableSkinnedMeshComponent::GetJointMatrix() const {
     std::vector<mat4> jointMatrices;
 
-    if(m_jointRoot == nullptr) return jointMatrices;
+    if (m_jointRoot == nullptr) return jointMatrices;
 
     jointMatrices.resize(m_jointSize);
     addJointsToVector(m_jointRoot, jointMatrices);
     return jointMatrices;
 }
-
 
 
 void DrawableSkinnedMeshComponent::addJointsToVector(JointComponent* headJoint, std::vector<mat4>& matrix) const {
@@ -46,13 +46,13 @@ void DrawableSkinnedMeshComponent::addJointsToVector(JointComponent* headJoint, 
     for (SGameObject* childJoint : children) {
         auto joint = childJoint->GetComponent<JointComponent>();
 
-        if(joint == nullptr) continue;
+        if (joint == nullptr) continue;
         addJointsToVector(joint, matrix);
     }
 }
 
 void DrawableSkinnedMeshComponent::SetJointSize(SGameObject* joint_object) {
-    if(joint_object->GetComponent<JointComponent>() == nullptr) return;
+    if (joint_object->GetComponent<JointComponent>() == nullptr) return;
     m_jointSize++;
     auto children = joint_object->GetChildren();
     for (SGameObject* childJoint : children) {
@@ -61,7 +61,7 @@ void DrawableSkinnedMeshComponent::SetJointSize(SGameObject* joint_object) {
 }
 
 bool DrawableSkinnedMeshComponent::SetMesh(const SISurface& meshSurface) {
-    if(!DrawableStaticMeshComponent::SetMesh(meshSurface)) return false;
+    if (!DrawableStaticMeshComponent::SetMesh(meshSurface)) return false;
 
     CreateSkinningBuffers(meshSurface);
 
@@ -71,12 +71,12 @@ bool DrawableSkinnedMeshComponent::SetMesh(const SISurface& meshSurface) {
 bool DrawableSkinnedMeshComponent::AttachJointMatrix(const GLProgramHandle* handle) const {
     auto joints = GetJointMatrix();
 
-    if(joints.empty()) return false;
+    if (joints.empty()) return false;
 
     std::vector<float> result;
 
-    for(mat4 matrix : joints) {
-        for(int i = 0; i < 16; i++) {
+    for (mat4 matrix : joints) {
+        for (int i = 0; i < 16; i++) {
             result.push_back(matrix.Pointer()[i]);
 
         }

@@ -1,47 +1,56 @@
 #pragma once
+
 #include "SComponent.h"
 #include "sqext.h"
 
-class CustomComponent : public SComponent {
-public:
-	CustomComponent();
-	~CustomComponent();
+namespace CSE {
+
+    class CustomComponent : public SComponent {
+    public:
+        CustomComponent();
+
+        ~CustomComponent();
 
 
-	void Exterminate() override;
-	void Init() override;
-	void Tick(float elapsedTime) override;
+        void Exterminate() override;
 
-	SComponent* Clone(SGameObject* object) override;
+        void Init() override;
 
-	void SetClassName(std::string name);
-	std::string SGetClassName() const;
+        void Tick(float elapsedTime) override;
 
+        SComponent* Clone(SGameObject* object) override;
 
-	bool GetIsEnable() const override;
-	void SetIsEnable(bool is_enable) override;
+        void SetClassName(std::string name);
 
-	void Log(const char* log);
-
-	SGameObject* GetGameObject() const override;
+        std::string SGetClassName() const;
 
 
-	Sqrat::Object GetClassInstance() const {
-		return m_classInstance->get();
-	}
+        bool GetIsEnable() const override;
 
-private:
-	void RegisterScript();
+        void SetIsEnable(bool is_enable) override;
 
-private:
-	mutable sqext::SQIClass* m_specialization = nullptr;
-	mutable sqext::SQIClassInstance* m_classInstance = nullptr;
-	int m_funcSetCSEngine = 0;
-	int m_funcInit = 1;
-	int m_funcTick = 2;
-	int m_funcExterminate = 3;
+        void Log(const char* log);
 
-	std::string m_className = "";
+        SGameObject* GetGameObject() const override;
 
-	bool m_isError = false;
-};
+
+        Sqrat::Object GetClassInstance() const {
+            return m_classInstance->get();
+        }
+
+    private:
+        void RegisterScript();
+
+    private:
+        mutable sqext::SQIClass* m_specialization = nullptr;
+        mutable sqext::SQIClassInstance* m_classInstance = nullptr;
+        int m_funcSetCSEngine = 0;
+        int m_funcInit = 1;
+        int m_funcTick = 2;
+        int m_funcExterminate = 3;
+
+        std::string m_className = "";
+
+        bool m_isError = false;
+    };
+}

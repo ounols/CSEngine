@@ -1,28 +1,30 @@
 #pragma once
 #include "../Vector.h"
 
-struct BaseLight {
+namespace CSE {
 
-	vec3 color = vec3{2, 2, 2};
+    struct BaseLight {
+
+        vec3 color = vec3{ 2, 2, 2 };
 
 
-};
+    };
 
-struct SLight : BaseLight {
+    struct SLight : BaseLight {
 
-	//Direction
-	vec4 direction;
+        //Direction
+        vec4 direction;
 
-	//Point Light
-	vec3* position;
-	float radius = 1.0f;
+        //Point Light
+        vec3* position;
+        float radius = 1.0f;
 
-	vec3 att = vec3{ 1.f, 0.f, 0.f };	//Kc, Kl, Kq
+        vec3 att = vec3{ 1.f, 0.f, 0.f };    //Kc, Kl, Kq
 
-	//Spot Light
-	float spot;
+        //Spot Light
+        float spot;
 
-};
+    };
 //struct DirectionalLight : BaseLight {
 //
 //	vec3 direction;
@@ -48,3 +50,4 @@ struct SLight : BaseLight {
 //	float spot;
 //
 //};
+}

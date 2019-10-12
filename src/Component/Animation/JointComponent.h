@@ -1,45 +1,56 @@
 #pragma once
+
 #include "../SComponent.h"
 #include "../../Util/Matrix.h"
 
-class JointComponent : public SComponent {
-public:
-    JointComponent();
-    JointComponent(const JointComponent& src);
-    ~JointComponent();
+namespace CSE {
 
-    void Exterminate() override;
-	void Init() override;
-	void Tick(float elapsedTime) override;
+    class JointComponent : public SComponent {
+    public:
+        JointComponent();
 
-    SComponent* Clone(SGameObject* object) override;
+        JointComponent(const JointComponent& src);
 
-    void SetValue(std::string name_str, Arguments value) override;
+        ~JointComponent();
 
-    std::string PrintValue() const override;
+        void Exterminate() override;
 
-    void SetAnimationMatrix(mat4 animation);
-    mat4 GetAnimationMatrix() const {
-        return m_animatedMatrix;
-    }
+        void Init() override;
 
-    void SetID(int id) {
-        m_id = id;
-    }
-    int GetID() const {
-        return m_id;
-    }
+        void Tick(float elapsedTime) override;
 
-    mat4 GetInverseTransformMatrix() const {
-        return m_inverseTransformMatrix;
-    }
-    void calcInverseBindTransform(mat4 parentTransform);
+        SComponent* Clone(SGameObject* object) override;
 
-    void SetBindLocalMatrix(mat4 mat);
+        void SetValue(std::string name_str, Arguments value) override;
 
-private:
-    int m_id;
-    mat4 m_animatedMatrix;
-    mat4 m_inverseTransformMatrix;
-    mat4 m_localBindMatrix;
-};
+        std::string PrintValue() const override;
+
+        void SetAnimationMatrix(mat4 animation);
+
+        mat4 GetAnimationMatrix() const {
+            return m_animatedMatrix;
+        }
+
+        void SetID(int id) {
+            m_id = id;
+        }
+
+        int GetID() const {
+            return m_id;
+        }
+
+        mat4 GetInverseTransformMatrix() const {
+            return m_inverseTransformMatrix;
+        }
+
+        void calcInverseBindTransform(mat4 parentTransform);
+
+        void SetBindLocalMatrix(mat4 mat);
+
+    private:
+        int m_id;
+        mat4 m_animatedMatrix;
+        mat4 m_inverseTransformMatrix;
+        mat4 m_localBindMatrix;
+    };
+}

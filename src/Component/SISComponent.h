@@ -1,15 +1,22 @@
 #pragma once
-class SISComponent {
-public:
 
-	SISComponent() {}
-	SISComponent(const SISComponent& src) {}
+namespace CSE {
 
-	virtual ~SISComponent() {}
+    class SISComponent {
+    public:
 
-	virtual void Start() = 0;
-	virtual void Init() = 0;
-	virtual void Tick(float elapsedTime) = 0;
+        SISComponent() {}
 
-};
+        SISComponent(const SISComponent& src) {}
 
+        virtual ~SISComponent() {}
+
+        virtual void Start() = 0;
+
+        virtual void Init() = 0;
+
+        virtual void Tick(float elapsedTime) = 0;
+
+    };
+
+}

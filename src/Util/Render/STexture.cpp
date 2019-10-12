@@ -10,6 +10,7 @@
 #include "../../Manager/ResMgr.h"
 #include "../AssetsDef.h"
 
+using namespace CSE;
 
 STexture::STexture() {
     SetUndestroyable(true);

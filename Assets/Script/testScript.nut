@@ -1,4 +1,4 @@
-class TestScript extends SCEngineScript {
+class TestScript extends CSEngineScript {
 
 	materialComp = null;
 	lightComp = null;

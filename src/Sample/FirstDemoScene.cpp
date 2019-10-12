@@ -17,6 +17,8 @@
 #include "../Manager/SCloneFactory.h"
 #include "../Util/Loader/SCENE/SSceneLoader.h"
 
+using namespace CSE;
+
 FirstDemoScene::FirstDemoScene() {
 
 }

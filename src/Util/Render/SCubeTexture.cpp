@@ -7,6 +7,8 @@
 
 #include "../../Manager/ResMgr.h"
 
+using namespace CSE;
+
 SCubeTexture::SCubeTexture() {
 
 }

@@ -3,6 +3,8 @@
 #include "DrawableSkinnedMeshComponent.h"
 #include "../Manager/RenderMgr.h"
 
+using namespace CSE;
+
 COMPONENT_CONSTRUCTOR(RenderComponent) {
     RenderMgr::getInstance()->Register(this);
 }
@@ -176,8 +178,8 @@ void RenderComponent::SetMaterials() const {
 
     if (m_material == nullptr) {
         //Default Error Material
-        vec3 m_ambientMaterial = vec3{1.f, 0.f, 0.f};
-        vec3 m_specularMaterial = vec3{1, 1, 1};
+        vec3 m_ambientMaterial = vec3{ 1.f, 0.f, 0.f };
+        vec3 m_specularMaterial = vec3{ 1, 1, 1 };
         float m_shininess = 128;
 
 //        glUniform3fv(handler->Uniforms.AmbientMaterial, 1, m_ambientMaterial.Pointer());
@@ -201,14 +203,14 @@ SComponent* RenderComponent::Clone(SGameObject* object) {
 }
 
 void RenderComponent::SetJointMatrix() {
-    if(!m_isSkinned) {
+    if (!m_isSkinned) {
         glUniform1i(handler->Uniforms.IsSkinning, 0);
         return;
     }
 
     auto mesh = dynamic_cast<DrawableSkinnedMeshComponent*>(m_mesh);
 
-    if(mesh->AttachJointMatrix(handler)) {
+    if (mesh->AttachJointMatrix(handler)) {
         glUniform1i(handler->Uniforms.IsSkinning, 1);
     }
 }

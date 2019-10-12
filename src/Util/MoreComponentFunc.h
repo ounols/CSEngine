@@ -5,11 +5,15 @@
 
 #include "../Component/SComponent.h"
 
-class MoreComponentFunc {
-private:
-    MoreComponentFunc(){}
-    ~MoreComponentFunc(){}
+namespace CSE {
 
-public:
-    static SComponent* CreateComponent(SGameObject* obj, std::string component_type);
-};
+    class MoreComponentFunc {
+    private:
+        MoreComponentFunc() {}
+
+        ~MoreComponentFunc() {}
+
+    public:
+        static SComponent* CreateComponent(SGameObject* obj, std::string component_type);
+    };
+}

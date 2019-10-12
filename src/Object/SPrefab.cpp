@@ -7,6 +7,8 @@
 #include "SPrefab.h"
 #include "../Util/Loader/DAE/DAELoader.h"
 
+using namespace CSE;
+
 SPrefab::SPrefab() {
 
 }
@@ -49,7 +51,7 @@ SGameObject* SPrefab::Clone(vec3 position, vec3 scale, Quaternion rotation, SGam
 }
 
 bool SPrefab::SetGameObject(SGameObject* obj) {
-    if(m_root != nullptr) return false;
+    if (m_root != nullptr) return false;
 
     m_root = obj;
     m_root->SetUndestroyable(true);
@@ -76,17 +78,16 @@ void SPrefab::Init(const AssetMgr::AssetReference* asset) {
 
 void SPrefab::GenerateResourceID(SGameObject* obj) {
 
-    if(obj == nullptr) {
+    if (obj == nullptr) {
         obj = m_root;
         obj->SetResourceID(GetID());
-    }
-    else {
+    } else {
         std::string resultID = obj->GetID();
         resultID = resultID.substr(resultID.find('/') + 1);
         obj->SetResourceID(std::string(GetID()) + "*" + resultID);
     }
 
-    for(auto child : obj->GetChildren()) {
+    for (auto child : obj->GetChildren()) {
         GenerateResourceID(child);
     }
 

@@ -5,6 +5,7 @@
 #include "Animation.h"
 #include "../Loader/DAE/DAELoader.h"
 
+using namespace CSE;
 
 void Animation::SetKeyframe(float totalTime, std::vector<KeyFrame*> keyframes) {
     m_length = totalTime;

@@ -12,64 +12,67 @@
 
 #define RESMGR ResMgr::getInstance()
 
-class SObject;
+namespace CSE {
 
-class GLProgramHandle;
+    class SObject;
 
-class SISurface;
+    class GLProgramHandle;
 
-class ResMgr {
-private:
-    ~ResMgr();
+    class SISurface;
 
-public:
+    class ResMgr {
+    private:
+        ~ResMgr();
+
+    public:
     DECLARE_SINGLETONE(ResMgr);
 
-    void Init();
+        void Init();
 
-    void Exterminate();
+        void Exterminate();
 
-    void Register(SResource* m_object);
+        void Register(SResource* m_object);
 
-    void Remove(SResource* m_object);
+        void Remove(SResource* m_object);
 
-    template<class TYPE>
-    TYPE* GetObject(std::string name) const;
+        template <class TYPE>
+        TYPE* GetObject(std::string name) const;
 
-    SResource* GetSResource(std::string name) const;
+        SResource* GetSResource(std::string name) const;
 
-    int GetID(SResource* object) const;
+        int GetID(SResource* object) const;
 
-    int GetSize() const;
+        int GetSize() const;
 
-    bool IsEmpty() const;
+        bool IsEmpty() const;
 
-    std::string RemoveDuplicatingName(std::string name) const;
+        std::string RemoveDuplicatingName(std::string name) const;
 
-    AssetMgr::AssetReference* GetAssetReference(std::string name) const;
+        AssetMgr::AssetReference* GetAssetReference(std::string name) const;
 
 #ifdef __ANDROID__
-    void SetAssetManager(AAssetManager* obj);
-    AAssetManager* GetAssetManager();
-    void SetEnv(JNIEnv* obj);
-    JNIEnv* GetEnv();
+        void SetAssetManager(AAssetManager* obj);
+        AAssetManager* GetAssetManager();
+        void SetEnv(JNIEnv* obj);
+        JNIEnv* GetEnv();
 #endif
 
 
-private:
-    std::vector<SResource*> m_resources;
-    AssetMgr* m_assetManager;
-};
+    private:
+        std::vector<SResource*> m_resources;
+        AssetMgr* m_assetManager;
+    };
 
 
-template<class TYPE>
-TYPE* ResMgr::GetObject(std::string name) const {
-    for (auto resource : m_resources) {
-        if (dynamic_cast<TYPE*>(resource)) {
-            if(name == resource->GetName())
-                return static_cast<TYPE*>(resource);
+    template <class TYPE>
+    TYPE* ResMgr::GetObject(std::string name) const {
+        for (auto resource : m_resources) {
+            if (dynamic_cast<TYPE*>(resource)) {
+                if (name == resource->GetName())
+                    return static_cast<TYPE*>(resource);
+            }
         }
-    }
 
-    return nullptr;
+        return nullptr;
+    }
 }

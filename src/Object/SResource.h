@@ -9,76 +9,80 @@
 #include "../SObject.h"
 #include "../Manager/MemoryMgr.h"
 
-class SResource : public SObject {
-public:
-    SResource();
-    virtual ~SResource();
+namespace CSE {
 
-    void SetName(std::string name);
+    class SResource : public SObject {
+    public:
+        SResource();
 
-    const char* GetName() const {
-        return m_name.c_str();
-    }
+        virtual ~SResource();
 
-    const char* GetID() const {
-        return m_id.c_str();
-    }
+        void SetName(std::string name);
 
-    void LinkResource(AssetMgr::AssetReference* asset) {
-        SetResource(asset, false);
-    }
+        const char* GetName() const {
+            return m_name.c_str();
+        }
 
-    void LinkResource(std::string name) {
-        SetResource(name, false);
-    }
+        const char* GetID() const {
+            return m_id.c_str();
+        }
 
-    template <class T>
-    static T* Create(std::string name, bool isForceCreate = false) {
-        if(!isForceCreate) {
+        void LinkResource(AssetMgr::AssetReference* asset) {
+            SetResource(asset, false);
+        }
+
+        void LinkResource(std::string name) {
+            SetResource(name, false);
+        }
+
+        template <class T>
+        static T* Create(std::string name, bool isForceCreate = false) {
+            if (!isForceCreate) {
+                SResource* res = GetResource(name);
+                if (res != nullptr) return static_cast<T*>(res);
+            }
+            T* object = new T();
+            SResource* res = object;
+
+            res->SetResource(name);
+            return object;
+        }
+
+        template <class T>
+        static T* Create(const AssetMgr::AssetReference* asset, bool isForceCreate = false) {
+            if (asset == nullptr) return nullptr;
+            if (!isForceCreate) {
+                SResource* res = GetResource(asset->name);
+                if (res != nullptr) return static_cast<T*>(res);
+            }
+            T* object = new T();
+            SResource* res = object;
+
+            res->SetResource(asset);
+            return object;
+        }
+
+        template <class T>
+        static T* Get(std::string name) {
             SResource* res = GetResource(name);
-            if(res != nullptr) return static_cast<T*>(res);
+            if (res != nullptr) return static_cast<T*>(res);
+            return nullptr;
         }
-        T* object = new T();
-        SResource* res = object;
 
-        res->SetResource(name);
-        return object;
-    }
+    protected:
+        virtual void Init(const AssetMgr::AssetReference* asset) = 0;
 
-    template <class T>
-    static T* Create(const AssetMgr::AssetReference* asset, bool isForceCreate = false) {
-        if(asset == nullptr) return nullptr;
-        if(!isForceCreate) {
-            SResource* res = GetResource(asset->name);
-            if(res != nullptr) return static_cast<T*>(res);
-        }
-        T* object = new T();
-        SResource* res = object;
+    private:
+        void SetResource(std::string name, bool isInit = true);
 
-        res->SetResource(asset);
-        return object;
-    }
+        void SetResource(const AssetMgr::AssetReference* asset, bool isInit = true);
 
-    template <class T>
-    static T* Get(std::string name) {
-        SResource* res = GetResource(name);
-        if(res != nullptr) return static_cast<T*>(res);
-        return nullptr;
-    }
+        static SResource* GetResource(std::string name);
 
-protected:
-    virtual void Init(const AssetMgr::AssetReference* asset) = 0;
-private:
-    void SetResource(std::string name, bool isInit = true);
-    void SetResource(const AssetMgr::AssetReference* asset, bool isInit = true);
+    private:
+        std::string m_name;
+        std::string m_id;
+        bool m_isInited = false;
 
-    static SResource* GetResource(std::string name);
-private:
-    std::string m_name;
-    std::string m_id;
-    bool m_isInited = false;
-
-};
-
-
-
+    };
+}

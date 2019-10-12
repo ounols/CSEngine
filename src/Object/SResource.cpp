@@ -6,6 +6,8 @@
 #include "SResource.h"
 #include "../Manager/ResMgr.h"
 
+using namespace CSE;
+
 SResource::SResource() {
     ResMgr::getInstance()->Register(this);
     m_name = "Resource " + std::to_string(ResMgr::getInstance()->GetSize());
@@ -20,7 +22,7 @@ void SResource::SetName(std::string name) {
 }
 
 void SResource::SetResource(std::string name, bool isInit) {
-    if(m_isInited) return;
+    if (m_isInited) return;
 
     auto asset = ResMgr::getInstance()->GetAssetReference(name);
 
@@ -28,14 +30,14 @@ void SResource::SetResource(std::string name, bool isInit) {
 }
 
 void SResource::SetResource(const AssetMgr::AssetReference* asset, bool isInit) {
-    if(asset == nullptr) return;
-    if(m_isInited) return;
+    if (asset == nullptr) return;
+    if (m_isInited) return;
 
     m_isInited = true;
     m_id = asset->id;
 
     SetName(asset->name);
-    if(isInit)
+    if (isInit)
         Init(asset);
 }
 

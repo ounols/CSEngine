@@ -7,20 +7,22 @@
 #include <vector>
 #include "MoreString.h"
 
+namespace CSE {
 
-class VariableBinder {
-protected:
-    typedef std::vector<std::string> Arguments;
-protected:
-    VariableBinder() {}
+    class VariableBinder {
+    protected:
+        typedef std::vector<std::string> Arguments;
+    protected:
+        VariableBinder() {}
 
-    virtual ~VariableBinder() {}
+        virtual ~VariableBinder() {}
 
-public:
-    virtual void SetValue(std::string name_str, Arguments value) = 0;
-    virtual std::string PrintValue() const = 0;
-};
+    public:
+        virtual void SetValue(std::string name_str, Arguments value) = 0;
 
+        virtual std::string PrintValue() const = 0;
+    };
+}
 
 #define PRINT_START(type) std::string result = std::string("<") + type + " type=\"" + m_classType + "\">" + '\n'
 #define PRINT_END(type) result += std::string("</") + type + ">\n"; return result

@@ -1,67 +1,81 @@
 #pragma once
+
 #include "SComponent.h"
 #include "../Util/Render/LightHelper.h"
 
-class LightComponent : public SComponent {
+namespace CSE {
 
-public:
-	enum LIGHT{ NONE = 0, DIRECTIONAL = 1, POINT = 2, SPOT = 3 };
-public:
-	LightComponent();
-	~LightComponent();
+    class LightComponent : public SComponent {
 
+    public:
+        enum LIGHT {
+            NONE = 0, DIRECTIONAL = 1, POINT = 2, SPOT = 3
+        };
+    public:
+        LightComponent();
 
-	void Exterminate() override;
-	void Init() override;
-	void Tick(float elapsedTime) override;
-
-	void SetLightType(LIGHT type);
-	void SetDirection(vec4 direction) const;
-	void SetColor(vec3 color) const;
-
-	vec4 GetDirection(vec4 direction) const;
-	vec3 GetColor() const;
-
-	//for Positional Light and Spot Light
-	void SetLightRadius(float radius) const;
-	void SetAttenuationFactor(vec3 att) const;
-	void SetAttenuationFactor(float Kc, float Kl, float Kq) const;
-
-	void SetSunrising(bool active);
+        ~LightComponent();
 
 
-	SLight* GetLight() const {
-		//switch (m_type) {
-		//case DIRECTIONAL: {
-		//	return (m_light);
-		//}
+        void Exterminate() override;
 
-		//case POINT:
-		//	return (m_light);
+        void Init() override;
 
-		//case SPOT:
-		//	return (m_light);
-		//	
-		//default:
-		//	return m_light;
-		//}
+        void Tick(float elapsedTime) override;
 
-		return m_light;
-	}
+        void SetLightType(LIGHT type);
+
+        void SetDirection(vec4 direction) const;
+
+        void SetColor(vec3 color) const;
+
+        vec4 GetDirection(vec4 direction) const;
+
+        vec3 GetColor() const;
+
+        //for Positional Light and Spot Light
+        void SetLightRadius(float radius) const;
+
+        void SetAttenuationFactor(vec3 att) const;
+
+        void SetAttenuationFactor(float Kc, float Kl, float Kq) const;
+
+        void SetSunrising(bool active);
 
 
-private:
-	void SetLightPosition() const;
+        SLight* GetLight() const {
+            //switch (m_type) {
+            //case DIRECTIONAL: {
+            //	return (m_light);
+            //}
 
-public:
-	LIGHT m_type = DIRECTIONAL;
-	bool DisableAmbient = false;
-	bool DisableDiffuse = false;
-	bool DisableSpecular = true;
+            //case POINT:
+            //	return (m_light);
 
-private:
-	SLight* m_light = nullptr;
-	bool m_isSunRising = false;
+            //case SPOT:
+            //	return (m_light);
+            //
+            //default:
+            //	return m_light;
+            //}
 
-};
+            return m_light;
+        }
 
+
+    private:
+        void SetLightPosition() const;
+
+    public:
+        LIGHT m_type = DIRECTIONAL;
+        bool DisableAmbient = false;
+        bool DisableDiffuse = false;
+        bool DisableSpecular = true;
+
+    private:
+        SLight* m_light = nullptr;
+        bool m_isSunRising = false;
+
+    };
+
+}
