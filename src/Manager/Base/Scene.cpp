@@ -2,23 +2,23 @@
 #include "../MemoryMgr.h"
 #include "../SceneMgr.h"
 
+using namespace CSE;
 
 Scene::Scene() {
-	SetUndestroyable(true);
+    SetUndestroyable(true);
 }
 
 
 Scene::~Scene() {
-	
+
 }
 
 
-
 void Scene::Exterminate() {
-	Destroy();
+    Destroy();
 }
 
 
 void Scene::SetScene(Scene* scene) {
-	SceneMgr::getInstance()->SetScene(scene);
+    SceneMgr::getInstance()->SetScene(scene);
 }

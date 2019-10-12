@@ -14,40 +14,42 @@
 #include <map>
 #include <string>
 
+namespace CSE {
 
-class Animation : public SResource {
-public:
-    Animation() {
-        SetUndestroyable(true);
-    }
+    class Animation : public SResource {
+    public:
+        Animation() {
+            SetUndestroyable(true);
+        }
 
-    Animation(float totalTime, std::vector<KeyFrame*> keyframes) {
-        SetUndestroyable(true);
-        m_length = totalTime;
-        m_keyframes = keyframes;
-    }
+        Animation(float totalTime, std::vector<KeyFrame*> keyframes) {
+            SetUndestroyable(true);
+            m_length = totalTime;
+            m_keyframes = keyframes;
+        }
 
-    ~Animation() {
-    }
+        ~Animation() {
+        }
 
-    void SetKeyframe(float totalTime, std::vector<KeyFrame*> keyframes);
+        void SetKeyframe(float totalTime, std::vector<KeyFrame*> keyframes);
 
-    void Exterminate() override;
+        void Exterminate() override;
 
-    float GetLength() const {
-        return m_length;
-    }
+        float GetLength() const {
+            return m_length;
+        }
 
-    std::vector<KeyFrame*> GetKeyFrames() const {
-        return m_keyframes;
-    }
+        std::vector<KeyFrame*> GetKeyFrames() const {
+            return m_keyframes;
+        }
 
-protected:
-    void Init(const AssetMgr::AssetReference* asset) override;
-private:
-    float m_length = 0;
-    std::vector<KeyFrame*> m_keyframes;
+    protected:
+        void Init(const AssetMgr::AssetReference* asset) override;
 
-};
+    private:
+        float m_length = 0;
+        std::vector<KeyFrame*> m_keyframes;
 
+    };
 
+}

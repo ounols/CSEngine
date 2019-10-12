@@ -6,28 +6,33 @@
 #include "../Object/SResource.h"
 #include "SGameObject.h"
 
+namespace CSE {
 
-class SPrefab : public SResource {
-public:
-    SPrefab();
-    ~SPrefab();
+    class SPrefab : public SResource {
+    public:
+        SPrefab();
 
-    SGameObject* Clone(vec3 position, SGameObject* parent = nullptr);
-    SGameObject* Clone(vec3 position, vec3 scale, Quaternion rotation, SGameObject* parent = nullptr);
+        ~SPrefab();
 
-    bool SetGameObject(SGameObject* obj);
+        SGameObject* Clone(vec3 position, SGameObject* parent = nullptr);
 
-    void Exterminate() override;
-    SGameObject* GetRoot() const {
-        return m_root;
-    }
+        SGameObject* Clone(vec3 position, vec3 scale, Quaternion rotation, SGameObject* parent = nullptr);
 
-protected:
-    void Init(const AssetMgr::AssetReference* asset) override;
-    void GenerateResourceID(SGameObject* obj = nullptr);
+        bool SetGameObject(SGameObject* obj);
 
-private:
-    SGameObject* m_root = nullptr;
-};
+        void Exterminate() override;
 
+        SGameObject* GetRoot() const {
+            return m_root;
+        }
 
+    protected:
+        void Init(const AssetMgr::AssetReference* asset) override;
+
+        void GenerateResourceID(SGameObject* obj = nullptr);
+
+    private:
+        SGameObject* m_root = nullptr;
+    };
+
+}

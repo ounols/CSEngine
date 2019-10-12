@@ -10,50 +10,51 @@
 #include "../../MacroDef.h"
 #include "../Matrix.h"
 
+namespace CSE {
 
-class Joint {
-public:
-    Joint(int m_index, std::string m_nameID, mat4 m_bindLocalTransform)
-            : m_index(m_index), m_nameID(m_nameID), m_bindLocalTransform(m_bindLocalTransform) {
+    class Joint {
+    public:
+        Joint(int m_index, std::string m_nameID, mat4 m_bindLocalTransform)
+                : m_index(m_index), m_nameID(m_nameID), m_bindLocalTransform(m_bindLocalTransform) {
 
-    }
-
-    ~Joint() {
-        for (auto child : m_children) {
-            SAFE_DELETE(child);
         }
 
-        m_children.clear();
-    }
+        ~Joint() {
+            for (auto child : m_children) {
+                SAFE_DELETE(child);
+            }
 
-    void addChild(Joint* child) {
-        if (child == nullptr) return;
-        m_children.push_back(child);
-    }
+            m_children.clear();
+        }
 
-    const std::string& GetName() const {
-        return m_nameID;
-    }
+        void addChild(Joint* child) {
+            if (child == nullptr) return;
+            m_children.push_back(child);
+        }
 
-    int GetIndex() const {
-        return m_index;
-    }
+        const std::string& GetName() const {
+            return m_nameID;
+        }
 
-    const mat4 GetBindLocalTransform() const {
-        return m_bindLocalTransform;
-    }
+        int GetIndex() const {
+            return m_index;
+        }
 
-    const std::vector<Joint*>& GetChildren() const {
-        return m_children;
-    }
+        const mat4 GetBindLocalTransform() const {
+            return m_bindLocalTransform;
+        }
 
-private:
-    int m_index;
-    std::string m_nameID;
-    mat4 m_bindLocalTransform;
+        const std::vector<Joint*>& GetChildren() const {
+            return m_children;
+        }
 
-    std::vector<Joint*> m_children;
+    private:
+        int m_index;
+        std::string m_nameID;
+        mat4 m_bindLocalTransform;
 
-};
+        std::vector<Joint*> m_children;
 
+    };
 
+}

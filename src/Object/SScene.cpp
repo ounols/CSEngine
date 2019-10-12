@@ -4,6 +4,8 @@
 
 #include "SScene.h"
 
+using namespace CSE;
+
 SScene::SScene() {
     m_root = new SGameObject("__ROOT_OF_SCENE__");
 }
@@ -26,7 +28,7 @@ void SScene::Destroy() {
 
 void SScene::InitGameObject(SGameObject* obj) {
     obj->Init();
-    for(auto child : obj->GetChildren()) {
+    for (auto child : obj->GetChildren()) {
         InitGameObject(child);
     }
 }
@@ -34,7 +36,7 @@ void SScene::InitGameObject(SGameObject* obj) {
 void SScene::TickGameObject(SGameObject* obj, float elapsedTime) {
     obj->Tick(elapsedTime);
 
-    for(auto child : obj->GetChildren()) {
+    for (auto child : obj->GetChildren()) {
         TickGameObject(child, elapsedTime);
     }
 }

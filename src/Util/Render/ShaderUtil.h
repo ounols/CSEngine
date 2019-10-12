@@ -6,18 +6,26 @@
 
 #include "../GLProgramHandle.h"
 
-class ShaderUtil {
-public:
-    ShaderUtil();
-    ~ShaderUtil();
+namespace CSE {
 
-    static GLProgramHandle* CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragmentSource, GLProgramHandle* handle = nullptr);
+    class ShaderUtil {
+    public:
+        ShaderUtil();
 
-    static GLuint createProgram(const GLchar* vertexSource, const GLchar* fragmentSource);
-    static GLuint createProgram(GLuint vertexShader, GLuint fragmentShader);
-    static GLuint loadShader(GLenum shaderType, const char *pSource);
+        ~ShaderUtil();
 
-    static std::map<std::string, std::string> GetImportantVariables(const GLchar* source);
-    static void BindVariables(std::map<std::string, std::string> variables, GLProgramHandle* handle);
-};
+        static GLProgramHandle* CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragmentSource,
+                                                    GLProgramHandle* handle = nullptr);
 
+        static GLuint createProgram(const GLchar* vertexSource, const GLchar* fragmentSource);
+
+        static GLuint createProgram(GLuint vertexShader, GLuint fragmentShader);
+
+        static GLuint loadShader(GLenum shaderType, const char* pSource);
+
+        static std::map<std::string, std::string> GetImportantVariables(const GLchar* source);
+
+        static void BindVariables(std::map<std::string, std::string> variables, GLProgramHandle* handle);
+    };
+
+}

@@ -6,6 +6,8 @@
 #include "DAEAnimationLoader.h"
 #include "../../MoreString.h"
 
+using namespace CSE;
+
 const mat4 CORRECTION = /*mat4::RotateX(90)*/ mat4::Identity();
 
 
@@ -16,8 +18,8 @@ DAEAnimationLoader::DAEAnimationLoader() {
 DAEAnimationLoader::~DAEAnimationLoader() {
     SAFE_DELETE(m_root);
 
-    for(auto frame : m_animationData->keyFrames) {
-        for(auto joint : frame->jointTransforms) {
+    for (auto frame : m_animationData->keyFrames) {
+        for (auto joint : frame->jointTransforms) {
             SAFE_DELETE(joint);
         }
         frame->jointTransforms.clear();
@@ -45,7 +47,7 @@ void DAEAnimationLoader::LoadAnimation() {
     std::vector<KeyFrameData*> keyFrames = initKeyFrames(times);
     std::vector<XNode> animationNodes = m_animation.children;
     for (XNode jointNode : animationNodes) {
-        if(jointNode.name != "animation") continue;
+        if (jointNode.name != "animation") continue;
         loadJointTransforms(keyFrames, jointNode, rootNode);
     }
 

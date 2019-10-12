@@ -2,25 +2,32 @@
 #include "../Component/CameraComponent.h"
 
 
-class CameraMgr : public SContainer<CameraComponent*> {
-public:
-	DECLARE_SINGLETONE(CameraMgr);
-	~CameraMgr();
+namespace CSE {
 
-	void Init();
-	void Tick();
-	void DeleteCameraComponent(CameraComponent* object);
+    class CameraMgr : public SContainer<CameraComponent*> {
+    public:
+    DECLARE_SINGLETONE(CameraMgr);
+
+        ~CameraMgr();
+
+        void Init();
+
+        void Tick();
+
+        void DeleteCameraComponent(CameraComponent* object);
 
 
-	const float* GetProjectionRatio() const;
-	void SetProjectionRatio(float ratio);
+        const float* GetProjectionRatio() const;
 
-	CameraComponent* GetCurrentCamera() const;
-	void ChangeCurrentCamera(CameraComponent* camera);
+        void SetProjectionRatio(float ratio);
 
-private:
-	CameraComponent* m_currentCamera = nullptr;
-	float m_projectionRatio;
+        CameraComponent* GetCurrentCamera() const;
 
-};
+        void ChangeCurrentCamera(CameraComponent* camera);
 
+    private:
+        CameraComponent* m_currentCamera = nullptr;
+        float m_projectionRatio;
+
+    };
+}

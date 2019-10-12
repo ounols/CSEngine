@@ -2,6 +2,8 @@
 #include "../TransformComponent.h"
 #include "../../Object/SResource.h"
 
+using namespace CSE;
+
 COMPONENT_CONSTRUCTOR(JointComponent), m_id(-1), m_animatedMatrix(mat4::Identity()), m_inverseTransformMatrix(mat4::Identity()) {
     
 }

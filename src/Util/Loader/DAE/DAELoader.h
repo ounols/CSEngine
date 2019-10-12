@@ -10,116 +10,119 @@
 #include "DAEAnimationLoader.h"
 #include "../../Animation/Animation.h"
 
-class Animation;
+namespace CSE {
 
-class DAELoader {
-public:
-    enum LOAD_TYPE {
-        ALL, MESH, ANIMATION, AUTO, NOTHING
-    };
-public:
-    DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type = ALL, bool isLoad = true);
+    class Animation;
 
-    ~DAELoader();
+    class DAELoader {
+    public:
+        enum LOAD_TYPE {
+            ALL, MESH, ANIMATION, AUTO, NOTHING
+        };
+    public:
+        DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type = ALL, bool isLoad = true);
 
-    void Load(const char* path, LOAD_TYPE type);
+        ~DAELoader();
 
-    void LoadTexture(const AssetMgr::AssetReference* asset);
+        void Load(const char* path, LOAD_TYPE type);
 
-    MeshSurface* GetMesh() const {
-        return m_obj;
-    }
+        void LoadTexture(const AssetMgr::AssetReference* asset);
 
-    Skeleton* getSkeleton() const {
-        return m_skeletonData;
-    }
+        MeshSurface* GetMesh() const {
+            return m_obj;
+        }
 
-    SPrefab* GeneratePrefab(Animation* animation, SPrefab* prefab = nullptr);
+        Skeleton* getSkeleton() const {
+            return m_skeletonData;
+        }
 
-    static SPrefab* GeneratePrefab(const char* path, Skeleton* skeleton, MeshSurface* mesh, Animation* animation,
-                                   SPrefab* prefab = nullptr);
+        SPrefab* GeneratePrefab(Animation* animation, SPrefab* prefab = nullptr);
 
-private:
-    void LoadSkin(XNode root_s);
+        static SPrefab* GeneratePrefab(const char* path, Skeleton* skeleton, MeshSurface* mesh, Animation* animation,
+                                       SPrefab* prefab = nullptr);
 
-    void LoadSkeleton(XNode root_s);
+    private:
+        void LoadSkin(XNode root_s);
 
-    void LoadGeometry(XNode root_g);
+        void LoadSkeleton(XNode root_s);
+
+        void LoadGeometry(XNode root_g);
 
 //===================================================================
 // GeometryLoader Functions
 //===================================================================
-    void ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWeight);
+        void ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWeight);
 
-    void ReadNormals(XNode data, std::string normalsId);
+        void ReadNormals(XNode data, std::string normalsId);
 
-    void ReadUVs(XNode data, std::string texCoordsId);
+        void ReadUVs(XNode data, std::string texCoordsId);
 
-    void AssembleVertices(XNode data);
+        void AssembleVertices(XNode data);
 
-    Vertex* processVertex(int posIndex, int normIndex, int texIndex);
+        Vertex* processVertex(int posIndex, int normIndex, int texIndex);
 
-    Vertex* dealWithAlreadyProcessedVertex(Vertex* previousVertex, int newTextureIndex, int newNormalIndex);
+        Vertex* dealWithAlreadyProcessedVertex(Vertex* previousVertex, int newTextureIndex, int newNormalIndex);
 
-    void removeUnusedVertices();
+        void removeUnusedVertices();
 
-    void ConvertDataToVectors();
+        void ConvertDataToVectors();
 
 //===================================================================
 // SkinLoader Functions
 //===================================================================
-    std::vector<std::string> loadJointsList(XNode skinningData);
+        std::vector<std::string> loadJointsList(XNode skinningData);
 
-    std::vector<float> loadWeights(XNode skinningData);
+        std::vector<float> loadWeights(XNode skinningData);
 
-    std::vector<int> getEffectiveJointsCounts(XNode node);
+        std::vector<int> getEffectiveJointsCounts(XNode node);
 
-    std::vector<VertexSkinData*>
-    getSkinData(XNode weightsDataNode, std::vector<int> counts, std::vector<float> weights);
+        std::vector<VertexSkinData*>
+        getSkinData(XNode weightsDataNode, std::vector<int> counts, std::vector<float> weights);
 
 //===================================================================
 // SkeletonLoader Functions
 //===================================================================
 
-    Joint* loadJointData(XNode jointNode, bool isRoot);
+        Joint* loadJointData(XNode jointNode, bool isRoot);
 
-    Joint* extractMainJointData(XNode jointNode, bool isRoot);
+        Joint* extractMainJointData(XNode jointNode, bool isRoot);
 
-    void LoadTexturePath(XNode imageNode);
-
-
-    void AttachDataToObjSurface();
-
-    void Exterminate();
-
-private:
-    const XNode* m_root{};
-    MeshSurface* m_obj;
-
-    std::vector<Vertex*> m_vertices;
-    std::vector<vec3> m_normals;
-    std::vector<vec2> m_texUVs;
-    std::vector<int> m_indices;
-
-    std::vector<float> m_f_vertices;
-    std::vector<float> m_f_normals;
-    std::vector<float> m_f_texUVs;
-    std::vector<int> m_f_jointIDs;
-    std::vector<float> m_f_weights;
-
-    SkinningData* m_skinningData = nullptr;
-    Skeleton* m_skeletonData = nullptr;
-    DAEAnimationLoader* m_animationLoader = nullptr;
+        void LoadTexturePath(XNode imageNode);
 
 
-    int m_maxWeight = 3;
-    int m_jointSize = 0;
+        void AttachDataToObjSurface();
 
-    bool m_isSkinning = false;
+        void Exterminate();
 
-    std::string m_name;
-    std::string m_texture_name;
+    private:
+        const XNode* m_root{};
+        MeshSurface* m_obj;
 
-    std::string m_resource_id;
+        std::vector<Vertex*> m_vertices;
+        std::vector<vec3> m_normals;
+        std::vector<vec2> m_texUVs;
+        std::vector<int> m_indices;
 
-};
+        std::vector<float> m_f_vertices;
+        std::vector<float> m_f_normals;
+        std::vector<float> m_f_texUVs;
+        std::vector<int> m_f_jointIDs;
+        std::vector<float> m_f_weights;
+
+        SkinningData* m_skinningData = nullptr;
+        Skeleton* m_skeletonData = nullptr;
+        DAEAnimationLoader* m_animationLoader = nullptr;
+
+
+        int m_maxWeight = 3;
+        int m_jointSize = 0;
+
+        bool m_isSkinning = false;
+
+        std::string m_name;
+        std::string m_texture_name;
+
+        std::string m_resource_id;
+
+    };
+}

@@ -11,6 +11,8 @@
 #include "../Component/RenderComponent.h"
 #include "../Component/TransformComponent.h"
 
+using namespace CSE;
+
 SComponent* MoreComponentFunc::CreateComponent(SGameObject* obj, std::string component_type) {
 
     SComponent* comp = nullptr;

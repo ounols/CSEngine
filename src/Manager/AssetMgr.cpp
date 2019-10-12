@@ -23,6 +23,7 @@
 #include <android/log.h>
 #include <Manager/ResMgr.h>
 #endif
+using namespace CSE;
 
 AssetMgr::AssetMgr() {
 
@@ -53,11 +54,11 @@ void AssetMgr::LoadAssets(bool isPacked) {
 }
 
 AssetMgr::AssetReference* AssetMgr::GetAsset(std::string name) const {
-    for(auto asset : m_assets) {
-        if(asset->name == name) return asset;
-        if(asset->id == name) return asset;
-        if(asset->path == name) return asset;
-        if(asset->name_full == name) return asset;
+    for (auto asset : m_assets) {
+        if (asset->name == name) return asset;
+        if (asset->id == name) return asset;
+        if (asset->path == name) return asset;
+        if (asset->name_full == name) return asset;
     }
 
     return nullptr;
@@ -104,16 +105,15 @@ void AssetMgr::ReadDirectory(std::string path) {
 AssetMgr::AssetReference* AssetMgr::CreateAsset(std::string path, std::string name_full, std::string name) {
     AssetReference* asset = new AssetReference();
     asset->path = path;
-    asset->id =  "File:" + path.substr(CSE::AssetsPath().size());
+    asset->id = "File:" + path.substr(CSE::AssetsPath().size());
     asset->name_full = name_full;
 
-    if(name.empty()) {
+    if (name.empty()) {
         name = name_full;
         auto name_strs = split(name, '.');
         asset->extension = name_strs[name_strs.size() - 1];
         asset->name = name.substr(0, name.rfind('.'));
-    }
-    else {
+    } else {
         asset->name = name;
     }
 

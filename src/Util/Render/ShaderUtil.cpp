@@ -5,7 +5,7 @@
 #include "ShaderUtil.h"
 #include "../MoreString.h"
 
-
+using namespace CSE;
 
 ShaderUtil::ShaderUtil() {
 
@@ -16,9 +16,10 @@ ShaderUtil::~ShaderUtil() {
 }
 
 
-GLProgramHandle* ShaderUtil::CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragmentSource, GLProgramHandle* handle) {
-    if(vertexSource == nullptr || fragmentSource == nullptr) return nullptr;
-    if(handle != nullptr && handle->Program != HANDLE_NULL) return nullptr;
+GLProgramHandle*
+ShaderUtil::CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragmentSource, GLProgramHandle* handle) {
+    if (vertexSource == nullptr || fragmentSource == nullptr) return nullptr;
+    if (handle != nullptr && handle->Program != HANDLE_NULL) return nullptr;
 
     GLProgramHandle* gProgramhandle = handle;
 
@@ -31,7 +32,7 @@ GLProgramHandle* ShaderUtil::CreateProgramHandle(const GLchar* vertexSource, con
     auto variables_vert = GetImportantVariables(vertexSource);
     auto variables_frag = GetImportantVariables(fragmentSource);
 
-    if(gProgramhandle == nullptr)
+    if (gProgramhandle == nullptr)
         gProgramhandle = new GLProgramHandle();
     gProgramhandle->SetProgram(program);
     //Get all variables from shader.
@@ -153,14 +154,14 @@ std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLcha
 
     std::string type_str = "";
 
-    for(auto line : str_line) {
+    for (auto line : str_line) {
         line += ';';
         auto result = split(line, '\n');
 
-        for(auto str : result) {
+        for (auto str : result) {
             int start_index = 0;
             int end_index = 0;
-            if((start_index = str.find("//[")) != std::string::npos) {
+            if ((start_index = str.find("//[")) != std::string::npos) {
                 start_index += 3;
                 end_index = str.find("]//");
                 type_str = str.substr(start_index, end_index - 3);
@@ -168,7 +169,7 @@ std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLcha
             }
 
             int eoc_index = 0;
-            if(type_str != "" && (eoc_index = str.find(';')) != std::string::npos) {
+            if (type_str != "" && (eoc_index = str.find(';')) != std::string::npos) {
                 int start_index = str.substr(0, eoc_index).rfind(' ');
                 int end_index = str.rfind('[');
                 end_index = end_index == std::string::npos ? eoc_index : end_index;
@@ -186,7 +187,7 @@ std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLcha
 
 void ShaderUtil::BindVariables(std::map<std::string, std::string> variables, GLProgramHandle* handle) {
 
-    if(handle == nullptr) return;
+    if (handle == nullptr) return;
 
     handle->Attributes.Position = handle->AttributeLocation("POSITION");
     handle->Attributes.Normal = handle->AttributeLocation("NORMAL");

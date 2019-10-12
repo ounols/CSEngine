@@ -1,10 +1,11 @@
 #include "TransformComponent.h"
 
+using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(TransformComponent) {
-    m_position = vec3{0, 0, 0};
+    m_position = vec3{ 0, 0, 0 };
     m_rotation = Quaternion();
-    m_scale = vec3{1, 1, 1};
+    m_scale = vec3{ 1, 1, 1 };
 }
 
 
@@ -19,7 +20,7 @@ void TransformComponent::Tick(float elapsedTime) {
 
     m_f_matrix = GetFinalMatrix();
     m_f_position = vec3{ m_f_matrix.w.x, m_f_matrix.w.y, m_f_matrix.w.z };
-    m_f_scale   = vec3{ m_f_matrix.x.x, m_f_matrix.y.y, m_f_matrix.z.z };
+    m_f_scale = vec3{ m_f_matrix.x.x, m_f_matrix.y.y, m_f_matrix.z.z };
 
 }
 
@@ -52,7 +53,7 @@ Quaternion TransformComponent::GetRotation() const {
 
 void TransformComponent::SetMatrix(mat4 matrix) {
     m_position = vec3{ matrix.w.x, matrix.w.y, matrix.w.z };
-    m_scale   = vec3{ matrix.x.x, matrix.y.y, matrix.z.z };
+    m_scale = vec3{ matrix.x.x, matrix.y.y, matrix.z.z };
     m_rotation = Quaternion::ToQuaternion(matrix);
 
 }
@@ -86,13 +87,11 @@ SComponent* TransformComponent::Clone(SGameObject* object) {
 }
 
 void TransformComponent::SetValue(std::string name_str, Arguments value) {
-    if(name_str == "m_position") {
+    if (name_str == "m_position") {
         m_position = vec3(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]));
-    }
-    else if(name_str == "m_scale") {
+    } else if (name_str == "m_scale") {
         m_scale = vec3(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]));
-    }
-    else if(name_str == "m_rotation") {
+    } else if (name_str == "m_rotation") {
         m_rotation = Quaternion(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]), std::stof(value[3]));
     }
 }

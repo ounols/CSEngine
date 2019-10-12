@@ -2,19 +2,24 @@
 #include "Base/Scene.h"
 #include "../MacroDef.h"
 
-class SceneMgr {
-public:
-	DECLARE_SINGLETONE(SceneMgr);
-	~SceneMgr();
+namespace CSE {
 
-	void Init() const;
-	void Tick(float elapsedTime) const;
-	
-	void SetScene(Scene* scene);
+    class SceneMgr {
+    public:
+    DECLARE_SINGLETONE(SceneMgr);
 
-	Scene* GetCurrentScene() const;
+        ~SceneMgr();
 
-private:
-	Scene* m_scene = nullptr;
-};
+        void Init() const;
 
+        void Tick(float elapsedTime) const;
+
+        void SetScene(Scene* scene);
+
+        Scene* GetCurrentScene() const;
+
+    private:
+        Scene* m_scene = nullptr;
+    };
+
+}

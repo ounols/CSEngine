@@ -5,6 +5,7 @@
 #include "../Component/TransformComponent.h"
 #include "../Component/CustomComponent.h"
 
+using namespace CSE;
 
 SGameObject::SGameObject() {
     GameObjectMgr::getInstance()->Register(this);
@@ -96,7 +97,7 @@ void SGameObject::RemoveChild(bool isAllLevel) {
 
 
 void SGameObject::RemoveChild(SGameObject* object) {
-    if(object == nullptr) return;
+    if (object == nullptr) return;
     auto ob = std::find(m_children.begin(), m_children.end(), object);
     m_children.erase(ob);
     object->m_parent = nullptr;
@@ -111,7 +112,7 @@ void SGameObject::SetParent(SGameObject* object) {
 }
 
 void SGameObject::RemoveParent() {
-    if(m_parent == nullptr) return;
+    if (m_parent == nullptr) return;
     m_parent->RemoveChild(this);
 }
 
@@ -283,8 +284,8 @@ std::string SGameObject::GetResourceID() const {
 void SGameObject::SetResourceID(std::string resID, bool setChildren) {
     m_resourceID = resID;
 
-    if(setChildren) {
-        for(auto child : m_children) {
+    if (setChildren) {
+        for (auto child : m_children) {
             child->SetResourceID(resID, setChildren);
         }
     }

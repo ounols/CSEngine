@@ -5,6 +5,7 @@
 #include "../../../Component/DrawableSkinnedMeshComponent.h"
 #include "../../../Component/RenderComponent.h"
 
+using namespace CSE;
 
 const mat4 CORRECTION = /*mat4::RotateX(90)*/ mat4::Identity();
 

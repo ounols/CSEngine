@@ -6,15 +6,17 @@
 
 #include "../Component/SComponent.h"
 
+namespace CSE {
 
-class SCloneFactory {
-private:
-    SCloneFactory();
-    ~SCloneFactory();
+    class SCloneFactory {
+    private:
+        SCloneFactory();
 
-public:
-    static SComponent* Clone(SComponent* component, SGameObject* parent = nullptr);
-    static SGameObject* Clone(SGameObject* object, SGameObject* parent = nullptr);
-};
+        ~SCloneFactory();
 
+    public:
+        static SComponent* Clone(SComponent* component, SGameObject* parent = nullptr);
 
+        static SGameObject* Clone(SGameObject* object, SGameObject* parent = nullptr);
+    };
+}

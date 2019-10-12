@@ -9,39 +9,49 @@
 #include "../GLProgramHandle.h"
 #include "../../Object/SResource.h"
 
-class STexture : public SResource {
-public:
-    enum TYPE { PNG, UNKOWN };
-public:
-    STexture();
-    virtual ~STexture();
+namespace CSE {
 
-    bool LoadFile(const char* path);
-    virtual bool Load(unsigned char* data);
-    bool LoadEmpty();
-    bool ReloadFile(const char* path);
-    bool Reload(unsigned char* data);
+    class STexture : public SResource {
+    public:
+        enum TYPE {
+            PNG, UNKOWN
+        };
+    public:
+        STexture();
 
-    unsigned int GetID() const {
-        return m_id;
-    }
+        virtual ~STexture();
 
-    virtual bool InitTexture(int size);
+        bool LoadFile(const char* path);
 
-    void Release();
-    void Exterminate() override;
+        virtual bool Load(unsigned char* data);
 
-    virtual void Bind(GLint location, int layout);
+        bool LoadEmpty();
 
-protected:
-    virtual void Init(const AssetMgr::AssetReference* asset) override;
+        bool ReloadFile(const char* path);
 
-protected:
-    int m_width = 0;
-    int m_height = 0;
-    int m_channels = 0;
+        bool Reload(unsigned char* data);
 
-    unsigned int m_id = 0;
-};
+        unsigned int GetID() const {
+            return m_id;
+        }
 
+        virtual bool InitTexture(int size);
 
+        void Release();
+
+        void Exterminate() override;
+
+        virtual void Bind(GLint location, int layout);
+
+    protected:
+        virtual void Init(const AssetMgr::AssetReference* asset) override;
+
+    protected:
+        int m_width = 0;
+        int m_height = 0;
+        int m_channels = 0;
+
+        unsigned int m_id = 0;
+    };
+
+}

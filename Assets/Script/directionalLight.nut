@@ -1,4 +1,4 @@
-class directionalLight extends SCEngineScript {
+class directionalLight extends CSEngineScript {
 
     lightComp = null;
     diffuse = null;

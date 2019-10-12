@@ -1,5 +1,7 @@
 #include "AnimatorComponent.h"
 
+using namespace CSE;
+
 COMPONENT_CONSTRUCTOR(AnimatorComponent) {
 
 }

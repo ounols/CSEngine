@@ -2,6 +2,8 @@
 #include "CameraMgr.h"
 #include "MemoryMgr.h"
 
+using namespace CSE;
+
 IMPLEMENT_SINGLETON(ResMgr);
 
 ResMgr::ResMgr() {
@@ -62,8 +64,8 @@ int ResMgr::GetID(SResource* object) const {
 }
 
 std::string ResMgr::RemoveDuplicatingName(std::string name) const {
-    for(auto resource : m_resources) {
-        if(name == resource->GetName()) return RemoveDuplicatingName(name + " of another");
+    for (auto resource : m_resources) {
+        if (name == resource->GetName()) return RemoveDuplicatingName(name + " of another");
     }
 
     return name;
@@ -74,9 +76,9 @@ AssetMgr::AssetReference* ResMgr::GetAssetReference(std::string name) const {
 }
 
 SResource* ResMgr::GetSResource(std::string name) const {
-    for(auto res : m_resources) {
-        if(res->GetName() == name) return res;
-        if(res->GetID() == name) return res;
+    for (auto res : m_resources) {
+        if (res->GetName() == name) return res;
+        if (res->GetID() == name) return res;
     }
     return nullptr;
 }

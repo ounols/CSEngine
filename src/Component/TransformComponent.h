@@ -5,38 +5,44 @@
 #include "../Util/Matrix.h"
 
 
-class TransformComponent : public SComponent, public TransformInterface {
-public:
-    TransformComponent();
+namespace CSE {
 
-    ~TransformComponent();
+    class TransformComponent : public SComponent, public TransformInterface {
+    public:
+        TransformComponent();
 
-    void Init() override;
+        ~TransformComponent();
 
-    void Tick(float elapsedTime) override;
+        void Init() override;
 
-    void Exterminate() override;
+        void Tick(float elapsedTime) override;
 
-    SComponent* Clone(SGameObject* object) override;
+        void Exterminate() override;
 
-    mat4 GetMatrix() const;
+        SComponent* Clone(SGameObject* object) override;
 
-    vec3* GetPosition();
-    vec3 GetScale() const;
-    Quaternion GetRotation() const;
-    void SetMatrix(mat4 matrix);
+        mat4 GetMatrix() const;
 
-    void SetValue(std::string name_str, Arguments value) override;
+        vec3* GetPosition();
 
-    std::string PrintValue() const override;
+        vec3 GetScale() const;
 
-private:
-    mat4 GetFinalMatrix() const;
+        Quaternion GetRotation() const;
 
-private:
-    mat4 m_f_matrix;
-    vec3 m_f_position;
-    vec3 m_f_scale;
-    Quaternion m_f_rotation;
-};
+        void SetMatrix(mat4 matrix);
 
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
+
+    private:
+        mat4 GetFinalMatrix() const;
+
+    private:
+        mat4 m_f_matrix;
+        vec3 m_f_position;
+        vec3 m_f_scale;
+        Quaternion m_f_rotation;
+    };
+
+}

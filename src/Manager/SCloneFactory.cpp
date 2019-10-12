@@ -10,6 +10,8 @@
 #include <map>
 #include <sstream>
 
+using namespace CSE;
+
 static void CloningObjects(SGameObject* object, std::map<SComponent*, SComponent*>& clone_comp,
                            std::map<SGameObject*, SGameObject*>& clone_obj, SGameObject* parent);
 

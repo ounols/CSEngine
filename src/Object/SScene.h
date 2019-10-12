@@ -7,27 +7,31 @@
 #include "../Manager/Base/Scene.h"
 #include "SGameObject.h"
 
-class SScene : public Scene {
-public:
-    SScene();
-    ~SScene();
+namespace CSE {
 
-    void Init() override;
+    class SScene : public Scene {
+    public:
+        SScene();
 
-    void Tick(float elapsedTime) override;
+        ~SScene();
 
-    void Destroy() override;
+        void Init() override;
 
-    SGameObject* GetRoot() {
-        return m_root;
-    }
+        void Tick(float elapsedTime) override;
 
-private:
-    void InitGameObject(SGameObject* obj);
-    void TickGameObject(SGameObject* obj, float elapsedTime);
+        void Destroy() override;
 
-private:
-    SGameObject* m_root = nullptr;
-};
+        SGameObject* GetRoot() {
+            return m_root;
+        }
 
+    private:
+        void InitGameObject(SGameObject* obj);
 
+        void TickGameObject(SGameObject* obj, float elapsedTime);
+
+    private:
+        SGameObject* m_root = nullptr;
+    };
+
+}

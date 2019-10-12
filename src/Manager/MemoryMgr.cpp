@@ -1,5 +1,6 @@
 #include<algorithm>
 #include "MemoryMgr.h"
+
 #ifdef WIN32
 #include <windows.h>
 #ifdef _DEBUG
@@ -11,107 +12,107 @@
 
 
 #elif __linux__
+
 #include <iostream>
 #include <typeinfo>
+
 #endif
 
-
+using namespace CSE;
 
 IMPLEMENT_SINGLETON(MemoryMgr);
 
-MemoryMgr::MemoryMgr()
-{
+MemoryMgr::MemoryMgr() {
 }
 
 
-MemoryMgr::~MemoryMgr()
-{
+MemoryMgr::~MemoryMgr() {
 }
 
 
 void MemoryMgr::ExterminateObjects(bool killAll) {
 
-	int index = 0;
+    int index = 0;
 
-	for (auto object : m_objects) {
-		if (object == nullptr) {
-			index++;
-			continue;
-		}
+    for (auto object : m_objects) {
+        if (object == nullptr) {
+            index++;
+            continue;
+        }
 
 #ifdef WIN32
-		OutputDebugStringA("Auto Releasing Object : ");
-		OutputDebugStringA(typeid(*object).name());
-		OutputDebugStringA("...\n");
+        OutputDebugStringA("Auto Releasing Object : ");
+        OutputDebugStringA(typeid(*object).name());
+        OutputDebugStringA("...\n");
 #elif __ANDROID__
-		LOGE("Auto Releasing Object : UNKOWN...");
+        LOGE("Auto Releasing Object : UNKOWN...");
 #elif __linux__
-		 std::cout << "Auto Releasing Object : " << typeid(*object).name() << "...\n";
+        std::cout << "Auto Releasing Object : " << typeid(*object).name() << "...\n";
 #endif
 
-		//���Ű� �Ұ����� ������ �������� Ȯ��
-		if(object->isUndestroyable && !killAll) {
+        //���Ű� �Ұ����� ������ �������� Ȯ��
+        if (object->isUndestroyable && !killAll) {
 #ifdef WIN32
-			OutputDebugStringA("denied.\n");
+            OutputDebugStringA("denied.\n");
 #elif __ANDROID__
-			LOGE("denied.\n");
+            LOGE("denied.\n");
 #endif
-			index++;
-			continue;
-		}
+            index++;
+            continue;
+        }
 
-		object->Exterminate();
-		SAFE_DELETE(object);
+        object->Exterminate();
+        SAFE_DELETE(object);
 #ifdef WIN32
-		OutputDebugStringA("deleted.\n");
+        OutputDebugStringA("deleted.\n");
 #elif __ANDROID__
-		LOGE("deleted.\n");
+        LOGE("deleted.\n");
 #elif __linux__
-		 std::cout << "deleted.\n";
+        std::cout << "deleted.\n";
 #endif
 
-		m_objects.at(index) = nullptr;
-		index++;
-	}
+        m_objects.at(index) = nullptr;
+        index++;
+    }
 
-	m_objects.erase(std::remove(m_objects.begin(), m_objects.end(), nullptr), m_objects.end());
+    m_objects.erase(std::remove(m_objects.begin(), m_objects.end(), nullptr), m_objects.end());
 }
 
 
 void MemoryMgr::ReleaseObject(SObject* object, bool isForce) {
-	if (object == nullptr) return;
+    if (object == nullptr) return;
 
-	//���Ű� �Ұ����� ������ �������� Ȯ��
-	if (object->isUndestroyable && !isForce) {
+    //���Ű� �Ұ����� ������ �������� Ȯ��
+    if (object->isUndestroyable && !isForce) {
 #ifdef WIN32
-		OutputDebugStringA("Releasing Object is denied.");
+        OutputDebugStringA("Releasing Object is denied.");
 #elif __ANDROID__
         LOGE("Releasing Object is denied.");
 #endif
-		return;
-	}
+        return;
+    }
 
-	//������ �����ϴ� ������Ʈ���� �Ǻ� �� SAFE_DELETE�� ȣ��
-	auto iObj = std::find(m_objects.begin(), m_objects.end(), object);
+    //������ �����ϴ� ������Ʈ���� �Ǻ� �� SAFE_DELETE�� ȣ��
+    auto iObj = std::find(m_objects.begin(), m_objects.end(), object);
 
-	if(iObj != m_objects.end()) {
+    if (iObj != m_objects.end()) {
 #ifdef WIN32
-		OutputDebugStringA("Releasing Object : ");
-		OutputDebugStringA(typeid(*object).name());
-		OutputDebugStringA("...\n");
+        OutputDebugStringA("Releasing Object : ");
+        OutputDebugStringA(typeid(*object).name());
+        OutputDebugStringA("...\n");
 #elif __ANDROID__
-		LOGE("Releasing Object : UNKOWN...");
+        LOGE("Releasing Object : UNKOWN...");
 #endif
 
-		m_objects.erase(iObj);
-		object->Exterminate();
-		SAFE_DELETE(object);
+        m_objects.erase(iObj);
+        object->Exterminate();
+        SAFE_DELETE(object);
 
 #ifdef WIN32
-		OutputDebugStringA("deleted\n");
+        OutputDebugStringA("deleted\n");
 #elif __ANDROID__
-		LOGE("deleted\n");
+        LOGE("deleted\n");
 #endif
 
-	}
+    }
 }

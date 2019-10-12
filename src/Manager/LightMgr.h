@@ -5,14 +5,18 @@
 #include "../Util/GLProgramHandle.h"
 #include "../Util/Render/SCubeTexture.h"
 
-class LightMgr : public SContainer<LightComponent*> {
-public:
-	DECLARE_SINGLETONE(LightMgr);
-	~LightMgr();
+namespace CSE {
 
-	void AttachLightToShader(const GLProgramHandle* handle) const;
+    class LightMgr : public SContainer<LightComponent*> {
+    public:
+    DECLARE_SINGLETONE(LightMgr);
 
-private:
-    SCubeTexture* m_currentSkybox;
-};
+        ~LightMgr();
 
+        void AttachLightToShader(const GLProgramHandle* handle) const;
+
+    private:
+        SCubeTexture* m_currentSkybox;
+    };
+
+}

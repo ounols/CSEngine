@@ -8,68 +8,71 @@
 #include "../../Matrix.h"
 #include "../XML/XML.h"
 
-struct JointTransformData {
-    std::string jointNameId;
-    mat4 jointLocalTransform;
+namespace CSE {
 
-    JointTransformData(const std::string& jointNameId, const mat4& jointLocalTransform) : jointNameId(jointNameId),
-                                                                                          jointLocalTransform(
-                                                                                                  jointLocalTransform) {}
-};
+    struct JointTransformData {
+        std::string jointNameId;
+        mat4 jointLocalTransform;
 
-struct KeyFrameData {
-    float time = 0;
-    std::vector<JointTransformData*> jointTransforms;
+        JointTransformData(const std::string& jointNameId, const mat4& jointLocalTransform) : jointNameId(jointNameId),
+                                                                                              jointLocalTransform(
+                                                                                                      jointLocalTransform) {}
+    };
 
-    KeyFrameData(float time) : time(time) {}
-};
+    struct KeyFrameData {
+        float time = 0;
+        std::vector<JointTransformData*> jointTransforms;
 
-struct AnimationData {
-    float lengthSeconds;
-    std::vector<KeyFrameData*> keyFrames;
+        KeyFrameData(float time) : time(time) {}
+    };
 
-    AnimationData(float lengthSeconds, std::vector<KeyFrameData*> keyFrames) : lengthSeconds(lengthSeconds),
-                                                                                      keyFrames(keyFrames) {}
-};
+    struct AnimationData {
+        float lengthSeconds;
+        std::vector<KeyFrameData*> keyFrames;
 
-class DAEAnimationLoader {
-public:
-    DAEAnimationLoader();
-    ~DAEAnimationLoader();
+        AnimationData(float lengthSeconds, std::vector<KeyFrameData*> keyFrames) : lengthSeconds(lengthSeconds),
+                                                                                   keyFrames(keyFrames) {}
+    };
 
-    void Load(const char* path, std::string name);
+    class DAEAnimationLoader {
+    public:
+        DAEAnimationLoader();
 
-    AnimationData* GetAnimation() const {
-        return m_animationData;
-    }
+        ~DAEAnimationLoader();
 
-private:
-    void LoadAnimation();
+        void Load(const char* path, std::string name);
 
-    std::string findRootJointName();
+        AnimationData* GetAnimation() const {
+            return m_animationData;
+        }
 
-    std::vector<float> getKeyTimes();
+    private:
+        void LoadAnimation();
 
-    std::vector<KeyFrameData*> initKeyFrames(std::vector<float> times);
+        std::string findRootJointName();
 
-    void loadJointTransforms(std::vector<KeyFrameData*> frames, XNode jointData, std::string rootNodeId);
+        std::vector<float> getKeyTimes();
 
-    std::string getJointName(XNode jointData);
+        std::vector<KeyFrameData*> initKeyFrames(std::vector<float> times);
 
-    std::string getDataId(XNode jointData);
+        void loadJointTransforms(std::vector<KeyFrameData*> frames, XNode jointData, std::string rootNodeId);
 
-    void
-    processTransforms(std::string jointName, std::vector<float> rawData, std::vector<KeyFrameData*> keyFrames, bool root);
+        std::string getJointName(XNode jointData);
 
+        std::string getDataId(XNode jointData);
 
-
-private:
-    std::string m_name;
-    const XNode* m_root;
-    XNode m_joint;
-    XNode m_animation;
-
-    AnimationData* m_animationData = nullptr;
-};
+        void
+        processTransforms(std::string jointName, std::vector<float> rawData, std::vector<KeyFrameData*> keyFrames,
+                          bool root);
 
 
+    private:
+        std::string m_name;
+        const XNode* m_root;
+        XNode m_joint;
+        XNode m_animation;
+
+        AnimationData* m_animationData = nullptr;
+    };
+
+}

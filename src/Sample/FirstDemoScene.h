@@ -3,7 +3,7 @@
 #include "../Object/SGameObject.h"
 #include "../Util/Render/MeshSurface.h"
 
-class FirstDemoScene : public Scene {
+class FirstDemoScene : public CSE::Scene {
 public:
 	FirstDemoScene();
 	~FirstDemoScene();
@@ -17,14 +17,14 @@ private:
 
 private:
 	//===============
-	SGameObject* c;
-	SGameObject* c2;	//new and delete
-	SGameObject* c3;	//switching render
-	SGameObject* d;
+	CSE::SGameObject* c;
+	CSE::SGameObject* c2;	//new and delete
+	CSE::SGameObject* c3;	//switching render
+	CSE::SGameObject* d;
 	//===============
 	float startTIme = 0;
-	MeshSurface* cube;
-	MeshSurface* cubemap;
+	CSE::MeshSurface* cube;
+	CSE::MeshSurface* cubemap;
 
 	bool isUnvisible = false;
     unsigned int cubeVAO = 0;
