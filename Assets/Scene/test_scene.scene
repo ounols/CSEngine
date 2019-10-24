@@ -17,7 +17,7 @@
 <value name="m_eye">__ROOT_OF_SCENE__AHA___/camera?TransformComponent</value>
 <value name="m_target">0 0 0</value>
 <value name="m_up">0 0 0</value>
-<value name="m_targetObject">__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/test/light</value>
+<value name="m_targetObject">__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper/light</value>
 <value name="m_cameraMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
 <value name="m_projectionMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
 <value name="m_type">PERSPECTIVE</value>
@@ -26,14 +26,14 @@
 <value name="m_distance">0.1 100</value>
 </component>
 <parent>__ROOT_OF_SCENE__AHA___</parent>
-</gameobject><gameobject name="light" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/test/light">
+</gameobject><gameobject name="light" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper/light">
 <component type="TransformComponent">
 <value name="m_position">2 2 -2</value>
 <value name="m_scale">2 2 2</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/test</parent>
-</gameobject><gameobject name="test" id="__ROOT_OF_SCENE__AHA___/test">
+<parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper</parent>
+</gameobject><gameobject name="" id="__ROOT_OF_SCENE__AHA___">
 <component type="TransformComponent">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
@@ -47,15 +47,15 @@
 <value name="m_rotation">0 0 0 1</value>
 </component>
 <parent>__ROOT_OF_SCENE__AHA___</parent>
-</gameobject><prefab name="test" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/test" fileid="File:stormtrooper.dae">
-<changegameobject name="test" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/test" fileid="File:stormtrooper.dae">
+</gameobject><prefab name="stormtrooper" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper" fileid="File:stormtrooper.dae">
+<changegameobject name="stormtrooper" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper" fileid="File:stormtrooper.dae">
 <component type="TransformComponent">
 <value name="m_position">0 -0.4 0</value>
 <value name="m_scale">0.2 0.2 0.2</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
 <parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh</parent>
-</changegameobject><changegameobject name="stormtrooper_animation" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/test/stormtrooper_animation" fileid="File:stormtrooper.dae*stormtrooper_animation">
+</changegameobject><changegameobject name="stormtrooper_animation" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper/stormtrooper_animation" fileid="File:stormtrooper.dae*stormtrooper_animation">
 <component type="TransformComponent">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
@@ -64,18 +64,11 @@
 <component type="AnimatorComponent">
 <value name="m_animationTime">0</value>
 <value name="m_startTime">0</value>
-<value name="m_currentAnimation">File:stormtrooper.dae?animation</value>
-<value name="m_entity">__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/test/mesh?DrawableSkinnedMeshComponent</value>
+<value name="m_currentAnimation"></value>
+<value name="m_entity">__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper/mesh?DrawableSkinnedMeshComponent</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/test</parent>
-</changegameobject></prefab><gameobject name="light" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/test/light">
-<component type="TransformComponent">
-<value name="m_position">2 2 -2</value>
-<value name="m_scale">2 2 2</value>
-<value name="m_rotation">0 0 0 1</value>
-</component>
-<parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/test</parent>
-</gameobject><gameobject name="" id="__ROOT_OF_SCENE__AHA___">
+<parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper</parent>
+</changegameobject></prefab><gameobject name="" id="__ROOT_OF_SCENE__AHA___">
 <component type="TransformComponent">
 <value name="m_position">0 0.7 0</value>
 <value name="m_scale">1 1 1</value>

@@ -126,7 +126,7 @@ void CustomComponent::RegisterScript() {
 void CustomComponent::SetClassName(std::string name) {
     m_className = name;
     RegisterScript();
-    Init();
+    //Init();
 }
 
 

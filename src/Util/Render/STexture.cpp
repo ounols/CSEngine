@@ -69,12 +69,12 @@ bool STexture::LoadEmpty() {
 
 bool STexture::ReloadFile(const char* path) {
     Release();
-    LoadFile(path);
+    return LoadFile(path);
 }
 
 bool STexture::Reload(unsigned char* data) {
     Release();
-    Load(data);
+    return Load(data);
 }
 
 void STexture::Release() {

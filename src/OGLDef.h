@@ -2,7 +2,6 @@
 #ifdef WIN32
 //windows include
 
-#include <Windows.h>
 #include <gl/glew.h>
 #include <iostream>
 

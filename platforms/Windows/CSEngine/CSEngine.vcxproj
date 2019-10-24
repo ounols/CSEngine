@@ -22,32 +22,32 @@
     <ProjectGuid>{56BD56F4-9FB9-4F84-8A65-DF988D903B66}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CSEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -71,10 +71,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>../../../External/glew/include;../../../External/Squirrel/include;../../../External/glfw/include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>../../../External/glew/include;../../../External/Squirrel/include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -87,7 +88,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile />
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\External\Squirrel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -100,7 +101,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -146,11 +147,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="..\..\..\src\Component\Animation\AnimatorComponent.h" />
+    <ClInclude Include="..\..\..\src\Component\Animation\JointComponent.h" />
     <ClInclude Include="..\..\..\src\Component\CameraComponent.h" />
     <ClInclude Include="..\..\..\src\Component\CustomComponent.h" />
+    <ClInclude Include="..\..\..\src\Component\DrawableSkinnedMeshComponent.h" />
     <ClInclude Include="..\..\..\src\Component\DrawableStaticMeshComponent.h" />
     <ClInclude Include="..\..\..\src\Component\LightComponent.h" />
     <ClInclude Include="..\..\..\src\Component\MaterialComponent.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="..\..\..\src\Component\SISComponent.h" />
     <ClInclude Include="..\..\..\src\Component\TransformComponent.h" />
     <ClInclude Include="..\..\..\src\MacroDef.h" />
+    <ClInclude Include="..\..\..\src\Manager\AssetMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\Base\Scene.h" />
     <ClInclude Include="..\..\..\src\Manager\Base\SContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\CameraMgr.h" />
@@ -173,37 +175,66 @@
     <ClInclude Include="..\..\..\src\Manager\RenderMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\ResMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\SceneMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\SCloneFactory.h" />
     <ClInclude Include="..\..\..\src\Manager\ScriptMgr.h" />
-    <ClInclude Include="..\..\..\src\Manager\ShaderProgramContainer.h" />
-    <ClInclude Include="..\..\..\src\Manager\SurfaceMeshContainer.h" />
     <ClInclude Include="..\..\..\src\Object\SGameObject.h" />
+    <ClInclude Include="..\..\..\src\Object\SPrefab.h" />
+    <ClInclude Include="..\..\..\src\Object\SResource.h" />
+    <ClInclude Include="..\..\..\src\Object\SScene.h" />
     <ClInclude Include="..\..\..\src\OGLDef.h" />
     <ClInclude Include="..\..\..\src\Sample\FirstDemoScene.h" />
     <ClInclude Include="..\..\..\src\SObject.h" />
+    <ClInclude Include="..\..\..\src\Util\Animation\Animation.h" />
+    <ClInclude Include="..\..\..\src\Util\Animation\AnimationUtill.h" />
+    <ClInclude Include="..\..\..\src\Util\Animation\Joint.h" />
+    <ClInclude Include="..\..\..\src\Util\Animation\Skeleton.h" />
     <ClInclude Include="..\..\..\src\Util\AssetsDef.h" />
+    <ClInclude Include="..\..\..\src\Util\CaptureDef.h" />
+    <ClInclude Include="..\..\..\src\Util\ComponentDef.h" />
     <ClInclude Include="..\..\..\src\Util\GLProgramHandle.h" />
     <ClInclude Include="..\..\..\src\Util\Interface\TransformInterface.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\DAE\DAEAnimationLoader.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\DAE\DAELoader.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\DAE\DAEUtil\DAEConvertSGameObject.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\DAE\DAEUtil\SkinningData.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\DAE\DAEUtil\Vertex.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\DAE\DAEUtil\VertexSkinData.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\SCENE\SSceneLoader.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\STB\stb_image.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\STB\stb_image_write.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\XML\XML.h" />
     <ClInclude Include="..\..\..\src\Util\Matrix.h" />
     <ClInclude Include="..\..\..\src\Util\MatrixDef.h" />
+    <ClInclude Include="..\..\..\src\Util\MoreComponentFunc.h" />
+    <ClInclude Include="..\..\..\src\Util\MoreMath.h" />
     <ClInclude Include="..\..\..\src\Util\MoreString.h" />
+    <ClInclude Include="..\..\..\src\Util\Quaternion.h" />
     <ClInclude Include="..\..\..\src\Util\Render\LightHelper.h" />
-    <ClInclude Include="..\..\..\src\Util\Render\ObjSurface.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\MeshSurface.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\PBRShaderLoader.h" />
     <ClInclude Include="..\..\..\src\Util\Render\RenderInterfaces.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\SCubeTexture.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\ShaderUtil.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\SkyboxUtil.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\SMaterial.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\STexture.h" />
     <ClInclude Include="..\..\..\src\Util\ScriptDef.h" />
+    <ClInclude Include="..\..\..\src\Util\VariableBinder.h" />
     <ClInclude Include="..\..\..\src\Util\Vector.h" />
     <ClInclude Include="CSEngine.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\Component\Animation\AnimatorComponent.cpp" />
+    <ClCompile Include="..\..\..\src\Component\Animation\JointComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\CameraComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\CustomComponent.cpp" />
+    <ClCompile Include="..\..\..\src\Component\DrawableSkinnedMeshComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\DrawableStaticMeshComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\LightComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\MaterialComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\RenderComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\TransformComponent.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\AssetMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Base\Scene.cpp" />
     <ClCompile Include="..\..\..\src\Manager\CameraMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectContainer.cpp" />
@@ -217,27 +248,35 @@
     <ClCompile Include="..\..\..\src\Manager\RenderMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\ResMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\SceneMgr.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\SCloneFactory.cpp" />
     <ClCompile Include="..\..\..\src\Manager\ScriptMgr.cpp" />
-    <ClCompile Include="..\..\..\src\Manager\ShaderProgramContainer.cpp" />
-    <ClCompile Include="..\..\..\src\Manager\SurfaceMeshContainer.cpp" />
     <ClCompile Include="..\..\..\src\Object\SGameObject.cpp" />
+    <ClCompile Include="..\..\..\src\Object\SPrefab.cpp" />
+    <ClCompile Include="..\..\..\src\Object\SResource.cpp" />
+    <ClCompile Include="..\..\..\src\Object\SScene.cpp" />
     <ClCompile Include="..\..\..\src\Sample\FirstDemoScene.cpp" />
     <ClCompile Include="..\..\..\src\SObject.cpp" />
-    <ClCompile Include="..\..\..\src\Util\Render\ObjSurface.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Animation\Animation.cpp" />
+    <ClCompile Include="..\..\..\src\Util\GLProgramHandle.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Loader\DAE\DAEAnimationLoader.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Loader\DAE\DAELoader.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Loader\DAE\DAEUtil\DAEConvertSGameObject.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Loader\SCENE\SSceneLoader.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Loader\XML\XML.cpp" />
+    <ClCompile Include="..\..\..\src\Util\MoreComponentFunc.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Render\MeshSurface.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Render\PBRShaderLoader.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Render\SCubeTexture.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Render\ShaderUtil.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Render\SMaterial.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Render\STexture.cpp" />
     <ClCompile Include="CSEngine.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CSEngine.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="CSEngine.ico" />
-    <Image Include="small.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

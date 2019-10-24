@@ -17,10 +17,10 @@
 #include "../../../src/Macrodef.h"
 
 
-#pragma comment(lib, "glew32.lib")
+#pragma comment(lib, "../../../External/glew/lib/Release/Win32/glew32.lib")
 #pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "glut32.lib")
-#pragma comment(lib, "glu32.lib")
+//#pragma comment(lib, "glut32.lib")
+//#pragma comment(lib, "glu32.lib")
 #pragma comment(lib, "winmm.lib")
 
 #ifdef _DEBUG
@@ -41,12 +41,13 @@ WCHAR szTitle[MAX_LOADSTRING]; // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING]; // 기본 창 클래스 이름입니다.
 
 									 // Window dimensions
-const GLuint WIDTH = 480, HEIGHT = 720;
+const GLuint WIDTH = 1280, HEIGHT = 720;
 
 HDC hdc;
 HGLRC hrc;
 
 bool b_isQuit = false;
+using namespace CSE;
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
 ATOM MyRegisterClass(HINSTANCE hInstance);
@@ -115,7 +116,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 
 	}
-
+	mainProc->Exterminate();
 	SAFE_DELETE(mainProc);
 
 	return static_cast<int>(msg.wParam);

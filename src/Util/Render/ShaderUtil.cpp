@@ -5,6 +5,10 @@
 #include "ShaderUtil.h"
 #include "../MoreString.h"
 
+#ifdef WIN32
+#include <Windows.h>
+#endif
+
 using namespace CSE;
 
 ShaderUtil::ShaderUtil() {

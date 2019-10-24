@@ -89,13 +89,22 @@ void AssetMgr::ReadDirectory(std::string path) {
 
 #endif //================================================
 #ifdef WIN32 //==========================================
-    std::string pattern(name);
-    pattern.append("\\*");
     WIN32_FIND_DATA data;
-    HANDLE hFind;
-    if ((hFind = FindFirstFile(pattern.c_str(), &data)) != INVALID_HANDLE_VALUE) {
+    HANDLE hFind = FindFirstFile(std::string(path + '*').c_str(), &data);
+    if (hFind != INVALID_HANDLE_VALUE) {
         do {
-            v.push_back(data.cFileName);
+			std::string name = data.cFileName;
+
+			if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+				if (name == "." || name == "..") continue;
+
+				ReadDirectory(path + name + '/');
+				continue;
+			}
+
+			AssetReference* asset = CreateAsset(path + name, name);
+			std::cout << "[pkg] " << asset->name << " (" << asset->extension << ")\n";
+
         } while (FindNextFile(hFind, &data) != 0);
         FindClose(hFind);
     }
@@ -125,7 +134,8 @@ AssetMgr::AssetReference* AssetMgr::CreateAsset(std::string path, std::string na
 
 void AssetMgr::SetType() {
 
-    for (auto asset : m_assets) {
+	for (int i = 0; i < m_assets.size(); i++) {
+		auto asset = m_assets[i];
         std::string type_str = asset->extension;
         make_lower(type_str);
 

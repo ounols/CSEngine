@@ -38,7 +38,7 @@ void FirstDemoScene::Init() {
 
     PBRShaderLoader* asdfasdf = new PBRShaderLoader();
 
-    asdfasdf->LoadShader();
+    //asdfasdf->LoadShader();
     SAFE_DELETE(asdfasdf);
 
 //	daeLoader->GeneratePrefab();

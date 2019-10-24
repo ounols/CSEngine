@@ -4,7 +4,7 @@
 #ifdef WIN32
 #include <windows.h>
 #ifdef _DEBUG
-#include <typeinfo.h>
+#include <typeinfo>
 #endif
 #elif __ANDROID__
 #define LOGE(...) __android_log_print(ANDROID_LOG_DEBUG,"SCEngineMomory",__VA_ARGS__)
