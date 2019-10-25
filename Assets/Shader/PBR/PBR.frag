@@ -81,9 +81,9 @@ float ClampedPow(float X, float Y) {
 void main(void) {
 
 	vec3 albedo     = u_albedo.r < 0.0 ? pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2)) : u_albedo;
-	float metallic  = u_metallic < 0.0 ? texture2D(u_sampler_metallic, v_textureCoordOut).r : u_metallic;
-	float roughness = u_roughness < 0.0 ? texture2D(u_sampler_roughness, v_textureCoordOut).r : u_roughness;
-	float ao        = u_ao < 0.0 ? texture2D(u_sampler_ao, v_textureCoordOut).r : u_ao;
+	float metallic  = u_metallic < 0.0 ? texture(u_sampler_metallic, v_textureCoordOut).r : u_metallic;
+	float roughness = u_roughness < 0.0 ? texture(u_sampler_roughness, v_textureCoordOut).r : u_roughness;
+	float ao        = u_ao < 0.0 ? texture(u_sampler_ao, v_textureCoordOut).r : u_ao;
 
 	vec3 N = normalize(v_eyespaceNormal);
 	vec3 V0 = normalize(N - v_worldPosition);

@@ -84,6 +84,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	//init GLEW
 	glewInit();
+
+	char* GL_version = (char*)glGetString(GL_VERSION);
+	char* GL_vendor = (char*)glGetString(GL_VENDOR);
+	char* GL_renderer = (char*)glGetString(GL_RENDERER);
+
+	std::string buf;
+
+	buf += std::string("Version : ") + (char*)glGetString(GL_VERSION) + '\n';
+	buf += std::string("Vendor : ") + (char*)glGetString(GL_VENDOR) + '\n';
+	buf += std::string("Renderer : ") + (char*)glGetString(GL_RENDERER) + '\n';
+
+	OutputDebugStringA(buf.c_str());
+
 	//GL20Lib::setupGLGraphics(WIDTH, HEIGHT);
 	mainProc->Init(WIDTH, HEIGHT);
 	mainProc->ResizeWindow(WIDTH, HEIGHT);
