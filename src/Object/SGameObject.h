@@ -66,12 +66,12 @@ namespace CSE {
         template <class T>
         T* GetComponentByID(std::string id) const;
 
+        SComponent* GetSComponentByID(std::string id) const;
+
         std::vector<SComponent*> GetComponents() const;
 
         HSQOBJECT GetCustomComponent(const char* className);
 
-        //template <class T>
-        //bool DeleteComponent();
         bool DeleteComponent(SComponent* component);
 
         template <class T>
@@ -144,43 +144,9 @@ namespace CSE {
     template <class T>
     T* SGameObject::GetComponentByID(std::string id) const {
 
-        auto object = FindByID(id);
-        if (object == nullptr) return nullptr;
-
-        auto components = object->GetComponents();
-        auto split_str = split(id, '?');
-
-        for (auto component : components) {
-            if (split_str[1] == component->GetClassType()) {
-                return static_cast<T*>(component);
-            }
-        }
-
-        return nullptr;
+        return static_cast<T*>(GetSComponentByID(id));
     }
 
-//로직 및 문법 상 문제가 제기됨
-//template <class T>
-//bool SGameObject::DeleteComponent() {
-//	for (auto component : m_components) {
-//		if (component == nullptr) continue;
-//		
-//		if (dynamic_cast<T*>(component)) {
-//			
-//			auto iCompObj = std::find(m_components.begin(), m_components.end(), component);
-//
-//			if(iCompObj != m_components.end()) {
-//				m_components.erase(iCompObj);
-//				//MemoryMgr::getInstance()->ReleaseObject((SObject*)component);
-//			}
-//			
-//
-//			return true;
-//		}
-//	}
-//
-//	return false;
-//}
 
 
     template <class T>

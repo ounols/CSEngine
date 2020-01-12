@@ -6,7 +6,12 @@
 #define CSENGINE_APP_COMPONENTDEF_H
 
 #define Transform static_cast<TransformInterface*>(gameObject->GetTransform())
-#define COMPONENT_CONSTRUCTOR(CLASSNAME) CLASSNAME::CLASSNAME() : SComponent(#CLASSNAME)
+#define COMPONENT_DECLARE(CLASSNAME)    \
+CLASSNAME();                            \
+auto GetComponent() override
+#define COMPONENT_CONSTRUCTOR(CLASSNAME)    \
+CLASSNAME::CLASSNAME() : SComponent(#CLASSNAME)
+
 #define FIND_OBJ_REFERENCE(obj, src) \
 {                           \
     auto targetObject = lists_obj.find(src->obj);    \

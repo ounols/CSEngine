@@ -14,14 +14,10 @@ namespace CSE {
         void Init();
 
 
-        static void RegisterScriptInAsset(std::string path);
-
         static void RegisterScript(std::string script);
 
     private:
         void DefineClasses(HSQUIRRELVM vm = Sqrat::DefaultVM::Get());
-
-        void DefineScenes(HSQUIRRELVM vm = Sqrat::DefaultVM::Get());
 
         void ReleaseSqratObject();
 

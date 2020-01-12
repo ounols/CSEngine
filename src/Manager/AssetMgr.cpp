@@ -54,11 +54,12 @@ void AssetMgr::LoadAssets(bool isPacked) {
 }
 
 AssetMgr::AssetReference* AssetMgr::GetAsset(std::string name) const {
+    make_lower(name);
     for (auto asset : m_assets) {
-        if (asset->name == name) return asset;
-        if (asset->id == name) return asset;
-        if (asset->path == name) return asset;
-        if (asset->name_full == name) return asset;
+        if (make_lower_copy(asset->name) == name) return asset;
+        if (make_lower_copy(asset->id) == name) return asset;
+        if (make_lower_copy(asset->path) == name) return asset;
+        if (make_lower_copy(asset->name_full) == name) return asset;
     }
 
     return nullptr;
@@ -222,6 +223,18 @@ AssetMgr::AssetReference* AssetMgr::AppendSubName(AssetMgr::AssetReference* asse
     asset->id += sub;
     asset->name += sub;
     return asset;
+}
+
+std::vector<AssetMgr::AssetReference*> AssetMgr::GetAssets(AssetMgr::TYPE type) const {
+    std::vector<AssetReference*> result;
+
+    for(auto asset : m_assets) {
+        if(asset->type == type) {
+            result.push_back(asset);
+        }
+    }
+
+    return result;
 }
 
 

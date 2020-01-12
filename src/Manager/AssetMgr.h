@@ -35,6 +35,8 @@ namespace CSE {
 
         AssetReference* GetAsset(std::string name) const;
 
+        std::vector<AssetReference*> GetAssets(TYPE type) const;
+
 #ifdef __ANDROID__
         void SetAssetManager(AAssetManager* obj);
         AAssetManager* GetAssetManager();

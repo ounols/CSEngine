@@ -4,6 +4,7 @@
 #pragma once
 
 #include "../Component/SComponent.h"
+#include "sqext.h"
 
 namespace CSE {
 
@@ -15,5 +16,8 @@ namespace CSE {
 
     public:
         static SComponent* CreateComponent(SGameObject* obj, std::string component_type);
+
+        static void BindComponentToSQInstance(SComponent* component, std::string name,
+                                              sqext::SQIClassInstance* instance);
     };
 }

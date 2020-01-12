@@ -23,5 +23,7 @@ namespace CSE {
 
         SGameObject* FindByID(std::string id) const;
 
+        SComponent* FindComponentByID(std::string id) const;
+
     };
 }

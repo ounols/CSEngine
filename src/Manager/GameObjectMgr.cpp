@@ -68,3 +68,19 @@ SGameObject* GameObjectMgr::FindByID(std::string id) const {
 
     return nullptr;
 }
+
+SComponent* GameObjectMgr::FindComponentByID(std::string id) const {
+    auto object = FindByID(id);
+    if (object == nullptr) return nullptr;
+
+    auto components = object->GetComponents();
+    auto split_str = split(id, '?');
+
+    for (auto component : components) {
+        if (split_str[1] == component->GetClassType()) {
+            return component;
+        }
+    }
+
+    return nullptr;
+}

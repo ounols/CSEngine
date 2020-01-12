@@ -96,7 +96,7 @@ void FirstDemoScene::Init() {
     c->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
     c->GetComponent<RenderComponent>()->SetIsEnable(false);
     c->CreateComponent<CustomComponent>();
-    c->GetComponent<CustomComponent>()->SetClassName("TestScript");
+    c->GetComponent<CustomComponent>()->SetClassName("testScript.script");
 
     SGameObject* testing = new SGameObject("root of mesh");
     root->AddChild(testing);
@@ -104,7 +104,7 @@ void FirstDemoScene::Init() {
     SGameObject* ab = stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
     ab->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
     ab->CreateComponent<CustomComponent>();
-    ab->GetComponent<CustomComponent>()->SetClassName("TestScript");
+    ab->GetComponent<CustomComponent>()->SetClassName("testScript.script");
 
     c2 = new SGameObject();
     c2->SetParent(root);
@@ -131,7 +131,7 @@ void FirstDemoScene::Init() {
     c3->GetTransform()->m_position.y = -0.7f;
 
     c3->CreateComponent<CustomComponent>();
-    c3->GetComponent<CustomComponent>()->SetClassName("TestScript2");
+    c3->GetComponent<CustomComponent>()->SetClassName("testScript2.script");
 
 
     c3->CreateComponent<RenderComponent>();
@@ -158,7 +158,12 @@ void FirstDemoScene::Init() {
     direction->GetComponent<LightComponent>()->SetLightType(LightComponent::DIRECTIONAL);
     direction->GetComponent<LightComponent>()->SetDirection(vec4{ 0.0f, 1.0f, 0, 0 });
     direction->CreateComponent<CustomComponent>();
-    direction->GetComponent<CustomComponent>()->SetClassName("directionalLight");
+    direction->GetComponent<CustomComponent>()->SetClassName("directionalLight.script");
+//
+//
+//    SComponent* test_comp = direction->GetComponent<CustomComponent>();
+//
+//    auto auto_comp = test_comp->GetComponent();
 
     d->SetName("light");
     d->CreateComponent<LightComponent>();

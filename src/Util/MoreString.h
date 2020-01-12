@@ -67,6 +67,12 @@ namespace CSE {
         std::transform(str.begin(), str.end(), str.begin(), tolower);
     }
 
+    static std::string make_lower_copy(std::string _str) {
+        std::string str(_str);
+        std::transform(str.begin(), str.end(), str.begin(), tolower);
+        return str;
+    }
+
     template <typename T>
     std::string appandAll(std::stringstream& sstream, T param) {
         sstream << param;

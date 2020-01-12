@@ -17,7 +17,7 @@ link_directories(/usr/local/lib)
 
 
 #find_package(OpenGL REQUIRED)
-#include_directories(${OPENGL_INCLUDE_DIR})
+include_directories(${OPENGL_INCLUDE_DIR})
 
 #find_package(PkgConfig REQUIRED)
 #pkg_search_module(GLFW REQUIRED glfw3)
