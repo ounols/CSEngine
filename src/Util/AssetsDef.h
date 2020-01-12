@@ -32,16 +32,23 @@ namespace CSE {
 
 #if defined (WIN32) || defined(__linux__)
 
-		std::ifstream fin(path);
+		std::ifstream fin(path, std::ios::binary);
 
 		if (!fin.is_open()) return "";
 
 
-		while(!fin.eof()) {
-			std::string line;
-			std::getline(fin, line);
-			buf += line + '\n';
-		}
+		//while(!fin.eof()) {
+		//	std::string line;
+		//	std::getline(fin, line);
+		//	buf += line + '\n';
+		//}
+
+		fin.seekg(0, std::ios::end);
+		size_t size = fin.tellg();
+		fin.seekg(0);
+		buf = std::string(size, ' ');
+		fin.read(&buf[0], size);
+		fin.close();
 
 #endif
 #ifdef __ANDROID__

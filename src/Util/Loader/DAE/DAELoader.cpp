@@ -45,7 +45,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
 
     if (type == LOAD_TYPE::MESH || type == LOAD_TYPE::ALL || type == LOAD_TYPE::AUTO) {
         try {
-            //스킨데이터를 불러옴
+            //
             LoadSkin(collada.getChild("library_controllers"));
             LoadSkeleton(collada.getChild("library_visual_scenes"));
             m_isSkinning = true;
@@ -62,7 +62,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
 
 
         try {
-            //지오메트리를 불러옴
+            //
             LoadGeometry(collada.getChild("library_geometries"));
         } catch (int error) {
             std::cout << "passing geometry...\n";
@@ -70,7 +70,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
 
     }
 
-    //애니메이션 데이터를 불러옴
+    //
     if (type == ANIMATION || type == ALL || type == AUTO) {
 
         try {
@@ -119,7 +119,7 @@ void DAELoader::LoadSkin(XNode root_s) {
     std::vector<int> effectorJointCounts = getEffectiveJointsCounts(weightsDataNode);
     std::vector<VertexSkinData*> vertexWeights = getSkinData(weightsDataNode, effectorJointCounts, weights);
 
-    //쓰레기값 제거
+    //
     SAFE_DELETE(m_skinningData);
     m_skinningData = new SkinningData();
     m_skinningData->set_jointOrder(jointsList);

@@ -44,10 +44,6 @@ void RenderMgr::Render(float elapsedTime) const {
         glUseProgram(handler.Program);
 
 
-        //Attach Light
-        LightMgr::getInstance()->AttachLightToShader(&handler);
-
-
         for (const auto& render : renderComp) {
             if (render == nullptr) continue;
             if (!render->isRenderActive) continue;
@@ -59,6 +55,9 @@ void RenderMgr::Render(float elapsedTime) const {
             glEnableVertexAttribArray(handler.Attributes.Weight);
             glEnableVertexAttribArray(handler.Attributes.JointId);
 
+			//Attach Light
+			LightMgr::getInstance()->AttachLightToShader(&handler);
+        	
             render->SetMatrix(camera, cameraPosition, projection);
             render->Render(elapsedTime);
 
@@ -69,7 +68,6 @@ void RenderMgr::Render(float elapsedTime) const {
             glDisableVertexAttribArray(handler.Attributes.JointId);
 
         }
-
 
     }
 

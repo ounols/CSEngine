@@ -1,6 +1,6 @@
-#version 300 es
+#version 330 core
 //#version 100
-#define MAX_LIGHTS 16
+#define MAX_LIGHTS 12
 
 precision highp float;
 precision highp int;

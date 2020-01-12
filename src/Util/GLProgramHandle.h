@@ -8,7 +8,7 @@
 #include <map>
 
 #define HANDLE_NULL -1
-#define MAX_LIGHTS 16
+#define MAX_LIGHTS 12
 #define MAX_JOINTS 60
 
 namespace CSE {

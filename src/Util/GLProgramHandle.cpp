@@ -106,16 +106,16 @@ void GLProgramHandle::SetAttributesList(std::map<std::string, std::string>& vert
 
         std::string name_str = name;
         std::string imp_name = getImplementName(vert, name_str);
-        auto& target = vert;
+		bool isTargetChanged = false;
 
         if (imp_name.empty()) {
             imp_name = getImplementName(frag, name_str);
             if (imp_name.empty()) continue;
 
-            target = frag;
+			isTargetChanged = true;
         }
 
-        int id = glGetAttribLocation(Program, target.find(imp_name)->second.c_str());
+        int id = glGetAttribLocation(Program, (isTargetChanged ? frag : vert).find(imp_name)->second.c_str());
 
         Element* element = new Element;
         element->type = type;
@@ -141,16 +141,16 @@ GLProgramHandle::SetUniformsList(std::map<std::string, std::string>& vert, std::
         std::string name_str = name;
 
         std::string imp_name = getImplementName(vert, name_str);
-        auto& target = vert;
+		bool isTargetChanged = false;
 
         if (imp_name.empty()) {
             imp_name = getImplementName(frag, name_str);
             if (imp_name.empty()) continue;
 
-            target = frag;
+			isTargetChanged = true;
         }
 
-        int id = glGetUniformLocation(Program, target.find(imp_name)->second.c_str());
+        int id = glGetUniformLocation(Program, (isTargetChanged ? frag : vert).find(imp_name)->second.c_str());
 
         Element* element = new Element;
         element->type = type;
@@ -185,7 +185,7 @@ std::string GLProgramHandle::getImplementName(std::map<std::string, std::string>
 }
 
 void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
-    //컴바인 쉐이더 로드
+    //
     std::string shader_combine = CSE::OpenAssetsTxtFile(asset->path);
 
     auto shader_combine_vector = split(shader_combine, ',');
@@ -194,7 +194,7 @@ void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
     m_vertShaderName = trim(shader_combine_vector.at(0));
     m_fragShaderName = trim(shader_combine_vector.at(1));
 
-    //데이터 바이딩
+    //
     auto vert_asset = ResMgr::getInstance()->GetAssetReference(m_vertShaderName);
     auto frag_asset = ResMgr::getInstance()->GetAssetReference(m_fragShaderName);
 

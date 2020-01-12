@@ -41,7 +41,7 @@ WCHAR szTitle[MAX_LOADSTRING]; // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING]; // 기본 창 클래스 이름입니다.
 
 									 // Window dimensions
-const GLuint WIDTH = 1280, HEIGHT = 720;
+const GLuint WIDTH = 1920, HEIGHT = 1080;
 
 HDC hdc;
 HGLRC hrc;

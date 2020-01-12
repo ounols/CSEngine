@@ -82,6 +82,7 @@ void OGLMgr::setupEGLGraphics(GLuint width, GLuint height) {
     glFrontFace(GL_CCW);
     glDepthFunc(GL_LEQUAL);
     glDepthMask(true);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
     //glDepthRangef(0.0,1.0);
 }
 

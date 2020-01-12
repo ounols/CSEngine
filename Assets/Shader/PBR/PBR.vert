@@ -1,10 +1,7 @@
-#version 300 es
+#version 330 core
 
-//#version 100
-precision highp float;
-precision highp int;
 
-#define MAX_LIGHTS 16
+#define MAX_LIGHTS 12
 #define MAX_WEIGHTS 3
 #define MAX_JOINTS 60
 
