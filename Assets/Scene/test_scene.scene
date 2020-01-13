@@ -39,6 +39,12 @@
 <value name="m_scale">1 1 1</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
+<component type="CustomComponent">
+<value name="m_classID">File:Script/testScript.nut</value>
+<value name="__variable__">materialComp null null</value>
+<value name="__variable__">lightComp null null</value>
+<value name="__variable__">ambient null null</value>
+</component>
 <parent>__ROOT_OF_SCENE__AHA___</parent>
 </gameobject><gameobject name="root$nbsp:of$nbsp:mesh" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh">
 <component type="TransformComponent">
@@ -54,6 +60,12 @@
 <value name="m_scale">0.2 0.2 0.2</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
+<component type="CustomComponent">
+<value name="m_classID">File:Script/testScript.nut</value>
+<value name="__variable__">materialComp null null</value>
+<value name="__variable__">lightComp null null</value>
+<value name="__variable__">ambient null null</value>
+</component>
 <parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh</parent>
 </changegameobject><changegameobject name="stormtrooper_animation" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper/stormtrooper_animation" fileid="File:stormtrooper.dae*stormtrooper_animation">
 <component type="TransformComponent">
@@ -64,7 +76,7 @@
 <component type="AnimatorComponent">
 <value name="m_animationTime">0</value>
 <value name="m_startTime">0</value>
-<value name="m_currentAnimation"></value>
+<value name="m_currentAnimation">File:stormtrooper.dae?animation</value>
 <value name="m_entity">__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper/mesh?DrawableSkinnedMeshComponent</value>
 </component>
 <parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper</parent>
@@ -81,6 +93,14 @@
 <value name="m_scale">1 1 1</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
+<component type="CustomComponent">
+<value name="m_classID">File:Script/testScript2.nut</value>
+<value name="__variable__">meshObj null null</value>
+<value name="__variable__">materialComp null null</value>
+<value name="__variable__">testScript null null</value>
+<value name="__variable__">count 0 int</value>
+<value name="__variable__">test_int this$nbsp:is$nbsp:test$nbsp:string!!$nbsp:문자열이다$nbsp:이거슨 str</value>
+</component>
 <parent>__ROOT_OF_SCENE__AHA___</parent>
 </gameobject><gameobject name="" id="__ROOT_OF_SCENE__AHA___">
 <component type="TransformComponent">
@@ -94,6 +114,12 @@
 <value name="m_position">0 1 0</value>
 <value name="m_scale">1 1 1</value>
 <value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CustomComponent">
+<value name="m_classID">File:Script/directionalLight.nut</value>
+<value name="__variable__">lightComp null null</value>
+<value name="__variable__">diffuse null null</value>
+<value name="__variable__">count 0.000000 float</value>
 </component>
 <parent>__ROOT_OF_SCENE__AHA___</parent>
 </gameobject></CSEPREFAB>

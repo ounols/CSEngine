@@ -8,6 +8,7 @@
 #include "../Util/MoreString.h"
 #include "../Component/MaterialComponent.h"
 #include "../Component/LightComponent.h"
+#include "../Object/SScriptObject.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -32,6 +33,7 @@ gameObject = null;							  \n\
 gameobject = null;							  \n\
 											  \n\
 function SetCSEngine(component) {			  \n\
+    if(CSEngine != null) return;              \n\
 	CSEngine = component;					  \n\
 	gameobject = CSEngine.GetGameObject();	  \n\
 	gameObject = CSEngine.GetGameObject();	  \n\
@@ -78,23 +80,6 @@ void ScriptMgr::Init() {
     //SquirrelVM::Init();
     DefineClasses();
     ReadScriptList();
-}
-
-
-void ScriptMgr::RegisterScriptInAsset(std::string path) {
-
-    std::string script_str = CSE::OpenAssetsTxtFile(CSE::AssetsPath() + path);
-
-    //replace GetComponent function
-    //script_str = ReplaceAll(script_str, "GetComponent<", "GetComponent_");
-    //script_str = ReplaceAll(script_str, ">()", "_()");
-    script_str = ReplaceFunction(script_str, "GetComponent<", ">()", "GetComponent_", "_()");
-
-    //replace GetCustomComponent(GetClass) function
-    script_str = ReplaceFunction(script_str, "GetClass<", ">()", "GetClass(\"", "\")");
-
-    RegisterScript(script_str);
-
 }
 
 
@@ -240,12 +225,6 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
 }
 
 
-void ScriptMgr::DefineScenes(HSQUIRRELVM vm) {
-
-
-}
-
-
 void ScriptMgr::ReleaseSqratObject() {
 
     for (auto obj : m_objects) {
@@ -258,15 +237,13 @@ void ScriptMgr::ReleaseSqratObject() {
 
 void ScriptMgr::ReadScriptList() const {
 
-    std::stringstream list(OpenAssetsTxtFile(AssetsPath() + "Script/core/script_list.ini"));
-    std::string path;
+    auto assets = ResMgr::getInstance()->GetAssetReferneces(AssetMgr::TYPE::SCRIPT);
 
     //compile base script class
     RegisterScript(CSEngineScript);
 
-    while (std::getline(list, path, '\n')) {
-        path = ReplaceAll(path, "\r", "");
-        RegisterScriptInAsset(path);
+    for (auto asset : assets) {
+        SResource::Create<SScriptObject>(asset);
     }
 
 }

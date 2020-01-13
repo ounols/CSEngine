@@ -21,7 +21,7 @@ void MaterialComponent::Init() {
         m_irradianceTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("irradiance.textureCubeMap");
     }
     if (m_prefilterTexture == nullptr) {
-        m_prefilterTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("irradiance.textureCubeMap");
+        m_prefilterTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("prefilter.textureCubeMap");
     }
 }
 

@@ -50,6 +50,8 @@ namespace CSE {
 
         AssetMgr::AssetReference* GetAssetReference(std::string name) const;
 
+        std::vector<AssetMgr::AssetReference*> GetAssetReferneces(AssetMgr::TYPE type) const;
+
 #ifdef __ANDROID__
         void SetAssetManager(AAssetManager* obj);
         AAssetManager* GetAssetManager();

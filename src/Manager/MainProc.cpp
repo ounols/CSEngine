@@ -35,8 +35,8 @@ void MainProc::Init(GLuint width, GLuint height) {
     m_scriptMgr->Init();
     GameObjectMgr::getInstance()->Init();
 
-    //SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/test.scene");
-    //SceneMgr::getInstance()->SetScene(scene);
+//    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/test.scene");
+//    SceneMgr::getInstance()->SetScene(scene);
     SceneMgr::getInstance()->SetScene(new FirstDemoScene());
 
 

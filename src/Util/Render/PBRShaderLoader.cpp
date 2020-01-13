@@ -151,7 +151,7 @@ void PBRShaderLoader::LoadShader() {
     // pbr: create a pre-filter cubemap, and re-scale capture FBO to pre-filter scale.
     // --------------------------------------------------------------------------------
     m_prefilterMap = new SCubeTexture();
-    m_prefilterMap->SetName("prefilter");
+    m_prefilterMap->SetName("prefilter.textureCubeMap");
     m_prefilterMap->InitTexture(128);
 
     // generate mipmaps for the cubemap so OpenGL automatically allocates the required memory.

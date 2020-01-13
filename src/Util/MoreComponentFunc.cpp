@@ -11,35 +11,50 @@
 #include "../Component/RenderComponent.h"
 #include "../Component/TransformComponent.h"
 
+#define CREATE_COMPONENT_MACRO(CLASSNAME) \
+if(component_type == #CLASSNAME) { \
+    return obj->CreateComponent<CLASSNAME>(); \
+}
+
+#define BIND_COMPONENT_MACRO(CLASSNAME) \
+if(component_type == #CLASSNAME) { \
+    auto comp_r = static_cast<CLASSNAME*>(component);   \
+    instance->set(name.c_str(), comp_r);    \
+    return; \
+}
+
 using namespace CSE;
 
 SComponent* MoreComponentFunc::CreateComponent(SGameObject* obj, std::string component_type) {
 
-    SComponent* comp = nullptr;
+    CREATE_COMPONENT_MACRO(AnimatorComponent);
+    CREATE_COMPONENT_MACRO(JointComponent);
+    CREATE_COMPONENT_MACRO(CameraComponent);
+    CREATE_COMPONENT_MACRO(CustomComponent);
+    CREATE_COMPONENT_MACRO(DrawableSkinnedMeshComponent);
+    CREATE_COMPONENT_MACRO(DrawableStaticMeshComponent);
+    CREATE_COMPONENT_MACRO(LightComponent);
+    CREATE_COMPONENT_MACRO(MaterialComponent);
+    CREATE_COMPONENT_MACRO(RenderComponent);
+    CREATE_COMPONENT_MACRO(TransformComponent);
 
-    if (component_type == "AnimatorComponent") {
-        comp = obj->CreateComponent<AnimatorComponent>();
-    } else if (component_type == "JointComponent") {
-        comp = obj->CreateComponent<JointComponent>();
-    } else if (component_type == "CameraComponent") {
-        comp = obj->CreateComponent<CameraComponent>();
-    } else if (component_type == "CustomComponent") {
-        comp = obj->CreateComponent<CustomComponent>();
-    } else if (component_type == "DrawableSkinnedMeshComponent") {
-        comp = obj->CreateComponent<DrawableSkinnedMeshComponent>();
-    } else if (component_type == "DrawableStaticMeshComponent") {
-        comp = obj->CreateComponent<DrawableStaticMeshComponent>();
-    } else if (component_type == "LightComponent") {
-        comp = obj->CreateComponent<LightComponent>();
-    } else if (component_type == "MaterialComponent") {
-        comp = obj->CreateComponent<MaterialComponent>();
-    } else if (component_type == "RenderComponent") {
-        comp = obj->CreateComponent<RenderComponent>();
-    } else if (component_type == "TransformComponent") {
-        comp = obj->GetComponent<TransformComponent>();
-    }
-
-
-    return comp;
+    return nullptr;
 
 }
+
+void MoreComponentFunc::BindComponentToSQInstance(SComponent* component, std::string name,
+                                                  sqext::SQIClassInstance* instance) {
+    std::string component_type = component->GetClassType();
+
+    BIND_COMPONENT_MACRO(AnimatorComponent);
+    BIND_COMPONENT_MACRO(JointComponent);
+    BIND_COMPONENT_MACRO(CameraComponent);
+    BIND_COMPONENT_MACRO(CustomComponent);
+    BIND_COMPONENT_MACRO(DrawableSkinnedMeshComponent);
+    BIND_COMPONENT_MACRO(DrawableStaticMeshComponent);
+    BIND_COMPONENT_MACRO(LightComponent);
+    BIND_COMPONENT_MACRO(MaterialComponent);
+    BIND_COMPONENT_MACRO(RenderComponent);
+    BIND_COMPONENT_MACRO(TransformComponent);
+}
+

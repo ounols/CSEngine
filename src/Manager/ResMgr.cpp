@@ -72,15 +72,23 @@ std::string ResMgr::RemoveDuplicatingName(std::string name) const {
 }
 
 AssetMgr::AssetReference* ResMgr::GetAssetReference(std::string name) const {
+    make_lower(name);
+
     return m_assetManager->GetAsset(name);
 }
 
 SResource* ResMgr::GetSResource(std::string name) const {
+    make_lower(name);
+
     for (auto res : m_resources) {
-        if (res->GetName() == name) return res;
-        if (res->GetID() == name) return res;
+        if (make_lower_copy(res->GetName()) == name) return res;
+        if (make_lower_copy(res->GetID()) == name) return res;
     }
     return nullptr;
+}
+
+std::vector<AssetMgr::AssetReference*> ResMgr::GetAssetReferneces(AssetMgr::TYPE type) const {
+    return m_assetManager->GetAssets(type);
 }
 
 

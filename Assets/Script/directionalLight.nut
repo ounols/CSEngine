@@ -1,11 +1,13 @@
 class directionalLight extends CSEngineScript {
 
+    //[public]//
     lightComp = null;
     diffuse = null;
     count = 0.0;
 
     function Init() {
         lightComp = gameobject.GetComponent<LightComponent>();
+        Log("count = " + count);
     }
 
     function Tick(elapsedTime) {

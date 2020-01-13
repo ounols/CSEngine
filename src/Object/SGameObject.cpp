@@ -291,5 +291,9 @@ void SGameObject::SetResourceID(std::string resID, bool setChildren) {
     }
 }
 
+SComponent* SGameObject::GetSComponentByID(std::string id) const {
+    return GameObjectMgr::getInstance()->FindComponentByID(id);
+}
+
 
 

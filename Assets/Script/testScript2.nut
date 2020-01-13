@@ -33,7 +33,12 @@ class TestScript2 extends CSEngineScript {
 //            Log("value : " + value);
 //        }
 //        count += 0.01;
-    }
-
-
+        /*
+        test{
+        }
+        }}}
+         */
+    }/*
+*/
+    test_int = "this is test string!! 문자열이다 이거슨";
 }
