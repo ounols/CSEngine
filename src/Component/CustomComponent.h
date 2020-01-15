@@ -19,7 +19,7 @@ namespace CSE {
             }
 
             std::string name;
-            const char* type;
+            std::string type;
             std::string value;
         };
     public:
@@ -54,9 +54,9 @@ namespace CSE {
         SGameObject* GetGameObject() const override;
 
 
-        Sqrat::Object GetClassInstance() const {
-            return m_classInstance->get();
-        }
+		Sqrat::Object GetClassInstance() const {
+			return m_classInstance->get();
+		}
 //
 //        auto GetComponent() -> CustomComponent* override {
 //            return this;

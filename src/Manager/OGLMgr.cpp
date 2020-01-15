@@ -99,7 +99,7 @@ void OGLMgr::setProjectionRatio() {
 }
 
 
-void OGLMgr::Render(float elapsedTime) {
+void OGLMgr::Render(float elapsedTime) const {
 
     glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

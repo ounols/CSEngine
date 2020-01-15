@@ -4,17 +4,7 @@
 #include "../MacroDef.h"
 #include "../Object/SScriptObject.h"
 #include "../Util/MoreComponentFunc.h"
-
-#ifdef WIN32
-#include <windows.h>
-#elif __ANDROID__
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,__VA_ARGS__)
-#include <android/log.h>
-#elif __linux__
-
-#include <iostream>
-
-#endif
+#include "../Util/SafeLog.h"
 
 using namespace CSE;
 
@@ -37,7 +27,7 @@ void CustomComponent::Exterminate() {
 void CustomComponent::Init() {
 
     if (m_specialization == nullptr) return;
-    if (m_classInstance != nullptr) {
+    if (m_classInstance == nullptr) {
         CreateClassInstance(std::vector<std::string>());
     }
 
@@ -48,11 +38,7 @@ void CustomComponent::Init() {
         m_classInstance->call(m_funcInit);
     } catch (Sqrat::Exception e) {
         m_isError = true;
-#ifdef WIN32
-        OutputDebugString(Sqrat::LastErrorString(Sqrat::DefaultVM::Get()).c_str());
-#elif __linux__
-        std::cout << Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) << '\n';
-#endif
+		SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
     }
 
 }
@@ -70,11 +56,7 @@ void CustomComponent::Tick(float elapsedTime) {
     }
     catch (Sqrat::Exception e) {
         m_isError = true;
-#ifdef WIN32
-        OutputDebugString(Sqrat::LastErrorString(Sqrat::DefaultVM::Get()).c_str());
-#elif __linux__
-        std::cout << Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) << '\n';
-#endif
+		SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
     }
 
 }
@@ -91,11 +73,7 @@ void CustomComponent::RegisterScript() {
     }
     catch (Sqrat::Exception e) {
         m_funcSetCSEngine = -1;
-#ifdef WIN32
-        OutputDebugString(Sqrat::LastErrorString(Sqrat::DefaultVM::Get()).c_str());
-#elif __linux__
-        std::cout << Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) << '\n';
-#endif
+		SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
     }
 
     try {
@@ -112,6 +90,11 @@ void CustomComponent::RegisterScript() {
     }
     catch (Sqrat::Exception e) { m_funcExterminate = -1; }
 
+	try {
+		m_specialization->bind(9, "GetCount");
+	}
+	catch (Sqrat::Exception e) { }
+
 }
 
 
@@ -120,7 +103,7 @@ void CustomComponent::SetClassName(std::string name) {
     if (asset == nullptr) return;
 
     m_classID = asset->GetID();
-    m_className = asset->GetClassName();
+    m_className = asset->GetScriptClassName();
 
     RegisterScript();
     CreateClassInstance(asset->GetVariables());
@@ -146,19 +129,7 @@ void CustomComponent::SetIsEnable(bool is_enable) {
 
 
 void CustomComponent::Log(const char* log) {
-#ifdef WIN32
-    std::string log_str = "[Log/";
-    log_str.append(m_className + "] : " + log + '\n');
-    OutputDebugString(log_str.c_str());
-#elif __ANDROID__
-    std::string log_str = "CSEngineScript/" + m_className;
-    LOGD(log_str.c_str(), "%s", log);
-#elif __linux__
-    std::string log_str = "[Log/";
-    log_str.append(m_className + "] : " + log + '\n');
-    std::cout << log_str.c_str();
-#endif
-
+	SafeLog::Log((std::string(log) + '\n').c_str());
 }
 
 
@@ -169,12 +140,6 @@ SGameObject* CustomComponent::GetGameObject() const {
 SComponent* CustomComponent::Clone(SGameObject* object) {
     INIT_COMPONENT_CLONE(CustomComponent, clone);
 
-    clone->m_funcSetCSEngine = m_funcSetCSEngine;
-    clone->m_funcInit = m_funcInit;
-    clone->m_funcTick = m_funcTick;
-    clone->m_funcExterminate = m_funcExterminate;
-    clone->m_variables = m_variables;
-
     if (!m_className.empty()) {
         clone->SetClassName(m_classID);
     }
@@ -184,14 +149,15 @@ SComponent* CustomComponent::Clone(SGameObject* object) {
 
 void CustomComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
     if (name_str == "m_classID") {
-        SetClassName(ConvertSpaceStr(value[0]));
+        SetClassName(ConvertSpaceStr(value[0], true));
     }
     //variable : 0.name , 1.value, 2. type
     else if (name_str == "__variable__") {
-        for(auto val : m_variables) {
+        for(auto& val : m_variables) {
             if(val.name == value[0]) {
-                val.type = value[2].c_str();
-                BindValue(&val, ConvertSpaceStr(value[1]).c_str());
+				val.value = value[1];
+				val.type = value[2];
+                BindValue(&val, ConvertSpaceStr(value[1], true).c_str());
             }
         }
     }
@@ -224,6 +190,7 @@ void CustomComponent::CreateClassInstance(std::vector<std::string> variables) {
         m_classInstance->call(m_funcSetCSEngine, this);
     } catch (Sqrat::Exception e) {
         m_isError = true;
+		SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
         return;
     }
 

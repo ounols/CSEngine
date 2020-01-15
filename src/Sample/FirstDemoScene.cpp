@@ -83,7 +83,7 @@ void FirstDemoScene::Init() {
     cube = new MeshSurface(CH02::teapot_smoothNumVerts, CH02::teapot_smoothVerts, CH02::teapot_smoothNormals);
     cube->SetUndestroyable(false);
     b->Destroy();
-    c = new SGameObject();
+    c = new SGameObject("c");
     c->SetParent(root);
     c->CreateComponent<DrawableStaticMeshComponent>();
     c->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
@@ -120,7 +120,7 @@ void FirstDemoScene::Init() {
     c2->CreateComponent<RenderComponent>();
     c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
-    c3 = new SGameObject();
+    c3 = new SGameObject("testscript2 object");
     c3->SetParent(root);
     c3->CreateComponent<DrawableStaticMeshComponent>();
     c3->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
@@ -132,6 +132,19 @@ void FirstDemoScene::Init() {
 
     c3->CreateComponent<CustomComponent>();
     c3->GetComponent<CustomComponent>()->SetClassName("testScript2.script");
+    {
+		std::vector<std::string> variable = {
+		"materialComp", c3->GetID(c3->GetComponent<MaterialComponent>()), "comp"
+		};
+		c3->GetComponent<CustomComponent>()->SetValue("__variable__", variable);
+    }
+	{
+		std::vector<std::string> variable = {
+		"testScript", c->GetID(c->GetComponent<CustomComponent>()), "nut"
+		};
+		c3->GetComponent<CustomComponent>()->SetValue("__variable__", variable);
+	}
+	
 
 
     c3->CreateComponent<RenderComponent>();

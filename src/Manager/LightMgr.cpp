@@ -26,10 +26,10 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
     //라이트 갯수를 쉐이더에 넣어줌 (필요없따)
 //	glUniform1i(handle->Uniforms.LightsSize, m_objects.size());
 
-    std::vector<float> lightPosition;
-    std::vector<int> lightType;
-    std::vector<float> lightRadius;
-    std::vector<float> lightColor;
+    //std::vector<float> lightPosition;
+    //std::vector<int> lightType;
+    //std::vector<float> lightRadius;
+    //std::vector<float> lightColor;
 
     int i = 0;
     for (const auto& light : m_objects) {
@@ -40,22 +40,24 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
         LightComponent::LIGHT type = light->m_type;
         SLight* lightObject = light->GetLight();
 
+		float lightPosition[4] = { 0.f };
+
         //LightMode
         //SetLightMode(handle, light, i);
 
         switch (type) {
 
             case LightComponent::DIRECTIONAL:
-                lightPosition.push_back(lightObject->direction.x);
-                lightPosition.push_back(lightObject->direction.y);
-                lightPosition.push_back(lightObject->direction.z);
-                lightPosition.push_back(lightObject->direction.w);
+                lightPosition[0] = lightObject->direction.x;
+                lightPosition[1] = lightObject->direction.y;
+                lightPosition[2] = lightObject->direction.z;
+                lightPosition[3] = lightObject->direction.w;
                 break;
             case LightComponent::POINT:
-                lightPosition.push_back(lightObject->position->x);
-                lightPosition.push_back(lightObject->position->y);
-                lightPosition.push_back(lightObject->position->z);
-                lightPosition.push_back(1.0f);
+				lightPosition[0] = lightObject->position->x;
+				lightPosition[1] = lightObject->position->y;
+				lightPosition[2] = lightObject->position->z;
+				lightPosition[3] = 1.0f;
                 break;
             case LightComponent::SPOT:
                 break;
@@ -64,21 +66,17 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 
         }
 
-        lightType.push_back(type);
-        lightRadius.push_back(lightObject->radius);
-        lightColor.push_back(lightObject->color.x);
-        lightColor.push_back(lightObject->color.y);
-        lightColor.push_back(lightObject->color.z);
+
+		glUniform4f(handle->Uniforms.LightPosition + i, lightPosition[0], lightPosition[1], lightPosition[2], lightPosition[3]);
+		glUniform3f(handle->Uniforms.LightColor + i, lightObject->color.x, lightObject->color.y, lightObject->color.z);
+		glUniform1i(handle->Uniforms.LightType + i, type);
+		glUniform1f(handle->Uniforms.LightRadius + i, lightObject->radius);
 
         i++;
     }
 
     if (i <= 0) return;
 
-    glUniform4fv(handle->Uniforms.LightPosition, MAX_LIGHTS, lightPosition.data());
-    glUniform3fv(handle->Uniforms.LightColor, MAX_LIGHTS, lightColor.data());
-    glUniform1iv(handle->Uniforms.LightType, MAX_LIGHTS, lightType.data());
-    glUniform1fv(handle->Uniforms.LightRadius, MAX_LIGHTS, lightRadius.data());
     glUniform1i(handle->Uniforms.LightSize, m_objects.size());
 
 }

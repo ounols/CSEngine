@@ -17,7 +17,7 @@ namespace CSE {
 
         void setupEGLGraphics(GLuint width, GLuint height);
 
-        void Render(float elapsedTime);
+        void Render(float elapsedTime) const;
 
         void ResizeWindow(GLuint width, GLuint height);
 

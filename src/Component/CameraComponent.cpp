@@ -2,6 +2,8 @@
 #include "TransformComponent.h"
 #include "../Manager/CameraMgr.h"
 
+#include <mutex>
+
 using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(CameraComponent), m_eye(nullptr), m_targetObject(nullptr) {
@@ -151,7 +153,9 @@ vec3 CameraComponent::GetCameraPosition() const {
 
 
 void CameraComponent::SetProjectionMatrix() {
+	std::mutex mutex;
 
+	mutex.lock();
     if (m_type == PERSPECTIVE) {
         m_projectionMatrix = mat4::Perspective(m_pFov, *m_pRatio, m_Near, m_Far);
 
@@ -160,7 +164,7 @@ void CameraComponent::SetProjectionMatrix() {
     }
 
     m_isProjectionInited = true;
-
+	mutex.unlock();
 }
 
 void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {

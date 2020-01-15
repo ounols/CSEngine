@@ -43,6 +43,9 @@ void RenderMgr::Render(float elapsedTime) const {
 
         glUseProgram(handler.Program);
 
+		//Attach Light
+		LightMgr::getInstance()->AttachLightToShader(&handler);
+
 
         for (const auto& render : renderComp) {
             if (render == nullptr) continue;
@@ -54,9 +57,6 @@ void RenderMgr::Render(float elapsedTime) const {
             glEnableVertexAttribArray(handler.Attributes.TextureCoord);
             glEnableVertexAttribArray(handler.Attributes.Weight);
             glEnableVertexAttribArray(handler.Attributes.JointId);
-
-			//Attach Light
-			LightMgr::getInstance()->AttachLightToShader(&handler);
         	
             render->SetMatrix(camera, cameraPosition, projection);
             render->Render(elapsedTime);

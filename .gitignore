@@ -55,7 +55,7 @@ Thumbs.db
 *.user
 *.userosscache
 *.sln.docstates
-*.vcxproj.filters
+# *.vcxproj.filters
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

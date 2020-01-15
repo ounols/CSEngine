@@ -33,7 +33,7 @@
 <value name="m_rotation">0 0 0 1</value>
 </component>
 <parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper</parent>
-</gameobject><gameobject name="" id="__ROOT_OF_SCENE__AHA___">
+</gameobject><gameobject name="c" id="__ROOT_OF_SCENE__AHA___/c">
 <component type="TransformComponent">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
@@ -76,7 +76,7 @@
 <component type="AnimatorComponent">
 <value name="m_animationTime">0</value>
 <value name="m_startTime">0</value>
-<value name="m_currentAnimation">File:stormtrooper.dae?animation</value>
+<value name="m_currentAnimation"></value>
 <value name="m_entity">__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper/mesh?DrawableSkinnedMeshComponent</value>
 </component>
 <parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper</parent>
@@ -87,7 +87,7 @@
 <value name="m_rotation">0 0 0 1</value>
 </component>
 <parent>__ROOT_OF_SCENE__AHA___</parent>
-</gameobject><gameobject name="" id="__ROOT_OF_SCENE__AHA___">
+</gameobject><gameobject name="testscript2$nbsp:object" id="__ROOT_OF_SCENE__AHA___/testscript2$nbsp:object">
 <component type="TransformComponent">
 <value name="m_position">0 -0.7 0</value>
 <value name="m_scale">1 1 1</value>
@@ -96,19 +96,19 @@
 <component type="CustomComponent">
 <value name="m_classID">File:Script/testScript2.nut</value>
 <value name="__variable__">meshObj null null</value>
-<value name="__variable__">materialComp null null</value>
-<value name="__variable__">testScript null null</value>
-<value name="__variable__">count 0 int</value>
+<value name="__variable__">materialComp __ROOT_OF_SCENE__AHA___/testscript2$nbsp:object?MaterialComponent comp</value>
+<value name="__variable__">testScript __ROOT_OF_SCENE__AHA___/c?CustomComponent nut</value>
+<value name="__variable__">count 3 int</value>
 <value name="__variable__">test_int this$nbsp:is$nbsp:test$nbsp:string!!$nbsp:문자열이다$nbsp:이거슨 str</value>
 </component>
 <parent>__ROOT_OF_SCENE__AHA___</parent>
-</gameobject><gameobject name="" id="__ROOT_OF_SCENE__AHA___">
+</gameobject><gameobject name="testscript2$nbsp:object" id="__ROOT_OF_SCENE__AHA___/testscript2$nbsp:object/testscript2$nbsp:object">
 <component type="TransformComponent">
 <value name="m_position">-2 -0.1 0</value>
 <value name="m_scale">0.5 0.5 0.5</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___</parent>
+<parent>__ROOT_OF_SCENE__AHA___/testscript2$nbsp:object</parent>
 </gameobject><gameobject name="directional" id="__ROOT_OF_SCENE__AHA___/directional">
 <component type="TransformComponent">
 <value name="m_position">0 1 0</value>

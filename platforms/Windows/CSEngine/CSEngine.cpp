@@ -7,6 +7,7 @@
 #include "CSEngine.h"
 
 #include <timeapi.h>
+#include <thread>
 
 //#include <gl/GL.h>
 //#include <gl/GLU.h>
@@ -54,6 +55,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
+
+void Update(MainProc* mainProc, DWORD dwStartTime);
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -104,6 +107,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	MSG msg;
 	DWORD dwStartTime = timeGetTime();
 
+	std::thread tUpdate(Update, mainProc, dwStartTime);
+
 	// 기본 메시지 루프입니다.
 	while (!b_isQuit) {
 
@@ -119,9 +124,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		else {
 			//GL20Lib::renderFrame(static_cast<float>(timeGetTime() - dwStartTime));
-			float deltaTime = static_cast<float>(timeGetTime() - dwStartTime);
-			mainProc->Update(deltaTime);
-			mainProc->Render(deltaTime);
+			//float deltaTime = static_cast<float>(timeGetTime() - dwStartTime);
+			//mainProc->Update(deltaTime);
+			mainProc->Render(0);
 			glEnd();
 			glFinish();
 
@@ -129,6 +134,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 
 	}
+	tUpdate.join();
 	mainProc->Exterminate();
 	SAFE_DELETE(mainProc);
 
@@ -275,4 +281,18 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
 		break;
 	}
 	return (INT_PTR)FALSE;
+}
+
+void Update(MainProc* mainProc, DWORD dwStartTime) {
+
+	while (!b_isQuit) {
+		float deltaTime = static_cast<float>(timeGetTime() - dwStartTime);
+		mainProc->Update(deltaTime);
+
+		Sleep(1);
+
+	}
+
+	SafeLog::Log("The rendering thread exterminates!\n");
+	
 }

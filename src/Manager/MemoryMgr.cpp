@@ -40,7 +40,7 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
             continue;
         }
 
-#ifdef WIN32
+#ifdef _DEBUG
         OutputDebugStringA("Auto Releasing Object : ");
         OutputDebugStringA(typeid(*object).name());
         OutputDebugStringA("...\n");
@@ -96,7 +96,7 @@ void MemoryMgr::ReleaseObject(SObject* object, bool isForce) {
     auto iObj = std::find(m_objects.begin(), m_objects.end(), object);
 
     if (iObj != m_objects.end()) {
-#ifdef WIN32
+#ifdef _DEBUG
         OutputDebugStringA("Releasing Object : ");
         OutputDebugStringA(typeid(*object).name());
         OutputDebugStringA("...\n");

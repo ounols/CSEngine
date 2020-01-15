@@ -38,24 +38,18 @@ void SScriptObject::RegisterScript(std::string script) {
         Script compiledScript;
         compiledScript.CompileString(script.c_str());
         if (Sqrat::Error::Occurred(vm)) {
-#ifdef WIN32
-            OutputDebugString(_SC("Compile Failed: "));
-            OutputDebugString(Error::Message(vm).c_str());
-#elif __ANDROID__
+#ifdef __ANDROID__
             LOGE("Compile Failed : %s", Error::Message(vm).c_str());
-#elif __linux__
+#else
             std::cout << "Compile Failed : " << Error::Message(vm) << '\n';
 #endif
         }
 
         compiledScript.Run();
         if (Sqrat::Error::Occurred(vm)) {
-#ifdef WIN32
-            OutputDebugString(_SC("Run Failed: "));
-            OutputDebugString(Error::Message(vm).c_str());
-#elif __ANDROID__
+#ifdef __ANDROID__
             LOGE("Run Failed : %s", Error::Message(vm).c_str());
-#elif __linux__
+#else
             std::cout << "Run Failed : " << Error::Message(vm) << '\n';
 #endif
         }
@@ -86,6 +80,7 @@ void SScriptObject::GetVariables(std::string str) {
 
     //split line
     for(auto line : split_line) {
+		line = trim(line);
         if(line.find("//") != std::string::npos) continue;
         if(isComment && line.find("*/") != std::string::npos) {
             isComment = false;
