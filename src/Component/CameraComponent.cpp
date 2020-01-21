@@ -170,7 +170,7 @@ void CameraComponent::SetProjectionMatrix() {
 void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
 
     if (name_str == "m_eye") {
-        m_eye = gameObject->GetComponentByID<TransformComponent>(value[0])->GetPosition();
+        m_eye = static_cast<TransformComponent*>(gameObject->FindByID(value[0])->GetTransform())->GetPosition();
     } else if (name_str == "m_target") {
         SET_VEC3(m_target);
     } else if (name_str == "m_up") {

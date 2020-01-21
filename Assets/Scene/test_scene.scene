@@ -76,7 +76,7 @@
 <component type="AnimatorComponent">
 <value name="m_animationTime">0</value>
 <value name="m_startTime">0</value>
-<value name="m_currentAnimation"></value>
+<value name="m_currentAnimation">File:stormtrooper.dae?animation</value>
 <value name="m_entity">__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper/mesh?DrawableSkinnedMeshComponent</value>
 </component>
 <parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper</parent>

@@ -221,9 +221,12 @@ void AssetMgr::SetType() {
             continue;
         }
 
-        //txt data
-        asset->type = TXT;
-        asset->name += ".text";
+		if(asset->type == NONE) {
+			//txt data
+			asset->type = TXT;
+			asset->name += ".text";
+		}
+
     }
 
 }
