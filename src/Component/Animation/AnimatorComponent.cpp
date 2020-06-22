@@ -103,10 +103,12 @@ float AnimatorComponent::CalculateProgression(KeyFrame* previous, KeyFrame* next
 
 std::map<std::string, mat4> AnimatorComponent::InterpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float t) {
     std::map<std::string, mat4> currentPose;
-    for (const auto& frame : previousFrame->GetJointKeyFrames()) {
+	auto jointKeyFrames_prev = previousFrame->GetJointKeyFrames();
+	auto jointKeyFrames_next = nextFrame->GetJointKeyFrames();
+    for (const auto& frame : jointKeyFrames_prev) {
         const auto jointName = frame.first;
         JointTransform* previousTransform = frame.second;
-        JointTransform* nextTransform = nextFrame->GetJointKeyFrames()[jointName];
+        JointTransform* nextTransform = jointKeyFrames_next[jointName];
         JointTransform currentTransform = JointTransform::Interpolate(t, *previousTransform, *nextTransform);
         currentPose[jointName] = currentTransform.GetLocalMatrix();
     }
