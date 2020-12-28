@@ -15,7 +15,7 @@ namespace CSE {
 
     class KeyFrame {
     public:
-        KeyFrame(float timeStamp, std::map<std::string, JointTransform*> pose) {
+        KeyFrame(float timeStamp, std::map<int, JointTransform*> pose) {
             m_timeStamp = timeStamp;
             m_pose = pose;
         }
@@ -34,13 +34,13 @@ namespace CSE {
             return m_timeStamp;
         }
 
-        std::map<std::string, JointTransform*> GetJointKeyFrames() const {
+        std::map<int, JointTransform*> GetJointKeyFrames() const {
             return m_pose;
         }
 
     private:
         float m_timeStamp = 0;
-        std::map<std::string, JointTransform*> m_pose;
+        std::map<int, JointTransform*> m_pose;
     };
 
     class JointTransform {

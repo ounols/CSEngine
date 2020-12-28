@@ -39,7 +39,7 @@ void RenderMgr::Render(float elapsedTime) const {
         const auto& renderComp = programPair.second;
 
         if (programPair.first == nullptr) continue;
-        if (renderComp.size() <= 0) continue;
+        if (renderComp.empty()) continue;
 
         glUseProgram(handler.Program);
 

@@ -25,6 +25,8 @@ SGameObject* DAEConvertSGameObject::CreateJoints(SGameObject* parent, Joint* dat
     SGameObject* jointObject = new SGameObject(data->GetName());
     JointComponent* joint = jointObject->CreateComponent<JointComponent>();
     joint->SetID(data->GetIndex());
+	int jointIndex = RESMGR->GetStringId(data->GetName());
+	joint->SetAnimationJointId(jointIndex);
     joint->SetBindLocalMatrix(data->GetBindLocalTransform());
 
     for (Joint* child : data->GetChildren()) {
@@ -65,10 +67,10 @@ SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameOb
 }
 
 KeyFrame* DAEConvertSGameObject::CreateKeyFrame(KeyFrameData* data) {
-    std::map<std::string, JointTransform*> map;
+    std::map<int, JointTransform*> map;
     for (auto jointData : data->jointTransforms) {
         JointTransform* jointTransform = CreateTransform(jointData);
-        map[jointData->jointNameId] = jointTransform;
+        map[jointData->jointId] = jointTransform;
     }
     return new KeyFrame(data->time, map);
 }

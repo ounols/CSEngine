@@ -37,15 +37,15 @@ namespace CSE {
     private:
         void UpdateAnimationTime(float elapsedTime);
 
-        std::map<std::string, mat4> calculateCurrentAnimationPose();
+        std::map<int, mat4> calculateCurrentAnimationPose();
 
-        void applyPoseToJoints(std::map<std::string, mat4>& currentPose, JointComponent* joint, mat4 parentTransform);
+        void applyPoseToJoints(std::map<int, mat4>& currentPose, JointComponent* joint, mat4 parentTransform);
 
         std::vector<KeyFrame*> getPreviousAndNextFrames();
 
         float CalculateProgression(KeyFrame* previous, KeyFrame* next);
 
-        std::map<std::string, mat4> InterpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float t);
+        std::map<int, mat4> InterpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float t);
 
     private:
 

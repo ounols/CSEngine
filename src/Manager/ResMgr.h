@@ -46,6 +46,8 @@ namespace CSE {
 
         bool IsEmpty() const;
 
+		int GetStringId(std::string str);
+
         std::string RemoveDuplicatingName(std::string name) const;
 
         AssetMgr::AssetReference* GetAssetReference(std::string name) const;
@@ -63,6 +65,7 @@ namespace CSE {
     private:
         std::vector<SResource*> m_resources;
         AssetMgr* m_assetManager;
+		std::vector<std::string> m_stringIds;
     };
 
 

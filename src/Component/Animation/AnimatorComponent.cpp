@@ -23,7 +23,7 @@ void AnimatorComponent::Tick(float elapsedTime) {
     }
     UpdateAnimationTime(elapsedTime);
 
-    std::map<std::string, mat4> currentPose = calculateCurrentAnimationPose();
+    std::map<int, mat4> currentPose = calculateCurrentAnimationPose();
     applyPoseToJoints(currentPose, m_entity->GetRootJoint(), mat4::Identity());
 
 }
@@ -57,16 +57,16 @@ void AnimatorComponent::UpdateAnimationTime(float elapsedTime) {
 }
 
 
-std::map<std::string, mat4> AnimatorComponent::calculateCurrentAnimationPose() {
+std::map<int, mat4> AnimatorComponent::calculateCurrentAnimationPose() {
     std::vector<KeyFrame*> frames = getPreviousAndNextFrames();
     float progression = CalculateProgression(frames[0], frames[1]);
     return InterpolatePoses(frames[0], frames[1], progression);
 }
 
-void AnimatorComponent::applyPoseToJoints(std::map<std::string, mat4>& currentPose, JointComponent* joint,
+void AnimatorComponent::applyPoseToJoints(std::map<int, mat4>& currentPose, JointComponent* joint,
                                           mat4 parentTransform) {
     SGameObject* object = joint->GetGameObject();
-    mat4 currentLocalTransform = currentPose[object->GetName()];
+    mat4 currentLocalTransform = currentPose[joint->GetAnimationJointId()];
     mat4 currentTransform = currentLocalTransform * parentTransform;
     for (auto child : object->GetChildren()) {
         auto joint_component = child->GetComponent<JointComponent>();
@@ -101,16 +101,16 @@ float AnimatorComponent::CalculateProgression(KeyFrame* previous, KeyFrame* next
     return currentTime / totalTime;
 }
 
-std::map<std::string, mat4> AnimatorComponent::InterpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float t) {
-    std::map<std::string, mat4> currentPose;
+std::map<int, mat4> AnimatorComponent::InterpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float t) {
+    std::map<int, mat4> currentPose;
 	auto jointKeyFrames_prev = previousFrame->GetJointKeyFrames();
 	auto jointKeyFrames_next = nextFrame->GetJointKeyFrames();
     for (const auto& frame : jointKeyFrames_prev) {
-        const auto jointName = frame.first;
+        const auto jointId = frame.first;
         JointTransform* previousTransform = frame.second;
-        JointTransform* nextTransform = jointKeyFrames_next[jointName];
+        JointTransform* nextTransform = jointKeyFrames_next[jointId];
         JointTransform currentTransform = JointTransform::Interpolate(t, *previousTransform, *nextTransform);
-        currentPose[jointName] = currentTransform.GetLocalMatrix();
+		currentPose.insert(std::pair<int, mat4>(jointId, currentTransform.GetLocalMatrix()));
     }
     return currentPose;
 }

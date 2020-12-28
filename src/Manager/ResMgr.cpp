@@ -55,6 +55,15 @@ bool ResMgr::IsEmpty() const {
     return m_resources.empty();
 }
 
+int ResMgr::GetStringId(std::string str) {
+	auto result = std::find(m_stringIds.begin(), m_stringIds.end(), str);
+	if (result != m_stringIds.end()) 
+		return result - m_stringIds.begin();
+
+	m_stringIds.push_back(str);
+	return m_stringIds.size() - 1;
+}
+
 int ResMgr::GetID(SResource* object) const {
     auto it = std::find(m_resources.begin(), m_resources.end(), object);
     if (it == m_resources.end())

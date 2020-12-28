@@ -56,6 +56,7 @@ SComponent* JointComponent::Clone(SGameObject* object) {
     clone->m_animatedMatrix = mat4(m_animatedMatrix);
     clone->m_localBindMatrix = mat4(m_localBindMatrix);
     clone->m_id = m_id;
+    clone->m_animationJointId = m_animationJointId;
 
     return clone;
 }

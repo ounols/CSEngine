@@ -39,7 +39,15 @@ namespace CSE {
             return m_id;
         }
 
-        mat4 GetInverseTransformMatrix() const {
+		int GetAnimationJointId() const {
+			return m_animationJointId;
+		}
+
+		void SetAnimationJointId(int animation_joint_id) {
+			m_animationJointId = animation_joint_id;
+		}
+    	
+    	mat4 GetInverseTransformMatrix() const {
             return m_inverseTransformMatrix;
         }
 
@@ -49,6 +57,7 @@ namespace CSE {
 
     private:
         int m_id;
+		int m_animationJointId;
         mat4 m_animatedMatrix;
         mat4 m_inverseTransformMatrix;
         mat4 m_localBindMatrix;

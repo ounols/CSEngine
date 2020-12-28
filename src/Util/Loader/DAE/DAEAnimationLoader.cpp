@@ -4,7 +4,9 @@
 
 #include "../../../MacroDef.h"
 #include "DAEAnimationLoader.h"
+
 #include "../../MoreString.h"
+#include "../../../Manager/ResMgr.h"
 
 using namespace CSE;
 
@@ -93,8 +95,8 @@ std::string DAEAnimationLoader::getDataId(XNode jointData) {
     return node.getAttribute("source").value.substr(1);
 }
 
-void DAEAnimationLoader::processTransforms(std::string jointName, std::vector<float> rawData,
-                                           std::vector<KeyFrameData*> keyFrames, bool root) {
+void DAEAnimationLoader::processTransforms(std::string jointName,
+                                           std::vector<float> rawData, std::vector<KeyFrameData*> keyFrames, bool root) {
 
     for (int i = 0; i < keyFrames.size(); i++) {
 
@@ -112,7 +114,7 @@ void DAEAnimationLoader::processTransforms(std::string jointName, std::vector<fl
             transform *= CORRECTION;
         }
 
-        keyFrames[i]->jointTransforms.push_back(new JointTransformData(jointName, transform));
+        keyFrames[i]->jointTransforms.push_back(new JointTransformData(RESMGR->GetStringId(jointName), jointName, transform));
     }
 
 }
