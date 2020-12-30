@@ -149,7 +149,7 @@ SScene* SSceneLoader::LoadScene(std::string path) {
 	}
 
 	LinkingID(gameobjects, scene->GetRoot());
-	LinkingRefernece(components);
+	LinkingReference(components);
 
 	for (auto gameobj : gameobjects) {
 		SAFE_DELETE(gameobj);
@@ -255,7 +255,7 @@ void SSceneLoader::LinkingID(std::vector<NodeKey*>& objs, SGameObject* root) {
 
 }
 
-void SSceneLoader::LinkingRefernece(std::vector<ComponentValue*>& comps) {
+void SSceneLoader::LinkingReference(std::vector<ComponentValue*>& comps) {
 
 	for (auto comp : comps) {
 		auto node = comp->node;
@@ -277,10 +277,10 @@ void SSceneLoader::LinkingRefernece(std::vector<ComponentValue*>& comps) {
 
 void SSceneLoader::ExploringPrefab(XNode node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps,
                                    SScene* scene) {
-	std::string name = ConvertSpaceStr(node.getAttribute("name").value);
+	std::string name = ConvertSpaceStr(node.getAttribute("name").value, true);
 	auto node_values = node.children;
-	std::string id = ConvertSpaceStr(node.getAttribute("id").value);
-	std::string file_id = ConvertSpaceStr(node.getAttribute("fileid").value);
+	std::string id = ConvertSpaceStr(node.getAttribute("id").value, true);
+	std::string file_id = ConvertSpaceStr(node.getAttribute("fileid").value, true);
 
 
 	//Create!
@@ -310,12 +310,12 @@ void SSceneLoader::ExploringPrefab(XNode node, std::vector<NodeKey*>& objs, std:
 void SSceneLoader::LinkingResourceID(XNode node, SGameObject* root, std::vector<NodeKey*>& objs,
                                      std::vector<ComponentValue*>& comps) {
 
-	std::string obj_fileid = node.getAttribute("fileid").value;
+	std::string obj_fileid = ConvertSpaceStr(node.getAttribute("fileid").value, true);
 
 	if (root->GetResourceID() == obj_fileid) {
 
-		std::string obj_id = node.getAttribute("id").value;
-		std::string obj_name = node.getAttribute("name").value;
+		std::string obj_id = ConvertSpaceStr(node.getAttribute("id").value, true);
+		std::string obj_name = ConvertSpaceStr(node.getAttribute("name").value, true);
 
 		NodeKey* key = new NodeKey();
 		key->obj = root;

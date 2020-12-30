@@ -39,7 +39,7 @@ namespace CSE {
 
         static void LinkingID(std::vector<NodeKey*>& objs, SGameObject* root);
 
-        static void LinkingRefernece(std::vector<ComponentValue*>& comps);
+        static void LinkingReference(std::vector<ComponentValue*>& comps);
 
         static void ExploringPrefab(XNode node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps,
                                     SScene* scene);

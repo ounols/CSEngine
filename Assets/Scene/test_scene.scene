@@ -1,23 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CSEPREFAB version="1.0.0">
-<gameobject name="__ROOT_OF_SCENE__AHA___" id="__ROOT_OF_SCENE__AHA___">
-<component type="TransformComponent">
-<value name="m_position">0 0 0</value>
-<value name="m_scale">1 1 1</value>
-<value name="m_rotation">0 0 0 1</value>
-</component>
-<parent>__ROOT_OF_SCENE__</parent>
-</gameobject><gameobject name="camera" id="__ROOT_OF_SCENE__AHA___/camera">
+<CSESCENE version="1.0.0">
+<gameobject name="camera" id="__ROOT_OF_SCENE__/camera">
 <component type="TransformComponent">
 <value name="m_position">0 0 3</value>
 <value name="m_scale">1 1 1</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
 <component type="CameraComponent">
-<value name="m_eye">__ROOT_OF_SCENE__AHA___/camera?TransformComponent</value>
+<value name="m_eye">__ROOT_OF_SCENE__/camera?TransformComponent</value>
 <value name="m_target">0 0 0</value>
 <value name="m_up">0 0 0</value>
-<value name="m_targetObject">__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper/light</value>
+<value name="m_targetObject">__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/stormtrooper/light</value>
 <value name="m_cameraMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
 <value name="m_projectionMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
 <value name="m_type">PERSPECTIVE</value>
@@ -25,15 +18,15 @@
 <value name="m_orthoValue">-1 1 -1 1</value>
 <value name="m_distance">0.1 100</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___</parent>
-</gameobject><gameobject name="light" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper/light">
+<parent>__ROOT_OF_SCENE__</parent>
+</gameobject><gameobject name="light" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/stormtrooper/light">
 <component type="TransformComponent">
 <value name="m_position">2 2 -2</value>
 <value name="m_scale">2 2 2</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper</parent>
-</gameobject><gameobject name="c" id="__ROOT_OF_SCENE__AHA___/c">
+<parent>__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/stormtrooper</parent>
+</gameobject><gameobject name="c" id="__ROOT_OF_SCENE__/c">
 <component type="TransformComponent">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
@@ -45,16 +38,16 @@
 <value name="__variable__">lightComp null null</value>
 <value name="__variable__">ambient null null</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___</parent>
-</gameobject><gameobject name="root$nbsp:of$nbsp:mesh" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh">
+<parent>__ROOT_OF_SCENE__</parent>
+</gameobject><gameobject name="root$nbsp:of$nbsp:mesh" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh">
 <component type="TransformComponent">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___</parent>
-</gameobject><prefab name="stormtrooper" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper" fileid="File:stormtrooper.dae">
-<changegameobject name="stormtrooper" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper" fileid="File:stormtrooper.dae">
+<parent>__ROOT_OF_SCENE__</parent>
+</gameobject><prefab name="stormtrooper" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/stormtrooper" fileid="File:stormtrooper.dae">
+<changegameobject name="stormtrooper" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/stormtrooper" fileid="File:stormtrooper.dae">
 <component type="TransformComponent">
 <value name="m_position">0 -0.4 0</value>
 <value name="m_scale">0.2 0.2 0.2</value>
@@ -66,8 +59,8 @@
 <value name="__variable__">lightComp null null</value>
 <value name="__variable__">ambient null null</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh</parent>
-</changegameobject><changegameobject name="stormtrooper_animation" id="__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper/stormtrooper_animation" fileid="File:stormtrooper.dae*stormtrooper_animation">
+<parent>__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh</parent>
+</changegameobject><changegameobject name="stormtrooper_animation" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/stormtrooper/stormtrooper_animation" fileid="File:stormtrooper.dae*stormtrooper_animation">
 <component type="TransformComponent">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
@@ -77,17 +70,17 @@
 <value name="m_animationTime">0</value>
 <value name="m_startTime">0</value>
 <value name="m_currentAnimation">File:stormtrooper.dae?animation</value>
-<value name="m_entity">__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper/mesh?DrawableSkinnedMeshComponent</value>
+<value name="m_entity">__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/stormtrooper/mesh?DrawableSkinnedMeshComponent</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___/root$nbsp:of$nbsp:mesh/stormtrooper</parent>
-</changegameobject></prefab><gameobject name="" id="__ROOT_OF_SCENE__AHA___">
+<parent>__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/stormtrooper</parent>
+</changegameobject></prefab><gameobject name="" id="__ROOT_OF_SCENE__">
 <component type="TransformComponent">
 <value name="m_position">0 0.7 0</value>
 <value name="m_scale">1 1 1</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___</parent>
-</gameobject><gameobject name="testscript2$nbsp:object" id="__ROOT_OF_SCENE__AHA___/testscript2$nbsp:object">
+<parent>__ROOT_OF_SCENE__</parent>
+</gameobject><gameobject name="testscript2$nbsp:object" id="__ROOT_OF_SCENE__/testscript2$nbsp:object">
 <component type="TransformComponent">
 <value name="m_position">0 -0.7 0</value>
 <value name="m_scale">1 1 1</value>
@@ -96,20 +89,20 @@
 <component type="CustomComponent">
 <value name="m_classID">File:Script/testScript2.nut</value>
 <value name="__variable__">meshObj null null</value>
-<value name="__variable__">materialComp __ROOT_OF_SCENE__AHA___/testscript2$nbsp:object?MaterialComponent comp</value>
-<value name="__variable__">testScript __ROOT_OF_SCENE__AHA___/c?CustomComponent nut</value>
+<value name="__variable__">materialComp __ROOT_OF_SCENE__/testscript2$nbsp:object?MaterialComponent comp</value>
+<value name="__variable__">testScript __ROOT_OF_SCENE__/c?CustomComponent nut</value>
 <value name="__variable__">count 3 int</value>
 <value name="__variable__">test_int this$nbsp:is$nbsp:test$nbsp:string!!$nbsp:문자열이다$nbsp:이거슨 str</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___</parent>
-</gameobject><gameobject name="testscript2$nbsp:object" id="__ROOT_OF_SCENE__AHA___/testscript2$nbsp:object/testscript2$nbsp:object">
+<parent>__ROOT_OF_SCENE__</parent>
+</gameobject><gameobject name="testscript2$nbsp:object" id="__ROOT_OF_SCENE__/testscript2$nbsp:object/testscript2$nbsp:object">
 <component type="TransformComponent">
 <value name="m_position">-2 -0.1 0</value>
 <value name="m_scale">0.5 0.5 0.5</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___/testscript2$nbsp:object</parent>
-</gameobject><gameobject name="directional" id="__ROOT_OF_SCENE__AHA___/directional">
+<parent>__ROOT_OF_SCENE__/testscript2$nbsp:object</parent>
+</gameobject><gameobject name="directional" id="__ROOT_OF_SCENE__/directional">
 <component type="TransformComponent">
 <value name="m_position">0 1 0</value>
 <value name="m_scale">1 1 1</value>
@@ -121,5 +114,5 @@
 <value name="__variable__">diffuse null null</value>
 <value name="__variable__">count 0.000000 float</value>
 </component>
-<parent>__ROOT_OF_SCENE__AHA___</parent>
-</gameobject></CSEPREFAB>
+<parent>__ROOT_OF_SCENE__</parent>
+</gameobject></CSESCENE>

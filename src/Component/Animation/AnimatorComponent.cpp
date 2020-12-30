@@ -57,19 +57,19 @@ void AnimatorComponent::UpdateAnimationTime(float elapsedTime) {
 }
 
 
-std::map<int, mat4> AnimatorComponent::calculateCurrentAnimationPose() {
+std::map<int, mat4> AnimatorComponent::calculateCurrentAnimationPose() const {
     std::vector<KeyFrame*> frames = getPreviousAndNextFrames();
-    float progression = CalculateProgression(frames[0], frames[1]);
+    const float progression = CalculateProgression(frames[0], frames[1]);
     return InterpolatePoses(frames[0], frames[1], progression);
 }
 
 void AnimatorComponent::applyPoseToJoints(std::map<int, mat4>& currentPose, JointComponent* joint,
-                                          mat4 parentTransform) {
+                                          const mat4 parentTransform) {
     SGameObject* object = joint->GetGameObject();
-    mat4 currentLocalTransform = currentPose[joint->GetAnimationJointId()];
+    const mat4 currentLocalTransform = currentPose[joint->GetAnimationJointId()];
     mat4 currentTransform = currentLocalTransform * parentTransform;
     for (auto child : object->GetChildren()) {
-        auto joint_component = child->GetComponent<JointComponent>();
+	    const auto joint_component = child->GetComponent<JointComponent>();
         if (joint_component != nullptr)
             applyPoseToJoints(currentPose, joint_component, currentTransform);
     }
@@ -77,7 +77,7 @@ void AnimatorComponent::applyPoseToJoints(std::map<int, mat4>& currentPose, Join
     joint->SetAnimationMatrix(currentTransform);
 }
 
-std::vector<KeyFrame*> AnimatorComponent::getPreviousAndNextFrames() {
+std::vector<KeyFrame*> AnimatorComponent::getPreviousAndNextFrames() const {
     auto allFrames = m_currentAnimation->GetKeyFrames();
     KeyFrame* previousFrame = allFrames[0];
     KeyFrame* nextFrame = allFrames[0];
@@ -95,7 +95,7 @@ std::vector<KeyFrame*> AnimatorComponent::getPreviousAndNextFrames() {
     return result;
 }
 
-float AnimatorComponent::CalculateProgression(KeyFrame* previous, KeyFrame* next) {
+float AnimatorComponent::CalculateProgression(KeyFrame* previous, KeyFrame* next) const {
     float totalTime = next->GetTimeStamp() - previous->GetTimeStamp();
     float currentTime = m_animationTime - previous->GetTimeStamp();
     return currentTime / totalTime;
