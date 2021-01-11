@@ -92,7 +92,7 @@ void PBRShaderLoader::LoadShader() {
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
     // ----------------------------------------------------------------------
     glUseProgram(m_equirectangularToCubemapShader->Program);
-    int hdrTextureLocation = m_equirectangularToCubemapShader->UniformLocation("EquirectangularMap");
+    int hdrTextureLocation = m_equirectangularToCubemapShader->UniformLocation("EquirectangularMap")->id;
     m_equirectangularToCubemapShader->SetUniformMat4("PROJECTION_MATRIX", captureProjection);
 
     m_hdrTexture->Bind(hdrTextureLocation, 0);
@@ -129,7 +129,7 @@ void PBRShaderLoader::LoadShader() {
     // pbr: solve diffuse integral by convolution to create an irradiance (cube)map.
     // -----------------------------------------------------------------------------
     glUseProgram(m_irradianceShader->Program);
-    int envTextureLocation = m_irradianceShader->UniformLocation("EnvironmentMap");
+	int envTextureLocation = m_irradianceShader->UniformLocation("EnvironmentMap")->id;
     m_irradianceShader->SetUniformMat4("PROJECTION_MATRIX", captureProjection);
     m_envCubemap->Bind(envTextureLocation, 0);
 
@@ -160,7 +160,7 @@ void PBRShaderLoader::LoadShader() {
     // pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
     // ----------------------------------------------------------------------------------------------------
     glUseProgram(m_prefilterShader->Program);
-    envTextureLocation = m_prefilterShader->UniformLocation("EnvironmentMap");
+    envTextureLocation = m_prefilterShader->UniformLocation("EnvironmentMap")->id;
     m_prefilterShader->SetUniformMat4("PROJECTION_MATRIX", captureProjection);
     m_envCubemap->Bind(envTextureLocation, 0);
 

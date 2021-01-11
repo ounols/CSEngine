@@ -119,3 +119,29 @@ void LightComponent::SetSunrising(bool active) {
     m_isSunRising = active;
 
 }
+
+SComponent* LightComponent::Clone(SGameObject* object) {
+	INIT_COMPONENT_CLONE(LightComponent, clone);
+
+	clone->m_type = m_type;
+	clone->DisableAmbient = DisableAmbient;
+	clone->DisableDiffuse = DisableDiffuse;
+	clone->DisableSpecular = DisableSpecular;
+
+	return clone;
+}
+
+void LightComponent::SetValue(std::string name_str, Arguments value) {
+}
+
+std::string LightComponent::PrintValue() const {
+	PRINT_START("component");
+
+	PRINT_VALUE(m_type, static_cast<int>(m_type));
+	//PRINT_VALUE(DisableAmbient, m_startTime);
+	//PRINT_VALUE(m_currentAnimation, ConvertSpaceStr(m_currentAnimation->GetID()));
+	//PRINT_VALUE(m_entity, ConvertSpaceStr(m_entity->GetGameObject()->GetID(m_entity)));
+
+
+	PRINT_END("component");
+}

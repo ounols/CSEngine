@@ -107,17 +107,17 @@ void MaterialComponent::CopyReference(SComponent* src, std::map<SGameObject*, SG
 }
 
 void MaterialComponent::SetShaderIds(const GLProgramHandle* handle) const {
-    m_shaderId.fAlbedo = handle->UniformLocation("FLOAT_ALBEDO");
-    m_shaderId.fMetallic = handle->UniformLocation("FLOAT_METALLIC");
-    m_shaderId.fRoughness = handle->UniformLocation("FLOAT_ROUGHNESS");
-    m_shaderId.fAo = handle->UniformLocation("FLOAT_AO");
-    m_shaderId.fIrradiance = handle->UniformLocation("FLOAT_IRRADIANCE");
+	m_shaderId.fAlbedo = handle->UniformLocation("FLOAT_ALBEDO")->id;
+    m_shaderId.fMetallic = handle->UniformLocation("FLOAT_METALLIC")->id;
+    m_shaderId.fRoughness = handle->UniformLocation("FLOAT_ROUGHNESS")->id;
+    m_shaderId.fAo = handle->UniformLocation("FLOAT_AO")->id;
+    m_shaderId.fIrradiance = handle->UniformLocation("FLOAT_IRRADIANCE")->id;
 
-    m_shaderId.texAlbedo = handle->UniformLocation("TEX2D_ALBEDO");
-    m_shaderId.texMetallic = handle->UniformLocation("TEX2D_METALLIC");
-    m_shaderId.texRoughness = handle->UniformLocation("TEX2D_ROUGHNESS");
-    m_shaderId.texAo = handle->UniformLocation("TEX2D_AO");
-    m_shaderId.texIrradiance = handle->UniformLocation("TEXCUBE_IRRADIANCE");
+    m_shaderId.texAlbedo = handle->UniformLocation("TEX2D_ALBEDO")->id;
+    m_shaderId.texMetallic = handle->UniformLocation("TEX2D_METALLIC")->id;
+    m_shaderId.texRoughness = handle->UniformLocation("TEX2D_ROUGHNESS")->id;
+    m_shaderId.texAo = handle->UniformLocation("TEX2D_AO")->id;
+    m_shaderId.texIrradiance = handle->UniformLocation("TEXCUBE_IRRADIANCE")->id;
 
     m_shaderId.isInited = true;
 }

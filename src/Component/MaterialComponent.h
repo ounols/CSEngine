@@ -3,6 +3,7 @@
 #include "../Util/Render/SCubeTexture.h"
 #include "SComponent.h"
 #include "../Util/GLProgramHandle.h"
+#include "../Util/Render/SMaterial.h"
 
 namespace CSE {
 
@@ -83,6 +84,7 @@ namespace CSE {
         vec3 m_irradianceMaterial = vec3{ 0.03f, 0.03f, 0.03f };
         bool m_isPrefilter = false;
 
+		SMaterial* m_material = nullptr;
 
         //Shader ID
         mutable ShaderID m_shaderId;

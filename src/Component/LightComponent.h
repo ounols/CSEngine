@@ -42,7 +42,6 @@ namespace CSE {
 
         void SetSunrising(bool active);
 
-
         SLight* GetLight() const {
             //switch (m_type) {
             //case DIRECTIONAL: {
@@ -62,6 +61,11 @@ namespace CSE {
             return m_light;
         }
 
+		SComponent* Clone(SGameObject* object) override;
+
+		void SetValue(std::string name_str, Arguments value) override;
+
+		std::string PrintValue() const override;
 
     private:
         void SetLightPosition() const;

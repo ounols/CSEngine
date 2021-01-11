@@ -58,14 +58,14 @@ namespace CSE {
             Program = program;
         }
 
-        GLint AttributeLocation(const char* location) const {
+		Element* AttributeLocation(const char* location) const {
             auto pair = AttributesList.find(location);
-            return pair == AttributesList.end() ? -1 : pair->second->id;
+            return pair == AttributesList.end() ? nullptr : pair->second;
         }
 
-        GLint UniformLocation(const char* location) const {
+		Element* UniformLocation(const char* location) const {
             auto pair = UniformsList.find(location);
-            return pair == UniformsList.end() ? -1 : pair->second->id;
+            return pair == UniformsList.end() ? nullptr : pair->second;
         }
 
         void SetAttribVec3(std::string location, vec3& value);

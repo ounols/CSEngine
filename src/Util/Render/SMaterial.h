@@ -4,21 +4,22 @@
 
 #pragma once
 
-#include <vector>
+#include <functional>
+#include <unordered_map>
+
 #include "../GLProgramHandle.h"
-#include "../../SObject.h"
 
 namespace CSE {
 
-    class SMaterial : public SObject {
+    class SMaterial : public SResource {
     private:
-        enum TYPE {
-            NONE, INT, FLOAT, VEC3, VEC4, MAT3, MAT4
-        };
         struct Element {
             int id = HANDLE_NULL;
-            TYPE type = NONE;
+            GLenum type = HANDLE_NULL;
             void* value = nullptr;
+			int count = 1;
+        	
+			std::function<void()> attachFunc = nullptr;
         };
     public:
         SMaterial();
@@ -29,15 +30,20 @@ namespace CSE {
 
         void SetHandle(GLProgramHandle* handle);
 
-        void AttachElement(const char* element_name, void* element);
+        void AttachElement() const;
+
+		void InitElements();
 
     private:
         void ReleaseElements();
 
-        static TYPE GetType(GLenum type);
+		static std::function<void()> SetBindFuncByType(Element* element, bool isUniform);
 
+    protected:
+        void Init(const AssetMgr::AssetReference* asset) override;
     private:
         GLProgramHandle* m_handle = nullptr;
-        std::vector<Element*> m_elements;
+        //std::vector<Element*> m_elements;
+		std::unordered_map<std::string, Element*> m_elements;
     };
 }
