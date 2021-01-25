@@ -75,6 +75,8 @@ std::function<void()> SMaterial::SetBindFuncByType(Element* element, bool isUnif
 
 	if(isUniform == false) {
 		switch (type) {
+		case GL_FLOAT_VEC2:
+			return [id, value]() { glVertexAttrib2fv(id, ((vec2&)value).Pointer()); };
 		case GL_FLOAT_VEC3:
 			return [id, value]() { glVertexAttrib3fv(id, ((vec3&)value).Pointer()); };
 		case GL_FLOAT_VEC4:

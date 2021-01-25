@@ -95,6 +95,10 @@ namespace CSE {
                            y * (1 - t) + v.y * t);
         }
 
+        const T* Pointer() const {
+            return &x;
+        }
+
         template <typename P>
         P* Write(P* pData) {
             Vector2* pVector = (Vector2*) pData;
