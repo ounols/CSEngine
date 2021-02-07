@@ -29,7 +29,7 @@ namespace CSE {
 
     struct GLAttributeHandles {
         GLint Position = HANDLE_NULL;
-//    GLint Color = HANDLE_NULL;
+        GLint Color = HANDLE_NULL;
         GLint Normal = HANDLE_NULL;
 //    GLint DiffuseMaterial = HANDLE_NULL;
         GLint TextureCoord = HANDLE_NULL;

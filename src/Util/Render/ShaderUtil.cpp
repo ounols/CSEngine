@@ -45,7 +45,6 @@ ShaderUtil::CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragme
 
     //Binding important variables to engine.
     BindVariables(variables_vert, gProgramhandle);
-    BindVariables(variables_frag, gProgramhandle);
 
     return gProgramhandle;
 }
@@ -193,21 +192,17 @@ void ShaderUtil::BindVariables(std::map<std::string, std::string> variables, GLP
 
     if (handle == nullptr) return;
 
-    handle->Attributes.Position = handle->AttributeLocation("POSITION")->id;
-    handle->Attributes.Normal = handle->AttributeLocation("NORMAL")->id;
-    handle->Attributes.JointId = handle->AttributeLocation("JOINT_INDICES")->id;
-    handle->Attributes.Weight = handle->AttributeLocation("WEIGHTS")->id;
-    handle->Attributes.TextureCoord = handle->AttributeLocation("TEX_UV")->id;
+    auto position = handle->AttributeLocation("POSITION");
+    auto normal = handle->AttributeLocation("NORMAL");
+    auto jointId = handle->AttributeLocation("JOINT_INDICES");
+    auto weight = handle->AttributeLocation("WEIGHTS");
+    auto textureCoord = handle->AttributeLocation("TEX_UV");
+    auto color = handle->AttributeLocation("COLOR");
 
-    handle->Uniforms.Projection = handle->UniformLocation("PROJECTION_MATRIX")->id;
-    handle->Uniforms.Modelview = handle->UniformLocation("MODELVIEW_MATRIX")->id;
-    handle->Uniforms.ModelNoCameraMatrix = handle->UniformLocation("MODELVIEW_NOCAMERA_MATRIX")->id;
-    //handle->Uniforms.CameraPosition = handle->UniformLocation("CAMERA_POSITION")->id;
-    handle->Uniforms.IsSkinning = handle->UniformLocation("SKINNING_MODE")->id;
-    handle->Uniforms.JointMatrix = handle->UniformLocation("JOINT_MATRIX")->id;
-    handle->Uniforms.LightPosition = handle->UniformLocation("LIGHT_POSITION")->id;
-    handle->Uniforms.LightType = handle->UniformLocation("LIGHT_TYPE")->id;
-    //handle->Uniforms.LightRadius = handle->UniformLocation("LIGHT_RADIUS")->id;
-    handle->Uniforms.LightSize = handle->UniformLocation("LIGHT_SIZE")->id;
-    handle->Uniforms.LightColor = handle->UniformLocation("LIGHT_COLOR")->id;
+    handle->Attributes.Position = position != nullptr ? position->id : HANDLE_NULL;
+    handle->Attributes.Normal = normal != nullptr ? normal->id : HANDLE_NULL;
+    handle->Attributes.JointId = jointId != nullptr ? jointId->id : HANDLE_NULL;
+    handle->Attributes.Weight = weight != nullptr ? weight->id : HANDLE_NULL;
+    handle->Attributes.TextureCoord = textureCoord != nullptr ? textureCoord->id : HANDLE_NULL;
+    handle->Attributes.Color = color != nullptr ? color->id : HANDLE_NULL;
 }

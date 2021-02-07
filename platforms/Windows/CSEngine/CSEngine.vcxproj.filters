@@ -144,6 +144,9 @@
     <ClCompile Include="..\..\..\src\Util\SafeLog.cpp">
       <Filter>src\Util</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\Util\Loader\XML\XMLParser.cpp">
+      <Filter>src\Util\Loader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Sample\FirstDemoScene.h" />
@@ -372,6 +375,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\Util\SafeLog.h">
       <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\Loader\XML\XMLParser.h">
+      <Filter>src\Util\Loader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

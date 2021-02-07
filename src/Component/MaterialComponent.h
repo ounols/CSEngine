@@ -43,7 +43,7 @@ namespace CSE {
         void CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
                            std::map<SComponent*, SComponent*> lists_comp) override;
 
-        void AttachMaterials(const GLProgramHandle* handle) const;
+        void AttachMaterials(SMaterial* material);
 
 
         void SetAlbedo(vec3 albedo);
@@ -85,9 +85,6 @@ namespace CSE {
         bool m_isPrefilter = false;
 
 		SMaterial* m_material = nullptr;
-
-        //Shader ID
-        mutable ShaderID m_shaderId;
 
     };
 

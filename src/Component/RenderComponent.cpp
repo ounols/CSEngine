@@ -187,7 +187,7 @@ void RenderComponent::SetMaterials() const {
 //        glUniform1f(handler->Uniforms.Shininess, m_shininess);
 
     } else {
-        m_material->AttachMaterials(handler);
+//        m_material->AttachMaterials(handler);
     }
 
 
