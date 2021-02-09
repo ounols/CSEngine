@@ -237,7 +237,7 @@ void ScriptMgr::ReleaseSqratObject() {
 
 void ScriptMgr::ReadScriptList() const {
 
-    auto assets = ResMgr::getInstance()->GetAssetReferneces(AssetMgr::TYPE::SCRIPT);
+    auto assets = ResMgr::getInstance()->GetAssetReferences(AssetMgr::TYPE::SCRIPT);
 
     //compile base script class
     RegisterScript(CSEngineScript);

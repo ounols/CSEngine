@@ -55,7 +55,7 @@ bool ResMgr::IsEmpty() const {
     return m_resources.empty();
 }
 
-int ResMgr::GetStringId(std::string str) {
+int ResMgr::GetStringHash(std::string str) {
 	auto result = std::find(m_stringIds.begin(), m_stringIds.end(), str);
 	if (result != m_stringIds.end()) 
 		return result - m_stringIds.begin();
@@ -96,7 +96,7 @@ SResource* ResMgr::GetSResource(std::string name) const {
     return nullptr;
 }
 
-std::vector<AssetMgr::AssetReference*> ResMgr::GetAssetReferneces(AssetMgr::TYPE type) const {
+std::vector<AssetMgr::AssetReference*> ResMgr::GetAssetReferences(AssetMgr::TYPE type) const {
     return m_assetManager->GetAssets(type);
 }
 

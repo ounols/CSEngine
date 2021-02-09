@@ -25,7 +25,7 @@ SGameObject* DAEConvertSGameObject::CreateJoints(SGameObject* parent, Joint* dat
     SGameObject* jointObject = new SGameObject(data->GetName());
     JointComponent* joint = jointObject->CreateComponent<JointComponent>();
     joint->SetID(data->GetIndex());
-	int jointIndex = RESMGR->GetStringId(data->GetName());
+	int jointIndex = RESMGR->GetStringHash(data->GetName());
 	joint->SetAnimationJointId(jointIndex);
     joint->SetBindLocalMatrix(data->GetBindLocalTransform());
 

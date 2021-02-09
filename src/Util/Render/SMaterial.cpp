@@ -4,6 +4,9 @@
 
 #include "SMaterial.h"
 
+#include "../AssetsDef.h"
+#include "../Loader/XML/XML.h"
+
 using namespace CSE;
 
 SMaterial::SMaterial() {
@@ -104,5 +107,14 @@ std::function<void()> SMaterial::SetBindFuncByType(Element* element, bool isUnif
 }
 
 void SMaterial::Init(const AssetMgr::AssetReference* asset) {
-	
+	const XNode* m_root;
+
+	try {
+		m_root = XFILE(asset->path.c_str()).getRoot();
+	}
+	catch (int e) {
+		return;
+	}
+
+	SAFE_DELETE(m_root);
 }

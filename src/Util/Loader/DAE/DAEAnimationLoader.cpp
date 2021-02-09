@@ -114,7 +114,7 @@ void DAEAnimationLoader::processTransforms(std::string jointName,
             transform *= CORRECTION;
         }
 
-        keyFrames[i]->jointTransforms.push_back(new JointTransformData(RESMGR->GetStringId(jointName), jointName, transform));
+        keyFrames[i]->jointTransforms.push_back(new JointTransformData(RESMGR->GetStringHash(jointName), jointName, transform));
     }
 
 }

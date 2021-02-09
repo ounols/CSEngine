@@ -38,6 +38,9 @@ namespace CSE {
         template <class TYPE>
         TYPE* GetObject(std::string name) const;
 
+    	template <class TYPE>
+		TYPE* GetObjectById(std::string id) const;
+
         SResource* GetSResource(std::string name) const;
 
         int GetID(SResource* object) const;
@@ -46,13 +49,13 @@ namespace CSE {
 
         bool IsEmpty() const;
 
-		int GetStringId(std::string str);
+		int GetStringHash(std::string str);
 
         std::string RemoveDuplicatingName(std::string name) const;
 
         AssetMgr::AssetReference* GetAssetReference(std::string name) const;
 
-        std::vector<AssetMgr::AssetReference*> GetAssetReferneces(AssetMgr::TYPE type) const;
+        std::vector<AssetMgr::AssetReference*> GetAssetReferences(AssetMgr::TYPE type) const;
 
 #ifdef __ANDROID__
         void SetAssetManager(AAssetManager* obj);
@@ -79,5 +82,17 @@ namespace CSE {
         }
 
         return nullptr;
+    }
+
+    template <class TYPE>
+    TYPE* ResMgr::GetObjectById(std::string id) const {
+		for (auto resource : m_resources) {
+			if (dynamic_cast<TYPE*>(resource)) {
+				if (id == resource->GetID())
+					return static_cast<TYPE*>(resource);
+			}
+		}
+
+		return nullptr;
     }
 }
