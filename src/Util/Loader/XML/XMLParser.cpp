@@ -6,6 +6,29 @@
 
 using namespace CSE;
 
+void XMLParser::parse(std::vector<std::string> values, void* dst, const char* type) {
+	if (type == "str") dst = (void*)values[0].c_str();
+	else if (type == "bool") dst = (void*)parseBool(values[0].c_str());
+	else if (type == "float") *static_cast<float*>(dst) = parseFloat(values[0].c_str());
+	else if (type == "int") dst = (void*)parseInt(values[0].c_str());
+	//    else if(type == "arr") dst = (void*)parseInt(values[0].c_str());
+
+	else if (type == "res") dst = (void*)parseResources<SResource>(values[0].c_str());
+	else if (type == "tex") dst = (void*)parseTexture(values[0].c_str());
+	else if (type == "mat") dst = (void*)parseMaterial(values[0].c_str());
+	
+	else if (type == "comp") dst = (void*)parseComponent(values[0].c_str());
+	else if (type == "gobj") dst = (void*)parseGameObject(values[0].c_str());
+	
+	else if (type == "vec2") *static_cast<vec2*>(dst) = parseVec2(values);
+	else if (type == "vec3") *static_cast<vec3*>(dst) = parseVec3(values);
+	else if (type == "vec4") *static_cast<vec4*>(dst) = parseVec4(values);
+	
+	else if (type == "mat2") *static_cast<mat2*>(dst) = parseMat2(values);
+	else if (type == "mat3") *static_cast<mat3*>(dst) = parseMat3(values);
+	else if (type == "mat4") *static_cast<mat4*>(dst) = parseMat4(values);
+}
+
 int XMLParser::parseInt(const char* value) {
 	return std::stoi(value);
 }

@@ -6,6 +6,7 @@
 
 #include "../AssetsDef.h"
 #include "../Loader/XML/XML.h"
+#include "../Loader/XML/XMLParser.h"
 
 using namespace CSE;
 
@@ -114,6 +115,22 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
 	}
 	catch (int e) {
 		return;
+	}
+
+	XNode sce_mat = m_root->getChild("CSEMAT");
+	XNode shader_node = sce_mat.getChild("shader");
+
+	auto var_nodes = shader_node.children;
+
+	for (auto node : var_nodes) {
+
+		auto element_value = node.value.toStringVector();
+		auto element_type = node.getAttribute("type").toString();
+		auto element_name = node.getAttribute("name").toString();
+		
+		Element* element = new Element;
+		XMLParser::parse(element_value, element->value, element_type.c_str());
+		m_elements.insert(std::pair<std::string, Element*>(element_name, element));
 	}
 
 	SAFE_DELETE(m_root);

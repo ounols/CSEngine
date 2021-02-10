@@ -14,6 +14,8 @@ namespace CSE {
 
 	class XMLParser {
 	public:
+		static void parse(std::vector<std::string> values, void* dst, const char* type);
+		
 		static int parseInt(const char* value);
 		static float parseFloat(const char* value);
 		static bool parseBool(const char* value);
