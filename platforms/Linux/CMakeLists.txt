@@ -70,10 +70,10 @@ include_directories(../../External/zip)
 
 
 target_link_libraries(CSEngine.app X11)
-# target_link_libraries(CSEngine.app GLEW)
+ target_link_libraries(CSEngine.app GLEW)
 target_link_libraries(CSEngine.app glfw)
-target_link_libraries(CSEngine.app GLESv2)
-# target_link_libraries(CSEngine.app GL)
+#target_link_libraries(CSEngine.app GLESv2)
+ target_link_libraries(CSEngine.app GL)
 target_link_libraries(CSEngine.app m)
 # target_link_libraries(CSEngine.app CSEngineLib)
 target_link_libraries(CSEngine.app SquirrelLib)

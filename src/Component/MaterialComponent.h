@@ -8,24 +8,6 @@
 namespace CSE {
 
     class MaterialComponent : public SComponent {
-    private:
-        struct ShaderID {
-            int texAlbedo = -1;
-            int texMetallic = -1;
-            int texRoughness = -1;
-            int texAo = -1;
-            int texIrradiance = -1;
-            int texPrefilter = -1;
-
-            int fAlbedo = -1;
-            int fMetallic = -1;
-            int fRoughness = -1;
-            int fAo = -1;
-            int fIrradiance = -1;
-            int bPrefilter = -1;
-
-            bool isInited = false;
-        };
     public:
         MaterialComponent();
 
@@ -43,6 +25,7 @@ namespace CSE {
         void CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
                            std::map<SComponent*, SComponent*> lists_comp) override;
 
+        void AttachMaterials(std::string id);
         void AttachMaterials(SMaterial* material);
 
 
@@ -85,7 +68,7 @@ namespace CSE {
         bool m_isPrefilter = false;
 
 		SMaterial* m_material = nullptr;
-
+		SMaterial* m_materialInstance = nullptr;
     };
 
 }

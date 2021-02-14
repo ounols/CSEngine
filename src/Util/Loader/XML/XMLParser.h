@@ -9,12 +9,13 @@
 #include "../../../Component/SComponent.h"
 #include "../../Render/SMaterial.h"
 #include "../../Render/STexture.h"
+#include "../../STypeDef.h"
 
 namespace CSE {
 
 	class XMLParser {
 	public:
-		static void parse(std::vector<std::string> values, void* dst, const char* type);
+		static void parse(std::vector<std::string> values, void* dst, SType type);
 		
 		static int parseInt(const char* value);
 		static float parseFloat(const char* value);
@@ -38,6 +39,8 @@ namespace CSE {
 		//Engine Objects
 		static SComponent* parseComponent(const char* value);
 		static SGameObject* parseGameObject(const char* value);
+
+		static SType GetType(std::string type);
 	};
 
 	template <class TYPE>

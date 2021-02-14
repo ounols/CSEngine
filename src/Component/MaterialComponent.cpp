@@ -17,18 +17,23 @@ void MaterialComponent::Exterminate() {
 
 
 void MaterialComponent::Init() {
-    if (m_irradianceTexture == nullptr) {
-        m_irradianceTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("irradiance.textureCubeMap");
-    }
-    if (m_prefilterTexture == nullptr) {
-        m_prefilterTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("prefilter.textureCubeMap");
-    }
+
+//    if (m_irradianceTexture == nullptr) {
+//        m_irradianceTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("irradiance.textureCubeMap");
+//    }
+//    if (m_prefilterTexture == nullptr) {
+//        m_prefilterTexture = ResMgr::getInstance()->GetObject<SCubeTexture>("prefilter.textureCubeMap");
+//    }
 }
 
 
 void MaterialComponent::Tick(float elapsedTime) {
 }
 
+
+void MaterialComponent::AttachMaterials(std::string id) {
+    m_material = SResource::Create<SMaterial>(id);
+}
 
 void MaterialComponent::AttachMaterials(SMaterial* material) {
 
@@ -83,18 +88,10 @@ void MaterialComponent::AttachMaterials(SMaterial* material) {
 SComponent* MaterialComponent::Clone(SGameObject* object) {
     INIT_COMPONENT_CLONE(MaterialComponent, clone);
 
-    clone->m_albedoTexture = m_albedoTexture;
-    clone->m_metallicTexture = m_metallicTexture;
-    clone->m_roughnessTexture = m_roughnessTexture;
-    clone->m_aoTexture = m_aoTexture;
-
-    clone->m_albedoMaterial = m_albedoMaterial;
-    clone->m_metallicMaterial = m_metallicMaterial;
-    clone->m_roughnessMaterial = m_roughnessMaterial;
-    clone->m_aoMaterial = m_aoMaterial;
-
-    clone->m_irradianceTexture = m_irradianceTexture;
-    clone->m_irradianceMaterial = m_irradianceMaterial;
+    clone->m_material = m_material;
+    if(clone->m_materialInstance != nullptr) {
+        m_materialInstance =
+    }
 
     return clone;
 }

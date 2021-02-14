@@ -14,6 +14,18 @@ SMaterial::SMaterial() {
 
 }
 
+
+SMaterial::SMaterial(const SMaterial& material) {
+    for(const auto element_pair : material.m_elements) {
+        auto element_src = element_pair.second;
+        Element* element_copy = new Element;
+        element_copy->count = element_src->count;
+        element_copy->type = element_src->type;
+        element_copy->value = element_src->value;
+        m_elements.insert(std::pair<std::string, Element*>(element_pair.first, element_copy));
+    }
+}
+
 SMaterial::~SMaterial() {
 
 }
@@ -64,7 +76,6 @@ void SMaterial::InitElements() {
 		if (handleElement == nullptr) continue;
 
 		element->id = handleElement->id;
-		element->type = handleElement->type;
 		element->attachFunc = SetBindFuncByType(element, isUniform);
 	}
 	
@@ -79,28 +90,28 @@ std::function<void()> SMaterial::SetBindFuncByType(Element* element, bool isUnif
 
 	if(isUniform == false) {
 		switch (type) {
-		case GL_FLOAT_VEC2:
+		case SType::VEC2:
 			return [id, value]() { glVertexAttrib2fv(id, ((vec2&)value).Pointer()); };
-		case GL_FLOAT_VEC3:
+		case SType::VEC3:
 			return [id, value]() { glVertexAttrib3fv(id, ((vec3&)value).Pointer()); };
-		case GL_FLOAT_VEC4:
+		case SType::VEC4:
 			return [id, value]() { glVertexAttrib4fv(id, ((vec4&)value).Pointer()); };
 		}
 		return nullptr;
 	}
 
 	switch (type) {
-	case GL_FLOAT:
+	case SType::FLOAT:
 		return [id, value]() { glUniform1f(id, (float&)value); };
-	case GL_INT:
+	case SType::INT:
 		return [id, value]() { glUniform1i(id, (int&)value); };
-	case GL_FLOAT_MAT4:
+	case SType::MAT4:
 		return [id, count, value]() { glUniformMatrix4fv(id, count, 0, ((mat4&)value).Pointer()); };
-	case GL_FLOAT_MAT3:
+	case SType::MAT3:
 		return [id, count, value]() { glUniformMatrix3fv(id, count, 0, ((mat3&)value).Pointer()); };
-	case GL_FLOAT_VEC3:
+	case SType::VEC3:
 		return [id, count, value]() { glUniform3fv(id, count, ((vec3&)value).Pointer()); };
-	case GL_FLOAT_VEC4:
+	case SType::VEC4:
 		return [id, count, value]() { glUniform4fv(id, count, ((mat4&)value).Pointer()); };
 	}
 	
@@ -126,10 +137,14 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
 
 		auto element_value = node.value.toStringVector();
 		auto element_type = node.getAttribute("type").toString();
-		auto element_name = node.getAttribute("name").toString();
-		
+        SType type = XMLParser::GetType(element_type);
+        auto element_name = node.getAttribute("name").toString();
+		auto element_count = node.getAttribute("count").toString();
+
 		Element* element = new Element;
-		XMLParser::parse(element_value, element->value, element_type.c_str());
+        element->type = type;
+        element->count = std::stoi(element_count);
+		XMLParser::parse(element_value, element->value, type);
 		m_elements.insert(std::pair<std::string, Element*>(element_name, element));
 	}
 

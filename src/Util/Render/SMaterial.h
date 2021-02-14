@@ -8,6 +8,7 @@
 #include <unordered_map>
 
 #include "../GLProgramHandle.h"
+#include "../STypeDef.h"
 
 namespace CSE {
 
@@ -15,7 +16,7 @@ namespace CSE {
     private:
         struct Element {
             int id = HANDLE_NULL;
-            GLenum type = HANDLE_NULL;
+            SType type = SType::UNKNOWN;
             void* value = nullptr;
 			int count = 1;
         	
@@ -23,6 +24,8 @@ namespace CSE {
         };
     public:
         SMaterial();
+
+        SMaterial(const SMaterial& material);
 
         ~SMaterial() override;
 

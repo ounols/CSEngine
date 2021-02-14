@@ -16,9 +16,9 @@
 
 #elif __linux__
 
-// #include <GL/glew.h>
-#include <GLES2/gl2.h>
-#include <GLES3/gl3.h>
+#include <GL/glew.h>
+//#include <GLES2/gl2.h>
+//#include <GLES3/gl3.h>
 #include <iostream>
 
 #endif
