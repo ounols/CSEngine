@@ -198,7 +198,7 @@ link_directories(${PROJECT_NAME} "../../../External/Squirrel/lib/Windows")
 ################################################################################
 # Target
 ################################################################################
-add_executable(${PROJECT_NAME} CSEngine.cpp CSEngine.h ${CSENGINE_SRC})
+add_executable(${PROJECT_NAME} CSEngine.cpp CSEngine.h CSEngine.rc ${CSENGINE_SRC})
 
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 set(ROOT_NAMESPACE CSEngine)
@@ -349,9 +349,9 @@ endif()
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     set(ADDITIONAL_LIBRARY_DEPENDENCIES
         "$<$<CONFIG:Debug>:"
-            "../../../External/glew/lib/Release/Win32/glew32;"
-            "../../../External/Squirrel/lib/Windows/squirrelD;"
-            "../../../External/Squirrel/lib/Windows/sqstdlibD;"
+            "glew32;"
+            "squirrelD;"
+            "sqstdlibD;"
             "kernel32;"
             "user32;"
             "gdi32;"

@@ -16,7 +16,9 @@ namespace CSE {
 	static std::string AssetsPath() {
 
 		std::string path;
-#if defined(_DEBUG) || defined(__linux__)
+#if defined(_DEBUG) && defined(MSVC_CMAKE)
+        path.append("../../../../Assets/");
+#elif defined(_DEBUG) || defined(__linux__)
 		path.append("../../../Assets/");
 #endif
 #ifdef __ANDROID__

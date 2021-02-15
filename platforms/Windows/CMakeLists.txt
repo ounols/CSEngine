@@ -4,6 +4,10 @@ set(CMAKE_SYSTEM_VERSION 10.0.17763.0 CACHE STRING "" FORCE)
 
 project(CSEngine CXX)
 
+if(MSVC)
+    add_compile_definitions(MSVC_CMAKE)
+endif()
+
 ################################################################################
 # Set target arch type if empty. Visual studio solution generator provides it.
 ################################################################################

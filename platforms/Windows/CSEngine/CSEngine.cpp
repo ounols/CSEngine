@@ -17,18 +17,20 @@
 #include "../../../src/Manager/MainProc.h"
 #include "../../../src/Macrodef.h"
 
-
+#if defined(_WIN32) && !defined(MSVC_CMAKE)
 #pragma comment(lib, "../../../External/glew/lib/Release/Win32/glew32.lib")
+#elif defined(_WIN64) && !defined(MSVC_CMAKE)
+#pragma comment(lib, "../../../External/glew/lib/Release/x64/glew32.lib")
+#endif
 #pragma comment(lib, "opengl32.lib")
 //#pragma comment(lib, "glut32.lib")
 //#pragma comment(lib, "glu32.lib")
 #pragma comment(lib, "winmm.lib")
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && !defined(MSVC_CMAKE)
 #pragma comment(lib, "../../../External/Squirrel/lib/Windows/squirrelD.lib")
 #pragma comment(lib, "../../../External/Squirrel/lib/Windows/sqstdlibD.lib")
-
-#else // Release
+#elif !defined(_DEBUG) && !defined(MSVC_CMAKE) // Release
 #pragma comment(lib, "../../../External/Squirrel/lib/Windows/squirrel.lib")
 #pragma comment(lib, "../../../External/Squirrel/lib/Windows/sqstdlib.lib")
 #endif
