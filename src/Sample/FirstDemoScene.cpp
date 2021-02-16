@@ -90,6 +90,7 @@ void FirstDemoScene::Init() {
     c->CreateComponent<MaterialComponent>();
 //	c->GetComponent<MaterialComponent>()->SetShininess(40);
 //	c->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
+    c->GetComponent<MaterialComponent>()->AttachMaterials("File:Material/DefaultPBR.mat");
     c->GetComponent<MaterialComponent>()->SetAlbedo(vec3{ 1, 0, 0 });
 
     c->CreateComponent<RenderComponent>();
@@ -112,6 +113,7 @@ void FirstDemoScene::Init() {
     c2->CreateComponent<DrawableStaticMeshComponent>();
     c2->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
     c2->CreateComponent<MaterialComponent>();
+    c2->GetComponent<MaterialComponent>()->AttachMaterials("File:Material/DefaultPBR.mat");
 //	c2->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
 //	c2->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
     c2->GetTransform()->m_position.y = 0.7f;
@@ -125,6 +127,7 @@ void FirstDemoScene::Init() {
     c3->CreateComponent<DrawableStaticMeshComponent>();
     c3->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
     c3->CreateComponent<MaterialComponent>();
+    c3->GetComponent<MaterialComponent>()->AttachMaterials("File:Material/DefaultPBR.mat");
 //	c3->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 0 });
 //	c3->GetComponent<MaterialComponent>()->SetShininess(2);
 //	c3->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
@@ -191,6 +194,7 @@ void FirstDemoScene::Init() {
     d->CreateComponent<DrawableStaticMeshComponent>();
     d->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
     d->CreateComponent<MaterialComponent>();
+    d->GetComponent<MaterialComponent>()->AttachMaterials("File:Material/DefaultPBR.mat");
 //	d->GetComponent<MaterialComponent>()->SetDiffuseMaterial(vec4{ 1, 1, 1, 1 });
     d->GetComponent<MaterialComponent>()->SetAlbedo(vec3{ 1, 1, 1 });
 //	d->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);

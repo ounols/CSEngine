@@ -25,12 +25,21 @@
 <value name="m_scale">2 2 2</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
+<component type="LightComponent">
+<value name="m_type">2</value>
+</component>
+<component type="MaterialComponent">
+<value name="m_material">File:Material/DefaultPBR.mat</value>
+</component>
 <parent>__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/stormtrooper</parent>
 </gameobject><gameobject name="c" id="__ROOT_OF_SCENE__/c">
 <component type="TransformComponent">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
 <value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="MaterialComponent">
+<value name="m_material">File:Material/DefaultPBR.mat</value>
 </component>
 <component type="CustomComponent">
 <value name="m_classID">File:Script/testScript.nut</value>
@@ -79,12 +88,18 @@
 <value name="m_scale">1 1 1</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
+<component type="MaterialComponent">
+<value name="m_material">File:Material/DefaultPBR.mat</value>
+</component>
 <parent>__ROOT_OF_SCENE__</parent>
 </gameobject><gameobject name="testscript2$nbsp:object" id="__ROOT_OF_SCENE__/testscript2$nbsp:object">
 <component type="TransformComponent">
 <value name="m_position">0 -0.7 0</value>
 <value name="m_scale">1 1 1</value>
 <value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="MaterialComponent">
+<value name="m_material">File:Material/DefaultPBR.mat</value>
 </component>
 <component type="CustomComponent">
 <value name="m_classID">File:Script/testScript2.nut</value>
@@ -101,12 +116,18 @@
 <value name="m_scale">0.5 0.5 0.5</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
+<component type="MaterialComponent">
+<value name="m_material">File:Material/DefaultPBR.mat</value>
+</component>
 <parent>__ROOT_OF_SCENE__/testscript2$nbsp:object</parent>
 </gameobject><gameobject name="directional" id="__ROOT_OF_SCENE__/directional">
 <component type="TransformComponent">
 <value name="m_position">0 1 0</value>
 <value name="m_scale">1 1 1</value>
 <value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="LightComponent">
+<value name="m_type">1</value>
 </component>
 <component type="CustomComponent">
 <value name="m_classID">File:Script/directionalLight.nut</value>

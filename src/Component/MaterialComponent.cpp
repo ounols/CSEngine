@@ -13,6 +13,9 @@ MaterialComponent::~MaterialComponent() {}
 
 
 void MaterialComponent::Exterminate() {
+    if(m_materialInstance != nullptr) {
+        SAFE_DELETE(m_materialInstance);
+    }
 }
 
 
@@ -90,7 +93,7 @@ SComponent* MaterialComponent::Clone(SGameObject* object) {
 
     clone->m_material = m_material;
     if(clone->m_materialInstance != nullptr) {
-        m_materialInstance =
+        m_materialInstance = new SMaterial(m_material);
     }
 
     return clone;
@@ -101,7 +104,7 @@ void MaterialComponent::CopyReference(SComponent* src, std::map<SGameObject*, SG
     return;
 }
 
-void MaterialComponent::SetShaderIds(const GLProgramHandle* handle) const {
+void MaterialComponent::SetShader(const GLProgramHandle* handle) const {
 //	m_shaderId.fAlbedo = handle->UniformLocation("FLOAT_ALBEDO")->id;
 //    m_shaderId.fMetallic = handle->UniformLocation("FLOAT_METALLIC")->id;
 //    m_shaderId.fRoughness = handle->UniformLocation("FLOAT_ROUGHNESS")->id;
@@ -118,13 +121,18 @@ void MaterialComponent::SetShaderIds(const GLProgramHandle* handle) const {
 }
 
 bool MaterialComponent::AttachTexture(STexture* texture, int tex_id, int mtrl_id, unsigned short layout) const {
-    glUniform1i(tex_id, layout);
-    if (texture != nullptr) {
-        texture->Bind(tex_id, layout);
-        glUniform1f(mtrl_id, -1);
-        return true;
-    }
+//    if (texture != nullptr) {
+//        texture->Bind(tex_id, layout);
+//        glUniform1f(mtrl_id, -1);
+//        return true;
+//    }
+//    return false;
     return false;
+}
+
+void MaterialComponent::CreateMaterialInstance() {
+    SAFE_DELETE(m_materialInstance);
+    m_materialInstance = new SMaterial(m_material);
 }
 
 void MaterialComponent::SetAlbedo(vec3 albedo) {
@@ -161,4 +169,25 @@ void MaterialComponent::SetAo(float ao) {
 void MaterialComponent::SetAoTexture(STexture* ao) {
     m_aoTexture = ao;
     m_aoMaterial = -1;
+}
+
+void MaterialComponent::SetInt(std::string element_name, int value) {
+    if(m_materialInstance == nullptr) CreateMaterialInstance();
+
+    m_materialInstance->SetElements(element_name, reinterpret_cast<void*>(value));
+}
+
+void MaterialComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
+    if (name_str == "m_material") {
+        AttachMaterials(value[0]);
+    }
+}
+
+std::string MaterialComponent::PrintValue() const {
+    PRINT_START("component");
+
+    PRINT_VALUE(m_material, ConvertSpaceStr(m_material->GetID()));
+//    PRINT_VALUE(m_material, "File:DefaultPBR.material");
+
+    PRINT_END("component");
 }

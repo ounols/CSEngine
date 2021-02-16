@@ -25,7 +25,7 @@ namespace CSE {
     public:
         SMaterial();
 
-        SMaterial(const SMaterial& material);
+        SMaterial(const SMaterial* material);
 
         ~SMaterial() override;
 
@@ -36,6 +36,10 @@ namespace CSE {
         void AttachElement() const;
 
 		void InitElements();
+
+		void SetElements(std::string element_name, void* value);
+
+		void* GetElements(std::string element_name) const;
 
     private:
         void ReleaseElements();

@@ -15,8 +15,11 @@ SMaterial::SMaterial() {
 }
 
 
-SMaterial::SMaterial(const SMaterial& material) {
-    for(const auto element_pair : material.m_elements) {
+SMaterial::SMaterial(const SMaterial* material) {
+
+    if(material == nullptr) throw -1;
+
+    for(const auto element_pair : material->m_elements) {
         auto element_src = element_pair.second;
         Element* element_copy = new Element;
         element_copy->count = element_src->count;
@@ -81,38 +84,53 @@ void SMaterial::InitElements() {
 	
 }
 
+void SMaterial::SetElements(std::string element_name, void* value) {
+    auto find_iter = m_elements.find(element_name);
+    if(find_iter == m_elements.end()) return;
+
+    find_iter->second->value = value;
+}
+
+void* SMaterial::GetElements(std::string element_name) const {
+    auto find_iter = m_elements.find(element_name);
+    if(find_iter == m_elements.end()) return nullptr;
+    return find_iter->second->value;
+}
+
 std::function<void()> SMaterial::SetBindFuncByType(Element* element, bool isUniform) {
 
 	const GLenum type = element->type;
-	const int id = element->id;
-	const void* value = element->value;
-	const int count = element->count;
 
 	if(isUniform == false) {
 		switch (type) {
 		case SType::VEC2:
-			return [id, value]() { glVertexAttrib2fv(id, ((vec2&)value).Pointer()); };
+			return [element]() { glVertexAttrib2fv(element->id, ((vec2&)element->value).Pointer()); };
 		case SType::VEC3:
-			return [id, value]() { glVertexAttrib3fv(id, ((vec3&)value).Pointer()); };
+			return [element]() { glVertexAttrib3fv(element->id, ((vec3&)element->value).Pointer()); };
 		case SType::VEC4:
-			return [id, value]() { glVertexAttrib4fv(id, ((vec4&)value).Pointer()); };
+			return [element]() { glVertexAttrib4fv(element->id, ((vec4&)element->value).Pointer()); };
 		}
 		return nullptr;
 	}
 
 	switch (type) {
 	case SType::FLOAT:
-		return [id, value]() { glUniform1f(id, (float&)value); };
+		return [element]() { glUniform1f(element->id, (float&)element->value); };
 	case SType::INT:
-		return [id, value]() { glUniform1i(id, (int&)value); };
+		return [element]() { glUniform1i(element->id, (int&)element->value); };
 	case SType::MAT4:
-		return [id, count, value]() { glUniformMatrix4fv(id, count, 0, ((mat4&)value).Pointer()); };
+		return [element]() { glUniformMatrix4fv(element->id, element->count, 0, ((mat4&)element->value).Pointer()); };
 	case SType::MAT3:
-		return [id, count, value]() { glUniformMatrix3fv(id, count, 0, ((mat3&)value).Pointer()); };
+		return [element]() { glUniformMatrix3fv(element->id, element->count, 0, ((mat3&)element->value).Pointer()); };
 	case SType::VEC3:
-		return [id, count, value]() { glUniform3fv(id, count, ((vec3&)value).Pointer()); };
+		return [element]() { glUniform3fv(element->id, element->count, ((vec3&)element->value).Pointer()); };
 	case SType::VEC4:
-		return [id, count, value]() { glUniform4fv(id, count, ((mat4&)value).Pointer()); };
+		return [element]() { glUniform4fv(element->id, element->count, ((mat4&)element->value).Pointer()); };
+	case SType::TEXTURE:
+		return [element]() {
+		    STexture* tex = (STexture*) element->value;
+		    tex->Bind(element->id, element->count);
+		};
 	}
 	
 	return nullptr;
@@ -136,10 +154,10 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
 	for (auto node : var_nodes) {
 
 		auto element_value = node.value.toStringVector();
-		auto element_type = node.getAttribute("type").toString();
+		auto element_type = node.getAttribute("type").value;
         SType type = XMLParser::GetType(element_type);
-        auto element_name = node.getAttribute("name").toString();
-		auto element_count = node.getAttribute("count").toString();
+        auto element_name = node.getAttribute("name").value;
+		auto element_count = node.getAttribute("count").value;
 
 		Element* element = new Element;
         element->type = type;

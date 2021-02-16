@@ -28,6 +28,9 @@ namespace CSE {
         void AttachMaterials(std::string id);
         void AttachMaterials(SMaterial* material);
 
+        void CreateMaterialInstance();
+
+        void SetInt(std::string element_name, int value);
 
         void SetAlbedo(vec3 albedo);
 
@@ -45,8 +48,12 @@ namespace CSE {
 
         void SetAoTexture(STexture* ao);
 
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
+
     private:
-        void SetShaderIds(const GLProgramHandle* handle) const;
+        void SetShader(const GLProgramHandle* handle) const;
 
         bool AttachTexture(STexture* texture, int tex_id, int mtrl_id, unsigned short layout) const;
 
