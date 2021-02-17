@@ -84,16 +84,16 @@ void SMaterial::InitElements() {
 	
 }
 
-void SMaterial::SetElements(std::string element_name, void* value) {
+void SMaterial::SetElements(std::string element_name, std::vector<std::string> value) {
     auto find_iter = m_elements.find(element_name);
     if(find_iter == m_elements.end()) return;
 
     find_iter->second->value = value;
 }
 
-void* SMaterial::GetElements(std::string element_name) const {
+std::vector<std::string> SMaterial::GetElements(std::string element_name) const {
     auto find_iter = m_elements.find(element_name);
-    if(find_iter == m_elements.end()) return nullptr;
+    if(find_iter == m_elements.end()) return std::vector<std::string>();
     return find_iter->second->value;
 }
 
@@ -104,31 +104,58 @@ std::function<void()> SMaterial::SetBindFuncByType(Element* element, bool isUnif
 	if(isUniform == false) {
 		switch (type) {
 		case SType::VEC2:
-			return [element]() { glVertexAttrib2fv(element->id, ((vec2&)element->value).Pointer()); };
+			return [element]() {
+			    auto value = XMLParser::parseVec2(element->value);
+			    glVertexAttrib2fv(element->id, value.Pointer());
+			};
 		case SType::VEC3:
-			return [element]() { glVertexAttrib3fv(element->id, ((vec3&)element->value).Pointer()); };
+			return [element]() {
+                auto value = XMLParser::parseVec3(element->value);
+                glVertexAttrib3fv(element->id, value.Pointer());
+			};
 		case SType::VEC4:
-			return [element]() { glVertexAttrib4fv(element->id, ((vec4&)element->value).Pointer()); };
+			return [element]() {
+                auto value = XMLParser::parseVec4(element->value);
+                glVertexAttrib4fv(element->id, value.Pointer());
+			};
 		}
 		return nullptr;
 	}
 
 	switch (type) {
 	case SType::FLOAT:
-		return [element]() { glUniform1f(element->id, (float&)element->value); };
+		return [element]() {
+            auto value = XMLParser::parseFloat(element->value[0].c_str());
+            glUniform1f(element->id, value);
+		};
 	case SType::INT:
-		return [element]() { glUniform1i(element->id, (int&)element->value); };
+		return [element]() {
+            auto value = XMLParser::parseInt(element->value[0].c_str());
+            glUniform1i(element->id, value);
+		};
 	case SType::MAT4:
-		return [element]() { glUniformMatrix4fv(element->id, element->count, 0, ((mat4&)element->value).Pointer()); };
+		return [element]() {
+            auto value = XMLParser::parseMat4(element->value);
+		    glUniformMatrix4fv(element->id, element->count, 0, value.Pointer());
+		};
 	case SType::MAT3:
-		return [element]() { glUniformMatrix3fv(element->id, element->count, 0, ((mat3&)element->value).Pointer()); };
+		return [element]() {
+            auto value = XMLParser::parseMat3(element->value);
+		    glUniformMatrix3fv(element->id, element->count, 0, value.Pointer());
+		};
 	case SType::VEC3:
-		return [element]() { glUniform3fv(element->id, element->count, ((vec3&)element->value).Pointer()); };
+		return [element]() {
+            auto value = XMLParser::parseVec3(element->value);
+		    glUniform3fv(element->id, element->count, value.Pointer());
+		};
 	case SType::VEC4:
-		return [element]() { glUniform4fv(element->id, element->count, ((mat4&)element->value).Pointer()); };
+		return [element]() {
+            auto value = XMLParser::parseVec4(element->value);
+		    glUniform4fv(element->id, element->count, value.Pointer());
+		};
 	case SType::TEXTURE:
 		return [element]() {
-		    STexture* tex = (STexture*) element->value;
+		    STexture* tex = XMLParser::parseTexture(element->value[0].c_str());
 		    tex->Bind(element->id, element->count);
 		};
 	}
@@ -162,7 +189,7 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
 		Element* element = new Element;
         element->type = type;
         element->count = std::stoi(element_count);
-		XMLParser::parse(element_value, element->value, type);
+        element->value = element_value;
 		m_elements.insert(std::pair<std::string, Element*>(element_name, element));
 	}
 

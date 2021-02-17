@@ -17,7 +17,7 @@ namespace CSE {
         struct Element {
             int id = HANDLE_NULL;
             SType type = SType::UNKNOWN;
-            void* value = nullptr;
+            std::vector<std::string> value;
 			int count = 1;
         	
 			std::function<void()> attachFunc = nullptr;
@@ -37,9 +37,9 @@ namespace CSE {
 
 		void InitElements();
 
-		void SetElements(std::string element_name, void* value);
+		void SetElements(std::string element_name, std::vector<std::string> value);
 
-		void* GetElements(std::string element_name) const;
+		std::vector<std::string> GetElements(std::string element_name) const;
 
     private:
         void ReleaseElements();
