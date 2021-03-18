@@ -31,44 +31,47 @@ void RenderMgr::Render(float elapsedTime) const {
                       cameraComponent->GetProjectionMatrix() : mat4::Identity();
     vec3 cameraPosition = cameraComponent->GetCameraPosition();
 
-    ProgramRenderLayer programComp(m_rendersLayer.begin(), m_rendersLayer.end());
+    OrderRenderLayer orderRenderLayer(m_rendersLayer.begin(), m_rendersLayer.end());
 
-    for (const auto& programPair : programComp) {
+    for (const auto& orderLayerPair : orderRenderLayer) {
+        const auto& orderLayer = orderLayerPair.second;
+        ProgramRenderLayer programComp(orderLayer.begin(), orderLayer.end());
 
-        const auto& handler = *programPair.first;
-        const auto& renderComp = programPair.second;
+        for (const auto& programPair : programComp) {
 
-        if (programPair.first == nullptr) continue;
-        if (renderComp.empty()) continue;
+            const auto& handler = *programPair.first;
+            const auto& renderComp = programPair.second;
 
-        glUseProgram(handler.Program);
+            if (programPair.first == nullptr) continue;
+            if (renderComp.empty()) continue;
 
-		//Attach Light
-		LightMgr::getInstance()->AttachLightToShader(&handler);
+            glUseProgram(handler.Program);
+
+            //Attach Light
+            LightMgr::getInstance()->AttachLightToShader(&handler);
 
 
-        for (const auto& render : renderComp) {
-            if (render == nullptr) continue;
-            if (!render->isRenderActive) continue;
+            for (const auto& render : renderComp) {
+                if (render == nullptr) continue;
+                if (!render->isRenderActive) continue;
 
-            // Initialize various state.
-            glEnableVertexAttribArray(handler.Attributes.Position);
-            glEnableVertexAttribArray(handler.Attributes.Normal);
-            glEnableVertexAttribArray(handler.Attributes.TextureCoord);
-            glEnableVertexAttribArray(handler.Attributes.Weight);
-            glEnableVertexAttribArray(handler.Attributes.JointId);
-        	
-            render->SetMatrix(camera, cameraPosition, projection);
-            render->Render(elapsedTime);
+                // Initialize various state.
+                glEnableVertexAttribArray(handler.Attributes.Position);
+                glEnableVertexAttribArray(handler.Attributes.Normal);
+                glEnableVertexAttribArray(handler.Attributes.TextureCoord);
+                glEnableVertexAttribArray(handler.Attributes.Weight);
+                glEnableVertexAttribArray(handler.Attributes.JointId);
 
-            glDisableVertexAttribArray(handler.Attributes.Position);
-            glDisableVertexAttribArray(handler.Attributes.Normal);
-            glDisableVertexAttribArray(handler.Attributes.TextureCoord);
-            glDisableVertexAttribArray(handler.Attributes.Weight);
-            glDisableVertexAttribArray(handler.Attributes.JointId);
+                render->SetMatrix(camera, cameraPosition, projection);
+                render->Render(elapsedTime);
 
+                glDisableVertexAttribArray(handler.Attributes.Position);
+                glDisableVertexAttribArray(handler.Attributes.Normal);
+                glDisableVertexAttribArray(handler.Attributes.TextureCoord);
+                glDisableVertexAttribArray(handler.Attributes.Weight);
+                glDisableVertexAttribArray(handler.Attributes.JointId);
+            }
         }
-
     }
 
     ////VBO 언바인딩

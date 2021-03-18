@@ -13,6 +13,17 @@ SResource::SResource() {
     m_name = "Resource " + std::to_string(ResMgr::getInstance()->GetSize());
 }
 
+SResource::SResource(bool isRegister) {
+    m_name = "Unregisted Resource";
+}
+
+SResource::SResource(const SResource* resource, bool isRegister) : SObject(isRegister) {
+    if(isRegister) {
+        ResMgr::getInstance()->Register(this);
+    }
+    m_name = resource->m_name + " (instance)";
+}
+
 SResource::~SResource() {
 
 }

@@ -42,6 +42,7 @@ bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, fl
         vec3 JointId;
     };
 
+    if(jointIds != nullptr) m_meshId.m_hasJoint = true;
 
     m_Verts.resize(sizeVert * 14);
 
@@ -152,6 +153,10 @@ void MeshSurface::GenerateTriangleIndices(std::vector<unsigned short>& indices) 
     indices.resize(GetTriangleIndexCount() * 3);
 
     indices = m_Indics;
+}
+
+bool MeshSurface::HasJoint() const {
+    return m_meshId.m_hasJoint;
 }
 
 

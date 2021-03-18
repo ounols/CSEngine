@@ -24,7 +24,7 @@ namespace CSE {
         GLint LightColor = HANDLE_NULL;
         GLint LightSize = HANDLE_NULL;
         GLint JointMatrix = HANDLE_NULL;
-        GLint IsSkinning = HANDLE_NULL;
+        GLint SkinningMode = HANDLE_NULL;
     };
 
     struct GLAttributeHandles {

@@ -3,7 +3,8 @@
 #include "SComponent.h"
 #include "../Util/Render/RenderInterfaces.h"
 #include "DrawableStaticMeshComponent.h"
-#include "MaterialComponent.h"
+#include "DrawableSkinnedMeshComponent.h"
+#include "../Util/Render/SMaterial.h"
 
 namespace CSE {
 
@@ -26,26 +27,19 @@ namespace CSE {
 
         void Render(float elapsedTime) override;
 
-        void SetShaderHandle(std::string name);
-
-        void SetShaderHandle(GLProgramHandle* handle);
-
-
         void SetIsEnable(bool is_enable) override;
 
-    private:
-        void SetVectorInfomation();
+        SMaterial* GetMaterial() const;
+        void SetMaterial(SMaterial* material);
 
-        void SetMaterials() const;
+    private:
+        void AttachMaterials() const;
+        void SetJointMatrix();
 
     private:
         DrawableStaticMeshComponent* m_mesh;
-        MaterialComponent* m_material;
-
-        bool m_isSkinned = false;
-
-
-        void SetJointMatrix();
+        DrawableSkinnedMeshComponent* m_skinningMesh;
+        SMaterial* m_material_clone;
+        // SMaterial* material (Override)
     };
-
 }

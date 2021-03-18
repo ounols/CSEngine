@@ -7,15 +7,16 @@ class TestScript2 extends CSEngineScript {
     count = 3;
 
     function Init() {
-		//materialComp = gameobject.GetComponent<MaterialComponent>();
+		materialComp = gameobject.GetComponent<RenderComponent>();
 
 		//재질 컴포넌트에 주변광을 노란색 (255, 255, 0)으로 설정
         if(materialComp != null) {
 			local diffuse = vec3();
-			diffuse.Set(1, 1, 0);
-            materialComp.SetRoughness(0.2);
-            materialComp.SetMetallic(0.2);
-            materialComp.SetAlbedo(diffuse);
+			diffuse.Set(1, 0, 0);
+			local material = materialComp.GetMaterial();
+            material.SetFloat("FLOAT_ROUGHNESS", 0.2);
+            material.SetFloat("FLOAT_METALLIC", 0.2);
+            material.SetVec3("FLOAT_ALBEDO", diffuse);
             //materialComp.SetDiffuse(diffuse);
             //materialComp.SetAmbient(ambient);
         }
@@ -31,7 +32,7 @@ class TestScript2 extends CSEngineScript {
 		Log("count : " + count);
 //        if(materialComp != null) {
 //            local value = sin(count);
-//            materialComp.SetRoughness(value);
+//            material.SetFloat("FLOAT_ROUGHNESS", value);
 //            Log("value : " + value);
 //        }
 //        count += 0.01;

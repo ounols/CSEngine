@@ -87,6 +87,22 @@ void MaterialComponent::AttachMaterials(SMaterial* material) {
 
 }
 
+void MaterialComponent::BindMaterial() const {
+    SMaterial* material = m_materialInstance == nullptr ? m_material : m_materialInstance;
+    material->AttachElement();
+}
+
+void MaterialComponent::SetAttributes(const GLMeshID& meshId) const {
+    SMaterial* material = m_materialInstance == nullptr ? m_material : m_materialInstance;
+
+    material->SetAttribute(meshId);
+}
+
+void MaterialComponent::SetCameraMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) const {
+    SMaterial* material = m_materialInstance == nullptr ? m_material : m_materialInstance;
+
+    material->SetCameraUniform(camera, cameraPosition, projection, gameObject->GetTransform());
+}
 
 SComponent* MaterialComponent::Clone(SGameObject* object) {
     INIT_COMPONENT_CLONE(MaterialComponent, clone);
@@ -171,14 +187,8 @@ void MaterialComponent::SetAoTexture(STexture* ao) {
     m_aoMaterial = -1;
 }
 
-void MaterialComponent::SetInt(std::string element_name, int value) {
-    if(m_materialInstance == nullptr) CreateMaterialInstance();
-
-    m_materialInstance->SetElements(element_name, reinterpret_cast<void*>(value));
-}
-
 void MaterialComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
-    if (name_str == "m_material") {
+    if (name_str == "material") {
         AttachMaterials(value[0]);
     }
 }
@@ -187,7 +197,7 @@ std::string MaterialComponent::PrintValue() const {
     PRINT_START("component");
 
     PRINT_VALUE(m_material, ConvertSpaceStr(m_material->GetID()));
-//    PRINT_VALUE(m_material, "File:DefaultPBR.material");
+//    PRINT_VALUE(material, "File:DefaultPBR.material");
 
     PRINT_END("component");
 }

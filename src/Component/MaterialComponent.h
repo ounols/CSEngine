@@ -27,10 +27,9 @@ namespace CSE {
 
         void AttachMaterials(std::string id);
         void AttachMaterials(SMaterial* material);
+        void BindMaterial() const;
 
         void CreateMaterialInstance();
-
-        void SetInt(std::string element_name, int value);
 
         void SetAlbedo(vec3 albedo);
 
@@ -47,6 +46,9 @@ namespace CSE {
         void SetAo(float ao);
 
         void SetAoTexture(STexture* ao);
+
+        void SetAttributes(const GLMeshID& meshId) const;
+        void SetCameraMatrix(mat4 camera, vec3 cameraPosition, mat4 projection)const;
 
         void SetValue(std::string name_str, Arguments value) override;
 

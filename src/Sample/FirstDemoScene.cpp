@@ -7,7 +7,6 @@
 #include "../Component/CameraComponent.h"
 #include "../../Assets/teapot_smooth.h"
 #include "../../Assets/cube.h"
-#include "../Component/MaterialComponent.h"
 #include "../Component/RenderComponent.h"
 #include "../Component/CustomComponent.h"
 #include "../Manager/GameObjectMgr.h"
@@ -87,14 +86,12 @@ void FirstDemoScene::Init() {
     c->SetParent(root);
     c->CreateComponent<DrawableStaticMeshComponent>();
     c->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
-    c->CreateComponent<MaterialComponent>();
 //	c->GetComponent<MaterialComponent>()->SetShininess(40);
 //	c->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
-    c->GetComponent<MaterialComponent>()->AttachMaterials("File:Material/DefaultPBR.mat");
-    c->GetComponent<MaterialComponent>()->SetAlbedo(vec3{ 1, 0, 0 });
 
-    c->CreateComponent<RenderComponent>();
-    c->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
+    auto c_r = c->CreateComponent<RenderComponent>();
+    c_r->GetMaterial()->SetVec3("FLOAT_ALBEDO", vec3{ 1, 0, 0 });
+//    c->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
     c->GetComponent<RenderComponent>()->SetIsEnable(false);
     c->CreateComponent<CustomComponent>();
     c->GetComponent<CustomComponent>()->SetClassName("testScript.script");
@@ -112,22 +109,18 @@ void FirstDemoScene::Init() {
     // c2->AddComponent(c->GetComponent<DrawableStaticMeshComponent>());
     c2->CreateComponent<DrawableStaticMeshComponent>();
     c2->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
-    c2->CreateComponent<MaterialComponent>();
-    c2->GetComponent<MaterialComponent>()->AttachMaterials("File:Material/DefaultPBR.mat");
 //	c2->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
 //	c2->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
     c2->GetTransform()->m_position.y = 0.7f;
 
 
     c2->CreateComponent<RenderComponent>();
-    c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
+//    c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
     c3 = new SGameObject("testscript2 object");
     c3->SetParent(root);
     c3->CreateComponent<DrawableStaticMeshComponent>();
     c3->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
-    c3->CreateComponent<MaterialComponent>();
-    c3->GetComponent<MaterialComponent>()->AttachMaterials("File:Material/DefaultPBR.mat");
 //	c3->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 1, 0 });
 //	c3->GetComponent<MaterialComponent>()->SetShininess(2);
 //	c3->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
@@ -135,23 +128,23 @@ void FirstDemoScene::Init() {
 
     c3->CreateComponent<CustomComponent>();
     c3->GetComponent<CustomComponent>()->SetClassName("testScript2.script");
-    {
-		std::vector<std::string> variable = {
-		"materialComp", c3->GetID(c3->GetComponent<MaterialComponent>()), "comp"
-		};
-		c3->GetComponent<CustomComponent>()->SetValue("__variable__", variable);
-    }
-	{
-		std::vector<std::string> variable = {
-		"testScript", c->GetID(c->GetComponent<CustomComponent>()), "nut"
-		};
-		c3->GetComponent<CustomComponent>()->SetValue("__variable__", variable);
-	}
+//    {
+//		std::vector<std::string> variable = {
+//		"materialComp", c3->GetID(c3->GetComponent<MaterialComponent>()), "comp"
+//		};
+//		c3->GetComponent<CustomComponent>()->SetValue("__variable__", variable);
+//    }
+//	{
+//		std::vector<std::string> variable = {
+//		"testScript", c->GetID(c->GetComponent<CustomComponent>()), "nut"
+//		};
+//		c3->GetComponent<CustomComponent>()->SetValue("__variable__", variable);
+//	}
 	
 
 
     c3->CreateComponent<RenderComponent>();
-    c3->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
+//    c3->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
     auto c4 = SCloneFactory::Clone(c3, c3);
 //	c4->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 1 });
@@ -193,13 +186,14 @@ void FirstDemoScene::Init() {
     d->GetComponent<LightComponent>()->SetLightRadius(1);
     d->CreateComponent<DrawableStaticMeshComponent>();
     d->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
-    d->CreateComponent<MaterialComponent>();
-    d->GetComponent<MaterialComponent>()->AttachMaterials("File:Material/DefaultPBR.mat");
+//    d->CreateComponent<MaterialComponent>();
+//    d->GetComponent<MaterialComponent>()->AttachMaterials("File:Material/DefaultPBR.mat");
 //	d->GetComponent<MaterialComponent>()->SetDiffuseMaterial(vec4{ 1, 1, 1, 1 });
-    d->GetComponent<MaterialComponent>()->SetAlbedo(vec3{ 1, 1, 1 });
+//    d->GetComponent<MaterialComponent>()->SetAlbedo(vec3{ 1, 1, 1 });
 //	d->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
-    d->CreateComponent<RenderComponent>();
-    d->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
+    auto d_r = d->CreateComponent<RenderComponent>();
+    d_r->GetMaterial()->SetVec3("FLOAT_ALBEDO", vec3{ 0, 1, 0 });
+//    d->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
     //d->GetComponent<LightComponent>()->DisableDiffuse = true;
 
     a->CreateComponent<CameraComponent>();
@@ -249,14 +243,14 @@ void FirstDemoScene::switchingObject() {
         c2 = new SGameObject();
         c2->CreateComponent<DrawableStaticMeshComponent>();
         c2->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
-        c2->CreateComponent<MaterialComponent>();
+//        c2->CreateComponent<MaterialComponent>();
 //		c2->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
 //		c2->GetComponent<MaterialComponent>()->SetMaterialSpecular(vec3{ 0, 0, 0 });
         c2->GetTransform()->m_position.y = 0.5f;
 
 
         c2->CreateComponent<RenderComponent>();
-        c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
+//        c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
 //        d->GetComponent<LightComponent>()->SetLightType(LightComponent::DIRECTIONAL);
     }

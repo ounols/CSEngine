@@ -21,13 +21,14 @@ namespace CSE {
 
         virtual bool SetMesh(const SISurface& meshSurface);
 
+        const GLMeshID& GetMeshID() const {
+            return m_meshId;
+        }
+
     protected:
         virtual void CreateMeshBuffers(const SISurface& surface);
 
     protected:
         GLMeshID m_meshId;
-
-    public:
-        friend class RenderComponent;
     };
 }

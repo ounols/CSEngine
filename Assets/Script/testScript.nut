@@ -5,15 +5,16 @@ class TestScript extends CSEngineScript {
 	ambient = null;
 
 	function Init(){
-		materialComp = gameobject.GetComponent<MaterialComponent>();
+		materialComp = gameobject.GetComponent<RenderComponent>();
 		lightComp = gameobject.GetComponent<LightComponent>();
 
 		local diffuse = vec3();
 		diffuse.Set(0, 1, 0);
 		if(materialComp != null) {
-			materialComp.SetRoughness(0.4);
-			materialComp.SetMetallic(0.4);
-			materialComp.SetAlbedo(diffuse);
+		    local material = materialComp.GetMaterial();
+			material.SetFloat("FLOAT_ROUGHNESS", 0.4);
+			material.SetFloat("FLOAT_METALLIC", 0.4);
+			material.SetVec3("FLOAT_ALBEDO", diffuse);
 			//materialComp.SetDiffuse(diffuse);
 			//materialComp.SetAmbient(ambient);
 		}

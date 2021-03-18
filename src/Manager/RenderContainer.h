@@ -15,6 +15,7 @@ namespace CSE {
     public:
         typedef std::vector<SIRender*> RenderInterfaces;
         typedef std::map<GLProgramHandle*, RenderInterfaces> ProgramRenderLayer;
+        typedef std::map<short, ProgramRenderLayer> OrderRenderLayer;
 
     public:
         void Register(SIRender* object);
@@ -22,7 +23,7 @@ namespace CSE {
         void Remove(SIRender* object);
 
     protected:
-        ProgramRenderLayer m_rendersLayer;
+        OrderRenderLayer m_rendersLayer;
     };
 
 }

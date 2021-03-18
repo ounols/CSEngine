@@ -25,7 +25,7 @@ namespace CSE {
 
         static std::map<std::string, std::string> GetImportantVariables(const GLchar* source);
 
-        static void BindVariables(std::map<std::string, std::string> variables, GLProgramHandle* handle);
+        static void BindVariables(GLProgramHandle* handle);
     };
 
 }

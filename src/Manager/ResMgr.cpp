@@ -90,8 +90,10 @@ SResource* ResMgr::GetSResource(std::string name) const {
     make_lower(name);
 
     for (auto res : m_resources) {
-        if (make_lower_copy(res->GetName()) == name) return res;
-        if (make_lower_copy(res->GetID()) == name) return res;
+        if (make_lower_copy(res->GetName()) == name)
+            return res;
+        if (make_lower_copy(res->GetID()) == name)
+            return res;
     }
     return nullptr;
 }

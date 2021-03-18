@@ -4,6 +4,7 @@
 #include <iostream>
 #include "../../../Component/DrawableSkinnedMeshComponent.h"
 #include "../../../Component/RenderComponent.h"
+#include "../../Render/STexture.h"
 
 using namespace CSE;
 
@@ -525,11 +526,11 @@ SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
         dynamic_cast<DrawableSkinnedMeshComponent*>(mesh_component)->SetRootJoint(joint_root->GetChildren()[0],
                                                                                   m_skeletonData->getJointCount());
 
-    mesh_root->CreateComponent<RenderComponent>();
-    mesh_root->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
+    auto renderComponent = mesh_root->CreateComponent<RenderComponent>();
+//    mesh_root->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
-    auto material = mesh_root->CreateComponent<MaterialComponent>();
-    material->SetAlbedoTexture(ResMgr::getInstance()->GetObject<STexture>(m_texture_name));
+    auto material = renderComponent->GetMaterial();
+    material->SetTexture("TEX2D_ALBEDO", ResMgr::getInstance()->GetObject<STexture>(m_texture_name));
 
     if (m_isSkinning) {
         SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,

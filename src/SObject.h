@@ -6,6 +6,7 @@ namespace CSE {
     public:
 
         SObject();
+        SObject(bool isRegister);
 
         virtual ~SObject();
 

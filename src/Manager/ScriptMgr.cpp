@@ -9,6 +9,7 @@
 #include "../Component/MaterialComponent.h"
 #include "../Component/LightComponent.h"
 #include "../Object/SScriptObject.h"
+#include "../Component/RenderComponent.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -178,11 +179,10 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
             .Func(_SC("SetEnable"), &CustomComponent::SetIsEnable)
             .Func(_SC("Log"), &CustomComponent::Log);
 
-    COMPONENT_DEF(MaterialComponent)
-            .Func(_SC("SetAlbedo"), &MaterialComponent::SetAlbedo)
-            .Func(_SC("SetMetallic"), &MaterialComponent::SetMetallic)
-            .Func(_SC("SetRoughness"), &MaterialComponent::SetRoughness)
-            .Func(_SC("SetAO"), &MaterialComponent::SetAo);
+    COMPONENT_DEF(RenderComponent)
+            .Func(_SC("GetMaterial"), &RenderComponent::GetMaterial)
+            .Func(_SC("SetEnable"), &RenderComponent::SetIsEnable)
+            .Func(_SC("GetEnable"), &RenderComponent::GetIsEnable);
 
 
     COMPONENT_DEF(LightComponent)
@@ -222,6 +222,11 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
             .Func(_SC("Rotate"), &Quaternion::Rotate)
             .Func(_SC("ToEulerAngle"), &Quaternion::ToEulerAngle);
 
+    SQRClassDef<SMaterial>(_SC("Material"))
+            .Func(_SC("SetInt"), &SMaterial::SetInt)
+            .Func(_SC("SetFloat"), &SMaterial::SetFloat)
+            .Func(_SC("SetVec3"), &SMaterial::SetVec3)
+            .Func(_SC("SetTexture"), &SMaterial::SetTexture);
 }
 
 

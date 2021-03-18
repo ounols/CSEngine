@@ -8,6 +8,9 @@ SObject::SObject() {
 	MemoryMgr::getInstance()->Register(this);
 }
 
+SObject::SObject(bool isRegister) {
+    if(isRegister) MemoryMgr::getInstance()->Register(this);
+}
 
 SObject::~SObject() {
 }

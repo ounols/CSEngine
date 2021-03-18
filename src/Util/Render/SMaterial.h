@@ -9,6 +9,8 @@
 
 #include "../GLProgramHandle.h"
 #include "../STypeDef.h"
+#include "../Interface/TransformInterface.h"
+#include "../Render/GLMeshID.h"
 
 namespace CSE {
 
@@ -17,7 +19,7 @@ namespace CSE {
         struct Element {
             int id = HANDLE_NULL;
             SType type = SType::UNKNOWN;
-            std::vector<std::string> value;
+            std::vector<std::string> value_str;
 			int count = 1;
         	
 			std::function<void()> attachFunc = nullptr;
@@ -37,20 +39,52 @@ namespace CSE {
 
 		void InitElements();
 
-		void SetElements(std::string element_name, std::vector<std::string> value);
+		void SetAttribute(const GLMeshID& meshId) const;
 
-		std::vector<std::string> GetElements(std::string element_name) const;
+		void SetCameraUniform(mat4 camera, vec3 cameraPosition, mat4 projection, TransformInterface* transform) const;
+
+		void SetSkinningUniform(const GLMeshID& mesh, const std::vector<mat4>& jointMatrix);
+
+		void SetInt(std::string name, int value);
+
+		void SetFloat(std::string name, float value);
+
+		void SetVec3(std::string name, vec3 value);
+
+		void SetTexture(std::string name, SResource* texture);
+
+        short GetOrderLayer() const;
+
+        void SetOrderLayer(int orderLayer);
+
+        GLProgramHandle* GetHandle() const;
+
+    protected:
+        void Init(const AssetMgr::AssetReference* asset) override;
 
     private:
         void ReleaseElements();
 
-		static std::function<void()> SetBindFuncByType(Element* element, bool isUniform);
+		void SetBindFuncByType(Element* element, bool isUniform);
 
-    protected:
-        void Init(const AssetMgr::AssetReference* asset) override;
+        void SetIntFunc(Element* element, int value);
+        void SetFloatFunc(Element* element, float value);
+        void SetBoolFunc(Element* element, bool value);
+
+        void SetMat4Func(Element* element, mat4 value);
+        void SetMat3Func(Element* element, mat3 value);
+        void SetMat2Func(Element* element, mat2 value);
+        void SetVec4Func(Element* element, vec4 value);
+        void SetVec3Func(Element* element, vec3 value);
+        void SetVec2Func(Element* element, vec2 value);
+
+        void SetTextureFunc(Element* element, SResource* texture);
+
     private:
         GLProgramHandle* m_handle = nullptr;
+        short m_orderLayer = 5000;
         //std::vector<Element*> m_elements;
 		std::unordered_map<std::string, Element*> m_elements;
+		std::unordered_map<std::string, Element*> m_attributeElements;
     };
 }

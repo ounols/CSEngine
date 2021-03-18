@@ -28,6 +28,9 @@ namespace CSE {
         }
 
         ~Matrix2() {}
+        const T* Pointer() const {
+            return &MAT2_XX;
+        }
     };
 
     template <typename T>
@@ -88,9 +91,7 @@ namespace CSE {
         }
 
         const T* Pointer() const {
-
             return &MAT3_XX;
-
         }
     };
 

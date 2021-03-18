@@ -167,7 +167,7 @@ std::string CustomComponent::PrintValue() const {
     PRINT_START("component");
 
     PRINT_VALUE(m_classID, ConvertSpaceStr(m_classID));
-    for(auto val : m_variables) {
+    for(auto& val : m_variables) {
         std::string value = val.value;
         if(value.empty()) value = "null";
         PRINT_VALUE(__variable__, val.name, ' ', ConvertSpaceStr(value) , ' ', val.type);

@@ -26,9 +26,9 @@ namespace CSE {
 		static vec3 parseVec3(std::vector<std::string> values);
 		static vec4 parseVec4(std::vector<std::string> values);
 
-		static mat2 parseMat2(std::vector<std::string> values);
-		static mat3 parseMat3(std::vector<std::string> values);
-		static mat4 parseMat4(std::vector<std::string> values);
+//		static mat2 parseMat2(std::vector<std::string> values);
+//		static mat3 parseMat3(std::vector<std::string> values);
+//		static mat4 parseMat4(std::vector<std::string> values);
 
 		//Resources
 		template <class TYPE>

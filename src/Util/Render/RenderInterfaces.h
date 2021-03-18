@@ -3,20 +3,10 @@
 #include "../../SObject.h"
 #include "../../Manager/ResMgr.h"
 #include "../Matrix.h"
+#include "SMaterial.h"
+#include "GLMeshID.h"
 
 namespace CSE {
-
-    struct GLMeshID {
-        int m_vertexBuffer = -1;
-        int m_indexBuffer = -1;
-        int m_vertexSize = -1;
-        int m_indexSize = -1;
-
-        int m_jointId = -1;
-        int m_weight = -1;
-    };
-
-
     class SISurface : public SResource {
     public:
 
@@ -55,12 +45,12 @@ namespace CSE {
         virtual void Render(float elapsedTime) = 0;
 
     protected:
-        GLProgramHandle* handler = nullptr;
+        short programRenderIndex = -1; //For RenderContainer
+        SMaterial* material = nullptr;
         bool isRenderActive = false;
 
     public:
         friend class RenderContainer;
-
         friend class RenderMgr;
     };
 }

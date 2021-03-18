@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CSEMAT version="1.0.0">
 <shader id="File:Shader/PBR/PBR.shader">
-<var name="TEX2D_ALBEDO" type="tex" count="1">File:Stormtrooper_D.texture</var>
+<var name="TEX2D_ALBEDO" type="tex" count="1">File:Stormtrooper_D.jpg</var>
+<var name="FLOAT_ALBEDO" type="vec3" count="1">1 1 1</var>
 </shader>
 </CSEMAT>

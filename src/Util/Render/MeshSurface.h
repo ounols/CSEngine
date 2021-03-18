@@ -30,6 +30,7 @@ namespace CSE {
 
         void GenerateTriangleIndices(std::vector<unsigned short>& indices) const override;
 
+        bool HasJoint() const;
 
         static vec3 GenerateTopTriangle(vec3 v0, vec3 v1, vec3 v2);
 

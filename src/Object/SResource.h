@@ -14,6 +14,8 @@ namespace CSE {
     class SResource : public SObject {
     public:
         SResource();
+        SResource(bool isRegister);
+        SResource(const SResource* resource, bool isRegister);
 
         virtual ~SResource();
 

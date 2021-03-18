@@ -44,7 +44,7 @@ ShaderUtil::CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragme
     gProgramhandle->SetUniformsList(variables_vert, variables_frag);
 
     //Binding important variables to engine.
-    BindVariables(variables_vert, gProgramhandle);
+    BindVariables(gProgramhandle);
 
     return gProgramhandle;
 }
@@ -188,16 +188,24 @@ std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLcha
     return variables;
 }
 
-void ShaderUtil::BindVariables(std::map<std::string, std::string> variables, GLProgramHandle* handle) {
+void ShaderUtil::BindVariables(GLProgramHandle* handle) {
 
     if (handle == nullptr) return;
 
+    //Attributes
     auto position = handle->AttributeLocation("POSITION");
     auto normal = handle->AttributeLocation("NORMAL");
     auto jointId = handle->AttributeLocation("JOINT_INDICES");
     auto weight = handle->AttributeLocation("WEIGHTS");
     auto textureCoord = handle->AttributeLocation("TEX_UV");
     auto color = handle->AttributeLocation("COLOR");
+    //Uniforms
+    auto modelView = handle->UniformLocation("MODELVIEW_MATRIX");
+    auto modelViewNoCamera = handle->UniformLocation("MODELVIEW_NOCAMERA_MATRIX");
+    auto cameraPosition = handle->UniformLocation("CAMERA_POSITION");
+    auto projection = handle->UniformLocation("PROJECTION_MATRIX");
+    auto skinningMode = handle->UniformLocation("SKINNING_MODE");
+    auto jointMatrix = handle->UniformLocation("JOINT_MATRIX");
 
     handle->Attributes.Position = position != nullptr ? position->id : HANDLE_NULL;
     handle->Attributes.Normal = normal != nullptr ? normal->id : HANDLE_NULL;
@@ -205,4 +213,11 @@ void ShaderUtil::BindVariables(std::map<std::string, std::string> variables, GLP
     handle->Attributes.Weight = weight != nullptr ? weight->id : HANDLE_NULL;
     handle->Attributes.TextureCoord = textureCoord != nullptr ? textureCoord->id : HANDLE_NULL;
     handle->Attributes.Color = color != nullptr ? color->id : HANDLE_NULL;
+
+    handle->Uniforms.Modelview = modelView != nullptr ? modelView->id : HANDLE_NULL;
+    handle->Uniforms.ModelNoCameraMatrix = modelViewNoCamera != nullptr ? modelViewNoCamera->id : HANDLE_NULL;
+    handle->Uniforms.CameraPosition = cameraPosition != nullptr ? cameraPosition->id : HANDLE_NULL;
+    handle->Uniforms.Projection = projection != nullptr ? projection->id : HANDLE_NULL;
+    handle->Uniforms.SkinningMode = skinningMode != nullptr ? skinningMode->id : HANDLE_NULL;
+    handle->Uniforms.JointMatrix = jointMatrix != nullptr ? jointMatrix->id : HANDLE_NULL;
 }
