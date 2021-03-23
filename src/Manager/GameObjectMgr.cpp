@@ -1,11 +1,9 @@
 #include <algorithm>
-#include "MemoryMgr.h"
 #include "GameObjectMgr.h"
-#include "../Util/MoreString.h"
+#include "EngineCore.h"
 
 using namespace CSE;
 
-IMPLEMENT_SINGLETON(GameObjectMgr);
 
 GameObjectMgr::GameObjectMgr() {}
 
@@ -39,7 +37,7 @@ void GameObjectMgr::DeleteGameObject(SGameObject* object) {
     if (iGameObj != m_objects.end()) {
         m_size--;
         m_objects.erase(iGameObj);
-        MemoryMgr::getInstance()->ReleaseObject(object);
+        CORE->GetCore<MemoryMgr>()->ReleaseObject(object);
     }
 }
 

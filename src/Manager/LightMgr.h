@@ -7,13 +7,14 @@
 
 namespace CSE {
 
-    class LightMgr : public SContainer<LightComponent*> {
+    class LightMgr : public SContainer<LightComponent*>, public CoreBase {
     public:
-    DECLARE_SINGLETONE(LightMgr);
-
+        explicit LightMgr();
         ~LightMgr();
 
         void AttachLightToShader(const GLProgramHandle* handle) const;
+
+        void Init() override;
 
     private:
         SCubeTexture* m_currentSkybox;

@@ -1,9 +1,8 @@
 #include "SceneMgr.h"
 #include "MemoryMgr.h"
+#include "EngineCore.h"
 
 using namespace CSE;
-
-IMPLEMENT_SINGLETON(SceneMgr);
 
 SceneMgr::SceneMgr() {
 
@@ -15,14 +14,14 @@ SceneMgr::~SceneMgr() {
 }
 
 
-void SceneMgr::Init() const {
+void SceneMgr::Init() {
     if (m_scene == nullptr) return;
 
     m_scene->Init();
 }
 
 
-void SceneMgr::Tick(float elapsedTime) const {
+void SceneMgr::Update(float elapsedTime) {
 
     if (m_scene == nullptr)
         return;
@@ -37,7 +36,7 @@ void SceneMgr::SetScene(Scene* scene) {
     if (m_scene != nullptr) {
         m_scene->SetUndestroyable(false);
         //MemoryMgr::getInstance()->ReleaseObject(m_scene);
-        MemoryMgr::getInstance()->ExterminateObjects();
+        CORE->GetCore<MemoryMgr>()->ExterminateObjects();
     }
 
     m_scene = scene;

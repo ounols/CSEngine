@@ -1,21 +1,21 @@
 #pragma once
 #include "../MacroDef.h"
 #include "GameObjectContainer.h"
+#include "Base/CoreBase.h"
 
 namespace CSE {
 
     class SGameObject;
 
-    class GameObjectMgr : public GameObjectContainer {
-    protected:
-    DECLARE_SINGLETONE(GameObjectMgr);
-
+    class GameObjectMgr : public GameObjectContainer, public CoreBase {
+    public:
+        explicit GameObjectMgr();
         ~GameObjectMgr();
 
     public:
-        void Init();
+        void Init() override;
 
-        void Update(float elapsedTime);
+        void Update(float elapsedTime) override;
 
         void DeleteGameObject(SGameObject* object);
 

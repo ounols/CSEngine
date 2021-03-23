@@ -10,8 +10,6 @@
 #include <android/asset_manager_jni.h>
 #endif
 
-#define RESMGR ResMgr::getInstance()
-
 namespace CSE {
 
     class SObject;
@@ -20,14 +18,16 @@ namespace CSE {
 
     class SISurface;
 
-    class ResMgr {
-    private:
+    class ResMgr : public CoreBase {
+    public:
+        explicit ResMgr();
         ~ResMgr();
 
     public:
-    DECLARE_SINGLETONE(ResMgr);
 
-        void Init();
+        void Init() override;
+
+        void InitResource();
 
         void Exterminate();
 

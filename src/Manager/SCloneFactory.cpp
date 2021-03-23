@@ -6,6 +6,7 @@
 #include "SceneMgr.h"
 #include "../Object/SScene.h"
 #include "../Component/TransformComponent.h"
+#include "EngineCore.h"
 
 #include <map>
 #include <sstream>
@@ -26,7 +27,7 @@ SCloneFactory::~SCloneFactory() {
 
 SComponent* SCloneFactory::Clone(SComponent* component, SGameObject* parent) {
     if(parent == nullptr) {
-        Scene* currentScene = SceneMgr::getInstance()->GetCurrentScene();
+        Scene* currentScene = CORE->GetCore<SceneMgr>()->GetCurrentScene();
         if(!dynamic_cast<SScene*>(currentScene)) return nullptr;
 
         parent = static_cast<SScene*>(currentScene)->GetRoot();
@@ -40,7 +41,7 @@ SComponent* SCloneFactory::Clone(SComponent* component, SGameObject* parent) {
 
 SGameObject* SCloneFactory::Clone(SGameObject* object, SGameObject* parent) {
     if(parent == nullptr) {
-        Scene* currentScene = SceneMgr::getInstance()->GetCurrentScene();
+        Scene* currentScene = CORE->GetCore<SceneMgr>()->GetCurrentScene();
         if(!dynamic_cast<SScene*>(currentScene)) return nullptr;
 
         parent = static_cast<SScene*>(currentScene)->GetRoot();

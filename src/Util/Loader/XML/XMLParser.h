@@ -10,6 +10,7 @@
 #include "../../Render/SMaterial.h"
 #include "../../Render/STexture.h"
 #include "../../STypeDef.h"
+#include "../../../Manager/EngineCore.h"
 
 namespace CSE {
 
@@ -45,7 +46,7 @@ namespace CSE {
 
 	template <class TYPE>
 	TYPE* XMLParser::parseResources(const char* value) {
-		TYPE* res = ResMgr::getInstance()->GetObjectById<TYPE>(value);
+        TYPE* res = CORE->GetCore<ResMgr>()->GetObjectById<TYPE>(value);
 		return res;
 	}
 

@@ -10,6 +10,7 @@
 #include "../Component/LightComponent.h"
 #include "../Object/SScriptObject.h"
 #include "../Component/RenderComponent.h"
+#include "EngineCore.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -241,8 +242,7 @@ void ScriptMgr::ReleaseSqratObject() {
 
 
 void ScriptMgr::ReadScriptList() const {
-
-    auto assets = ResMgr::getInstance()->GetAssetReferences(AssetMgr::TYPE::SCRIPT);
+    auto assets = CORE->GetCore<ResMgr>()->GetAssetReferences(AssetMgr::TYPE::SCRIPT);
 
     //compile base script class
     RegisterScript(CSEngineScript);

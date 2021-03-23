@@ -2,8 +2,6 @@
 
 using namespace CSE;
 
-IMPLEMENT_SINGLETON(CameraMgr);
-
 CameraMgr::CameraMgr() {
 }
 
@@ -13,11 +11,6 @@ CameraMgr::~CameraMgr() {}
 
 void CameraMgr::Init() {
 }
-
-
-void CameraMgr::Tick() {
-}
-
 
 void CameraMgr::DeleteCameraComponent(CameraComponent* object) {
     if (object == nullptr) return;

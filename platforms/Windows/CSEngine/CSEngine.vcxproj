@@ -161,9 +161,12 @@
     <ClInclude Include="..\..\..\src\Component\TransformComponent.h" />
     <ClInclude Include="..\..\..\src\MacroDef.h" />
     <ClInclude Include="..\..\..\src\Manager\AssetMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\Base\CoreBase.h" />
+    <ClInclude Include="..\..\..\src\Manager\Base\RenderCoreBase.h" />
     <ClInclude Include="..\..\..\src\Manager\Base\Scene.h" />
     <ClInclude Include="..\..\..\src\Manager\Base\SContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\CameraMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\EngineCore.h" />
     <ClInclude Include="..\..\..\src\Manager\GameObjectContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\GameObjectMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\LightMgr.h" />
@@ -240,6 +243,7 @@
     <ClCompile Include="..\..\..\src\Manager\AssetMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Base\Scene.cpp" />
     <ClCompile Include="..\..\..\src\Manager\CameraMgr.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\EngineCore.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\LightMgr.cpp" />

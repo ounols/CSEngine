@@ -88,7 +88,7 @@ namespace CSE {
 
         std::string GetID() const;
 
-        std::string GetID(SComponent* component) const;
+        std::string GetID(const SComponent* component) const;
 
         void SetName(std::string name) {
             m_name = name;

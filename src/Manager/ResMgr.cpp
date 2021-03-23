@@ -1,17 +1,13 @@
 #include "ResMgr.h"
 #include "CameraMgr.h"
 #include "MemoryMgr.h"
+#include "EngineCore.h"
 
 using namespace CSE;
 
-IMPLEMENT_SINGLETON(ResMgr);
-
 ResMgr::ResMgr() {
-
-    Init();
-
+    InitResource();
 }
-
 
 ResMgr::~ResMgr() {
     Exterminate();
@@ -19,6 +15,10 @@ ResMgr::~ResMgr() {
 
 
 void ResMgr::Init() {
+}
+
+
+void ResMgr::InitResource() {
     //Make Asset Manager
     m_assetManager = new AssetMgr();
 
@@ -44,7 +44,7 @@ void ResMgr::Remove(SResource* m_object) {
         m_resources.erase(iObj);
     }
 
-    MemoryMgr::getInstance()->ReleaseObject(m_object, true);
+    CORE->GetCore<MemoryMgr>()->ReleaseObject(m_object, true);
 }
 
 int ResMgr::GetSize() const {

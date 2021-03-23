@@ -42,7 +42,7 @@ namespace CSE {
 
         virtual void SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) = 0;
 
-        virtual void Render(float elapsedTime) = 0;
+        virtual void Render() const = 0;
 
     protected:
         short programRenderIndex = -1; //For RenderContainer

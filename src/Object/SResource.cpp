@@ -5,12 +5,14 @@
 #include <iostream>
 #include "SResource.h"
 #include "../Manager/ResMgr.h"
+#include "../Manager/EngineCore.h"
 
 using namespace CSE;
 
 SResource::SResource() {
-    ResMgr::getInstance()->Register(this);
-    m_name = "Resource " + std::to_string(ResMgr::getInstance()->GetSize());
+    auto resMgr = CORE->GetCore<ResMgr>();
+    resMgr->Register(this);
+    m_name = "Resource " + std::to_string(resMgr->GetSize());
 }
 
 SResource::SResource(bool isRegister) {
@@ -19,7 +21,7 @@ SResource::SResource(bool isRegister) {
 
 SResource::SResource(const SResource* resource, bool isRegister) : SObject(isRegister) {
     if(isRegister) {
-        ResMgr::getInstance()->Register(this);
+        CORE->GetCore<ResMgr>()->Register(this);
     }
     m_name = resource->m_name + " (instance)";
 }
@@ -29,13 +31,13 @@ SResource::~SResource() {
 }
 
 void SResource::SetName(std::string name) {
-    m_name = ResMgr::getInstance()->RemoveDuplicatingName(name);
+    m_name = CORE->GetCore<ResMgr>()->RemoveDuplicatingName(name);
 }
 
 void SResource::SetResource(std::string name, bool isInit) {
     if (m_isInited) return;
 
-    auto asset = ResMgr::getInstance()->GetAssetReference(name);
+    auto asset = CORE->GetCore<ResMgr>()->GetAssetReference(name);
 
     SetResource(asset, isInit);
 }
@@ -53,5 +55,5 @@ void SResource::SetResource(const AssetMgr::AssetReference* asset, bool isInit) 
 }
 
 SResource* SResource::GetResource(std::string name) {
-    return ResMgr::getInstance()->GetSResource(name);
+    return CORE->GetCore<ResMgr>()->GetSResource(name);
 }

@@ -7,6 +7,7 @@
 
 #include "../../MoreString.h"
 #include "../../../Manager/ResMgr.h"
+#include "../../../Manager/EngineCore.h"
 
 using namespace CSE;
 
@@ -14,7 +15,6 @@ const mat4 CORRECTION = /*mat4::RotateX(90)*/ mat4::Identity();
 
 
 DAEAnimationLoader::DAEAnimationLoader() {
-
 }
 
 DAEAnimationLoader::~DAEAnimationLoader() {
@@ -114,7 +114,8 @@ void DAEAnimationLoader::processTransforms(std::string jointName,
             transform *= CORRECTION;
         }
 
-        keyFrames[i]->jointTransforms.push_back(new JointTransformData(RESMGR->GetStringHash(jointName), jointName, transform));
+        keyFrames[i]->jointTransforms.push_back(
+                new JointTransformData(CORE->GetCore<ResMgr>()->GetStringHash(jointName), jointName, transform));
     }
 
 }

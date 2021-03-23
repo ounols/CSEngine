@@ -1,15 +1,19 @@
 #include "SObject.h"
 #include "Manager/MemoryMgr.h"
+#include "Manager/EngineCore.h"
 
 using namespace CSE;
 
+MemoryMgr* memoryMgr = nullptr;
+
 SObject::SObject() {
+    memoryMgr = CORE->GetCore<MemoryMgr>();
 	// register this object to MemoryContainer class
-	MemoryMgr::getInstance()->Register(this);
+    memoryMgr->Register(this);
 }
 
 SObject::SObject(bool isRegister) {
-    if(isRegister) MemoryMgr::getInstance()->Register(this);
+    if(isRegister) memoryMgr->Register(this);
 }
 
 SObject::~SObject() {
@@ -21,10 +25,10 @@ void SObject::SetUndestroyable(bool enable) {
 }
 
 void SObject::Destroy() {
-	MemoryMgr::getInstance()->ReleaseObject(this);
+    memoryMgr->ReleaseObject(this);
 
 }
 
 void SObject::__FORCE_DESTROY__() {
-	MemoryMgr::getInstance()->ReleaseObject(this, true);
+    memoryMgr->ReleaseObject(this, true);
 }

@@ -2,19 +2,19 @@
 #include "../MacroDef.h"
 #include "RenderContainer.h"
 #include "CameraMgr.h"
+#include "Base/RenderCoreBase.h"
 
 namespace CSE {
 
-    class RenderMgr : public RenderContainer {
+    class RenderMgr : public RenderContainer, public CoreBase, public RenderCoreBase {
     public:
-    DECLARE_SINGLETONE(RenderMgr);
-
+        explicit RenderMgr();
         ~RenderMgr();
 
     public:
         void Init();
 
-        void Render(float elapsedTime) const;
+        void Render() const override;
 
     private:
         void Exterminate();

@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "../MemoryMgr.h"
 #include "../SceneMgr.h"
+#include "../EngineCore.h"
 
 using namespace CSE;
 
@@ -20,5 +21,5 @@ void Scene::Exterminate() {
 
 
 void Scene::SetScene(Scene* scene) {
-    SceneMgr::getInstance()->SetScene(scene);
+    CORE->GetCore<SceneMgr>()->SetScene(scene);
 }

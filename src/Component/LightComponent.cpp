@@ -1,12 +1,14 @@
 #include "LightComponent.h"
 #include "../Manager/LightMgr.h"
 #include "TransformComponent.h"
+#include "../Manager/EngineCore.h"
 
 using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(LightComponent) {
 
-    LightMgr::getInstance()->Register(this);
+    auto lightMgr = CORE->GetCore<LightMgr>();
+    lightMgr->Register(this);
 
     m_light = new SLight();
 
@@ -19,7 +21,7 @@ LightComponent::~LightComponent() {}
 
 void LightComponent::Exterminate() {
 
-    LightMgr::getInstance()->Remove(this);
+    CORE->GetCore<LightMgr>()->Remove(this);
     SAFE_DELETE(m_light);
 
 }

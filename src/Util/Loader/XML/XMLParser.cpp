@@ -62,12 +62,12 @@ SMaterial* XMLParser::parseMaterial(const char* value) {
 }
 
 SComponent* XMLParser::parseComponent(const char* value) {
-	SComponent* comp = GameObjectMgr::getInstance()->FindComponentByID(value);
+	SComponent* comp = CORE->GetCore<GameObjectMgr>()->FindComponentByID(value);
 	return comp;
 }
 
 SGameObject* XMLParser::parseGameObject(const char* value) {
-	SGameObject* obj = GameObjectMgr::getInstance()->FindByID(ConvertSpaceStr(value, true));
+	SGameObject* obj = CORE->GetCore<GameObjectMgr>()->FindByID(ConvertSpaceStr(value, true));
 	return obj;
 }
 

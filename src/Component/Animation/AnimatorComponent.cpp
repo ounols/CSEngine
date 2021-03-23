@@ -81,12 +81,13 @@ std::vector<KeyFrame*> AnimatorComponent::getPreviousAndNextFrames() const {
     auto allFrames = m_currentAnimation->GetKeyFrames();
     KeyFrame* previousFrame = allFrames[0];
     KeyFrame* nextFrame = allFrames[0];
-    for (int i = 1; i < allFrames.size(); i++) {
-        nextFrame = allFrames[i];
+
+    for (const auto& frame : allFrames) {
+        nextFrame = frame;
         if (nextFrame->GetTimeStamp() > m_animationTime) {
             break;
         }
-        previousFrame = allFrames[i];
+        previousFrame = frame;
     }
 
     std::vector<KeyFrame*> result;

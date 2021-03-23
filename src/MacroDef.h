@@ -2,23 +2,23 @@
 
 
 //#define SINGLETONE(x) static inline x* getInstance() { static x t; return &t; }
-// º¹»ç ±ÝÁö ¸ÅÅ©·Î
+// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½
 #define MAKE_NO_COPY(CLASSNAME)                                             \
         private:                                                            \
                CLASSNAME(const CLASSNAME&);                                 \
                CLASSNAME& operator=(const CLASSNAME&);
 
-// ½ÌÅ¬Åæ ÆÐÅÏ »ý¼º ¸ÅÅ©·Î
+// ï¿½ï¿½Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½
 #define DECLARE_SINGLETONE(CLASSNAME)                                       \
         MAKE_NO_COPY(CLASSNAME)                                             \
         private:                                                            \
-               CLASSNAME();                                               \
+               explicit CLASSNAME();                                               \
                static CLASSNAME* sInstance;                                 \
         public:                                                             \
                static CLASSNAME* getInstance();                                \
                static void delInstance();
 
-// ½Ì±ÛÅæ ÆÐÅÏ ±¸Çö ¸ÅÅ©·Î
+// ï¿½Ì±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½
 #define IMPLEMENT_SINGLETON(CLASSNAME)                              \
                CLASSNAME* CLASSNAME::sInstance= nullptr;               \
                                                                     \

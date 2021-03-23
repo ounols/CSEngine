@@ -1,15 +1,19 @@
 #pragma once
 #include "../OGLDef.h"
+#include "Base/CoreBase.h"
+#include "Base/RenderCoreBase.h"
 #include <string>
 
 
 namespace CSE {
 
-    class OGLMgr {
+    class OGLMgr : public CoreBase, public RenderCoreBase {
     public:
         OGLMgr();
 
         ~OGLMgr();
+
+        void Init() override;
 
         void setShaderProgram();
 
@@ -17,7 +21,7 @@ namespace CSE {
 
         void setupEGLGraphics(GLuint width, GLuint height);
 
-        void Render(float elapsedTime) const;
+        void Render() const override;
 
         void ResizeWindow(GLuint width, GLuint height);
 

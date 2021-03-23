@@ -7,8 +7,6 @@ enum LIGHTMODE {
     None, Amb, Dif, Spec, AMbDif = 12, AmbSpec = 13, DifSpec = 23, AmbDifSpec = 123
 };
 
-IMPLEMENT_SINGLETON(LightMgr);
-
 LightMgr::LightMgr() {
 
 }
@@ -23,7 +21,7 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 
     if (handle == nullptr) return;
 
-    //¶óÀÌÆ® °¹¼ö¸¦ ½¦ÀÌ´õ¿¡ ³Ö¾îÁÜ (ÇÊ¿ä¾øµû)
+    //ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ (ï¿½Ê¿ï¿½ï¿½ï¿½ï¿½)
 //	glUniform1i(handle->Uniforms.LightsSize, m_objects.size());
 
     //std::vector<float> lightPosition;
@@ -81,18 +79,21 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 
 }
 
+void LightMgr::Init() {
+
+}
 
 //void LightMgr::AttachDirectionalLight(const GLProgramHandle* handle, const SLight* light, int index) const {
 //
 //
-//	//¹æÇâ
+//	//ï¿½ï¿½ï¿½ï¿½
 ////	glUniform4fv(handle->Uniforms.LightPosition[index], 1, light->direction.Pointer());
 //	glUniform1i(handle->Uniforms.IsDirectional[index], 1);
 //
-//	//°¨¼è¹æÁ¤½Ä
+//	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //	glUniform1i(handle->Uniforms.IsAttenuation[index], 0);
 //
-//	//»ö±¤
+//	//ï¿½ï¿½ï¿½ï¿½
 //	glUniform4fv(handle->Uniforms.DiffuseLight[index], 1, light->diffuseColor.Pointer());
 //	glUniform4fv(handle->Uniforms.AmbientLight[index], 1, light->ambientColor.Pointer());
 //	glUniform4fv(handle->Uniforms.SpecularLight[index], 1, light->specularColor.Pointer());
@@ -105,16 +106,16 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 //void LightMgr::AttachPositionalLight(const GLProgramHandle* handle, const SLight* light, int index) const {
 //
 //	vec4 position(light->position->x, light->position->y, light->position->z, 1);
-//	//À§Ä¡
+//	//ï¿½ï¿½Ä¡
 //	glUniform4fv(handle->Uniforms.LightPosition[index], 1, position.Pointer());
 //	glUniform1i(handle->Uniforms.IsDirectional[index], 0);
 //
-//	//°¨¼è¹æÁ¤½Ä
+//	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //	glUniform1i(handle->Uniforms.IsAttenuation[index], 1);
 //	glUniform3fv(handle->Uniforms.AttenuationFactor[index], 1, light->att.Pointer());
 //	glUniform1f(handle->Uniforms.LightRadius[index], light->radius);
 //
-//	//»ö±¤
+//	//ï¿½ï¿½ï¿½ï¿½
 //	glUniform4fv(handle->Uniforms.DiffuseLight[index], 1, light->diffuseColor.Pointer());
 //	glUniform4fv(handle->Uniforms.AmbientLight[index], 1, light->ambientColor.Pointer());
 //	glUniform4fv(handle->Uniforms.SpecularLight[index], 1, light->specularColor.Pointer());

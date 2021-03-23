@@ -4,15 +4,12 @@
 
 namespace CSE {
 
-    class CameraMgr : public SContainer<CameraComponent*> {
+    class CameraMgr : public SContainer<CameraComponent*>, public CoreBase {
     public:
-    DECLARE_SINGLETONE(CameraMgr);
-
+        explicit CameraMgr();
         ~CameraMgr();
 
-        void Init();
-
-        void Tick();
+        void Init() override;
 
         void DeleteCameraComponent(CameraComponent* object);
 

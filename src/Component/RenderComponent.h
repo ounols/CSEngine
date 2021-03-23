@@ -25,7 +25,7 @@ namespace CSE {
 
         void SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) override;
 
-        void Render(float elapsedTime) override;
+        void Render() const override;
 
         void SetIsEnable(bool is_enable) override;
 
@@ -34,7 +34,7 @@ namespace CSE {
 
     private:
         void AttachMaterials() const;
-        void SetJointMatrix();
+        void SetJointMatrix() const;
 
     private:
         DrawableStaticMeshComponent* m_mesh;

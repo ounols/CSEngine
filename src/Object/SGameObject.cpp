@@ -4,18 +4,19 @@
 #include "../Manager/GameObjectMgr.h"
 #include "../Component/TransformComponent.h"
 #include "../Component/CustomComponent.h"
+#include "../Manager/EngineCore.h"
 
 using namespace CSE;
 
 SGameObject::SGameObject() {
-    GameObjectMgr::getInstance()->Register(this);
+    CORE->GetCore<GameObjectMgr>()->Register(this);
     m_transform = CreateComponent<TransformComponent>();
 
     SGameObject::Init();
 }
 
 SGameObject::SGameObject(const SGameObject& src) {
-    GameObjectMgr::getInstance()->Register(this);
+    CORE->GetCore<GameObjectMgr>()->Register(this);
     m_transform = CreateComponent<TransformComponent>();
 
     SGameObject::Init();
@@ -24,7 +25,7 @@ SGameObject::SGameObject(const SGameObject& src) {
 
 
 SGameObject::SGameObject(std::string name) {
-    GameObjectMgr::getInstance()->Register(this);
+    CORE->GetCore<GameObjectMgr>()->Register(this);
     m_name = name;
     m_transform = CreateComponent<TransformComponent>();
 
@@ -57,7 +58,7 @@ void SGameObject::Tick(float elapsedTime) {
 
 
 void SGameObject::Exterminate() {
-    GameObjectMgr::getInstance()->Remove(this);
+    CORE->GetCore<GameObjectMgr>()->Remove(this);
 }
 
 
@@ -65,7 +66,7 @@ void SGameObject::Destroy() {
 
     for (auto component : m_components) {
         if (component == nullptr) continue;
-        MemoryMgr::getInstance()->ReleaseObject(component);
+        CORE->GetCore<MemoryMgr>()->ReleaseObject(component);
     }
 
     m_components.clear();
@@ -74,7 +75,7 @@ void SGameObject::Destroy() {
         RemoveParent();
     }
 
-    GameObjectMgr::getInstance()->DeleteGameObject(this);
+    CORE->GetCore<GameObjectMgr>()->DeleteGameObject(this);
 
     for (auto object : m_children) {
         if (object == nullptr) continue;
@@ -126,7 +127,7 @@ void SGameObject::AddComponent(SComponent* component) {
 
     auto str_class = component->GetClassType();
     int index = 0;
-    for (auto comp : m_components) {
+    for (const auto& comp : m_components) {
         if (comp->GetClassType() == str_class) {
             index++;
         }
@@ -173,7 +174,7 @@ bool SGameObject::DeleteComponent(SComponent* component) {
 
     if (iCompObj != m_components.end()) {
         m_components.erase(iCompObj);
-        MemoryMgr::getInstance()->ReleaseObject(component);
+        CORE->GetCore<MemoryMgr>()->ReleaseObject(component);
         return true;
     }
 
@@ -184,7 +185,7 @@ bool SGameObject::DeleteComponent(SComponent* component) {
 std::string SGameObject::GetID() const {
 
     std::string id;
-    for (SGameObject* node = const_cast<SGameObject*>(this);; node = node->GetParent()) {
+    for (const SGameObject* node = const_cast<SGameObject*>(this);; node = node->GetParent()) {
         if (node == nullptr) break;
 
         id = node->GetName() + (id.empty() ? "" : "/") + id;
@@ -194,12 +195,12 @@ std::string SGameObject::GetID() const {
 }
 
 
-std::string SGameObject::GetID(SComponent* component) const {
+std::string SGameObject::GetID(const SComponent* component) const {
     if (component == nullptr) return "";
 
     int id = 0;
 
-    for (const auto comp : m_components) {
+    for (const auto& comp : m_components) {
         if (component == comp) {
             return GetID() + '?' + component->GetClassType();
         }
@@ -212,12 +213,12 @@ std::string SGameObject::GetID(SComponent* component) const {
 
 SGameObject* SGameObject::Find(std::string name) const {
 
-    return GameObjectMgr::getInstance()->Find(ConvertSpaceStr(name, true));
+    return CORE->GetCore<GameObjectMgr>()->Find(ConvertSpaceStr(name, true));
 
 }
 
 SGameObject* SGameObject::FindByID(std::string id) {
-    return GameObjectMgr::getInstance()->FindByID(ConvertSpaceStr(id, true));
+    return CORE->GetCore<GameObjectMgr>()->FindByID(ConvertSpaceStr(id, true));
 }
 
 
@@ -257,11 +258,11 @@ void SGameObject::SetUndestroyable(bool enable) {
 
     SObject::SetUndestroyable(enable);
 
-    for (auto component : m_components) {
+    for (const auto& component : m_components) {
         component->SetUndestroyable(enable);
     }
 
-    for (auto child : m_children) {
+    for (const auto& child : m_children) {
         child->SetUndestroyable(enable);
     }
 }
@@ -285,14 +286,14 @@ void SGameObject::SetResourceID(std::string resID, bool setChildren) {
     m_resourceID = resID;
 
     if (setChildren) {
-        for (auto child : m_children) {
+        for (const auto& child : m_children) {
             child->SetResourceID(resID, setChildren);
         }
     }
 }
 
 SComponent* SGameObject::GetSComponentByID(std::string id) const {
-    return GameObjectMgr::getInstance()->FindComponentByID(id);
+    return CORE->GetCore<GameObjectMgr>()->FindComponentByID(id);
 }
 
 

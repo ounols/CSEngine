@@ -5,12 +5,12 @@
 #include "AssetsDef.h"
 #include "MoreString.h"
 #include "Render/ShaderUtil.h"
+#include "../Manager/EngineCore.h"
 
 using namespace CSE;
 
 GLProgramHandle::GLProgramHandle() : Program(HANDLE_NULL) {
     SetUndestroyable(true);
-
 }
 
 GLProgramHandle::~GLProgramHandle() {
@@ -195,8 +195,9 @@ void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
     m_fragShaderName = trim(shader_combine_vector.at(1));
 
     //
-    auto vert_asset = ResMgr::getInstance()->GetAssetReference(m_vertShaderName);
-    auto frag_asset = ResMgr::getInstance()->GetAssetReference(m_fragShaderName);
+    auto resMgr = CORE->GetCore<ResMgr>();
+    auto vert_asset = resMgr->GetAssetReference(m_vertShaderName);
+    auto frag_asset = resMgr->GetAssetReference(m_fragShaderName);
 
     std::string vert_str = CSE::OpenAssetsTxtFile(vert_asset->path);
     std::string frag_str = CSE::OpenAssetsTxtFile(frag_asset->path);

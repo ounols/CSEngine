@@ -147,6 +147,9 @@
     <ClCompile Include="..\..\..\src\Util\Loader\XML\XMLParser.cpp">
       <Filter>src\Util\Loader</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\Manager\EngineCore.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Sample\FirstDemoScene.h" />
@@ -378,6 +381,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\Util\Loader\XML\XMLParser.h">
       <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Manager\EngineCore.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Manager\Base\RenderCoreBase.h">
+      <Filter>src\Manager\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Manager\Base\CoreBase.h">
+      <Filter>src\Manager\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,12 +1,9 @@
 #include "RenderMgr.h"
-#include "../Util/GLProgramHandle.h"
 #include "LightMgr.h"
+#include "EngineCore.h"
 // #include <iostream>
 
 using namespace CSE;
-
-IMPLEMENT_SINGLETON(RenderMgr);
-
 
 RenderMgr::RenderMgr() {
     m_NoneCamera = mat4::LookAt(vec3(0, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0));
@@ -22,9 +19,12 @@ void RenderMgr::Init() {
 }
 
 
-void RenderMgr::Render(float elapsedTime) const {
+void RenderMgr::Render() const {
 
-    CameraComponent* cameraComponent = CameraMgr::getInstance()->GetCurrentCamera();
+    auto cameraMgr = CORE->GetCore<CameraMgr>();
+    auto lightMgr = CORE->GetCore<LightMgr>();
+
+    CameraComponent* cameraComponent = cameraMgr->GetCurrentCamera();
     mat4 camera = (cameraComponent != nullptr) ?
                   cameraComponent->GetCameraMatrix() : m_NoneCamera;
     mat4 projection = (cameraComponent != nullptr) ?
@@ -48,7 +48,7 @@ void RenderMgr::Render(float elapsedTime) const {
             glUseProgram(handler.Program);
 
             //Attach Light
-            LightMgr::getInstance()->AttachLightToShader(&handler);
+            lightMgr->AttachLightToShader(&handler);
 
 
             for (const auto& render : renderComp) {
@@ -63,7 +63,7 @@ void RenderMgr::Render(float elapsedTime) const {
                 glEnableVertexAttribArray(handler.Attributes.JointId);
 
                 render->SetMatrix(camera, cameraPosition, projection);
-                render->Render(elapsedTime);
+                render->Render();
 
                 glDisableVertexAttribArray(handler.Attributes.Position);
                 glDisableVertexAttribArray(handler.Attributes.Normal);

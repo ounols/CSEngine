@@ -1,10 +1,12 @@
 #include "RenderComponent.h"
 #include "../Manager/RenderMgr.h"
+#include "../Manager/EngineCore.h"
 
 using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(RenderComponent) {
-    RenderMgr::getInstance()->Register(this);
+    auto renderMgr = CORE->GetCore<RenderMgr>();
+    renderMgr->Register(this);
     SetMaterial(nullptr);
 }
 
@@ -49,7 +51,7 @@ void RenderComponent::SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projectio
 }
 
 
-void RenderComponent::Render(float elapsedTime) {
+void RenderComponent::Render() const {
 
     if (m_mesh == nullptr || m_material_clone == nullptr) return;
 
@@ -87,7 +89,7 @@ SComponent* RenderComponent::Clone(SGameObject* object) {
     return clone;
 }
 
-void RenderComponent::SetJointMatrix() {
+void RenderComponent::SetJointMatrix() const {
 
     m_material_clone->SetSkinningUniform(m_mesh->GetMeshID(), m_skinningMesh != nullptr ?
     m_skinningMesh->GetJointMatrix() : std::vector<mat4>());
@@ -98,10 +100,11 @@ SMaterial* RenderComponent::GetMaterial() const {
 }
 
 void RenderComponent::SetMaterial(SMaterial* material) {
-    RenderMgr::getInstance()->Remove(this);
+    auto renderMgr = CORE->GetCore<RenderMgr>();
+    renderMgr->Remove(this);
     if(this->material == nullptr) this->material = SResource::Create<SMaterial>("File:Material/DefaultPBR.mat");
     else this->material = material;
-    RenderMgr::getInstance()->Register(this);
+    renderMgr->Register(this);
 
     SAFE_DELETE(m_material_clone)
     m_material_clone = new SMaterial(this->material);

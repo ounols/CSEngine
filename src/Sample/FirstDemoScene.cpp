@@ -103,6 +103,7 @@ void FirstDemoScene::Init() {
     ab->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
     ab->CreateComponent<CustomComponent>();
     ab->GetComponent<CustomComponent>()->SetClassName("testScript.script");
+//    auto ab_m = ab->GetComponent<RenderComponent>()->GetMaterial();
 
     c2 = new SGameObject();
     c2->SetParent(root);

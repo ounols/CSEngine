@@ -1,18 +1,18 @@
 #pragma once
 #include "Base/Scene.h"
 #include "../MacroDef.h"
+#include "Base/CoreBase.h"
 
 namespace CSE {
 
-    class SceneMgr {
+    class SceneMgr : public CoreBase {
     public:
-    DECLARE_SINGLETONE(SceneMgr);
-
+        explicit SceneMgr();
         ~SceneMgr();
 
-        void Init() const;
+        void Init() override;
 
-        void Tick(float elapsedTime) const;
+        void Update(float elapsedTime) override;
 
         void SetScene(Scene* scene);
 

@@ -2,16 +2,17 @@
 #include "../Component/CustomComponent.h"
 #include "../Util/Matrix.h"
 #include "Base/SContainer.h"
+#include "Base/CoreBase.h"
 
 namespace CSE {
 
-    class ScriptMgr : public SContainer<Sqrat::Object*> {
+    class ScriptMgr : public SContainer<Sqrat::Object*>, public CoreBase {
     public:
         ScriptMgr();
 
         ~ScriptMgr();
 
-        void Init();
+        void Init() override;
 
 
         static void RegisterScript(std::string script);

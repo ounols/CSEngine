@@ -137,7 +137,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	}
 	tUpdate.join();
-	mainProc->Exterminate();
 	SAFE_DELETE(mainProc);
 
 	return static_cast<int>(msg.wParam);

@@ -7,11 +7,11 @@
 #include "../../../../Component/Animation/JointComponent.h"
 #include "../../../../Component/Animation/AnimatorComponent.h"
 #include "../../../../Component/TransformComponent.h"
+#include "../../../../Manager/EngineCore.h"
 
 using namespace CSE;
 
 DAEConvertSGameObject::DAEConvertSGameObject() {
-
 }
 
 DAEConvertSGameObject::~DAEConvertSGameObject() {
@@ -25,7 +25,7 @@ SGameObject* DAEConvertSGameObject::CreateJoints(SGameObject* parent, Joint* dat
     SGameObject* jointObject = new SGameObject(data->GetName());
     JointComponent* joint = jointObject->CreateComponent<JointComponent>();
     joint->SetID(data->GetIndex());
-	int jointIndex = RESMGR->GetStringHash(data->GetName());
+	int jointIndex = CORE->GetCore<ResMgr>()->GetStringHash(data->GetName());
 	joint->SetAnimationJointId(jointIndex);
     joint->SetBindLocalMatrix(data->GetBindLocalTransform());
 

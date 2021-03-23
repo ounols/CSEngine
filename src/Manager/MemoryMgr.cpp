@@ -20,8 +20,6 @@
 
 using namespace CSE;
 
-IMPLEMENT_SINGLETON(MemoryMgr);
-
 MemoryMgr::MemoryMgr() {
 }
 
@@ -115,4 +113,8 @@ void MemoryMgr::ReleaseObject(SObject* object, bool isForce) {
 #endif
 
     }
+}
+
+void MemoryMgr::Init() {
+
 }

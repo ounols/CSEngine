@@ -4,6 +4,7 @@
 #include "../Util/AssetsDef.h"
 #include "CameraMgr.h"
 #include "../Util/Render/ShaderUtil.h"
+#include "EngineCore.h"
 
 #ifdef __linux__
 
@@ -17,6 +18,8 @@ OGLMgr::OGLMgr() : m_projectionRatio(-1) {
 
 }
 
+void OGLMgr::Init() {
+}
 
 OGLMgr::~OGLMgr() {
     releaseBuffers();
@@ -94,12 +97,12 @@ void OGLMgr::setProjectionRatio() {
         m_projectionRatio = (GLfloat) m_height / (GLfloat) m_width;
 
 
-    CameraMgr::getInstance()->SetProjectionRatio(m_projectionRatio);
+    CORE->GetCore<CameraMgr>()->SetProjectionRatio(m_projectionRatio);
 
 }
 
 
-void OGLMgr::Render(float elapsedTime) const {
+void OGLMgr::Render() const {
 
     glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

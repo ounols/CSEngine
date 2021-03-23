@@ -1,8 +1,6 @@
 #pragma once
 
 #include "../OGLDef.h"
-#include "OGLMgr.h"
-#include "ScriptMgr.h"
 
 namespace CSE {
 
@@ -21,11 +19,6 @@ namespace CSE {
         void Render(float elapsedTime) const;
 
         void Exterminate();
-
-    private:
-        OGLMgr* m_oglMgr = nullptr;
-        ScriptMgr* m_scriptMgr = nullptr;
-
     };
 
 }
