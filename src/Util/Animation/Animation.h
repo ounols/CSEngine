@@ -10,9 +10,9 @@
 #include "../../Manager/ResMgr.h"
 #include "../../MacroDef.h"
 #include "AnimationUtill.h"
-#include <vector>
 #include <map>
 #include <string>
+#include <list>
 
 namespace CSE {
 
@@ -22,7 +22,7 @@ namespace CSE {
             SetUndestroyable(true);
         }
 
-        Animation(float totalTime, std::vector<KeyFrame*> keyframes) {
+        Animation(float totalTime, std::list<KeyFrame*> keyframes) {
             SetUndestroyable(true);
             m_length = totalTime;
             m_keyframes = keyframes;
@@ -31,7 +31,7 @@ namespace CSE {
         ~Animation() {
         }
 
-        void SetKeyframe(float totalTime, std::vector<KeyFrame*> keyframes);
+        void SetKeyframe(float totalTime, std::list<KeyFrame*> keyframes);
 
         void Exterminate() override;
 
@@ -39,7 +39,7 @@ namespace CSE {
             return m_length;
         }
 
-        std::vector<KeyFrame*> GetKeyFrames() const {
+        std::list<KeyFrame*> GetKeyFrames() const {
             return m_keyframes;
         }
 
@@ -48,7 +48,7 @@ namespace CSE {
 
     private:
         float m_length = 0;
-        std::vector<KeyFrame*> m_keyframes;
+        std::list<KeyFrame*> m_keyframes;
 
     };
 

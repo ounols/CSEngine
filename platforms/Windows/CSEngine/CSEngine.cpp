@@ -109,7 +109,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	MSG msg;
 	DWORD dwStartTime = timeGetTime();
 
-	std::thread tUpdate(Update, mainProc, dwStartTime);
+//	std::thread tUpdate(Update, mainProc, dwStartTime);
 
 	// 기본 메시지 루프입니다.
 	while (!b_isQuit) {
@@ -126,8 +126,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		else {
 			//GL20Lib::renderFrame(static_cast<float>(timeGetTime() - dwStartTime));
-			//float deltaTime = static_cast<float>(timeGetTime() - dwStartTime);
-			//mainProc->Update(deltaTime);
+			float deltaTime = static_cast<float>(timeGetTime() - dwStartTime);
+			mainProc->Update(deltaTime);
 			mainProc->Render(0);
 			glEnd();
 			glFinish();
@@ -136,7 +136,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 
 	}
-	tUpdate.join();
+//	tUpdate.join();
 	SAFE_DELETE(mainProc);
 
 	return static_cast<int>(msg.wParam);

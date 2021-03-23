@@ -8,7 +8,7 @@
 
 using namespace CSE;
 
-void Animation::SetKeyframe(float totalTime, std::vector<KeyFrame*> keyframes) {
+void Animation::SetKeyframe(float totalTime, std::list<KeyFrame*> keyframes) {
     m_length = totalTime;
     m_keyframes = keyframes;
 }

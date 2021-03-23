@@ -68,7 +68,8 @@ void AnimatorComponent::applyPoseToJoints(std::map<int, mat4>& currentPose, Join
     SGameObject* object = joint->GetGameObject();
     const mat4 currentLocalTransform = currentPose[joint->GetAnimationJointId()];
     mat4 currentTransform = currentLocalTransform * parentTransform;
-    for (auto child : object->GetChildren()) {
+    auto children = object->GetChildren();
+    for (const auto& child : children) {
 	    const auto joint_component = child->GetComponent<JointComponent>();
         if (joint_component != nullptr)
             applyPoseToJoints(currentPose, joint_component, currentTransform);
@@ -79,8 +80,9 @@ void AnimatorComponent::applyPoseToJoints(std::map<int, mat4>& currentPose, Join
 
 std::vector<KeyFrame*> AnimatorComponent::getPreviousAndNextFrames() const {
     auto allFrames = m_currentAnimation->GetKeyFrames();
-    KeyFrame* previousFrame = allFrames[0];
-    KeyFrame* nextFrame = allFrames[0];
+    KeyFrame* previousFrame = allFrames.front();
+    KeyFrame* nextFrame = allFrames.front();
+    allFrames.pop_front();
 
     for (const auto& frame : allFrames) {
         nextFrame = frame;
@@ -91,6 +93,7 @@ std::vector<KeyFrame*> AnimatorComponent::getPreviousAndNextFrames() const {
     }
 
     std::vector<KeyFrame*> result;
+    result.reserve(2);
     result.push_back(previousFrame);
     result.push_back(nextFrame);
     return result;

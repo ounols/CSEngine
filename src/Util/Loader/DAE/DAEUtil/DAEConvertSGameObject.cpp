@@ -46,7 +46,7 @@ SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameOb
     SGameObject* animationObject = new SGameObject(parent->GetName() + "_animation");
     AnimatorComponent* animator = animationObject->CreateComponent<AnimatorComponent>();
 
-    std::vector<KeyFrame*> frames;
+    std::list<KeyFrame*> frames;
     int length = animationData->keyFrames.size();
 
     for (int i = 0; i < length; i++) {
