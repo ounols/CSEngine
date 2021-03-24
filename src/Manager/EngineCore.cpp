@@ -4,6 +4,7 @@
 
 #include "EngineCore.h"
 #include "../Sample/FirstDemoScene.h"
+#include "../Util/Render/PBRShaderLoader.h"
 
 using namespace CSE;
 IMPLEMENT_SINGLETON(EngineCore);
@@ -11,7 +12,6 @@ IMPLEMENT_SINGLETON(EngineCore);
 constexpr short ENGINE_COUNT = 9;
 
 EngineCore::EngineCore() {
-
 }
 
 EngineCore::~EngineCore() {
@@ -23,6 +23,12 @@ void EngineCore::Init(unsigned int width, unsigned int height) {
 
     m_oglMgr->setupEGLGraphics(width, height);
     m_oglMgr->ResizeWindow(width, height);
+
+    PBRShaderLoader* asdfasdf = new PBRShaderLoader();
+
+    asdfasdf->LoadShader();
+    SAFE_DELETE(asdfasdf);
+
     for (const auto& core : m_cores) {
         core->Init();
     }

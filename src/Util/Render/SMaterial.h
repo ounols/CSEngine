@@ -86,5 +86,6 @@ namespace CSE {
         //std::vector<Element*> m_elements;
 		std::unordered_map<std::string, Element*> m_elements;
 		std::unordered_map<std::string, Element*> m_attributeElements;
+		int m_textureLayout = 0;
     };
 }

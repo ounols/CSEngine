@@ -21,7 +21,6 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 
     if (handle == nullptr) return;
 
-    //����Ʈ ������ ���̴��� �־��� (�ʿ����)
 //	glUniform1i(handle->Uniforms.LightsSize, m_objects.size());
 
     //std::vector<float> lightPosition;

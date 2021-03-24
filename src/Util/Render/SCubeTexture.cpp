@@ -18,12 +18,12 @@ SCubeTexture::~SCubeTexture() {
 }
 
 bool SCubeTexture::InitTexture(int size) {
-    if (m_id != 0) {
+    if (m_texId != 0) {
         return false;
     }
 
-    glGenTextures(1, &m_id);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
+    glGenTextures(1, &m_texId);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_texId);
 
     GLuint channel = GL_RGB;
 
@@ -40,19 +40,19 @@ bool SCubeTexture::InitTexture(int size) {
 }
 
 void SCubeTexture::Bind(GLint location, int layout) {
-    if (m_id == 0) {
+    if (m_texId == 0) {
         return;
     }
 
     glUniform1i(location, layout);
 
     glActiveTexture(GL_TEXTURE0 + layout);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_texId);
 
 }
 
 void SCubeTexture::GenerateMipmap() {
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_texId);
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 }
 

@@ -206,6 +206,11 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
     auto projection = handle->UniformLocation("PROJECTION_MATRIX");
     auto skinningMode = handle->UniformLocation("SKINNING_MODE");
     auto jointMatrix = handle->UniformLocation("JOINT_MATRIX");
+    auto lightPosition = handle->UniformLocation("LIGHT_POSITION");
+    auto lightType = handle->UniformLocation("LIGHT_TYPE");
+    auto lightRaius = handle->UniformLocation("LIGHT_RADIUS");
+    auto lightColor = handle->UniformLocation("LIGHT_COLOR");
+    auto lightSize = handle->UniformLocation("LIGHT_SIZE");
 
     handle->Attributes.Position = position != nullptr ? position->id : HANDLE_NULL;
     handle->Attributes.Normal = normal != nullptr ? normal->id : HANDLE_NULL;
@@ -220,4 +225,9 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
     handle->Uniforms.Projection = projection != nullptr ? projection->id : HANDLE_NULL;
     handle->Uniforms.SkinningMode = skinningMode != nullptr ? skinningMode->id : HANDLE_NULL;
     handle->Uniforms.JointMatrix = jointMatrix != nullptr ? jointMatrix->id : HANDLE_NULL;
+    handle->Uniforms.LightPosition = lightPosition != nullptr ? lightPosition->id : HANDLE_NULL;
+    handle->Uniforms.LightType = lightType != nullptr ? lightType->id : HANDLE_NULL;
+    handle->Uniforms.LightRadius = lightRaius != nullptr ? lightRaius->id : HANDLE_NULL;
+    handle->Uniforms.LightColor = lightColor != nullptr ? lightColor->id : HANDLE_NULL;
+    handle->Uniforms.LightSize = lightSize != nullptr ? lightSize->id : HANDLE_NULL;
 }

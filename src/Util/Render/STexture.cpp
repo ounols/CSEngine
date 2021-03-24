@@ -22,7 +22,7 @@ STexture::~STexture() {
 
 bool STexture::LoadFile(const char* path) {
 
-    if (m_id != 0) return false;
+    if (m_texId != 0) return false;
 
 //    m_name = path;
     unsigned char* data = stbi_load(path, &m_width, &m_height, &m_channels, 0);
@@ -32,13 +32,13 @@ bool STexture::LoadFile(const char* path) {
 
 bool STexture::Load(unsigned char* data) {
 
-    if (m_id != 0) {
+    if (m_texId != 0) {
         stbi_image_free(data);
         return false;
     }
 
-    glGenTextures(1, &m_id);
-    glBindTexture(GL_TEXTURE_2D, m_id);
+    glGenTextures(1, &m_texId);
+    glBindTexture(GL_TEXTURE_2D, m_texId);
 
     GLuint channel = GL_RGB;
     if (m_channels == 4) channel = GL_RGBA;
@@ -55,10 +55,10 @@ bool STexture::Load(unsigned char* data) {
 }
 
 bool STexture::LoadEmpty() {
-    if (m_id != 0) return false;
+    if (m_texId != 0) return false;
 
-    glGenTextures(1, &m_id);
-    glBindTexture(GL_TEXTURE_2D, m_id);
+    glGenTextures(1, &m_texId);
+    glBindTexture(GL_TEXTURE_2D, m_texId);
 
     GLubyte data[] = { 255, 255, 255, 255 };
 
@@ -78,8 +78,8 @@ bool STexture::Reload(unsigned char* data) {
 }
 
 void STexture::Release() {
-    glDeleteTextures(1, &m_id);
-    m_id = 0;
+    glDeleteTextures(1, &m_texId);
+    m_texId = 0;
     m_height = 0;
     m_width = 0;
 }
@@ -90,22 +90,22 @@ void STexture::Exterminate() {
 }
 
 void STexture::Bind(GLint location, int layout) {
-    if (m_id == 0) {
+    if (m_texId == 0) {
         LoadEmpty();
     }
     glUniform1i(location, layout);
 
     glActiveTexture(GL_TEXTURE0 + layout);
-    glBindTexture(GL_TEXTURE_2D, m_id);
+    glBindTexture(GL_TEXTURE_2D, m_texId);
 }
 
 bool STexture::InitTexture(int size) {
-    if (m_id != 0) {
+    if (m_texId != 0) {
         return false;
     }
 
-    glGenTextures(1, &m_id);
-    glBindTexture(GL_TEXTURE_2D, m_id);
+    glGenTextures(1, &m_texId);
+    glBindTexture(GL_TEXTURE_2D, m_texId);
 
     GLuint channel = GL_RGB;
 

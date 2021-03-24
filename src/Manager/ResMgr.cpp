@@ -73,7 +73,7 @@ int ResMgr::GetID(SResource* object) const {
 }
 
 std::string ResMgr::RemoveDuplicatingName(std::string name) const {
-    for (auto resource : m_resources) {
+    for (const auto& resource : m_resources) {
         if (name == resource->GetName()) return RemoveDuplicatingName(name + " of another");
     }
 
@@ -101,7 +101,6 @@ SResource* ResMgr::GetSResource(std::string name) const {
 std::vector<AssetMgr::AssetReference*> ResMgr::GetAssetReferences(AssetMgr::TYPE type) const {
     return m_assetManager->GetAssets(type);
 }
-
 
 #ifdef __ANDROID__
 

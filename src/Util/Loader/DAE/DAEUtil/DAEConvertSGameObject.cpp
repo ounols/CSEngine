@@ -29,7 +29,8 @@ SGameObject* DAEConvertSGameObject::CreateJoints(SGameObject* parent, Joint* dat
 	joint->SetAnimationJointId(jointIndex);
     joint->SetBindLocalMatrix(data->GetBindLocalTransform());
 
-    for (Joint* child : data->GetChildren()) {
+    auto children = data->GetChildren();
+    for (const auto& child : children) {
         CreateJoints(jointObject, child);
     }
 
@@ -68,7 +69,7 @@ SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameOb
 
 KeyFrame* DAEConvertSGameObject::CreateKeyFrame(KeyFrameData* data) {
     std::map<int, JointTransform*> map;
-    for (auto jointData : data->jointTransforms) {
+    for (const auto& jointData : data->jointTransforms) {
         JointTransform* jointTransform = CreateTransform(jointData);
         map[jointData->jointId] = jointTransform;
     }

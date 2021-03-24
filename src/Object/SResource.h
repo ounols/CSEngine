@@ -21,6 +21,8 @@ namespace CSE {
 
         void SetName(std::string name);
 
+        void SetID(std::string id);
+
         const char* GetName() const {
             return m_name.c_str();
         }

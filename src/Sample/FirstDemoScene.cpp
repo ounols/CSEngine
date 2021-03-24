@@ -35,11 +35,6 @@ void FirstDemoScene::Init() {
 //    SPrefab* stormtrooper = MeshLoader::LoadModel("stormtrooper.model");
     SPrefab* stormtrooper = SResource::Create<SPrefab>("stormtrooper.prefab");
 
-    PBRShaderLoader* asdfasdf = new PBRShaderLoader();
-
-    asdfasdf->LoadShader();
-    SAFE_DELETE(asdfasdf);
-
 //	daeLoader->GeneratePrefab();
 
 //	SGameObject* aa = new SGameObject();

@@ -530,7 +530,8 @@ SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
 //    mesh_root->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
     auto material = renderComponent->GetMaterial();
-    material->SetTexture("TEX2D_ALBEDO", CORE->GetCore<ResMgr>()->GetObject<STexture>(m_texture_name));
+    if(!m_texture_name.empty())
+        material->SetTexture("TEX2D_ALBEDO", CORE->GetCore<ResMgr>()->GetObject<STexture>(m_texture_name));
 
     if (m_isSkinning) {
         SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,

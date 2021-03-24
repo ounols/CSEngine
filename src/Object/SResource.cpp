@@ -34,6 +34,10 @@ void SResource::SetName(std::string name) {
     m_name = CORE->GetCore<ResMgr>()->RemoveDuplicatingName(name);
 }
 
+void SResource::SetID(std::string id) {
+    m_id = id;
+}
+
 void SResource::SetResource(std::string name, bool isInit) {
     if (m_isInited) return;
 

@@ -69,10 +69,13 @@ void PBRShaderLoader::LoadShader() {
     std::string hdr_path = CSE::AssetsPath() + "Texture/hdr/newport_loft.hdr";
     m_hdrTexture = new STexture();
     m_hdrTexture->LoadFile(hdr_path.c_str());
+    stbi_set_flip_vertically_on_load(false);
 
     // pbr: setup cubemap to render to and attach to framebuffer
     // ---------------------------------------------------------
     m_envCubemap = new SCubeTexture();
+    m_envCubemap->SetName("envCubemap.textureCubeMap");
+    m_envCubemap->SetID("envCubemap.textureCubeMap");
     m_envCubemap->InitTexture(512);
     m_envCubemap->GenerateMipmap();
 
@@ -106,7 +109,7 @@ void PBRShaderLoader::LoadShader() {
         m_equirectangularToCubemapShader->SetUniformMat4("VIEW_MATRIX", captureViews[i]);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                               m_envCubemap->GetID(), 0);
+                               m_envCubemap->GetTextureID(), 0);
         glGetError();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         RenderCubeVAO();
@@ -120,6 +123,7 @@ void PBRShaderLoader::LoadShader() {
     // --------------------------------------------------------------------------------
     m_irradianceMap = new SCubeTexture();
     m_irradianceMap->SetName("irradiance.textureCubeMap");
+    m_irradianceMap->SetID("irradiance.textureCubeMap");
     m_irradianceMap->InitTexture(32);
 
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
@@ -140,7 +144,7 @@ void PBRShaderLoader::LoadShader() {
         m_irradianceShader->SetUniformMat4("VIEW_MATRIX", captureViews[i]);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                               m_irradianceMap->GetID(), 0);
+                               m_irradianceMap->GetTextureID(), 0);
         glGetError();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         RenderCubeVAO();
@@ -152,6 +156,7 @@ void PBRShaderLoader::LoadShader() {
     // --------------------------------------------------------------------------------
     m_prefilterMap = new SCubeTexture();
     m_prefilterMap->SetName("prefilter.textureCubeMap");
+    m_prefilterMap->SetID("prefilter.textureCubeMap");
     m_prefilterMap->InitTexture(128);
 
     // generate mipmaps for the cubemap so OpenGL automatically allocates the required memory.
@@ -182,7 +187,7 @@ void PBRShaderLoader::LoadShader() {
         for (unsigned int i = 0; i < 6; ++i) {
             m_prefilterShader->SetUniformMat4("VIEW_MATRIX", captureViews[i]);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                                   m_prefilterMap->GetID(), mip);
+                                   m_prefilterMap->GetTextureID(), mip);
 
             glGetError();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

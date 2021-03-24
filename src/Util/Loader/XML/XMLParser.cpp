@@ -54,11 +54,11 @@ vec4 XMLParser::parseVec4(std::vector<std::string> values) {
 }
 
 STexture* XMLParser::parseTexture(const char* value) {
-	return parseResources<STexture>(value);
+	return SResource::Create<STexture>(value);
 }
 
 SMaterial* XMLParser::parseMaterial(const char* value) {
-	return parseResources<SMaterial>(value);
+    return SResource::Create<SMaterial>(value);
 }
 
 SComponent* XMLParser::parseComponent(const char* value) {

@@ -59,13 +59,13 @@ void SMaterial::SetHandle(GLProgramHandle* handle) {
 
 void SMaterial::AttachElement() const {
 
-	for (const auto element_pair : m_elements) {
-		const auto* element = element_pair.second;
+	for (const auto& element_pair : m_elements) {
+		const auto& element = element_pair.second;
 		if(element->id < 0) continue;
 		element->attachFunc();
 	}
-    for (const auto element_pair : m_attributeElements) {
-        const auto* element = element_pair.second;
+    for (const auto& element_pair : m_attributeElements) {
+        const auto& element = element_pair.second;
         if(element->id < 0) continue;
         element->attachFunc();
     }
@@ -73,13 +73,13 @@ void SMaterial::AttachElement() const {
 
 void SMaterial::InitElements() {
 
-	for (auto element_pair : m_elements) {
-		const auto element_name = element_pair.first.c_str();
-		auto* element = element_pair.second;
+	for (const auto& element_pair : m_elements) {
+		const auto& element_name = element_pair.first.c_str();
+		const auto& element = element_pair.second;
 		if (element->attachFunc != nullptr) continue;
 
 		bool isUniform = true;
-		auto* handleElement = m_handle->UniformLocation(element_name);
+		const auto& handleElement = m_handle->UniformLocation(element_name);
 //		if (handleElement == nullptr) {
 //			handleElement = m_handle->AttributeLocation(element_name);	isUniform = false;
 //		}
@@ -356,6 +356,7 @@ void SMaterial::SetVec2Func(SMaterial::Element* element, vec2 value) {
 void SMaterial::SetTextureFunc(SMaterial::Element* element, SResource* texture) {
     if(element == nullptr || texture == nullptr) return;
     STexture* value = static_cast<STexture*>(texture);
+    element->count = m_textureLayout++;
     element->attachFunc = [element, value]() {
         value->Bind(element->id, element->count);
     };

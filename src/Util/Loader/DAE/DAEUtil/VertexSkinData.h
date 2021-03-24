@@ -13,12 +13,13 @@ namespace CSE {
         ~VertexSkinData() {}
 
         void addJointEffect(int jointId, float weight) {
-            for (int i = 0; i < m_weights.size(); i++) {
-                if (weight > m_weights[i]) {
-                    auto jointID_it = m_jointIDs.begin();
-                    auto weight_it = m_weights.begin();
-                    m_jointIDs.insert(jointID_it + i, jointId);
-                    m_weights.insert(weight_it + i, weight);
+            auto index = 0;
+            auto jointID_it = m_jointIDs.begin();
+            auto weight_it = m_weights.begin();
+            for (const auto& weight_object : m_weights) {
+                if (weight > weight_object) {
+                    m_jointIDs.insert(jointID_it++, jointId);
+                    m_weights.insert(weight_it++, weight);
                     return;
                 }
             }
@@ -49,6 +50,8 @@ namespace CSE {
 
     private:
         void fillEmptyWeights(int max) {
+            m_jointIDs.reserve(max);
+            m_weights.reserve(max);
             while (m_jointIDs.size() < max) {
                 m_jointIDs.push_back(0);
                 m_weights.push_back(0);
@@ -57,8 +60,9 @@ namespace CSE {
 
         float saveTopWeights(std::vector<float>& topWeightsArray) {
             float total = 0;
-            for (int i = 0; i < topWeightsArray.size(); i++) {
-                topWeightsArray[i] = m_weights.at(i);
+            auto size = topWeightsArray.size();
+            for (int i = 0; i < size; ++i) {
+                topWeightsArray[i] = m_weights[i];
                 total += topWeightsArray[i];
             }
             return total;
@@ -66,8 +70,9 @@ namespace CSE {
 
         void refillWeightList(std::vector<float> topWeights, float total) {
             m_weights.clear();
-            for (int i = 0; i < topWeights.size(); i++) {
-                m_weights.push_back(std::fmin(topWeights[i] / total, 1));
+            m_weights.reserve(topWeights.size());
+            for (const auto& topWeight : topWeights) {
+                m_weights.push_back(std::fmin(topWeight / total, 1));
             }
         }
 

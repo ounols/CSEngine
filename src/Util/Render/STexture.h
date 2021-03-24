@@ -31,8 +31,8 @@ namespace CSE {
 
         bool Reload(unsigned char* data);
 
-        unsigned int GetID() const {
-            return m_id;
+        unsigned int GetTextureID() const {
+            return m_texId;
         }
 
         virtual bool InitTexture(int size);
@@ -51,7 +51,7 @@ namespace CSE {
         int m_height = 0;
         int m_channels = 0;
 
-        unsigned int m_id = 0;
+        unsigned int m_texId = 0;
     };
 
 }
