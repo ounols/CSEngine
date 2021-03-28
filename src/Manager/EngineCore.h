@@ -18,21 +18,18 @@
 #include "SceneMgr.h"
 
 #define GET_CORE_FUNCTION(CORENAME, core_instance)  \
-template <>                                         \
-CORENAME* GetCore<CORENAME>() const {               \
+CORENAME* Get##CORENAME##Core() const {               \
     return static_cast<CORENAME*>(core_instance);   \
 }
 
 #define CORE EngineCore::getInstance()
+#define GetCore(CORENAME) Get##CORENAME##Core()
 
 namespace CSE {
     class EngineCore {
     public:
         DECLARE_SINGLETONE(EngineCore);
         ~EngineCore();
-
-        template <class T>
-        T* GetCore() const;
 
         GET_CORE_FUNCTION(ResMgr, m_resMgr);
         GET_CORE_FUNCTION(GameObjectMgr, m_gameObjectMgr);
@@ -69,14 +66,4 @@ namespace CSE {
 
         OGLMgr* m_oglMgr = nullptr;
     };
-
-    template <class T>
-    T* EngineCore::GetCore() const {
-        for (const auto& core : m_cores) {
-            if (dynamic_cast<T*>(core)) {
-                return static_cast<T*>(core);
-            }
-        }
-        return nullptr;
-    }
 }

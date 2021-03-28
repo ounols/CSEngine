@@ -36,7 +36,7 @@ void SceneMgr::SetScene(Scene* scene) {
     if (m_scene != nullptr) {
         m_scene->SetUndestroyable(false);
         //MemoryMgr::getInstance()->ReleaseObject(m_scene);
-        CORE->GetCore<MemoryMgr>()->ExterminateObjects();
+        CORE->GetCore(MemoryMgr)->ExterminateObjects();
     }
 
     m_scene = scene;

@@ -37,7 +37,7 @@ void GameObjectMgr::DeleteGameObject(SGameObject* object) {
     if (iGameObj != m_objects.end()) {
         m_size--;
         m_objects.erase(iGameObj);
-        CORE->GetCore<MemoryMgr>()->ReleaseObject(object);
+        CORE->GetCore(MemoryMgr)->ReleaseObject(object);
     }
 }
 

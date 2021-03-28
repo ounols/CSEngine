@@ -21,8 +21,8 @@ void RenderMgr::Init() {
 
 void RenderMgr::Render() const {
 
-    auto cameraMgr = CORE->GetCore<CameraMgr>();
-    auto lightMgr = CORE->GetCore<LightMgr>();
+    auto cameraMgr = CORE->GetCore(CameraMgr);
+    auto lightMgr = CORE->GetCore(LightMgr);
 
     CameraComponent* cameraComponent = cameraMgr->GetCurrentCamera();
     mat4 camera = (cameraComponent != nullptr) ?

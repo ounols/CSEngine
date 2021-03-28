@@ -12,7 +12,7 @@ namespace CSE {
         ~RenderMgr();
 
     public:
-        void Init();
+        void Init() override;
 
         void Render() const override;
 

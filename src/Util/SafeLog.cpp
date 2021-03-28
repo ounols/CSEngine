@@ -17,7 +17,7 @@ void SafeLog::Log(const char* log) {
 #ifdef WIN32
 	OutputDebugStringA(log);
 #elif __ANDROID__
-	LOGD(log);
+	LOGD(log, 0);
 #elif __linux__
 	std::cout << log;
 #endif

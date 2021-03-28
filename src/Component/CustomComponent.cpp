@@ -4,7 +4,9 @@
 #include "../MacroDef.h"
 #include "../Object/SScriptObject.h"
 #include "../Util/MoreComponentFunc.h"
+#ifndef __ANDROID__
 #include "../Util/SafeLog.h"
+#endif
 
 using namespace CSE;
 

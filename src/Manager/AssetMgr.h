@@ -7,6 +7,10 @@
 
 #include <string>
 #include <vector>
+#ifdef __ANDROID__
+#include <android/asset_manager.h>
+#include <jni.h>
+#endif
 
 namespace CSE {
 

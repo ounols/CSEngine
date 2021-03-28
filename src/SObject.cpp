@@ -7,7 +7,7 @@ using namespace CSE;
 MemoryMgr* memoryMgr = nullptr;
 
 SObject::SObject() {
-    memoryMgr = CORE->GetCore<MemoryMgr>();
+    memoryMgr = CORE->GetCore(MemoryMgr);
 	// register this object to MemoryContainer class
     memoryMgr->Register(this);
 }

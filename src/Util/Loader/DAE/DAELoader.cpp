@@ -430,7 +430,7 @@ Joint* DAELoader::loadJointData(XNode jointNode, bool isRoot) {
 void DAELoader::LoadTexturePath(XNode imageNode) {
     std::string path = imageNode.getChild("image").getChild("init_from").value;
     path = trim(path);
-    auto asset = CORE->GetCore<ResMgr>()->GetAssetReference(path);
+    auto asset = CORE->GetCore(ResMgr)->GetAssetReference(path);
     if (asset == nullptr) return;
 
     LoadTexture(asset);
@@ -531,7 +531,7 @@ SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
 
     auto material = renderComponent->GetMaterial();
     if(!m_texture_name.empty())
-        material->SetTexture("TEX2D_ALBEDO", CORE->GetCore<ResMgr>()->GetObject<STexture>(m_texture_name));
+        material->SetTexture("TEX2D_ALBEDO", CORE->GetCore(ResMgr)->GetObject<STexture>(m_texture_name));
 
     if (m_isSkinning) {
         SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, mesh_root,
@@ -547,7 +547,7 @@ SPrefab* DAELoader::GeneratePrefab(const char* path, Skeleton* skeleton, MeshSur
                                    SPrefab* prefab) {
 
     DAELoader* loader = new DAELoader(path, mesh, AUTO, false);
-    auto asset = CORE->GetCore<ResMgr>()->GetAssetReference(path);
+    auto asset = CORE->GetCore(ResMgr)->GetAssetReference(path);
     if (asset == nullptr) {
         SAFE_DELETE(loader);
         return nullptr;

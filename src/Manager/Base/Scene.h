@@ -14,7 +14,7 @@ namespace CSE {
 
         virtual void Tick(float elapsedTime) = 0;
 
-        virtual void Destroy() = 0;
+        virtual void Destroy() override = 0;
 
         void Exterminate() override;
 

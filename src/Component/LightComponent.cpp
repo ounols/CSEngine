@@ -7,7 +7,7 @@ using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(LightComponent) {
 
-    auto lightMgr = CORE->GetCore<LightMgr>();
+    auto lightMgr = CORE->GetCore(LightMgr);
     lightMgr->Register(this);
 
     m_light = new SLight();
@@ -21,7 +21,7 @@ LightComponent::~LightComponent() {}
 
 void LightComponent::Exterminate() {
 
-    CORE->GetCore<LightMgr>()->Remove(this);
+    CORE->GetCore(LightMgr)->Remove(this);
     SAFE_DELETE(m_light);
 
 }

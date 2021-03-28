@@ -89,7 +89,9 @@ GLuint ShaderUtil::createProgram(GLuint vertexShader, GLuint fragmentShader) {
                 if (buf) {
 
                     glGetProgramInfoLog(program, bufLength, NULL, buf);
+#ifndef __ANDROID__
                     std::cout << "Could not link program:\n" << buf << '\n';
+#endif
                     //LOGE("Could not link program:\n%s\n", buf);
                     free(buf);
 
@@ -134,7 +136,9 @@ GLuint ShaderUtil::loadShader(GLenum shaderType, const char* pSource) {
                 if (buf) {
                     glGetShaderInfoLog(shader, infoLen, NULL, buf);
                     //LOGE("Could not compile shader %d:\n%s\n", shaderType, buf);
+#ifndef __ANDROID__
                     std::cout << "Could not compile shader:\n" << buf << '\n';
+#endif
 #ifdef WIN32
                     OutputDebugStringA(buf);
 #endif

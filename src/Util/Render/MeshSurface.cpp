@@ -226,13 +226,13 @@ void MeshSurface::Exterminate() {
 
 
 void MeshSurface::Destroy() {
-    CORE->GetCore<MemoryMgr>()->ReleaseObject(this);
+    CORE->GetCore(MemoryMgr)->ReleaseObject(this);
 }
 
 void MeshSurface::Init(const AssetMgr::AssetReference* asset) {
 
     std::string parent_id = split(asset->id, '?')[0];
-    auto model = CORE->GetCore<ResMgr>()->GetAssetReference(parent_id);
+    auto model = CORE->GetCore(ResMgr)->GetAssetReference(parent_id);
     AssetMgr::TYPE type = model->type;
 
     //프리팹에 모든 정보가 있으므로 아예 프리팹 새로 생성

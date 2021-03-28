@@ -115,7 +115,7 @@ void DAEAnimationLoader::processTransforms(std::string jointName,
         }
 
         keyFrames[i]->jointTransforms.push_back(
-                new JointTransformData(CORE->GetCore<ResMgr>()->GetStringHash(jointName), jointName, transform));
+                new JointTransformData(CORE->GetCore(ResMgr)->GetStringHash(jointName), jointName, transform));
     }
 
 }

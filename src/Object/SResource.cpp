@@ -10,7 +10,7 @@
 using namespace CSE;
 
 SResource::SResource() {
-    auto resMgr = CORE->GetCore<ResMgr>();
+    auto resMgr = CORE->GetCore(ResMgr);
     resMgr->Register(this);
     m_name = "Resource " + std::to_string(resMgr->GetSize());
 }
@@ -21,7 +21,7 @@ SResource::SResource(bool isRegister) {
 
 SResource::SResource(const SResource* resource, bool isRegister) : SObject(isRegister) {
     if(isRegister) {
-        CORE->GetCore<ResMgr>()->Register(this);
+        CORE->GetCore(ResMgr)->Register(this);
     }
     m_name = resource->m_name + " (instance)";
 }
@@ -31,7 +31,7 @@ SResource::~SResource() {
 }
 
 void SResource::SetName(std::string name) {
-    m_name = CORE->GetCore<ResMgr>()->RemoveDuplicatingName(name);
+    m_name = CORE->GetCore(ResMgr)->RemoveDuplicatingName(name);
 }
 
 void SResource::SetID(std::string id) {
@@ -41,7 +41,7 @@ void SResource::SetID(std::string id) {
 void SResource::SetResource(std::string name, bool isInit) {
     if (m_isInited) return;
 
-    auto asset = CORE->GetCore<ResMgr>()->GetAssetReference(name);
+    auto asset = CORE->GetCore(ResMgr)->GetAssetReference(name);
 
     SetResource(asset, isInit);
 }
@@ -59,5 +59,5 @@ void SResource::SetResource(const AssetMgr::AssetReference* asset, bool isInit) 
 }
 
 SResource* SResource::GetResource(std::string name) {
-    return CORE->GetCore<ResMgr>()->GetSResource(name);
+    return CORE->GetCore(ResMgr)->GetSResource(name);
 }

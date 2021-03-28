@@ -27,7 +27,7 @@ SCloneFactory::~SCloneFactory() {
 
 SComponent* SCloneFactory::Clone(SComponent* component, SGameObject* parent) {
     if(parent == nullptr) {
-        Scene* currentScene = CORE->GetCore<SceneMgr>()->GetCurrentScene();
+        Scene* currentScene = CORE->GetCore(SceneMgr)->GetCurrentScene();
         if(!dynamic_cast<SScene*>(currentScene)) return nullptr;
 
         parent = static_cast<SScene*>(currentScene)->GetRoot();
@@ -41,7 +41,7 @@ SComponent* SCloneFactory::Clone(SComponent* component, SGameObject* parent) {
 
 SGameObject* SCloneFactory::Clone(SGameObject* object, SGameObject* parent) {
     if(parent == nullptr) {
-        Scene* currentScene = CORE->GetCore<SceneMgr>()->GetCurrentScene();
+        Scene* currentScene = CORE->GetCore(SceneMgr)->GetCurrentScene();
         if(!dynamic_cast<SScene*>(currentScene)) return nullptr;
 
         parent = static_cast<SScene*>(currentScene)->GetRoot();

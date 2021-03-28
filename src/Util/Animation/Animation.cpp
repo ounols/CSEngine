@@ -22,7 +22,7 @@ void Animation::Exterminate() {
 
 void Animation::Init(const AssetMgr::AssetReference* asset) {
     std::string parent_id = split(asset->id, '?')[0];
-    auto model = CORE->GetCore<ResMgr>()->GetAssetReference(parent_id);
+    auto model = CORE->GetCore(ResMgr)->GetAssetReference(parent_id);
 
     DAELoader::GeneratePrefab(model->path.c_str(), nullptr, nullptr, this, nullptr);
 

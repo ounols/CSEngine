@@ -195,7 +195,7 @@ void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
     m_fragShaderName = trim(shader_combine_vector.at(1));
 
     //
-    auto resMgr = CORE->GetCore<ResMgr>();
+    auto resMgr = CORE->GetCore(ResMgr);
     auto vert_asset = resMgr->GetAssetReference(m_vertShaderName);
     auto frag_asset = resMgr->GetAssetReference(m_fragShaderName);
 

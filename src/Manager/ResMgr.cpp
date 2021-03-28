@@ -44,7 +44,7 @@ void ResMgr::Remove(SResource* m_object) {
         m_resources.erase(iObj);
     }
 
-    CORE->GetCore<MemoryMgr>()->ReleaseObject(m_object, true);
+    CORE->GetCore(MemoryMgr)->ReleaseObject(m_object, true);
 }
 
 int ResMgr::GetSize() const {

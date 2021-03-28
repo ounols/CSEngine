@@ -5,7 +5,7 @@
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 #include <android/log.h>
-#include <Manager/ResMgr.h>
+#include <Manager/EngineCore.h>
 
 #define  LOG_TAG    "SCENGINE"
 
@@ -55,7 +55,7 @@ namespace CSE {
 #endif
 #ifdef __ANDROID__
 // get lists : https://stackoverflow.com/questions/13317387/how-to-get-file-in-assets-from-android-ndk
-		AAssetManager* assetManager = RESMGR->GetAssetManager();
+		AAssetManager* assetManager = CORE->GetCore(ResMgr)->GetAssetManager();
 		AAsset* asset = AAssetManager_open(assetManager, path.c_str(), AASSET_MODE_STREAMING);
 
 		if(asset == nullptr){

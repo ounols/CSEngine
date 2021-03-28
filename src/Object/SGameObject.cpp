@@ -9,14 +9,14 @@
 using namespace CSE;
 
 SGameObject::SGameObject() {
-    CORE->GetCore<GameObjectMgr>()->Register(this);
+    CORE->GetCore(GameObjectMgr)->Register(this);
     m_transform = CreateComponent<TransformComponent>();
 
     SGameObject::Init();
 }
 
 SGameObject::SGameObject(const SGameObject& src) {
-    CORE->GetCore<GameObjectMgr>()->Register(this);
+    CORE->GetCore(GameObjectMgr)->Register(this);
     m_transform = CreateComponent<TransformComponent>();
 
     SGameObject::Init();
@@ -25,7 +25,7 @@ SGameObject::SGameObject(const SGameObject& src) {
 
 
 SGameObject::SGameObject(std::string name) {
-    CORE->GetCore<GameObjectMgr>()->Register(this);
+    CORE->GetCore(GameObjectMgr)->Register(this);
     m_name = name;
     m_transform = CreateComponent<TransformComponent>();
 
@@ -58,7 +58,7 @@ void SGameObject::Tick(float elapsedTime) {
 
 
 void SGameObject::Exterminate() {
-    CORE->GetCore<GameObjectMgr>()->Remove(this);
+    CORE->GetCore(GameObjectMgr)->Remove(this);
 }
 
 
@@ -66,7 +66,7 @@ void SGameObject::Destroy() {
 
     for (auto component : m_components) {
         if (component == nullptr) continue;
-        CORE->GetCore<MemoryMgr>()->ReleaseObject(component);
+        CORE->GetCore(MemoryMgr)->ReleaseObject(component);
     }
 
     m_components.clear();
@@ -75,7 +75,7 @@ void SGameObject::Destroy() {
         RemoveParent();
     }
 
-    CORE->GetCore<GameObjectMgr>()->DeleteGameObject(this);
+    CORE->GetCore(GameObjectMgr)->DeleteGameObject(this);
 
     for (auto object : m_children) {
         if (object == nullptr) continue;
@@ -174,7 +174,7 @@ bool SGameObject::DeleteComponent(SComponent* component) {
 
     if (iCompObj != m_components.end()) {
         m_components.erase(iCompObj);
-        CORE->GetCore<MemoryMgr>()->ReleaseObject(component);
+        CORE->GetCore(MemoryMgr)->ReleaseObject(component);
         return true;
     }
 
@@ -213,12 +213,12 @@ std::string SGameObject::GetID(const SComponent* component) const {
 
 SGameObject* SGameObject::Find(std::string name) const {
 
-    return CORE->GetCore<GameObjectMgr>()->Find(ConvertSpaceStr(name, true));
+    return CORE->GetCore(GameObjectMgr)->Find(ConvertSpaceStr(name, true));
 
 }
 
 SGameObject* SGameObject::FindByID(std::string id) {
-    return CORE->GetCore<GameObjectMgr>()->FindByID(ConvertSpaceStr(id, true));
+    return CORE->GetCore(GameObjectMgr)->FindByID(ConvertSpaceStr(id, true));
 }
 
 
@@ -293,7 +293,7 @@ void SGameObject::SetResourceID(std::string resID, bool setChildren) {
 }
 
 SComponent* SGameObject::GetSComponentByID(std::string id) const {
-    return CORE->GetCore<GameObjectMgr>()->FindComponentByID(id);
+    return CORE->GetCore(GameObjectMgr)->FindComponentByID(id);
 }
 
 

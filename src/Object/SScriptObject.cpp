@@ -39,7 +39,7 @@ void SScriptObject::RegisterScript(std::string script) {
         compiledScript.CompileString(script.c_str());
         if (Sqrat::Error::Occurred(vm)) {
 #ifdef __ANDROID__
-            LOGE("Compile Failed : %s", Error::Message(vm).c_str());
+//            LOGE("Compile Failed : %s", Error::Message(vm).c_str());
 #else
             std::cout << "Compile Failed : " << Error::Message(vm) << '\n';
 #endif
@@ -48,7 +48,7 @@ void SScriptObject::RegisterScript(std::string script) {
         compiledScript.Run();
         if (Sqrat::Error::Occurred(vm)) {
 #ifdef __ANDROID__
-            LOGE("Run Failed : %s", Error::Message(vm).c_str());
+//            LOGE("Run Failed : %s", Error::Message(vm).c_str());
 #else
             std::cout << "Run Failed : " << Error::Message(vm) << '\n';
 #endif

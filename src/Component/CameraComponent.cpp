@@ -8,7 +8,7 @@
 using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(CameraComponent), m_eye(nullptr), m_targetObject(nullptr) {
-    auto cameraMgr = CORE->GetCore<CameraMgr>();
+    auto cameraMgr = CORE->GetCore(CameraMgr);
     cameraMgr->Register(this);
     m_pRatio = const_cast<float*>(cameraMgr->GetProjectionRatio());
 }
@@ -20,7 +20,7 @@ CameraComponent::~CameraComponent() {
 
 
 void CameraComponent::Exterminate() {
-    CORE->GetCore<CameraMgr>()->Remove(this);
+    CORE->GetCore(CameraMgr)->Remove(this);
 }
 
 
@@ -30,7 +30,7 @@ void CameraComponent::Init() {
     m_up = vec3(0, 1, 0);
 
     m_resultTarget = vec3();
-    m_pRatio = const_cast<float*>(CORE->GetCore<CameraMgr>()->GetProjectionRatio());
+    m_pRatio = const_cast<float*>(CORE->GetCore(CameraMgr)->GetProjectionRatio());
 }
 
 

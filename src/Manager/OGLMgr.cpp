@@ -97,7 +97,7 @@ void OGLMgr::setProjectionRatio() {
         m_projectionRatio = (GLfloat) m_height / (GLfloat) m_width;
 
 
-    CORE->GetCore<CameraMgr>()->SetProjectionRatio(m_projectionRatio);
+    CORE->GetCore(CameraMgr)->SetProjectionRatio(m_projectionRatio);
 
 }
 

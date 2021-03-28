@@ -5,7 +5,7 @@
 using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(RenderComponent) {
-    auto renderMgr = CORE->GetCore<RenderMgr>();
+    auto renderMgr = CORE->GetCore(RenderMgr);
     renderMgr->Register(this);
     SetMaterial(nullptr);
 }
@@ -101,7 +101,7 @@ SMaterial* RenderComponent::GetMaterial() const {
 }
 
 void RenderComponent::SetMaterial(SMaterial* material) {
-    auto renderMgr = CORE->GetCore<RenderMgr>();
+    auto renderMgr = CORE->GetCore(RenderMgr);
     renderMgr->Remove(this);
     if(this->material == nullptr) this->material = SResource::Create<SMaterial>("File:Material/DefaultPBR.mat");
     else this->material = material;
