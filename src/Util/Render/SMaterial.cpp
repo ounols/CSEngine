@@ -173,7 +173,7 @@ void SMaterial::SetSkinningUniform(const GLMeshID& mesh, const std::vector<mat4>
 
     std::vector<float> result;
     for (mat4 matrix : jointMatrix) {
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 16; ++i) {
             result.push_back(matrix.Pointer()[i]);
 
         }
@@ -217,15 +217,15 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
         return;
     }
 
-    XNode sce_mat = m_root->getChild("CSEMAT");
-    XNode shader_node = sce_mat.getChild("shader");
+    XNode cse_mat = m_root->getChild("CSEMAT");
+    XNode shader_node = cse_mat.getChild("shader");
 
     auto var_nodes = shader_node.children;
     auto shader_file_id = shader_node.getAttribute("id").value;
     auto shaderHandle = SResource::Create<GLProgramHandle>(shader_file_id);
     if(shaderHandle == nullptr) return;
 
-    for (auto node : var_nodes) {
+    for (const auto& node : var_nodes) {
 
         auto element_value = node.value.toStringVector();
         auto element_type = node.getAttribute("type").value;
@@ -248,43 +248,29 @@ void SMaterial::SetBindFuncByType(Element* element, bool isUniform) {
 
 	const GLenum type = element->type;
 
-//	if(isUniform == false) {
-//		switch (type) {
-//		case SType::VEC2:
-//			return [element]() {
-//			    auto value = XMLParser::parseVec2(element->value_str);
-//			    glVertexAttrib2fv(element->id, value.Pointer());
-//			};
-//		case SType::VEC3:
-//			return [element]() {
-//                auto value = XMLParser::parseVec3(element->value_str);
-//                glVertexAttrib3fv(element->id, value.Pointer());
-//			};
-//		case SType::VEC4:
-//			return [element]() {
-//                auto value = XMLParser::parseVec4(element->value_str);
-//                glVertexAttrib4fv(element->id, value.Pointer());
-//			};
-//		}
-//		return nullptr;
-//	}
-
 	switch (type) {
 	case SType::FLOAT:
         SetFloatFunc(element, XMLParser::parseFloat(element->value_str[0].c_str()));
+        break;
 	case SType::INT:
         SetIntFunc(element, XMLParser::parseInt(element->value_str[0].c_str()));
+            break;
 //	case SType::MAT4:
 //		SetMat4Func(element, XMLParser::parseMat4(element->value_str));
+//            break;
 //	case SType::MAT3:
 //		SetMat3Func(element, XMLParser::parseMat3(element->value_str));
+//            break;
     case SType::VEC4:
         SetVec4Func(element, XMLParser::parseVec4(element->value_str));
-	case SType::VEC3:
+            break;
+        case SType::VEC3:
         SetVec3Func(element, XMLParser::parseVec3(element->value_str));
-	case SType::TEXTURE:
+            break;
+        case SType::TEXTURE:
         SetTextureFunc(element, XMLParser::parseTexture(element->value_str[0].c_str()));
-	}
+            break;
+    }
 	
 	return;
 }

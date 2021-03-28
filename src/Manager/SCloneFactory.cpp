@@ -56,7 +56,7 @@ SGameObject* SCloneFactory::Clone(SGameObject* object, SGameObject* parent) {
     SGameObject* cloneObject_root = clone_object[object];
 
 
-    for(auto component_pair : clone_component) {
+    for(const auto& component_pair : clone_component) {
         SComponent* component = component_pair.second;
         component->CopyReference(component_pair.first, clone_object, clone_component);
     }
@@ -78,7 +78,7 @@ void CloningObjects(SGameObject* object, std::map<SComponent*, SComponent*>& clo
 
     //게임 컴포넌트 복사
     std::vector<SComponent*> target_component = object->GetComponents();
-    for(auto component : target_component) {
+    for(const auto& component : target_component) {
         if(dynamic_cast<TransformComponent*>(component)) {
             TransformComponent* transform_copy = static_cast<TransformComponent*>(cloneObject->GetTransform());
             TransformInterface* transform_src = static_cast<TransformComponent*>(component);
@@ -89,16 +89,15 @@ void CloningObjects(SGameObject* object, std::map<SComponent*, SComponent*>& clo
             transform_copy->m_scale = vec3(transform_src->m_scale);
             continue;
         }
-        SComponent* copy_comp = component->Clone(cloneObject);
+        const auto& copy_comp = component->Clone(cloneObject);
         clone_comp[component] = copy_comp;
         copy_comp->SetIsEnable(component->GetIsEnable());
 //        cloneObject->AddComponent(copy_comp);
     }
 
-    for(auto child : object->GetChildren()) {
+    auto children = object->GetChildren();
+    for(const auto& child : children) {
         CloningObjects(child, clone_comp, clone_obj, cloneObject);
     }
-
     parent->AddChild(cloneObject);
-
 }

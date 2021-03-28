@@ -36,11 +36,11 @@ void RenderContainer::Remove(SIRender* object) {
     if (orderLayerIter != m_rendersLayer.end()) {
         {
             //2. Program Render Layer Level
-            ProgramRenderLayer programLayer = orderLayerIter->second;
+            ProgramRenderLayer& programLayer = orderLayerIter->second;
             auto handlerPair = programLayer.find(handler);
             if (handlerPair != programLayer.end()) {
-                auto layerVector = handlerPair->second;
-                layerVector.erase(layerVector.begin() + object->programRenderIndex);
+                auto& layerVector = handlerPair->second;
+                handlerPair->second.erase(layerVector.begin() + object->programRenderIndex);
 
                 //빈공간은 제거
                 if (layerVector.empty()) {

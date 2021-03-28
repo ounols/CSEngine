@@ -42,9 +42,9 @@ void DrawableSkinnedMeshComponent::addJointsToVector(JointComponent* headJoint, 
     int index = headJoint->GetID();
     matrix[index] = headJoint->GetAnimationMatrix();
 
-    std::vector<SGameObject*> children = headJoint->GetGameObject()->GetChildren();
-    for (SGameObject* childJoint : children) {
-        auto joint = childJoint->GetComponent<JointComponent>();
+    const auto& children = headJoint->GetGameObject()->GetChildren();
+    for (const auto& childJoint : children) {
+        const auto& joint = childJoint->GetComponent<JointComponent>();
 
         if (joint == nullptr) continue;
         addJointsToVector(joint, matrix);
@@ -55,7 +55,7 @@ void DrawableSkinnedMeshComponent::SetJointSize(SGameObject* joint_object) {
     if (joint_object->GetComponent<JointComponent>() == nullptr) return;
     m_jointSize++;
     auto children = joint_object->GetChildren();
-    for (SGameObject* childJoint : children) {
+    for (const auto& childJoint : children) {
         SetJointSize(childJoint);
     }
 }

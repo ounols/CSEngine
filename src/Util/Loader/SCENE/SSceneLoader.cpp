@@ -289,7 +289,7 @@ void SSceneLoader::ExploringPrefab(XNode node, std::vector<NodeKey*>& objs, std:
 
 
 	//Change objects value
-	for (auto child : node_values) {
+	for (const auto& child : node_values) {
 		if (child.name == "gameobject") {
 			ExploringScene(child, objs, comps);
 		}
@@ -325,7 +325,7 @@ void SSceneLoader::LinkingResourceID(XNode node, SGameObject* root, std::vector<
 		objs.push_back(key);
 
 
-		for (auto comp : node.children) {
+		for (const auto& comp : node.children) {
 			if (comp.name != "component") continue;
 
 			std::string comp_type = comp.getAttribute("type").value;
@@ -350,7 +350,8 @@ void SSceneLoader::LinkingResourceID(XNode node, SGameObject* root, std::vector<
 		}
 	}
 
-	for (auto child : root->GetChildren()) {
+	auto children = root->GetChildren();
+	for (const auto& child : children) {
 		LinkingResourceID(node, child, objs, comps);
 	}
 }
@@ -374,7 +375,7 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 		ConvertSpaceStr(obj->GetID()) + "\" fileid=\"" + ConvertSpaceStr(obj->GetResourceID()) +
 		"\">\n";
 
-	for (auto object_node : n_o->children) {
+	for (const auto& object_node : n_o->children) {
 		bool isFind = false;
 		XNode target_node;
 		std::string obj_id;
@@ -389,7 +390,7 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 			continue;
 		}
 
-		for (auto prefab_node : n_p->children) {
+		for (const auto& prefab_node : n_p->children) {
 			std::string prefab_id = prefab_node.getAttribute("fileid").value;
 			if (obj_id == prefab_id) {
 				target_node = prefab_node;

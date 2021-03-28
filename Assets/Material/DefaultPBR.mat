@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CSEMAT version="1.0.0">
 <shader id="File:Shader/PBR/PBR.shader">
-<var name="TEX2D_ALBEDO" type="tex" count="1">File:Stormtrooper_D.png</var>
+<var name="TEX2D_ALBEDO" type="tex" count="1">File:Stormtrooper_D.jpg</var>
 <var name="TEXCUBE_IRRADIANCE" type="tex" count="1">irradiance.textureCubeMap</var>
 <var name="TEXCUBE_PREFILTER" type="tex" count="1">prefilter.textureCubeMap</var>
 <var name="FLOAT_ALBEDO" type="vec3" count="1">1 1 1</var>

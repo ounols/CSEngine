@@ -85,6 +85,7 @@ SComponent* RenderComponent::Clone(SGameObject* object) {
     INIT_COMPONENT_CLONE(RenderComponent, clone);
 
     clone->isRenderActive = isRenderActive;
+    clone->SetMaterial(material);
 
     return clone;
 }

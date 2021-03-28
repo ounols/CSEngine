@@ -20,7 +20,7 @@ CLASSNAME::CLASSNAME() : SComponent(#CLASSNAME)
 #define FIND_COMP_REFERENCE(comp, src, componentName) \
 {                           \
     auto targetObject = lists_comp.find(src->comp);    \
-    comp = (targetObject != lists_comp.end()) ? dynamic_cast<componentName*>(targetObject->second) : src->comp;    \
+    comp = (targetObject != lists_comp.end()) ? static_cast<componentName*>(targetObject->second) : src->comp;    \
 }
 
 #define INIT_COMPONENT_CLONE(className, cloneName) \

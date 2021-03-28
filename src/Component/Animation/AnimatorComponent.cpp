@@ -65,17 +65,18 @@ std::map<int, mat4> AnimatorComponent::calculateCurrentAnimationPose() const {
 
 void AnimatorComponent::applyPoseToJoints(std::map<int, mat4>& currentPose, JointComponent* joint,
                                           const mat4 parentTransform) {
-    SGameObject* object = joint->GetGameObject();
-    const mat4 currentLocalTransform = currentPose[joint->GetAnimationJointId()];
-    mat4 currentTransform = currentLocalTransform * parentTransform;
+    const auto& object = joint->GetGameObject();
+    const int jointId = joint->GetAnimationJointId();
+    const mat4& currentLocalTransform = currentPose[jointId];
+    mat4&& currentTransform = currentLocalTransform * parentTransform;
     auto children = object->GetChildren();
     for (const auto& child : children) {
-	    const auto joint_component = child->GetComponent<JointComponent>();
+	    const auto& joint_component = child->GetComponent<JointComponent>();
         if (joint_component != nullptr)
             applyPoseToJoints(currentPose, joint_component, currentTransform);
     }
     currentTransform = joint->GetInverseTransformMatrix() * currentTransform;
-    joint->SetAnimationMatrix(currentTransform);
+    joint->SetAnimationMatrix(std::move(currentTransform));
 }
 
 std::vector<KeyFrame*> AnimatorComponent::getPreviousAndNextFrames() const {
@@ -132,7 +133,7 @@ SComponent* AnimatorComponent::Clone(SGameObject* object) {
 void AnimatorComponent::CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
                                       std::map<SComponent*, SComponent*> lists_comp) {
     if (src == nullptr) return;
-    AnimatorComponent* convert = dynamic_cast<AnimatorComponent*>(src);
+    AnimatorComponent* convert = static_cast<AnimatorComponent*>(src);
 
     //Copy Components
     FIND_COMP_REFERENCE(m_entity, convert, DrawableSkinnedMeshComponent);

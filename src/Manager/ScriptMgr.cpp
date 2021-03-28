@@ -147,7 +147,6 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
 
 
     //GameObject
-
     SQRClassDef<SGameObject>(_SC("GameObject"), vm)
             .Func(_SC("Find"), &SGameObject::Find)
             .Func(_SC("GetTransform"), &SGameObject::GetTransform)
@@ -247,7 +246,7 @@ void ScriptMgr::ReadScriptList() const {
     //compile base script class
     RegisterScript(CSEngineScript);
 
-    for (auto asset : assets) {
+    for (const auto& asset : assets) {
         SResource::Create<SScriptObject>(asset);
     }
 

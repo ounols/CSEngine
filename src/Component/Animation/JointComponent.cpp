@@ -31,7 +31,7 @@ void JointComponent::Tick(float elapsedTime) {
 }
 
 
-void JointComponent::SetAnimationMatrix(mat4 animation) {
+void JointComponent::SetAnimationMatrix(mat4&& animation) {
     m_animatedMatrix = animation;
 }
 
@@ -40,7 +40,7 @@ void JointComponent::calcInverseBindTransform(mat4 parentTransform) {
     m_inverseTransformMatrix = mat4::Invert(bindTransform);
 
     auto children = gameObject->GetChildren();
-    for (auto child : children) {
+    for (const auto& child : children) {
         JointComponent* child_comp = child->GetComponent<JointComponent>();
 
         if(child_comp == nullptr) continue;

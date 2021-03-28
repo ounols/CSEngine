@@ -25,7 +25,7 @@ namespace CSE {
 
         std::string PrintValue() const override;
 
-        void SetAnimationMatrix(mat4 animation);
+        void SetAnimationMatrix(mat4&& animation);
 
         mat4 GetAnimationMatrix() const {
             return m_animatedMatrix;
