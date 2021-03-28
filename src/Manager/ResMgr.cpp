@@ -6,7 +6,6 @@
 using namespace CSE;
 
 ResMgr::ResMgr() {
-    InitResource();
 }
 
 ResMgr::~ResMgr() {
@@ -15,6 +14,7 @@ ResMgr::~ResMgr() {
 
 
 void ResMgr::Init() {
+    InitResource();
 }
 
 
@@ -105,6 +105,7 @@ std::vector<AssetMgr::AssetReference*> ResMgr::GetAssetReferences(AssetMgr::TYPE
 #ifdef __ANDROID__
 
 void ResMgr::SetAssetManager(AAssetManager* obj) {
+    SafeLog::Log("SetAssetManager");
     m_assetManager->SetAssetManager(obj);
 }
 

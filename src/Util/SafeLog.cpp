@@ -4,7 +4,9 @@
 #include <Windows.h>
 
 #elif __ANDROID__
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,__VA_ARGS__)
+#define  LOG_TAG    "CSEngine"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #include <android/log.h>
 #elif __linux__
 
@@ -17,7 +19,7 @@ void SafeLog::Log(const char* log) {
 #ifdef WIN32
 	OutputDebugStringA(log);
 #elif __ANDROID__
-	LOGD(log, 0);
+	LOGE(log, 0);
 #elif __linux__
 	std::cout << log;
 #endif

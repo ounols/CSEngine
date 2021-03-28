@@ -15,7 +15,7 @@
 #include <GL/glew.h>
 #include <crtdbg.h>
 #include "../../../src/Manager/MainProc.h"
-#include "../../../src/Macrodef.h"
+#include "../../../src/MacroDef.h"
 
 #if defined(_WIN32) && !defined(MSVC_CMAKE)
 #pragma comment(lib, "../../../External/glew/lib/Release/Win32/glew32.lib")

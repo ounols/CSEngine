@@ -36,3 +36,7 @@ void MainProc::Exterminate() {
 void MainProc::ResizeWindow(GLuint width, GLuint height) const {
     CORE->ResizeWindow(width, height);
 }
+
+void MainProc::GenerateCores() {
+    CORE->GenerateCores();
+}

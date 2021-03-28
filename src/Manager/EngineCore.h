@@ -45,8 +45,6 @@ namespace CSE {
         void Render() const;
         void Exterminate();
         void ResizeWindow(unsigned int width, unsigned int height);
-
-    private:
         void GenerateCores();
 
     private:
@@ -65,5 +63,7 @@ namespace CSE {
         CoreBase* m_scriptMgr = nullptr;
 
         OGLMgr* m_oglMgr = nullptr;
+
+        bool m_isGenerated = false;
     };
 }

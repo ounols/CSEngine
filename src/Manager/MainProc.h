@@ -18,6 +18,8 @@ namespace CSE {
 
         void Render(float elapsedTime) const;
 
+        void GenerateCores();
+
         void Exterminate();
     };
 

@@ -66,7 +66,21 @@ AssetMgr::AssetReference* AssetMgr::GetAsset(std::string name) const {
 }
 
 void AssetMgr::ReadDirectory(std::string path) {
-#ifdef __linux__ //======================================
+#ifdef __ANDROID__
+    AAssetDir* assetDir = AAssetManager_openDir(m_assetManager, "");
+    const char* filename = (const char*)NULL;
+    SafeLog::Log("ReadDirectory");
+    while ((filename = AAssetDir_getNextFileName(assetDir)) != NULL) {
+        AAsset* asset = AAssetManager_open(m_assetManager, filename, AASSET_MODE_STREAMING);
+
+        std::string name = filename;
+        SafeLog::Log(name.c_str());
+        AssetReference* assetReference = CreateAsset(path + name, name);
+
+        AAsset_close(asset);
+    }
+    AAssetDir_close(assetDir);
+#elif __linux__ //======================================
 
     DIR* dirp = opendir(path.c_str());
     struct dirent* dp;

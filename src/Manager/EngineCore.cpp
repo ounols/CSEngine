@@ -21,6 +21,9 @@ EngineCore::~EngineCore() {
 void EngineCore::Init(unsigned int width, unsigned int height) {
     GenerateCores();
 
+    for (const auto& core : m_cores) {
+        core->Init();
+    }
     m_oglMgr->setupEGLGraphics(width, height);
     m_oglMgr->ResizeWindow(width, height);
 
@@ -29,9 +32,6 @@ void EngineCore::Init(unsigned int width, unsigned int height) {
     asdfasdf->LoadShader();
     SAFE_DELETE(asdfasdf);
 
-    for (const auto& core : m_cores) {
-        core->Init();
-    }
 
     //    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/test_scene.scene");
 //    SceneMgr::getInstance()->SetScene(scene);
@@ -59,8 +59,12 @@ void EngineCore::Exterminate() {
 }
 
 void EngineCore::GenerateCores() {
+    if(m_isGenerated) return;
+    m_isGenerated = true;
+    SafeLog::Log("m_isGenerated");
     m_cores = std::vector<CoreBase*>();
     m_cores.reserve(ENGINE_COUNT);
+    SafeLog::Log(" m_cores = std::vector<CoreBase*>();");
 
     m_resMgr = new ResMgr();
     m_gameObjectMgr = new GameObjectMgr();
