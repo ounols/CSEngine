@@ -39,7 +39,7 @@ namespace CSE {
     private:
         DrawableStaticMeshComponent* m_mesh;
         DrawableSkinnedMeshComponent* m_skinningMesh;
-        SMaterial* m_material_clone;
+        SMaterial* m_material_clone = nullptr;
         // SMaterial* material (Override)
     };
 }

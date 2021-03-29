@@ -31,28 +31,6 @@ namespace CSE {
 	static std::string OpenAssetsTxtFile(std::string path) {
 
 		std::string buf;
-
-#if defined (WIN32) || defined(__linux__)
-
-		std::ifstream fin(path, std::ios::binary);
-
-		if (!fin.is_open()) return "";
-
-
-		//while(!fin.eof()) {
-		//	std::string line;
-		//	std::getline(fin, line);
-		//	buf += line + '\n';
-		//}
-
-		fin.seekg(0, std::ios::end);
-		size_t size = fin.tellg();
-		fin.seekg(0);
-		buf = std::string(size, ' ');
-		fin.read(&buf[0], size);
-		fin.close();
-
-#endif
 #ifdef __ANDROID__
 // get lists : https://stackoverflow.com/questions/13317387/how-to-get-file-in-assets-from-android-ndk
 		AAssetManager* assetManager = CORE->GetCore(ResMgr)->GetAssetManager();
@@ -78,10 +56,27 @@ namespace CSE {
 
 		delete strbuf;
 
+#elif defined (WIN32) || defined(__linux__)
+
+		std::ifstream fin(path, std::ios::binary);
+
+		if (!fin.is_open()) return "";
+
+
+		//while(!fin.eof()) {
+		//	std::string line;
+		//	std::getline(fin, line);
+		//	buf += line + '\n';
+		//}
+
+		fin.seekg(0, std::ios::end);
+		size_t size = fin.tellg();
+		fin.seekg(0);
+		buf = std::string(size, ' ');
+		fin.read(&buf[0], size);
+		fin.close();
 
 #endif
-
-
 		return buf;
 	}
 
