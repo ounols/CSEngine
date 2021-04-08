@@ -8,8 +8,12 @@ CSEngine은 크로스 플랫폼 3D 게임 엔진입니다.
 빌드 방식은 해당 링크를 통해 확인하실 수 있습니다.
 
 ---------------
-## LICENCE ##
-Copyright 2017-2021 ounols.
+# LICENCE #
+The CSEngine source code:
+
+The BSD 2-Clause License
+
+Copyright 2017-2021, ounols.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
