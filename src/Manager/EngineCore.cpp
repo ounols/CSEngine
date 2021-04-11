@@ -31,6 +31,7 @@ void EngineCore::Init(unsigned int width, unsigned int height) {
     asdfasdf->LoadShader();
     SAFE_DELETE(asdfasdf);
 
+    m_oglMgr->ResizeWindow(width, height);
 
     //    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/test_scene.scene");
 //    SceneMgr::getInstance()->SetScene(scene);
