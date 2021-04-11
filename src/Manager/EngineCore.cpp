@@ -25,7 +25,6 @@ void EngineCore::Init(unsigned int width, unsigned int height) {
         core->Init();
     }
     m_oglMgr->setupEGLGraphics(width, height);
-    m_oglMgr->ResizeWindow(width, height);
 
     PBRShaderLoader* asdfasdf = new PBRShaderLoader();
 
