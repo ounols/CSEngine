@@ -72,6 +72,8 @@ namespace CSE {
         std::vector<SResource*> m_resources;
         AssetMgr* m_assetManager;
 		std::vector<std::string> m_stringIds;
+    public:
+        friend class AssetMgr;
     };
 
 

@@ -28,12 +28,12 @@ PBRShaderLoader::~PBRShaderLoader() {
 
 void PBRShaderLoader::LoadShader() {
 
-    std::string cubemap_str = CSE::OpenAssetsTxtFile(CSE::AssetsPath() + "Shader/PBR/IBL/cubemap.vert");
-    std::string etc_str = CSE::OpenAssetsTxtFile(CSE::AssetsPath() + "Shader/PBR/IBL/equirectangular_to_cubemap.frag");
-    std::string irr_str = CSE::OpenAssetsTxtFile(CSE::AssetsPath() + "Shader/PBR/IBL/irradiance_convolution.frag");
-    std::string pre_str = CSE::OpenAssetsTxtFile(CSE::AssetsPath() + "Shader/PBR/IBL/prefilter.frag");
-    std::string brdf_v_str = CSE::OpenAssetsTxtFile(CSE::AssetsPath() + "Shader/PBR/IBL/brdf.vert");
-    std::string brdf_f_str = CSE::OpenAssetsTxtFile(CSE::AssetsPath() + "Shader/PBR/IBL/brdf.frag");
+    std::string cubemap_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/cubemap.vert");
+    std::string etc_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/equirectangular_to_cubemap.frag");
+    std::string irr_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/irradiance_convolution.frag");
+    std::string pre_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/prefilter.frag");
+    std::string brdf_v_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/brdf.vert");
+    std::string brdf_f_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/brdf.frag");
 
     m_equirectangularToCubemapShader = ShaderUtil::CreateProgramHandle(cubemap_str.c_str(), etc_str.c_str());
     m_irradianceShader = ShaderUtil::CreateProgramHandle(cubemap_str.c_str(), irr_str.c_str());

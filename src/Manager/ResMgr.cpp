@@ -2,6 +2,7 @@
 #include "CameraMgr.h"
 #include "MemoryMgr.h"
 #include "EngineCore.h"
+#include "../Util/AssetsDef.h"
 
 using namespace CSE;
 
@@ -24,7 +25,7 @@ void ResMgr::InitResource() {
 
 
     //Load Assets
-    m_assetManager->LoadAssets(false);
+    m_assetManager->LoadAssets(ASSET_PACKED);
 
 }
 

@@ -59,7 +59,7 @@ void SScriptObject::RegisterScript(std::string script) {
 }
 
 void SScriptObject::RemakeScript(std::string path) {
-    std::string script_str = OpenAssetsTxtFile(path);
+    std::string script_str = AssetMgr::LoadAssetFile(path);
 
     GetVariables(script_str);
 

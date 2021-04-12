@@ -6,6 +6,7 @@
 #include "../MacroDef.h"
 #include "../Util/AssetsDef.h"
 #include "../Util/MoreString.h"
+#include "EngineCore.h"
 #include <iostream>
 
 #ifdef __linux__
@@ -42,15 +43,19 @@ void AssetMgr::Exterminate() {
 #ifdef __ANDROID__
     SAFE_DELETE(m_assetManager);
 #endif
+
+    zip_close(m_zip);
 }
 
 void AssetMgr::LoadAssets(bool isPacked) {
 
     if (!isPacked) {
-        ReadDirectory(CSE::AssetsPath());
-
-        SetType();
+        ReadDirectory(CSE::NativeAssetsPath());
     }
+    else {
+        ReadPackage(CSE::NativeAssetsPath() + "/Assets.zip");
+    }
+    SetType();
 }
 
 AssetMgr::AssetReference* AssetMgr::GetAsset(std::string name) const {
@@ -124,6 +129,30 @@ void AssetMgr::ReadDirectory(std::string path) {
         FindClose(hFind);
     }
 #endif //================================================
+}
+
+void AssetMgr::ReadPackage(std::string path) {
+#ifdef __ANDROID__
+    if(m_zip == nullptr) m_zip = zip_stream_open("stream_string", stream_count, 'r');
+#else
+    if(m_zip == nullptr) m_zip = zip_open(path.c_str(), 0, 'r');
+#endif
+    int zipSize = zip_entries_total(m_zip);
+    for (int i = 0; i < zipSize; ++i) {
+        zip_entry_openbyindex(m_zip, i);
+        {
+            const char *name = zip_entry_name(m_zip);
+            std::string name_str = name;
+            auto rFindIndex = name_str.rfind('/');
+            std::string name_cropped = (rFindIndex == std::string::npos) ? name_str : name_str.substr(rFindIndex + 1);
+            int isdir = zip_entry_isdir(m_zip);
+            if(isdir != 0) continue;
+            AssetReference* asset = CreateAsset(name, name_cropped);
+            std::cout << "(Packed)[pkg] " << asset->name << " (" << asset->extension << ")\n";
+        }
+        zip_entry_close(m_zip);
+    }
+
 }
 
 AssetMgr::AssetReference* AssetMgr::CreateAsset(std::string path, std::string name_full, std::string name) {
@@ -255,12 +284,32 @@ AssetMgr::AssetReference* AssetMgr::AppendSubName(AssetMgr::AssetReference* asse
 std::vector<AssetMgr::AssetReference*> AssetMgr::GetAssets(AssetMgr::TYPE type) const {
     std::vector<AssetReference*> result;
 
-    for(auto asset : m_assets) {
+    for(const auto& asset : m_assets) {
         if(asset->type == type) {
             result.push_back(asset);
         }
     }
 
+    return result;
+}
+
+std::string AssetMgr::LoadAssetFile(std::string path) {
+    if(ASSET_PACKED == false)
+        return OpenNativeAssetsTxtFile(path);
+
+    std::string result;
+    const auto& zip = CORE->GetResMgrCore()->m_assetManager->m_zip;
+    zip_entry_open(zip, path.c_str());
+    {
+        char *buf = nullptr;
+        size_t bufsize = 0;
+
+        zip_entry_read(zip, (void **)&buf, &bufsize);
+        result = std::string(buf);
+        result.resize(bufsize);
+        free(buf);
+    }
+    zip_entry_close(zip);
     return result;
 }
 

@@ -1,5 +1,6 @@
 #include "../../AssetsDef.h"
 #include "XML.h"
+#include "../../../Manager/AssetMgr.h"
 
 /************************************************************************************************************************************************/
 
@@ -213,7 +214,7 @@ const XNode* XFILE::loadBuffer(std::string buffer) {
 }
 
 XFILE::XFILE(const char* str) { // read the file into the node heirchy
-    this->file = CSE::OpenAssetsTxtFile(str);
+    this->file = CSE::AssetMgr::LoadAssetFile(str);
     if (file.empty()) {
 #ifndef __ANDROID__
         printf("XML file [%s] not found!\n", str);

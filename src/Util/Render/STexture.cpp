@@ -120,7 +120,7 @@ bool STexture::InitTexture(int size) {
 }
 
 void STexture::Init(const AssetMgr::AssetReference* asset) {
-	const std::string img_str = CSE::OpenAssetsTxtFile(asset->path);
+	const std::string img_str = CSE::AssetMgr::LoadAssetFile(asset->path);
 
     auto data = stbi_load_from_memory(reinterpret_cast<const unsigned char*>(img_str.c_str()), img_str.length(),
                                       &m_width, &m_height, &m_channels, 0);
