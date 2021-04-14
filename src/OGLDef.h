@@ -13,7 +13,7 @@
 #include <android/log.h>
 
 
-#include <gl3stub.h>
+#include <GLES3/gl3.h>
 #include <EGL/egl.h>
 
 #elif __linux__

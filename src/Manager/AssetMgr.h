@@ -67,6 +67,7 @@ namespace CSE {
 #ifdef __ANDROID__
         AAssetManager* m_assetManager;
         JNIEnv* m_env = nullptr;
+        std::string m_package_raw;
 #endif
     };
 

@@ -56,7 +56,7 @@ namespace CSE {
 		char* strbuf = new char[fileSize + 1]();
 		AAsset_read(asset, strbuf, fileSize);
 		AAsset_close(asset);
-		buf = strbuf;
+		buf = std::string(strbuf, fileSize);
 		delete strbuf;
 #elif defined (WIN32) || defined(__linux__)
 		std::ifstream fin(path, std::ios::binary);

@@ -70,7 +70,7 @@ namespace CSE {
 
     private:
         std::vector<SResource*> m_resources;
-        AssetMgr* m_assetManager;
+        AssetMgr* m_assetManager = nullptr;
 		std::vector<std::string> m_stringIds;
     public:
         friend class AssetMgr;

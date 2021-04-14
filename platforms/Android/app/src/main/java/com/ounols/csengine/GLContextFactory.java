@@ -22,7 +22,7 @@ public class GLContextFactory implements GLSurfaceView.EGLContextFactory {
         Log.w(TAG, "OpenGL ES 2.0 context 클래스 생성자 호출");
 
         checkEglError("eglCreateContext 적용 전", egl);
-        int[] attrib_list = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE};
+        int[] attrib_list = {EGL_CONTEXT_CLIENT_VERSION, 3, EGL10.EGL_NONE};
         EGLContext context = egl.eglCreateContext(display, eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list);
         checkEglError("eglCreateContext 적용 후", egl);
 

@@ -72,6 +72,7 @@ AssetMgr::AssetReference* AssetMgr::GetAsset(std::string name) const {
 
 void AssetMgr::ReadDirectory(std::string path) {
 #ifdef __ANDROID__
+    return;
     AAssetDir* assetDir = AAssetManager_openDir(m_assetManager, "");
     const char* filename = (const char*)NULL;
     SafeLog::Log("ReadDirectory");
@@ -133,7 +134,11 @@ void AssetMgr::ReadDirectory(std::string path) {
 
 void AssetMgr::ReadPackage(std::string path) {
 #ifdef __ANDROID__
-    if(m_zip == nullptr) m_zip = zip_stream_open("stream_string", stream_count, 'r');
+    if(m_zip == nullptr) {
+        SafeLog::Log(path.c_str());
+        m_package_raw = OpenNativeAssetsTxtFile(path);
+        m_zip = zip_stream_open(m_package_raw.c_str(), m_package_raw.length(), 0, 'r');
+    }
 #else
     if(m_zip == nullptr) m_zip = zip_open(path.c_str(), 0, 'r');
 #endif

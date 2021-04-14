@@ -21,7 +21,8 @@ void ResMgr::Init() {
 
 void ResMgr::InitResource() {
     //Make Asset Manager
-    m_assetManager = new AssetMgr();
+    if(m_assetManager == nullptr)
+        m_assetManager = new AssetMgr();
 
 
     //Load Assets
@@ -107,6 +108,9 @@ std::vector<AssetMgr::AssetReference*> ResMgr::GetAssetReferences(AssetMgr::TYPE
 
 void ResMgr::SetAssetManager(AAssetManager* obj) {
     SafeLog::Log("SetAssetManager");
+    //Make Asset Manager
+    if(m_assetManager == nullptr)
+        m_assetManager = new AssetMgr();
     m_assetManager->SetAssetManager(obj);
 }
 
