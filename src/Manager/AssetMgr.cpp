@@ -53,7 +53,7 @@ void AssetMgr::LoadAssets(bool isPacked) {
         ReadDirectory(CSE::NativeAssetsPath());
     }
     else {
-        ReadPackage(CSE::NativeAssetsPath() + "/Assets.zip");
+        ReadPackage(CSE::NativeAssetsPath() + "Assets.zip");
     }
     SetType();
 }
@@ -301,12 +301,11 @@ std::string AssetMgr::LoadAssetFile(std::string path) {
     const auto& zip = CORE->GetResMgrCore()->m_assetManager->m_zip;
     zip_entry_open(zip, path.c_str());
     {
-        char *buf = nullptr;
+        char* buf = nullptr;
         size_t bufsize = 0;
 
         zip_entry_read(zip, (void **)&buf, &bufsize);
-        result = std::string(buf);
-        result.resize(bufsize);
+        result = std::string(buf, bufsize);
         free(buf);
     }
     zip_entry_close(zip);

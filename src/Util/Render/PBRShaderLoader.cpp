@@ -67,8 +67,7 @@ void PBRShaderLoader::LoadShader() {
     // ---------------------------------
     stbi_set_flip_vertically_on_load(true);
     std::string hdr_path = CSE::AssetsPath() + "Texture/hdr/newport_loft.hdr";
-    m_hdrTexture = new STexture();
-    m_hdrTexture->LoadFile(hdr_path.c_str());
+    m_hdrTexture = SResource::Create<STexture>(hdr_path);
     stbi_set_flip_vertically_on_load(false);
 
     // pbr: setup cubemap to render to and attach to framebuffer
