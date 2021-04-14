@@ -20,19 +20,36 @@ add_library( # Sets the name of the library.
              src/main/cpp/native-lib.cpp )
 
 file(GLOB CSENGINE_SRC
-                        "../../../src/*.*"
-                        "../../../src/*/*.*"
-                        "../../../src/*/*/*.*")
+        "../../../src/*.*"
+        "../../../src/*/*.*"
+        "../../../src/*/*/*.*"
+        "../../../src/*/*/*/*.*"
+        "../../../src/*/*/*/*/*.*"
+        "../../../src/*/*/*/*/*/*.*"
+                                "../../../src/*/*/*/*/*/*/*.*"
+        )
 
 file(GLOB SQUIRREL_SRC
                         "../../../External/Squirrel/lib/sqstdlib/*.*"
                         "../../../External/Squirrel/lib/squirrel/*.*")
 
-
+if (${ANDROID_PLATFORM_LEVEL} LESS 12)
+    message(FATAL_ERROR "OpenGL 2 is not supported before API level 11 \
+                      (currently using ${ANDROID_PLATFORM_LEVEL}).")
+    return()
+elseif (${ANDROID_PLATFORM_LEVEL} LESS 18)
+    add_definitions("-DDYNAMIC_ES3")
+    set(GL3STUB_SRC src/main/cpp/gl3stub.c)
+    message(WARNING  "OpenGL 2")
+    set(OPENGL_LIB GLESv2)
+else ()
+    message(WARNING  "OpenGL 3")
+#    set(OPENGL_LIB GLESv3)
+endif (${ANDROID_PLATFORM_LEVEL} LESS 12)
 
 add_library( CSEngineLib
               SHARED
-              ${CSENGINE_SRC} src/main/cpp/CSEngineAndroidBinder.cpp )
+              ${GL3STUB_SRC} ${CSENGINE_SRC} src/main/cpp/CSEngineAndroidBinder.cpp )
 
 add_library( SquirrelLib
             SHARED
@@ -40,9 +57,9 @@ add_library( SquirrelLib
 
 #헤더파일 위치
 include_directories(../../../src)
+include_directories(src/main/cpp)
 #Squirrel 헤더파일 위치
 include_directories(../../../External/Squirrel/include)
-
 
 #add_library( CSEngineBinderLib
 #              SHARED
@@ -73,11 +90,12 @@ target_link_libraries( # Specifies the target library.
                        ${log-lib} )
 
 target_link_libraries(CSEngineLib
+                     ${OPENGL_LIB}
                      android
                      log
                      EGL
-                     GLESv2
                      SquirrelLib
+                     GLESv3
                      ${log-lib})
 
 set(CMAKE_C_FLAGS "-Wno-error=format-security")

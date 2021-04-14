@@ -197,7 +197,7 @@ void FirstDemoScene::Init() {
     a->GetComponent<CameraComponent>()->SetTarget(d);
     //===============
 
-    SSceneLoader::SavePrefab(root, CSE::AssetsPath() + "Scene/test_scene.scene");
+    SSceneLoader::SavePrefab(root, CSE::NativeAssetsPath() + "Scene/test_scene.scene");
 }
 
 

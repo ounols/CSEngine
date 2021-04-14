@@ -13,7 +13,7 @@
 #include <android/log.h>
 
 
-#include <gl3stub.h>
+#include <GLES3/gl3.h>
 #include <EGL/egl.h>
 
 #elif __linux__
@@ -34,7 +34,7 @@ static void checkGlError(const char* op) {
 
 #else
 	SafeLog::Log((std::string(op) + ": glError " + std::to_string(error)).c_str());
-      //std::cout << op << ": glError " << error << '\n';
+      std::cout << op << ": glError " << error << '\n';
 #endif
     }
 }

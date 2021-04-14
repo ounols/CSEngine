@@ -150,6 +150,9 @@
     <ClCompile Include="..\..\..\src\Manager\EngineCore.cpp">
       <Filter>src\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\Util\Loader\ZIP\zip.cpp">
+      <Filter>src\Util\Loader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Sample\FirstDemoScene.h" />
@@ -391,6 +394,12 @@
     <ClInclude Include="..\..\..\src\Manager\Base\CoreBase.h">
       <Filter>src\Manager\Base</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\Loader\ZIP\zip.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\Loader\ZIP\miniz.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CSEngine.rc" />
@@ -429,5 +438,8 @@
     <Filter Include="src\Util\Render">
       <UniqueIdentifier>{99f41871-70c2-4470-9281-b2664237c669}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

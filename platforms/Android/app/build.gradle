@@ -1,11 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 28
+    ndkVersion '21.2.6472646'
+
     defaultConfig {
         applicationId "com.ounols.csengine"
-        minSdkVersion 14
-        targetSdkVersion 26
+        minSdkVersion 18
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -14,6 +16,7 @@ android {
         }
         externalNativeBuild {
             cmake {
+                arguments "-DANDROID_STL=c++_static" //, "-DANDROID_TOOLCHAIN=clang"
                 cppFlags "-std=c++14 -frtti -fexceptions"
             }
         }
@@ -26,6 +29,7 @@ android {
     }
     externalNativeBuild {
         cmake {
+            version '3.10.2'
             path "CMakeLists.txt"
         }
     }
@@ -34,7 +38,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

@@ -2,6 +2,7 @@
 #include "CameraMgr.h"
 #include "MemoryMgr.h"
 #include "EngineCore.h"
+#include "../Util/AssetsDef.h"
 
 using namespace CSE;
 
@@ -20,11 +21,12 @@ void ResMgr::Init() {
 
 void ResMgr::InitResource() {
     //Make Asset Manager
-    m_assetManager = new AssetMgr();
+    if(m_assetManager == nullptr)
+        m_assetManager = new AssetMgr();
 
 
     //Load Assets
-    m_assetManager->LoadAssets(false);
+    m_assetManager->LoadAssets(ASSET_PACKED);
 
 }
 
@@ -106,6 +108,9 @@ std::vector<AssetMgr::AssetReference*> ResMgr::GetAssetReferences(AssetMgr::TYPE
 
 void ResMgr::SetAssetManager(AAssetManager* obj) {
     SafeLog::Log("SetAssetManager");
+    //Make Asset Manager
+    if(m_assetManager == nullptr)
+        m_assetManager = new AssetMgr();
     m_assetManager->SetAssetManager(obj);
 }
 

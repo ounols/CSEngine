@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include "../Util/Loader/ZIP/zip.h"
 #ifdef __ANDROID__
 #include <android/asset_manager.h>
 #include <jni.h>
@@ -41,6 +42,8 @@ namespace CSE {
 
         std::vector<AssetReference*> GetAssets(TYPE type) const;
 
+        static std::string LoadAssetFile(std::string path);
+
 #ifdef __ANDROID__
         void SetAssetManager(AAssetManager* obj);
         AAssetManager* GetAssetManager();
@@ -50,6 +53,7 @@ namespace CSE {
 
     private:
         void ReadDirectory(std::string path);
+        void ReadPackage(std::string path);
 
         AssetReference* CreateAsset(std::string path, std::string name_full, std::string name = "");
 
@@ -59,10 +63,11 @@ namespace CSE {
 
     private:
         std::vector<AssetReference*> m_assets;
-
+        zip_t* m_zip = nullptr;
 #ifdef __ANDROID__
         AAssetManager* m_assetManager;
         JNIEnv* m_env = nullptr;
+        std::string m_package_raw;
 #endif
     };
 

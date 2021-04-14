@@ -68,6 +68,8 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 		glUniform3f(handle->Uniforms.LightColor + i, lightObject->color.x, lightObject->color.y, lightObject->color.z);
 		glUniform1i(handle->Uniforms.LightType + i, type);
 		glUniform1f(handle->Uniforms.LightRadius + i, lightObject->radius);
+        if(handle->Uniforms.LightRadius >= 0)
+            glUniform1f(handle->Uniforms.LightRadius + i, lightObject->radius);
 
         i++;
     }

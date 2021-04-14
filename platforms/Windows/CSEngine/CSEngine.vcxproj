@@ -208,6 +208,8 @@
     <ClInclude Include="..\..\..\src\Util\Loader\STB\stb_image_write.h" />
     <ClInclude Include="..\..\..\src\Util\Loader\XML\XML.h" />
     <ClInclude Include="..\..\..\src\Util\Loader\XML\XMLParser.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\ZIP\miniz.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\ZIP\zip.h" />
     <ClInclude Include="..\..\..\src\Util\Matrix.h" />
     <ClInclude Include="..\..\..\src\Util\MatrixDef.h" />
     <ClInclude Include="..\..\..\src\Util\MoreComponentFunc.h" />
@@ -272,6 +274,7 @@
     <ClCompile Include="..\..\..\src\Util\Loader\SCENE\SSceneLoader.cpp" />
     <ClCompile Include="..\..\..\src\Util\Loader\XML\XML.cpp" />
     <ClCompile Include="..\..\..\src\Util\Loader\XML\XMLParser.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Loader\ZIP\zip.cpp" />
     <ClCompile Include="..\..\..\src\Util\MoreComponentFunc.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\MeshSurface.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\PBRShaderLoader.cpp" />
@@ -287,6 +290,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="CSEngine.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
