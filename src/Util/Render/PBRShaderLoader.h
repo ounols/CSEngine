@@ -36,6 +36,7 @@ namespace CSE {
         SCubeTexture* m_envCubemap;
         SCubeTexture* m_irradianceMap;
         SCubeTexture* m_prefilterMap;
+        STexture* m_brdfMap;
 
         unsigned int m_cubeVBO;
         unsigned int m_cubeVAO;

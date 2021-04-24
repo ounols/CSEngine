@@ -99,7 +99,7 @@ void STexture::Bind(GLint location, int layout) {
     glBindTexture(GL_TEXTURE_2D, m_texId);
 }
 
-bool STexture::InitTexture(int size) {
+bool STexture::InitTexture(int width, int height, int channel, int internalFormat, int glType) {
     if (m_texId != 0) {
         return false;
     }
@@ -107,14 +107,12 @@ bool STexture::InitTexture(int size) {
     glGenTextures(1, &m_texId);
     glBindTexture(GL_TEXTURE_2D, m_texId);
 
-    GLuint channel = GL_RGB;
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, channel, glType, nullptr);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, channel, size, size, 0, channel, GL_UNSIGNED_BYTE, 0);
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     return true;
 }

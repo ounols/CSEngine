@@ -35,7 +35,8 @@ namespace CSE {
             return m_texId;
         }
 
-        virtual bool InitTexture(int size);
+        virtual bool InitTexture(int width, int height, int channel = GL_RGB, int internalFormat = GL_RGB,
+                                 int glType = GL_UNSIGNED_BYTE);
 
         void Release();
 

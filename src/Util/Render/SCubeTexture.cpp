@@ -17,7 +17,7 @@ SCubeTexture::~SCubeTexture() {
 
 }
 
-bool SCubeTexture::InitTexture(int size) {
+bool SCubeTexture::InitTexture(int width, int height, int channel, int internalFormat, int glType) {
     if (m_texId != 0) {
         return false;
     }
@@ -25,15 +25,35 @@ bool SCubeTexture::InitTexture(int size) {
     glGenTextures(1, &m_texId);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_texId);
 
-    GLuint channel = GL_RGB;
-
     for (GLuint i = 0; i < 6; ++i) {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, channel, size, size, 0, channel, GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, height, 0, channel, glType, nullptr);
     }
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    return true;
+}
+
+bool SCubeTexture::InitTextureMipmap(int width, int height, int channel, int internalFormat, int glType) {
+    if (m_texId != 0) {
+        return false;
+    }
+
+    glGenTextures(1, &m_texId);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_texId);
+
+    for (GLuint i = 0; i < 6; ++i) {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, height, 0, channel, glType, nullptr);
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     return true;

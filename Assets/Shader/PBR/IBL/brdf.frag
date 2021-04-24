@@ -77,8 +77,7 @@ vec2 IntegrateBRDF(float NdotV, float roughness) {
     vec3 N = vec3(0.0, 0.0, 1.0);
     
     const uint SAMPLE_COUNT = 1024u;
-    for(uint i = 0u; i < SAMPLE_COUNT; ++i)
-    {
+    for(uint i = 0u; i < SAMPLE_COUNT; ++i) {
         // generates a sample vector that's biased towards the
         // preferred alignment direction (importance sampling).
         vec2 Xi = Hammersley(i, SAMPLE_COUNT);
@@ -89,8 +88,7 @@ vec2 IntegrateBRDF(float NdotV, float roughness) {
         float NdotH = max(H.z, 0.0);
         float VdotH = max(dot(V, H), 0.0);
 
-        if(NdotL > 0.0)
-        {
+        if(NdotL > 0.0) {
             float G = GeometrySmith(N, V, L, roughness);
             float G_Vis = (G * VdotH) / (NdotH * NdotV);
             float Fc = pow(1.0 - VdotH, 5.0);

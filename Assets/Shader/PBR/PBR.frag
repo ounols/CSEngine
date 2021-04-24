@@ -21,6 +21,7 @@ uniform sampler2D u_sampler_ao;
 uniform samplerCube u_sampler_irradiance;
 //[TEXCUBE_PREFILTER]//
 uniform samplerCube u_prefilterMap;
+//[TEX2D_BRDFLUT]//
 uniform sampler2D u_brdfLUT;
 
 //[FLOAT_ALBEDO]//
@@ -110,11 +111,11 @@ void main(void) {
 		// Cook-Torrance BRDF
 		float NDF = DistributionGGX(N, H, roughness);
 		float G   = GeometrySmith(N, V, L, roughness);
-		vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
+		vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
 
 		vec3 nominator    = NDF * G * F;
-		float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
-		vec3 specular = nominator / max(denominator, 0.001); // prevent divide by zero for NdotV=0.0 or NdotL=0.0
+		float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;
+		vec3 specular = nominator / denominator; // prevent divide by zero for NdotV=0.0 or NdotL=0.0
 
 		// kS is equal to Fresnel
 		vec3 kS = F;
@@ -137,7 +138,7 @@ void main(void) {
 	}
 
 	// ambient lighting (we now use IBL as the ambient term)
-	vec3 kS = fresnelSchlick(max(dot(N, V0), 0.0), F0);
+	vec3 kS = fresnelSchlickRoughness(max(dot(N, V0), 0.0), F0, roughness);
 	vec3 kD = 1.0 - kS;
 	kD *= 1.0 - metallic;
 	vec3 irradiance = u_irradiance.r < 0.0 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
@@ -146,10 +147,10 @@ void main(void) {
 	// sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
 	const float MAX_REFLECTION_LOD = 4.0;
 	vec3 prefilteredColor = textureLod(u_prefilterMap, R,  roughness * MAX_REFLECTION_LOD).rgb;
-//	vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
-	vec3 specular = prefilteredColor * (kS/* * brdf.x + brdf.y*/);
+	vec2 brdf  = texture(u_brdfLUT, vec2(max(dot(N, V0), 0.0), roughness)).rg;
+	vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
 
-	vec3 ambient = (kD * diffuse /*+ specular*/) * ao;
+	vec3 ambient = (kD * diffuse + specular) * ao;
 
 //	vec3 irradiance = u_irradiance.r < 0.00 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
 //	vec3 ambient = irradiance * albedo * ao;
