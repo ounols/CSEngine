@@ -1,9 +1,8 @@
 //
 // Created by ounols on 19. 5. 4.
 //
-#include "PBRShaderLoader.h"
+#include "SEnvironmentMgr.h"
 #include "ShaderUtil.h"
-#include "STexture.h"
 #include "../AssetsDef.h"
 #include "../Matrix.h"
 #include "SkyboxUtil.h"
@@ -15,18 +14,18 @@
 
 using namespace CSE;
 
-PBRShaderLoader::PBRShaderLoader() {
+SEnvironmentMgr::SEnvironmentMgr() {
 
 }
 
-PBRShaderLoader::~PBRShaderLoader() {
+SEnvironmentMgr::~SEnvironmentMgr() {
     glDeleteVertexArrays(1, &m_cubeVAO);
     glDeleteBuffers(1, &m_cubeVBO);
     glDeleteVertexArrays(1, &m_planeVAO);
     glDeleteBuffers(1, &m_planeVBO);
 }
 
-void PBRShaderLoader::LoadShader() {
+void SEnvironmentMgr::RenderPBREnvironment() {
 
     std::string cubemap_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/cubemap.vert");
     std::string etc_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/equirectangular_to_cubemap.frag");
@@ -45,7 +44,6 @@ void PBRShaderLoader::LoadShader() {
     // ----------------------
     unsigned int captureFBO;
     unsigned int captureRBO;
-    unsigned int captureRBO_color;
 
     glDisable(GL_CULL_FACE);
 
@@ -231,7 +229,7 @@ void PBRShaderLoader::LoadShader() {
     glEnable(GL_CULL_FACE);
 }
 
-void PBRShaderLoader::LoadCubeVAO() {
+void SEnvironmentMgr::LoadCubeVAO() {
     float vertices[] = {
             // back face
             -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
@@ -293,14 +291,14 @@ void PBRShaderLoader::LoadCubeVAO() {
     glBindVertexArray(0);
 }
 
-void PBRShaderLoader::RenderCubeVAO() {
+void SEnvironmentMgr::RenderCubeVAO() {
     // render Cube
     glBindVertexArray(m_cubeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
 }
 
-void PBRShaderLoader::LoadPlaneVAO() {
+void SEnvironmentMgr::LoadPlaneVAO() {
     float quadVertices[] = {
             // positions        // texture Coords
             -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
@@ -320,7 +318,7 @@ void PBRShaderLoader::LoadPlaneVAO() {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) (3 * sizeof(float)));
 }
 
-void PBRShaderLoader::RenderPlaneVAO() {
+void SEnvironmentMgr::RenderPlaneVAO() {
     glBindVertexArray(m_planeVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);

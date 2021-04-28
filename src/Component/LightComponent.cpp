@@ -23,11 +23,13 @@ void LightComponent::Exterminate() {
 
     CORE->GetCore(LightMgr)->Remove(this);
     SAFE_DELETE(m_light);
-
+    glDeleteFramebuffers(1, &m_depthMapFBO);
 }
 
 
 void LightComponent::Init() {
+    if(m_disableShadow) return;
+    SetDepthMap();
 }
 
 
@@ -102,11 +104,14 @@ void LightComponent::SetAttenuationFactor(float Kc, float Kl, float Kq) const {
 
 }
 
-
 void LightComponent::SetLightPosition() const {
 
     m_light->position = static_cast<TransformComponent*>(gameObject->GetTransform())->GetPosition();
 
+}
+
+void LightComponent::SetDepthMap() {
+    if(m_depthMapFBO < 0) glGenFramebuffers(1, &m_depthMapFBO);
 }
 
 vec4 LightComponent::GetDirection(vec4 direction) const {

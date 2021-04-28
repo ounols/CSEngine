@@ -8,13 +8,13 @@
 
 namespace CSE {
 
-    class PBRShaderLoader {
+    class SEnvironmentMgr {
     public:
-        PBRShaderLoader();
+        SEnvironmentMgr();
 
-        ~PBRShaderLoader();
+        ~SEnvironmentMgr();
 
-        void LoadShader();
+        void RenderPBREnvironment();
 
     private:
         void LoadCubeVAO();

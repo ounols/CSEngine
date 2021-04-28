@@ -117,7 +117,7 @@
     <ClCompile Include="..\..\..\src\Util\MoreComponentFunc.cpp">
       <Filter>src\Util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\Util\Render\PBRShaderLoader.cpp">
+    <ClCompile Include="..\..\..\src\Util\Render\SEnvironmentMgr.cpp">
       <Filter>src\Util\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\Manager\SCloneFactory.cpp">
@@ -319,7 +319,7 @@
     <ClInclude Include="..\..\..\src\OGLDef.h">
       <Filter>src\Util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\Util\Render\PBRShaderLoader.h">
+    <ClInclude Include="..\..\..\src\Util\Render\SEnvironmentMgr.h">
       <Filter>src\Util\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\Util\Quaternion.h">

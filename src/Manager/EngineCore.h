@@ -16,6 +16,7 @@
 #include "LightMgr.h"
 #include "RenderMgr.h"
 #include "SceneMgr.h"
+#include "../Util/Render/SEnvironmentMgr.h"
 
 #define GET_CORE_FUNCTION(CORENAME, core_instance)  \
 CORENAME* Get##CORENAME##Core() const {               \
@@ -63,6 +64,7 @@ namespace CSE {
         CoreBase* m_scriptMgr = nullptr;
 
         OGLMgr* m_oglMgr = nullptr;
+        SEnvironmentMgr* m_environmentMgr = nullptr;
 
         bool m_isGenerated = false;
     };

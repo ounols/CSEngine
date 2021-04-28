@@ -69,17 +69,19 @@ namespace CSE {
 
     private:
         void SetLightPosition() const;
+        void SetDepthMap();
 
     public:
         LIGHT m_type = DIRECTIONAL;
         bool DisableAmbient = false;
         bool DisableDiffuse = false;
         bool DisableSpecular = true;
+        bool m_disableShadow = false;
 
     private:
         SLight* m_light = nullptr;
         bool m_isSunRising = false;
-
+        unsigned int m_depthMapFBO = -1;
     };
 
 }

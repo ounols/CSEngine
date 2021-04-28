@@ -24,6 +24,8 @@ void RenderMgr::Render() const {
     auto cameraMgr = CORE->GetCore(CameraMgr);
     auto lightMgr = CORE->GetCore(LightMgr);
 
+    lightMgr->RenderShadowMap();
+
     CameraComponent* cameraComponent = cameraMgr->GetCurrentCamera();
     mat4 camera = (cameraComponent != nullptr) ?
                   cameraComponent->GetCameraMatrix() : m_NoneCamera;
@@ -38,7 +40,6 @@ void RenderMgr::Render() const {
         ProgramRenderLayer programComp(orderLayer.begin(), orderLayer.end());
 
         for (const auto& programPair : programComp) {
-
             const auto& handler = *programPair.first;
             const auto& renderComp = programPair.second;
 

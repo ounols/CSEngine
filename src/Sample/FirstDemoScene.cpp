@@ -1,6 +1,6 @@
 #include <iostream>
 #include <sstream>
-#include "../Util/Render/PBRShaderLoader.h"
+#include "../Util/Render/SEnvironmentMgr.h"
 #include "FirstDemoScene.h"
 #include "../Component/LightComponent.h"
 #include "../Component/DrawableSkinnedMeshComponent.h"
