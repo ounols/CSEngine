@@ -21,6 +21,6 @@ pipelines:
               # Using CMake
               - mkdir build
               - cd build
-              - cmake -DCMAKE_BUILD_TYPE=Debug ..\platforms\Linux
+              - cmake -DCMAKE_BUILD_TYPE=Debug ../platforms/Linux
               - cmake --build . --target CSEngine
               
