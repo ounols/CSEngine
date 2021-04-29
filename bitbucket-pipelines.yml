@@ -6,7 +6,15 @@
 
 image: gcc:10.2
 
-test: &buildTest
+gen-commit: &gen-commit
+  step:
+    name: Generate the recent commit badage
+    script:
+      - date_str=$(TZ=":Asia/Seoul" date '+%Y--%m--%d_%H:%M:%S'); commit=$(git rev-parse --short HEAD); printf -v date_str "https://img.shields.io/badge/recent_commit-%s(%s)-F05032?style=flat-square&logo=git&logoColor=white" $commit $date_str; wget -O recent-commit.svg $date_str;
+    artifacts:
+      - recent-commit.svg
+
+build-engine: &build-engine
   step:
     name: Build the CSEngine
     script:
@@ -23,11 +31,11 @@ test: &buildTest
       - cmake -DCMAKE_BUILD_TYPE=Debug ../platforms/Linux
       - cmake --build .
     after-script:
-      - if [ -f build/CSEngine.app ]; then wget -O build-result.svg "https://img.shields.io/badge/build-passing-87CF3E?style=flat-square&logo=linux&logoColor=white"; else wget -O build-result.svg "https://img.shields.io/badge/build-failed-DC382D?style=flat-square&logo=linux&logoColor=white"; fi
+      - date_str=$(TZ=":Asia/Seoul" date '+%Y--%m--%d'); if [ -f build/CSEngine.app ]; then printf -v date_str "https://img.shields.io/badge/build-passing_(%s)-87CF3E?style=flat-square&logo=linux&logoColor=white" $date_str; else printf -v date_str "https://img.shields.io/badge/build-failed_(%s)-DC382D?style=flat-square&logo=linux&logoColor=white" $date_str; fi; wget -O build-result.svg $date_str;
     artifacts:
       - build-result.svg
 
-upload-badge: &upload-status-badge
+upload-status-badge: &upload-status-badge
     step:
       name: Upload the build status badge
       script:
@@ -37,8 +45,23 @@ upload-badge: &upload-status-badge
             BITBUCKET_USERNAME: $BITBUCKET_USERNAME
             BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
             FILENAME: 'build-result.svg'
+            
+upload-commit-badge: &upload-commit-badge
+    step:
+      name: Upload the commit badge
+      script:
+        - ls /opt/atlassian/pipelines/agent/build
+        - pipe: atlassian/bitbucket-upload-file:0.3.2
+          variables:
+            BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+            BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+            FILENAME: 'recent-commit.svg'
 
 pipelines:
   default:
-        - <<: *buildTest
+    - <<: *gen-commit
+    - <<: *upload-commit-badge
+  branches:
+    master:
+        - <<: *build-engine
         - <<: *upload-status-badge
