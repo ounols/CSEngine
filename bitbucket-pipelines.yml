@@ -6,21 +6,39 @@
 
 image: gcc:10.2
 
+test: &buildTest
+  step:
+    name: buildTest
+    script:
+      # Print the Linux version.
+      - uname -a
+      # Print the gcc version.
+      - gcc --version
+      # Setting Environment
+      - apt-get update
+      - apt-get -y install cmake build-essential mesa-common-dev libglfw3 libglfw3-dev libglew-dev
+      # Using CMake
+      - mkdir build
+      - cd build
+      - cmake -DCMAKE_BUILD_TYPE=Debug ../platforms/Linux
+      - cmake --build .
+    after-script:
+      - [! -f CSEngine.app ] && wget -O build-result.svg "https://img.shields.io/badge/build-passing-87CF3E?style=flat-square&logo=linux&logoColor=white" || wget -O build-result.svg "https://img.shields.io/badge/build-failed-DC382D?style=flat-square&logo=linux&logoColor=white"
+    artifacts:
+      - build/build-result.svg
+
+upload-badge: &upload-status-badge
+    step:
+      name: Upload the build status badge
+      script:
+        - ls /opt/atlassian/pipelines/agent/build/build
+        - pipe: atlassian/bitbucket-upload-file:0.1.8
+          variables:
+            BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+            BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+            FILENAME: 'build-result.svg'
 
 pipelines:
   default:
-        - step:
-            script:
-              # Print the Linux version.
-              - uname -a
-              # Print the gcc version.
-              - gcc --version
-              # Setting Environment
-              - apt-get update
-              - apt-get -y install cmake build-essential mesa-common-dev libglfw3 libglfw3-dev libglew-dev
-              # Using CMake
-              - mkdir build
-              - cd build
-              - cmake -DCMAKE_BUILD_TYPE=Debug ../platforms/Linux
-              - cmake --build . --target CSEngine
-              
+        - <<: *buildTest
+        - <<: *upload-status-badge
