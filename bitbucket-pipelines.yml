@@ -32,7 +32,7 @@ upload-badge: &upload-status-badge
       name: Upload the build status badge
       script:
         - ls /opt/atlassian/pipelines/agent/build
-        - pipe: atlassian/bitbucket-upload-file:0.1.8
+        - pipe: atlassian/bitbucket-upload-file:0.3.2
           variables:
             BITBUCKET_USERNAME: $BITBUCKET_USERNAME
             BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
