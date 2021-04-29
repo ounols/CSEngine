@@ -23,7 +23,7 @@ test: &buildTest
       - cmake -DCMAKE_BUILD_TYPE=Debug ../platforms/Linux
       - cmake --build .
     after-script:
-      - [! -f build/CSEngine.app ] && wget -O build-result.svg "https://img.shields.io/badge/build-passing-87CF3E?style=flat-square&logo=linux&logoColor=white" || wget -O build-result.svg "https://img.shields.io/badge/build-failed-DC382D?style=flat-square&logo=linux&logoColor=white"
+      - if [ -f build/CSEngine.app ]; then wget -O build-result.svg "https://img.shields.io/badge/build-passing-87CF3E?style=flat-square&logo=linux&logoColor=white"; else wget -O build-result.svg "https://img.shields.io/badge/build-failed-DC382D?style=flat-square&logo=linux&logoColor=white"; fi
     artifacts:
       - build-result.svg
 
