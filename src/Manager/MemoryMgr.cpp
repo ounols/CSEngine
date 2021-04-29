@@ -5,6 +5,8 @@
 #include <windows.h>
 #ifdef _DEBUG
 #include <typeinfo>
+#include <iostream>
+
 #endif
 #elif __ANDROID__
 #define LOGE(...) __android_log_print(ANDROID_LOG_DEBUG,"SCEngineMomory",__VA_ARGS__)
@@ -30,11 +32,11 @@ MemoryMgr::~MemoryMgr() {
 
 void MemoryMgr::ExterminateObjects(bool killAll) {
 
-    int index = 0;
-
-    for (auto object : m_objects) {
+    auto iter = m_objects.begin();
+    while (iter != m_objects.end()) {
+        auto object = *iter;
         if (object == nullptr) {
-            index++;
+            ++iter;
             continue;
         }
 
@@ -55,11 +57,12 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 #elif __ANDROID__
             LOGE("denied.\n");
 #endif
-            index++;
+            ++iter;
             continue;
         }
 
         object->Exterminate();
+        iter = m_objects.erase(iter);
         SAFE_DELETE(object);
 #ifdef WIN32
         OutputDebugStringA("deleted.\n");
@@ -68,9 +71,6 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 #elif __linux__
         std::cout << "deleted.\n";
 #endif
-
-        m_objects.at(index) = nullptr;
-        index++;
     }
 
     m_objects.erase(std::remove(m_objects.begin(), m_objects.end(), nullptr), m_objects.end());
@@ -102,8 +102,8 @@ void MemoryMgr::ReleaseObject(SObject* object, bool isForce) {
         LOGE("Releasing Object : UNKOWN...");
 #endif
 
-        m_objects.erase(iObj);
         object->Exterminate();
+        Remove(object);
         SAFE_DELETE(object);
 
 #ifdef WIN32

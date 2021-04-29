@@ -46,7 +46,7 @@ void CameraMgr::SetProjectionRatio(float ratio) {
 
 CameraComponent* CameraMgr::GetCurrentCamera() const {
     if (m_currentCamera == nullptr && m_size > 0)
-        return m_objects.at(0);
+        return m_objects.front();
 
     return m_currentCamera;
 }

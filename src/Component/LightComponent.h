@@ -2,6 +2,7 @@
 
 #include "SComponent.h"
 #include "../Util/Render/LightHelper.h"
+#include "../Util/Render/STexture.h"
 
 namespace CSE {
 
@@ -82,6 +83,7 @@ namespace CSE {
         SLight* m_light = nullptr;
         bool m_isSunRising = false;
         unsigned int m_depthMapFBO = -1;
+        STexture* m_shadowTexture = nullptr;
     };
 
 }

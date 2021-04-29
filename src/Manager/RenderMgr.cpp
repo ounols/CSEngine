@@ -18,6 +18,10 @@ RenderMgr::~RenderMgr() {
 void RenderMgr::Init() {
 }
 
+void RenderMgr::SetViewport(int width, int height) {
+    m_width = width;
+    m_height = height;
+}
 
 void RenderMgr::Render() const {
 
@@ -25,6 +29,8 @@ void RenderMgr::Render() const {
     auto lightMgr = CORE->GetCore(LightMgr);
 
     lightMgr->RenderShadowMap();
+
+    glViewport(0, 0, (GLsizei) m_width, (GLsizei) m_height);
 
     CameraComponent* cameraComponent = cameraMgr->GetCurrentCamera();
     mat4 camera = (cameraComponent != nullptr) ?

@@ -14,6 +14,8 @@ namespace CSE {
     public:
         void Init() override;
 
+        void SetViewport(int width, int height);
+
         void Render() const override;
 
     private:
@@ -21,5 +23,7 @@ namespace CSE {
 
     private:
         mat4 m_NoneCamera;
+        int m_width = 1;
+        int m_height = 1;
     };
 }

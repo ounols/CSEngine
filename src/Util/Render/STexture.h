@@ -38,6 +38,11 @@ namespace CSE {
         virtual bool InitTexture(int width, int height, int channel = GL_RGB, int internalFormat = GL_RGB,
                                  int glType = GL_UNSIGNED_BYTE);
 
+        virtual void SetParameteri(int targetName, int value) const;
+
+        virtual void SetParameterfv(int targetName, float* value) const;
+
+
         void Release();
 
         void Exterminate() override;
@@ -51,6 +56,8 @@ namespace CSE {
         int m_width = 0;
         int m_height = 0;
         int m_channels = 0;
+        int m_internalFormat = 0;
+        int m_glType = GL_UNSIGNED_BYTE;
 
         unsigned int m_texId = 0;
     };

@@ -10,7 +10,7 @@
 namespace CSE {
 
     class LightMgr : public SContainer<LightComponent*>, public CoreBase {
-    private:
+    public:
         const int SHADOW_WIDTH = 1024;
         const int SHADOW_HEIGHT = 1024;
 
