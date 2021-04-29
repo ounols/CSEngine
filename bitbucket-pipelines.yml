@@ -9,19 +9,18 @@ image: gcc:10.2
 
 pipelines:
   default:
-    - parallel:
         - step:
-            name: Test
             script:
-              - make check
-        - step:
-            name: Lint
-            script:
-              # apt update && apt -y install cppcheck && cppcheck .
-              - make lint
-        - step:
-            name: Build and Run
-            script:
-              - make compile
-              # Execute your C++ application after compilation to check success
-              - make distcheck
+              # Print the Linux version.
+              - uname -a
+              # Print the gcc version.
+              - gcc --version
+              # Setting Environment
+              - apt-get update
+              - apt-get -y install cmake build-essential mesa-common-dev libglfw3 libglfw3-dev libglew-dev
+              # Using CMake
+              - mkdir build
+              - cd build
+              - cmake -DCMAKE_BUILD_TYPE=Debug platforms\Linux
+              - cmake --build . --target CSEngine
+              
