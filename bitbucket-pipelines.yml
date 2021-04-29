@@ -8,7 +8,7 @@ image: gcc:10.2
 
 test: &buildTest
   step:
-    name: buildTest
+    name: Build the CSEngine
     script:
       # Print the Linux version.
       - uname -a
@@ -23,15 +23,15 @@ test: &buildTest
       - cmake -DCMAKE_BUILD_TYPE=Debug ../platforms/Linux
       - cmake --build .
     after-script:
-      - if [ -f CSEngine.app ]; then wget -O build-result.svg "https://img.shields.io/badge/build-passing-87CF3E?style=flat-square&logo=linux&logoColor=white"; else wget -O build-result.svg "https://img.shields.io/badge/build-failed-DC382D?style=flat-square&logo=linux&logoColor=white"; fi
+      - [! -f build/CSEngine.app ] && wget -O build-result.svg "https://img.shields.io/badge/build-passing-87CF3E?style=flat-square&logo=linux&logoColor=white" || wget -O build-result.svg "https://img.shields.io/badge/build-failed-DC382D?style=flat-square&logo=linux&logoColor=white"
     artifacts:
-      - build/build-result.svg
+      - build-result.svg
 
 upload-badge: &upload-status-badge
     step:
       name: Upload the build status badge
       script:
-        - ls /opt/atlassian/pipelines/agent/build/build
+        - ls /opt/atlassian/pipelines/agent/build
         - pipe: atlassian/bitbucket-upload-file:0.1.8
           variables:
             BITBUCKET_USERNAME: $BITBUCKET_USERNAME
