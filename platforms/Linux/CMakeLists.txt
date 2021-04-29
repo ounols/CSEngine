@@ -38,8 +38,6 @@ file(GLOB SQUIRREL_SRC
                         "../../External/Squirrel/lib/sqstdlib/*.*"
                         "../../External/Squirrel/lib/squirrel/*.*")
 
-file(GLOB ZIP_SRC
-        "../../External/zip/*.*")
 
 # file(GLOB GL3W_SRC "gl3w/*.c")
 
@@ -53,9 +51,6 @@ file(GLOB ZIP_SRC
 add_library( SquirrelLib
             SHARED
             ${SQUIRREL_SRC})
-add_library( ZipLib
-        SHARED
-        ${ZIP_SRC})
 
 
 add_executable(CSEngine.app CSEngine_Linux_glfw.cpp ${CSENGINE_SRC})
@@ -65,7 +60,6 @@ include_directories(/usr/include)
 include_directories(/usr/local/include)
 #include_directories(../../src)
 include_directories(../../External/Squirrel/include)
-include_directories(../../External/zip)
 # include_directories(/gl3w)
 
 
@@ -77,4 +71,3 @@ target_link_libraries(CSEngine.app glfw)
 target_link_libraries(CSEngine.app m)
 # target_link_libraries(CSEngine.app CSEngineLib)
 target_link_libraries(CSEngine.app SquirrelLib)
-target_link_libraries(CSEngine.app ZipLib)
