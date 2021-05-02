@@ -1,6 +1,8 @@
 #include "RenderComponent.h"
 #include "../Manager/RenderMgr.h"
 #include "../Manager/EngineCore.h"
+#include "../Util/Render/ShaderUtil.h"
+#include "TransformComponent.h"
 
 using namespace CSE;
 
@@ -51,18 +53,21 @@ void RenderComponent::Tick(float elapsedTime) {
 }
 
 
-void RenderComponent::SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) {
-    m_material_clone->SetCameraUniform(camera, cameraPosition, projection, gameObject->GetTransform());
+void RenderComponent::SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection, const GLProgramHandle* handle) {
+    const auto& current_handle = handle == nullptr ? m_material_clone->GetHandle() : handle;
+    ShaderUtil::BindCameraToShader(*current_handle, camera, cameraPosition, projection,
+                                   static_cast<const TransformComponent*>(gameObject->GetTransform())->GetMatrix());
 }
 
 
-void RenderComponent::Render(bool ignore_material) const {
+void RenderComponent::Render(const GLProgramHandle* handle) const {
 
     if (m_mesh == nullptr || m_material_clone == nullptr) return;
 
-    if(!ignore_material) AttachMaterials();
-    SetJointMatrix();
-    m_material_clone->SetAttribute(m_mesh->GetMeshID());
+    const auto& current_handle = handle == nullptr ? m_material_clone->GetHandle() : handle;
+    if(handle == nullptr) AttachMaterials();
+    SetJointMatrix(current_handle);
+    ShaderUtil::BindAttributeToShader(*current_handle, m_mesh->GetMeshID());
 }
 
 
@@ -76,7 +81,6 @@ void RenderComponent::SetIsEnable(bool is_enable) {
 void RenderComponent::AttachMaterials() const {
 
     //Set Materials
-
     if (m_material_clone == nullptr) {
         return;
     } else {
@@ -95,10 +99,10 @@ SComponent* RenderComponent::Clone(SGameObject* object) {
     return clone;
 }
 
-void RenderComponent::SetJointMatrix() const {
-
-    m_material_clone->SetSkinningUniform(m_mesh->GetMeshID(), m_skinningMesh != nullptr ?
-    m_skinningMesh->GetJointMatrix() : std::vector<mat4>());
+void RenderComponent::SetJointMatrix(const GLProgramHandle* handle) const {
+    ShaderUtil::BindSkinningDataToShader(*handle, m_mesh->GetMeshID(),
+                                         m_skinningMesh != nullptr ?
+                                         m_skinningMesh->GetJointMatrix() : std::vector<mat4>());
 }
 
 SMaterial* RenderComponent::GetMaterial() const {

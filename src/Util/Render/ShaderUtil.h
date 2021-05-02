@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../GLProgramHandle.h"
+#include "GLMeshID.h"
 
 namespace CSE {
 
@@ -26,6 +27,14 @@ namespace CSE {
         static std::map<std::string, std::string> GetImportantVariables(const GLchar* source);
 
         static void BindVariables(GLProgramHandle* handle);
+
+        static void BindCameraToShader(const GLProgramHandle& handle, const mat4& camera, const vec3& cameraPosition,
+                                       const mat4& projection, const mat4& transform);
+
+        static void BindAttributeToShader(const GLProgramHandle& handle, const GLMeshID& meshId);
+
+        static void BindSkinningDataToShader(const GLProgramHandle& handle, const GLMeshID& meshId,
+                                             const std::vector<mat4>& jointMatrix);
     };
 
 }

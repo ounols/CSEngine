@@ -23,18 +23,21 @@ namespace CSE {
         SComponent* Clone(SGameObject* object) override;
 
 
-        void SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) override;
+        void
+        SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection, const GLProgramHandle* handle = nullptr) override;
 
-        void Render(bool ignore_material) const override;
+        void Render(const GLProgramHandle* handle = nullptr) const override;
 
         void SetIsEnable(bool is_enable) override;
 
         SMaterial* GetMaterial() const;
+
         void SetMaterial(SMaterial* material);
 
     private:
         void AttachMaterials() const;
-        void SetJointMatrix() const;
+
+        void SetJointMatrix(const GLProgramHandle* handle) const;
 
     private:
         DrawableStaticMeshComponent* m_mesh = nullptr;

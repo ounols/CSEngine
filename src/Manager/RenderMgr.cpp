@@ -5,6 +5,9 @@
 
 using namespace CSE;
 
+CameraMgr* cameraMgr = nullptr;
+LightMgr* lightMgr = nullptr;
+
 RenderMgr::RenderMgr() {
     m_NoneCamera = mat4::LookAt(vec3(0, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0));
 }
@@ -16,8 +19,14 @@ RenderMgr::~RenderMgr() {
 
 
 void RenderMgr::Init() {
+    // Setting PBS Environment
     m_environmentMgr = new SEnvironmentMgr();
     m_environmentMgr->RenderPBREnvironment();
+    // Setting Shadow Environment
+    m_environmentMgr->InitShadowEnvironment();
+
+    cameraMgr = CORE->GetCore(CameraMgr);
+    lightMgr = CORE->GetCore(LightMgr);
 }
 
 void RenderMgr::SetViewport(int width, int height) {
@@ -26,19 +35,14 @@ void RenderMgr::SetViewport(int width, int height) {
 }
 
 void RenderMgr::Render() const {
-
-    auto cameraMgr = CORE->GetCore(CameraMgr);
-    auto lightMgr = CORE->GetCore(LightMgr);
-
     lightMgr->RenderShadowMap(m_environmentMgr->GetShadowEnvironment());
 
     glViewport(0, 0, (GLsizei) m_width, (GLsizei) m_height);
 
     CameraComponent* cameraComponent = cameraMgr->GetCurrentCamera();
-    mat4 camera = (cameraComponent != nullptr) ?
-                  cameraComponent->GetCameraMatrix() : m_NoneCamera;
-    mat4 projection = (cameraComponent != nullptr) ?
-                      cameraComponent->GetProjectionMatrix() : mat4::Identity();
+    if(cameraComponent == nullptr) return;
+    mat4 camera = cameraComponent->GetCameraMatrix();
+    mat4 projection = cameraComponent->GetProjectionMatrix();
     vec3 cameraPosition = cameraComponent->GetCameraPosition();
 
     OrderRenderLayer orderRenderLayer(m_rendersLayer.begin(), m_rendersLayer.end());
@@ -55,31 +59,29 @@ void RenderMgr::Render() const {
             if (renderComp.empty()) continue;
 
             glUseProgram(handler.Program);
-
             //Attach Light
             lightMgr->AttachLightToShader(&handler);
 
+            // Initialize various state.
+            glEnableVertexAttribArray(handler.Attributes.Position);
+            glEnableVertexAttribArray(handler.Attributes.Normal);
+            glEnableVertexAttribArray(handler.Attributes.TextureCoord);
+            glEnableVertexAttribArray(handler.Attributes.Weight);
+            glEnableVertexAttribArray(handler.Attributes.JointId);
 
             for (const auto& render : renderComp) {
                 if (render == nullptr) continue;
                 if (!render->isRenderActive) continue;
 
-                // Initialize various state.
-                glEnableVertexAttribArray(handler.Attributes.Position);
-                glEnableVertexAttribArray(handler.Attributes.Normal);
-                glEnableVertexAttribArray(handler.Attributes.TextureCoord);
-                glEnableVertexAttribArray(handler.Attributes.Weight);
-                glEnableVertexAttribArray(handler.Attributes.JointId);
-
                 render->SetMatrix(camera, cameraPosition, projection);
                 render->Render();
-
-                glDisableVertexAttribArray(handler.Attributes.Position);
-                glDisableVertexAttribArray(handler.Attributes.Normal);
-                glDisableVertexAttribArray(handler.Attributes.TextureCoord);
-                glDisableVertexAttribArray(handler.Attributes.Weight);
-                glDisableVertexAttribArray(handler.Attributes.JointId);
             }
+
+            glDisableVertexAttribArray(handler.Attributes.Position);
+            glDisableVertexAttribArray(handler.Attributes.Normal);
+            glDisableVertexAttribArray(handler.Attributes.TextureCoord);
+            glDisableVertexAttribArray(handler.Attributes.Weight);
+            glDisableVertexAttribArray(handler.Attributes.JointId);
         }
     }
 

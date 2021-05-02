@@ -239,3 +239,81 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
     handle->Uniforms.LightColor = lightColor != nullptr ? lightColor->id : HANDLE_NULL;
     handle->Uniforms.LightSize = lightSize != nullptr ? lightSize->id : HANDLE_NULL;
 }
+
+void ShaderUtil::BindCameraToShader(const GLProgramHandle& handle, const mat4& view, const vec3& cameraPosition,
+                                    const mat4& projection, const mat4& transform) {
+    mat4 modelView = transform * view;
+    glUniformMatrix4fv(handle.Uniforms.Modelview, 1, 0, modelView.Pointer());
+    glUniformMatrix4fv(handle.Uniforms.ModelNoCameraMatrix, 1, 0, transform.Pointer());
+    glUniform3fv(handle.Uniforms.CameraPosition, 1, cameraPosition.Pointer());
+
+    //normal matrix
+//    glUniformMatrix3fv(handler->Uniforms.NormalMatrix, 1, 0, modelView.ToMat3().Pointer());
+
+
+    //projection transform
+    glUniformMatrix4fv(handle.Uniforms.Projection, 1, 0, projection.Pointer());
+}
+
+// position(x y z) + normal(x y z) + tex(u v) + weight(x y z) + jointID(id1, id2, id3)
+void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMeshID& meshId) {
+    int stride = 4 * sizeof(vec3) + sizeof(vec2);    //normal + position + uv = (4 * sizeof(vec3) + sizeof(vec2))
+    const GLvoid* offset = (const GLvoid*) sizeof(vec3);
+    GLint position = handle.Attributes.Position;
+    GLint normal = handle.Attributes.Normal;
+    GLint tex = handle.Attributes.TextureCoord;
+    GLint weight = handle.Attributes.Weight;
+    GLint jointId = handle.Attributes.JointId;
+
+    bool isNormal = normal != HANDLE_NULL;
+    bool isTex = tex != HANDLE_NULL;
+
+    if (meshId.m_indexSize < 0) {
+        glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
+        glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
+        glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, offset);
+
+        offset = (GLvoid*) (sizeof(vec3) * 2);
+        glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, stride, offset);
+
+        offset = (GLvoid*) (sizeof(vec3) * 2 + sizeof(vec2));
+        glVertexAttribPointer(weight, 3, GL_FLOAT, GL_FALSE, stride, offset);
+        offset = (GLvoid*) (sizeof(vec3) * 3 + sizeof(vec2));
+        glVertexAttribPointer(jointId, 3, GL_FLOAT, GL_FALSE, stride, offset);
+        glDrawArrays(GL_TRIANGLES, 0, meshId.m_vertexSize);
+    } else {
+        glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
+        glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
+        glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, offset);
+
+        offset = (GLvoid*) (sizeof(vec3) * 2);
+        glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, stride, offset);
+        
+        offset = (GLvoid*) (sizeof(vec3) * 2 + sizeof(vec2));
+        glVertexAttribPointer(weight, 3, GL_FLOAT, GL_FALSE, stride, offset);
+        offset = (GLvoid*) (sizeof(vec3) * 3 + sizeof(vec2));
+        glVertexAttribPointer(jointId, 3, GL_FLOAT, GL_FALSE, stride, offset);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshId.m_indexBuffer);
+        glDrawElements(GL_TRIANGLES, meshId.m_indexSize * 3, GL_UNSIGNED_SHORT, 0);
+    }
+}
+
+void ShaderUtil::BindSkinningDataToShader(const GLProgramHandle& handle, const GLMeshID& meshId,
+                                          const std::vector<mat4>& jointMatrix) {
+    if (!meshId.m_hasJoint || jointMatrix.empty()) {
+        glUniform1i(handle.Uniforms.SkinningMode, 0);
+        return;
+    }
+
+    std::vector<float> result;
+    result.reserve(jointMatrix.size() * 16);
+    for (const mat4& matrix : jointMatrix) {
+        for (int i = 0; i < 16; ++i) {
+            result.push_back(matrix.Pointer()[i]);
+
+        }
+    }
+
+    glUniformMatrix4fv(handle.Uniforms.JointMatrix, MAX_JOINTS, GL_FALSE, &result[0]);
+    glUniform1i(handle.Uniforms.SkinningMode, 1);
+}

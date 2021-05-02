@@ -1,5 +1,7 @@
 #include "LightMgr.h"
 #include "../OGLDef.h"
+#include "../Component/RenderComponent.h"
+#include "../Util/AssetsDef.h"
 
 using namespace CSE;
 
@@ -79,8 +81,44 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
     glUniform1i(handle->Uniforms.LightSize, m_objects.size());
 }
 
-void LightMgr::RenderShadowMap() const {
+void LightMgr::RenderShadowMap(GLProgramHandle* handle) const {
+    if(handle == nullptr) return;
+    glViewport(0, 0, (GLsizei) SHADOW_WIDTH, (GLsizei) SHADOW_HEIGHT);
 
+    glUseProgram(handle->Program);
+
+    // Initialize various state.
+    glEnableVertexAttribArray(handle->Attributes.Position);
+    glEnableVertexAttribArray(handle->Attributes.Weight);
+    glEnableVertexAttribArray(handle->Attributes.JointId);
+
+    for (const auto& light : m_objects) {
+        if(light->m_disableShadow) continue;
+        const auto& light_transform = light->GetGameObject()->GetTransform();
+        const auto& projectionMatrix = light->GetLightProjectionMatrix();
+        const auto& viewMatrix = light->GetLightViewMatrix();
+
+        light->BindDepthMap();
+        for (const auto& shadowObject : m_shadowObject) {
+            if(!shadowObject->isRenderActive) continue;
+            const auto& shadow_transform = static_cast<RenderComponent*>(shadowObject)->GetGameObject()->GetTransform();
+
+//            if(SHADOW_DISTANCE > vec3::Distance(light_transform->m_position, shadow_transform->m_position))
+//                continue;
+
+            shadowObject->SetMatrix(viewMatrix, light_transform->m_position, projectionMatrix, handle);
+            shadowObject->Render(handle);
+
+
+        }
+
+//        std::string save_str = CSE::AssetsPath() + "test.bmp";
+//        saveScreenshot(save_str.c_str());
+    }
+    glDisableVertexAttribArray(handle->Attributes.Position);
+    glDisableVertexAttribArray(handle->Attributes.Weight);
+    glDisableVertexAttribArray(handle->Attributes.JointId);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void LightMgr::Init() {

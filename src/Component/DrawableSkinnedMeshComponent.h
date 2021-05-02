@@ -25,14 +25,10 @@ namespace CSE {
 
         bool SetMesh(const SISurface& meshSurface) override;
 
-        bool AttachJointMatrix(const GLProgramHandle* handle) const;
-
     private:
         void addJointsToVector(JointComponent* headJoint, std::vector<mat4>& matrix) const;
 
         void SetJointSize(SGameObject* joint_object);
-
-        void CreateSkinningBuffers(const SISurface& surface);
 
     private:
         JointComponent* m_jointRoot = nullptr;

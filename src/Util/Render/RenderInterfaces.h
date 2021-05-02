@@ -40,9 +40,10 @@ namespace CSE {
 
         virtual ~SIRender() {}
 
-        virtual void SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) = 0;
+        virtual void
+        SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection, const GLProgramHandle* handle = nullptr) = 0;
 
-        virtual void Render(bool ignore_material = false) const = 0;
+        virtual void Render(const GLProgramHandle* handle = nullptr) const = 0;
 
     protected:
         short programRenderIndex = -1; //For RenderContainer
@@ -52,6 +53,7 @@ namespace CSE {
 
     public:
         friend class RenderContainer;
+
         friend class RenderMgr;
     };
 }

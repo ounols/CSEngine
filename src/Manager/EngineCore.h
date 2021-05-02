@@ -64,7 +64,6 @@ namespace CSE {
         CoreBase* m_scriptMgr = nullptr;
 
         OGLMgr* m_oglMgr = nullptr;
-        SEnvironmentMgr* m_environmentMgr = nullptr;
 
         bool m_isGenerated = false;
     };

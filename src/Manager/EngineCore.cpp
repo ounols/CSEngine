@@ -23,12 +23,9 @@ void EngineCore::Init(unsigned int width, unsigned int height) {
     for (const auto& core : m_cores) {
         core->Init();
     }
-    m_oglMgr->setupEGLGraphics(width, height);
-
-    m_environmentMgr = new SEnvironmentMgr();
-    m_environmentMgr->RenderPBREnvironment();
 
     m_oglMgr->ResizeWindow(width, height);
+    static_cast<RenderMgr*>(m_renderMgr)->SetViewport(width, height);
 
     //    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/test_scene.scene");
 //    SceneMgr::getInstance()->SetScene(scene);
@@ -53,7 +50,6 @@ void EngineCore::Exterminate() {
         SAFE_DELETE(core);
     }
     m_cores.clear();
-    SAFE_DELETE(m_environmentMgr);
 }
 
 void EngineCore::GenerateCores() {
@@ -94,5 +90,6 @@ void EngineCore::GenerateCores() {
 
 void EngineCore::ResizeWindow(unsigned int width, unsigned int height) {
     m_oglMgr->ResizeWindow(width, height);
+    static_cast<RenderMgr*>(m_renderMgr)->SetViewport(width, height);
 }
 

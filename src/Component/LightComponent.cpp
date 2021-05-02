@@ -36,6 +36,11 @@ void LightComponent::Init() {
 
 
 void LightComponent::Tick(float elapsedTime) {
+
+    auto eye = static_cast<TransformComponent*>(gameObject->GetTransform())->GetPosition();
+    auto target = vec3(m_light->direction.x, m_light->direction.y, m_light->direction.z);
+    m_lightViewMatrix = mat4::LookAt(*eye, target, vec3{ 0, 1, 0});
+
     if (m_isSunRising && m_type == DIRECTIONAL) {
         float value = m_light->direction.y;
         float bright = (value < 0.2) ? (value - 0.2f) * 2 + 1 : 1;
@@ -56,9 +61,14 @@ void LightComponent::SetLightType(LIGHT type) {
 
     m_type = type;
 
+    // 임시
+    m_lightProjectionMatrix = mat4::Ortho(-1.f, 1.f, -1.f, 1.f, m_near, m_far);
 
     if (m_type == POINT || m_type == SPOT) {
         SetLightPosition();
+    }
+    else {
+        m_lightProjectionMatrix = mat4::Ortho(-1.f, 1.f, -1.f, 1.f, m_near, m_far);
     }
 
 }
@@ -87,29 +97,21 @@ void LightComponent::SetColor(vec3 color) const {
 }
 
 void LightComponent::SetLightRadius(float radius) const {
-
     m_light->radius = radius;
-
 }
 
 
 void LightComponent::SetAttenuationFactor(vec3 att) const {
-
     m_light->att = att;
-
 }
 
 
 void LightComponent::SetAttenuationFactor(float Kc, float Kl, float Kq) const {
-
     SetAttenuationFactor(vec3{ Kc, Kl, Kq });
-
 }
 
 void LightComponent::SetLightPosition() const {
-
     m_light->position = static_cast<TransformComponent*>(gameObject->GetTransform())->GetPosition();
-
 }
 
 void LightComponent::SetDepthMap() {
@@ -134,6 +136,10 @@ void LightComponent::SetDepthMap() {
 
 }
 
+LightComponent::LIGHT LightComponent::GetType() const {
+    return m_type;
+}
+
 vec4 LightComponent::GetDirection(vec4 direction) const {
     return m_light->direction;
 }
@@ -154,6 +160,10 @@ SComponent* LightComponent::Clone(SGameObject* object) {
 	clone->DisableAmbient = DisableAmbient;
 	clone->DisableDiffuse = DisableDiffuse;
 	clone->DisableSpecular = DisableSpecular;
+	clone->m_disableShadow = m_disableShadow;
+
+	clone->m_near = m_near;
+	clone->m_far = m_far;
 
 	return clone;
 }
@@ -171,4 +181,17 @@ std::string LightComponent::PrintValue() const {
 
 
 	PRINT_END("component");
+}
+
+const mat4& LightComponent::GetLightProjectionMatrix() const {
+    return m_lightProjectionMatrix;
+}
+
+const mat4& LightComponent::GetLightViewMatrix() const {
+    return m_lightViewMatrix;
+}
+
+void LightComponent::BindDepthMap() const {
+    glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
 }
