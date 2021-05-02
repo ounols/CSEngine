@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <algorithm>
+#include <list>
 #include "../SObject.h"
 
 #include "../Util/Interface/TransformInterface.h"
@@ -42,7 +42,7 @@ namespace CSE {
 
         void AddChild(SGameObject* object);
 
-        void RemoveChild(bool isAllLevel = false);
+        void RemoveChildren(bool isAllLevel = false);
 
         void RemoveChild(SGameObject* object);
 
@@ -52,7 +52,7 @@ namespace CSE {
 
         void RemoveParent();
 
-        std::vector<SGameObject*> GetChildren() const;
+        const std::list<SGameObject*>& GetChildren() const;
 
         /**
          * \brief 컴포넌트를 이 오브젝트에 추가합니다.
@@ -68,11 +68,11 @@ namespace CSE {
 
         SComponent* GetSComponentByID(std::string id) const;
 
-        std::vector<SComponent*> GetComponents() const;
+        const std::list<SComponent*>& GetComponents() const;
 
         HSQOBJECT GetCustomComponent(const char* className);
 
-        bool DeleteComponent(SComponent* component);
+        void DeleteComponent(SComponent* component);
 
         template <class T>
         T* CreateComponent();
@@ -108,10 +108,10 @@ namespace CSE {
 
 
     private:
-        std::vector<SGameObject*> m_children;
+        std::list<SGameObject*> m_children;
         SGameObject* m_parent = nullptr;
 
-        std::vector<SComponent*> m_components;
+        std::list<SComponent*> m_components;
         std::string m_name;
         TransformInterface* m_transform;
         bool isEnable = true;
@@ -131,7 +131,7 @@ namespace CSE {
 
     template <class T>
     T* SGameObject::GetComponent() {
-        for (auto component : m_components) {
+        for (const auto component : m_components) {
             if (component == nullptr) continue;
             if (dynamic_cast<T*>(component)) {
                 return static_cast<T*>(component);

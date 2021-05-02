@@ -24,9 +24,6 @@
     <ClCompile Include="..\..\..\src\Component\LightComponent.cpp">
       <Filter>src\component</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\Component\MaterialComponent.cpp">
-      <Filter>src\component</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\Component\RenderComponent.cpp">
       <Filter>src\component</Filter>
     </ClCompile>
@@ -176,9 +173,6 @@
       <Filter>src\component</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\Component\LightComponent.h">
-      <Filter>src\component</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\Component\MaterialComponent.h">
       <Filter>src\component</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\Component\RenderComponent.h">

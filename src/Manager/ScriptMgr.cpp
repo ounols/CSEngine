@@ -6,7 +6,6 @@
 
 #include "../Util/AssetsDef.h"
 #include "../Util/MoreString.h"
-#include "../Component/MaterialComponent.h"
 #include "../Component/LightComponent.h"
 #include "../Object/SScriptObject.h"
 #include "../Component/RenderComponent.h"

@@ -7,7 +7,6 @@
 #include "../Component/CameraComponent.h"
 #include "../Component/CustomComponent.h"
 #include "../Component/LightComponent.h"
-#include "../Component/MaterialComponent.h"
 #include "../Component/RenderComponent.h"
 #include "../Component/TransformComponent.h"
 
@@ -34,7 +33,6 @@ SComponent* MoreComponentFunc::CreateComponent(SGameObject* obj, std::string com
     CREATE_COMPONENT_MACRO(DrawableSkinnedMeshComponent);
     CREATE_COMPONENT_MACRO(DrawableStaticMeshComponent);
     CREATE_COMPONENT_MACRO(LightComponent);
-    CREATE_COMPONENT_MACRO(MaterialComponent);
     CREATE_COMPONENT_MACRO(RenderComponent);
     CREATE_COMPONENT_MACRO(TransformComponent);
 
@@ -53,7 +51,6 @@ void MoreComponentFunc::BindComponentToSQInstance(SComponent* component, std::st
     BIND_COMPONENT_MACRO(DrawableSkinnedMeshComponent);
     BIND_COMPONENT_MACRO(DrawableStaticMeshComponent);
     BIND_COMPONENT_MACRO(LightComponent);
-    BIND_COMPONENT_MACRO(MaterialComponent);
     BIND_COMPONENT_MACRO(RenderComponent);
     BIND_COMPONENT_MACRO(TransformComponent);
 }

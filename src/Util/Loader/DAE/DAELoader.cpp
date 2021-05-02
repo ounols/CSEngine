@@ -523,7 +523,7 @@ SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
     mesh_component->SetMesh(*m_obj);
 
     if (m_isSkinning)
-        dynamic_cast<DrawableSkinnedMeshComponent*>(mesh_component)->SetRootJoint(joint_root->GetChildren()[0],
+        dynamic_cast<DrawableSkinnedMeshComponent*>(mesh_component)->SetRootJoint(joint_root->GetChildren().front(),
                                                                                   m_skeletonData->getJointCount());
 
     auto renderComponent = mesh_root->CreateComponent<RenderComponent>();

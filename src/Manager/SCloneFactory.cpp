@@ -77,7 +77,7 @@ void CloningObjects(SGameObject* object, std::map<SComponent*, SComponent*>& clo
     cloneObject->SetResourceID(object->GetResourceID());
 
     //게임 컴포넌트 복사
-    std::vector<SComponent*> target_component = object->GetComponents();
+    const auto& target_component = object->GetComponents();
     for(const auto& component : target_component) {
         if(dynamic_cast<TransformComponent*>(component)) {
             TransformComponent* transform_copy = static_cast<TransformComponent*>(cloneObject->GetTransform());

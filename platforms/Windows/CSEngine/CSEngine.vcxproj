@@ -154,7 +154,6 @@
     <ClInclude Include="..\..\..\src\Component\DrawableSkinnedMeshComponent.h" />
     <ClInclude Include="..\..\..\src\Component\DrawableStaticMeshComponent.h" />
     <ClInclude Include="..\..\..\src\Component\LightComponent.h" />
-    <ClInclude Include="..\..\..\src\Component\MaterialComponent.h" />
     <ClInclude Include="..\..\..\src\Component\RenderComponent.h" />
     <ClInclude Include="..\..\..\src\Component\SComponent.h" />
     <ClInclude Include="..\..\..\src\Component\SISComponent.h" />
@@ -239,7 +238,6 @@
     <ClCompile Include="..\..\..\src\Component\DrawableSkinnedMeshComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\DrawableStaticMeshComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\LightComponent.cpp" />
-    <ClCompile Include="..\..\..\src\Component\MaterialComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\RenderComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\TransformComponent.cpp" />
     <ClCompile Include="..\..\..\src\Manager\AssetMgr.cpp" />

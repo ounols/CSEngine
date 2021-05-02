@@ -64,7 +64,7 @@ void SGameObject::Exterminate() {
 
 void SGameObject::Destroy() {
 
-    for (auto component : m_components) {
+    for (auto& component : m_components) {
         if (component == nullptr) continue;
         CORE->GetCore(MemoryMgr)->ReleaseObject(component);
     }
@@ -75,12 +75,12 @@ void SGameObject::Destroy() {
         RemoveParent();
     }
 
-    CORE->GetCore(GameObjectMgr)->DeleteGameObject(this);
-
     for (auto object : m_children) {
         if (object == nullptr) continue;
         object->Destroy();
     }
+
+    CORE->GetCore(GameObjectMgr)->DeleteGameObject(this);
 }
 
 void SGameObject::AddChild(SGameObject* object) {
@@ -89,9 +89,9 @@ void SGameObject::AddChild(SGameObject* object) {
     object->m_parent = this;
 }
 
-void SGameObject::RemoveChild(bool isAllLevel) {
-    for (auto child : m_children) {
-        child->RemoveChild(isAllLevel);
+void SGameObject::RemoveChildren(bool isAllLevel) {
+    for (const auto& child : m_children) {
+        child->RemoveChildren(isAllLevel);
     }
     m_children.clear();
 }
@@ -99,8 +99,7 @@ void SGameObject::RemoveChild(bool isAllLevel) {
 
 void SGameObject::RemoveChild(SGameObject* object) {
     if (object == nullptr) return;
-    auto ob = std::find(m_children.begin(), m_children.end(), object);
-    m_children.erase(ob);
+    m_children.remove(object);
     object->m_parent = nullptr;
 }
 
@@ -118,7 +117,7 @@ void SGameObject::RemoveParent() {
 }
 
 
-std::vector<SGameObject*> SGameObject::GetChildren() const {
+const std::list<SGameObject*>& SGameObject::GetChildren() const {
     return m_children;
 }
 
@@ -126,29 +125,20 @@ std::vector<SGameObject*> SGameObject::GetChildren() const {
 void SGameObject::AddComponent(SComponent* component) {
 
     auto str_class = component->GetClassType();
-    int index = 0;
-    for (const auto& comp : m_components) {
-        if (comp->GetClassType() == str_class) {
-            index++;
-        }
-    }
-
-    if (index > 0) component->SetClassType(str_class + "?" + std::to_string(index));
-
     component->SetGameObject(this);
     m_components.push_back(component);
 
 }
 
 
-std::vector<SComponent*> SGameObject::GetComponents() const {
-    return std::vector<SComponent*>(m_components);
+const std::list<SComponent*>& SGameObject::GetComponents() const {
+    return m_components;
 }
 
 
 HSQOBJECT SGameObject::GetCustomComponent(const char* className) {
 
-    for (auto component : m_components) {
+    for (const auto& component : m_components) {
         if (component == nullptr) continue;
         if (dynamic_cast<CustomComponent*>(component)) {
             auto customComponent = static_cast<CustomComponent*>(component);
@@ -168,18 +158,8 @@ HSQOBJECT SGameObject::GetCustomComponent(const char* className) {
 }
 
 
-bool SGameObject::DeleteComponent(SComponent* component) {
-
-    auto iCompObj = std::find(m_components.begin(), m_components.end(), component);
-
-    if (iCompObj != m_components.end()) {
-        m_components.erase(iCompObj);
-        CORE->GetCore(MemoryMgr)->ReleaseObject(component);
-        return true;
-    }
-
-    return false;
-
+void SGameObject::DeleteComponent(SComponent* component) {
+    m_components.remove(component);
 }
 
 std::string SGameObject::GetID() const {
