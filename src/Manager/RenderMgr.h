@@ -3,6 +3,8 @@
 #include "RenderContainer.h"
 #include "CameraMgr.h"
 #include "Base/RenderCoreBase.h"
+#include "../Util/Render/SEnvironmentMgr.h"
+
 
 namespace CSE {
 
@@ -25,5 +27,7 @@ namespace CSE {
         mat4 m_NoneCamera;
         int m_width = 1;
         int m_height = 1;
+
+        SEnvironmentMgr* m_environmentMgr = nullptr;
     };
 }

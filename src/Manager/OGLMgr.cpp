@@ -19,6 +19,7 @@ OGLMgr::OGLMgr() : m_projectionRatio(-1) {
 }
 
 void OGLMgr::Init() {
+    setupEGLGraphics();
 }
 
 OGLMgr::~OGLMgr() {
@@ -70,10 +71,7 @@ void OGLMgr::setBuffers() {
 }
 
 
-void OGLMgr::setupEGLGraphics(GLuint width, GLuint height) {
-
-    m_width = width;
-    m_height = height;
+void OGLMgr::setupEGLGraphics() {
 
     setBuffers();
     setShaderProgram();

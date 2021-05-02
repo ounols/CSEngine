@@ -19,7 +19,7 @@ namespace CSE {
 
         void setBuffers();
 
-        void setupEGLGraphics(GLuint width, GLuint height);
+        void setupEGLGraphics();
 
         void Render() const override;
 

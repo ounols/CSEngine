@@ -95,6 +95,10 @@ namespace CSE {
                            y * (1 - t) + v.y * t);
         }
 
+        static float Distance(const Vector2& a, const Vector2& b) {
+            return sqrtf(powf(a.x - b.x, 2) + powf(a.y - b.y, 2));
+        }
+
         const T* Pointer() const {
             return &x;
         }
@@ -203,6 +207,10 @@ namespace CSE {
                            a.z * (1 - t) + b.z * t);
         }
 
+        static float Distance(const Vector3& a, const Vector3& b) {
+            return sqrtf(powf(a.x - b.x, 2) + powf(a.y - b.y, 2) + powf(a.z - b.z, 2));
+        }
+
         const T* Pointer() const {
             return &x;
         }
@@ -259,6 +267,10 @@ namespace CSE {
                            a.y * (1 - t) + b.y * t,
                            a.z * (1 - t) + b.z * t,
                            a.w * (1 - t) + b.w * t);
+        }
+
+        static float Distance(const Vector4& a, const Vector4& b) {
+            return sqrtf(powf(a.x - b.x, 2) + powf(a.y - b.y, 2) + powf(a.z - b.z, 2) + powf(a.w - b.w, 2));
         }
 
         Vector4 operator+(const Vector4& v) const {

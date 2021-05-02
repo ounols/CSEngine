@@ -47,6 +47,7 @@ namespace CSE {
     protected:
         short programRenderIndex = -1; //For RenderContainer
         SMaterial* material = nullptr;
+    public:
         bool isRenderActive = false;
 
     public:
