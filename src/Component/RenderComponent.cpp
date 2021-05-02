@@ -22,6 +22,11 @@ void RenderComponent::Exterminate() {
 
 void RenderComponent::Init() {
 
+    if(!m_disableShadow) {
+        auto lightMgr = CORE->GetCore(LightMgr);
+        lightMgr->RegisterShadowObject(this);
+    }
+
     m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
     if (m_mesh != nullptr) {
         m_skinningMesh = dynamic_cast<DrawableSkinnedMeshComponent*>(m_mesh);
@@ -51,11 +56,11 @@ void RenderComponent::SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projectio
 }
 
 
-void RenderComponent::Render() const {
+void RenderComponent::Render(bool ignore_material) const {
 
     if (m_mesh == nullptr || m_material_clone == nullptr) return;
 
-    AttachMaterials();
+    if(!ignore_material) AttachMaterials();
     SetJointMatrix();
     m_material_clone->SetAttribute(m_mesh->GetMeshID());
 }

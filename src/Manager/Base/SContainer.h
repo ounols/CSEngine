@@ -1,7 +1,7 @@
 #pragma once
 
 #include <algorithm>
-#include <vector>
+#include <list>
 
 namespace CSE {
 
@@ -31,16 +31,18 @@ namespace CSE {
         }
 
         virtual void Remove(T object) {
-            auto iObj = std::find(m_objects.begin(), m_objects.end(), object);
+//            auto iObj = std::find(m_objects.begin(), m_objects.end(), object);
 
-            if (iObj != m_objects.end()) {
-                m_objects.erase(iObj);
-            }
+//            if (iObj != m_objects.end()) {
+                m_objects.remove(object);
+//            }
         }
 
         T Get(int index) const {
             if (index < 0 || index > m_size || m_size < 1) return nullptr;
-            return m_objects[index];
+            auto iter = m_objects.begin();
+            std::advance(iter, index);
+            return *iter;
         }
 
         int GetID(T object) const {
@@ -57,7 +59,7 @@ namespace CSE {
 
 
     protected:
-        std::vector<T> m_objects;
+        std::list<T> m_objects;
         int m_size = 0;
     };
 

@@ -23,11 +23,15 @@ void LightComponent::Exterminate() {
 
     CORE->GetCore(LightMgr)->Remove(this);
     SAFE_DELETE(m_light);
-
+    glDeleteFramebuffers(1, &m_depthMapFBO);
+    auto resMgr = CORE->GetCore(ResMgr);
+    if(m_shadowTexture != nullptr) resMgr->Remove(m_shadowTexture);
 }
 
 
 void LightComponent::Init() {
+    if(m_disableShadow) return;
+    SetDepthMap();
 }
 
 
@@ -102,10 +106,31 @@ void LightComponent::SetAttenuationFactor(float Kc, float Kl, float Kq) const {
 
 }
 
-
 void LightComponent::SetLightPosition() const {
 
     m_light->position = static_cast<TransformComponent*>(gameObject->GetTransform())->GetPosition();
+
+}
+
+void LightComponent::SetDepthMap() {
+    if(m_shadowTexture != nullptr) return;
+
+    glGenFramebuffers(1, &m_depthMapFBO);
+    m_shadowTexture = new STexture();
+    auto lightMgr = CORE->GetCore(LightMgr);
+    m_shadowTexture->InitTexture(lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT,
+                                 GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
+    m_shadowTexture->SetParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    m_shadowTexture->SetParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    m_shadowTexture->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    m_shadowTexture->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+    m_shadowTexture->SetParameterfv(GL_TEXTURE_BORDER_COLOR, borderColor);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_shadowTexture->GetTextureID(), 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
 

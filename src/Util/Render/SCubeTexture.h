@@ -14,7 +14,10 @@ namespace CSE {
 
         ~SCubeTexture();
 
-        bool InitTexture(int size) override;
+        bool InitTexture(int width, int height, int channel = GL_RGB, int internalFormat = GL_RGB,
+                         int glType = GL_UNSIGNED_BYTE) override;
+        bool InitTextureMipmap(int width, int height, int channel = GL_RGB, int internalFormat = GL_RGB,
+                               int glType = GL_UNSIGNED_BYTE);
 
         void Bind(GLint location, int layout) override;
 

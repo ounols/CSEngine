@@ -1,9 +1,8 @@
 //
 // Created by ounols on 19. 5. 4.
 //
-#include "PBRShaderLoader.h"
+#include "SEnvironmentMgr.h"
 #include "ShaderUtil.h"
-#include "STexture.h"
 #include "../AssetsDef.h"
 #include "../Matrix.h"
 #include "SkyboxUtil.h"
@@ -15,18 +14,18 @@
 
 using namespace CSE;
 
-PBRShaderLoader::PBRShaderLoader() {
+SEnvironmentMgr::SEnvironmentMgr() {
 
 }
 
-PBRShaderLoader::~PBRShaderLoader() {
+SEnvironmentMgr::~SEnvironmentMgr() {
     glDeleteVertexArrays(1, &m_cubeVAO);
     glDeleteBuffers(1, &m_cubeVBO);
     glDeleteVertexArrays(1, &m_planeVAO);
     glDeleteBuffers(1, &m_planeVBO);
 }
 
-void PBRShaderLoader::LoadShader() {
+void SEnvironmentMgr::RenderPBREnvironment() {
 
     std::string cubemap_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/cubemap.vert");
     std::string etc_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/equirectangular_to_cubemap.frag");
@@ -45,7 +44,6 @@ void PBRShaderLoader::LoadShader() {
     // ----------------------
     unsigned int captureFBO;
     unsigned int captureRBO;
-    unsigned int captureRBO_color;
 
     glDisable(GL_CULL_FACE);
 
@@ -75,8 +73,8 @@ void PBRShaderLoader::LoadShader() {
     m_envCubemap = new SCubeTexture();
     m_envCubemap->SetName("envCubemap.textureCubeMap");
     m_envCubemap->SetID("envCubemap.textureCubeMap");
-    m_envCubemap->InitTexture(512);
-    m_envCubemap->GenerateMipmap();
+    m_envCubemap->InitTextureMipmap(512, 512);
+
 
     // pbr: set up projection and view matrices for capturing data onto the 6 cubemap face directions
     // ----------------------------------------------------------------------------------------------
@@ -115,6 +113,7 @@ void PBRShaderLoader::LoadShader() {
 //        std::string save_str = CSE::AssetsPath() + "test" + std::to_string(i) + ".bmp";
 //        saveScreenshot(save_str.c_str());
     }
+    m_envCubemap->GenerateMipmap();
 
     std::cout << " finished!\n";
 
@@ -123,7 +122,7 @@ void PBRShaderLoader::LoadShader() {
     m_irradianceMap = new SCubeTexture();
     m_irradianceMap->SetName("irradiance.textureCubeMap");
     m_irradianceMap->SetID("irradiance.textureCubeMap");
-    m_irradianceMap->InitTexture(32);
+    m_irradianceMap->InitTexture(32, 32);
 
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
@@ -156,7 +155,7 @@ void PBRShaderLoader::LoadShader() {
     m_prefilterMap = new SCubeTexture();
     m_prefilterMap->SetName("prefilter.textureCubeMap");
     m_prefilterMap->SetID("prefilter.textureCubeMap");
-    m_prefilterMap->InitTexture(128);
+    m_prefilterMap->InitTextureMipmap(128, 128);
 
     // generate mipmaps for the cubemap so OpenGL automatically allocates the required memory.
     m_prefilterMap->GenerateMipmap();
@@ -198,6 +197,30 @@ void PBRShaderLoader::LoadShader() {
     }
     std::cout << " finished!\n";
 
+    // pbr: generate a 2D LUT from the BRDF equations used.
+    // ----------------------------------------------------
+    std::cout << "[PBR] Backing a 2D LUT from the BRDF equations used...";
+    m_brdfMap = new STexture();
+    m_brdfMap->SetName("brdfLUT.texture");
+    m_brdfMap->SetID("brdfLUT.texture");
+    m_brdfMap->InitTexture(512, 512, GL_RG, GL_RG16F, GL_FLOAT);
+
+    // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 512, 512);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_brdfMap->GetTextureID(), 0);
+
+    glViewport(0, 0, 512, 512);
+    glUseProgram(m_brdfShader->Program);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    LoadPlaneVAO();
+    RenderPlaneVAO();
+
+//    std::string save_str = CSE::AssetsPath() + "brdf.bmp";
+//    saveScreenshot(save_str.c_str());
+    std::cout << " finished!\n";
+
     //release fbo, rbo
     glDeleteFramebuffers(1, &captureFBO);
     glDeleteRenderbuffers(1, &captureRBO);
@@ -206,7 +229,16 @@ void PBRShaderLoader::LoadShader() {
     glEnable(GL_CULL_FACE);
 }
 
-void PBRShaderLoader::LoadCubeVAO() {
+
+void SEnvironmentMgr::InitShadowEnvironment() {
+    std::string vert_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/Shadow/default_shadow.vert");
+    std::string frag_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/Shadow/default_shadow.frag");
+
+    m_shadowDepthMapShader = ShaderUtil::CreateProgramHandle(vert_str.c_str(), frag_str.c_str());
+}
+
+
+void SEnvironmentMgr::LoadCubeVAO() {
     float vertices[] = {
             // back face
             -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
@@ -260,22 +292,22 @@ void PBRShaderLoader::LoadCubeVAO() {
     glBindVertexArray(m_cubeVAO);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) 0);
-//        glEnableVertexAttribArray(1);
-//        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-//        glEnableVertexAttribArray(2);
-//        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
 
-void PBRShaderLoader::RenderCubeVAO() {
+void SEnvironmentMgr::RenderCubeVAO() {
     // render Cube
     glBindVertexArray(m_cubeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
 }
 
-void PBRShaderLoader::LoadPlaneVAO() {
+void SEnvironmentMgr::LoadPlaneVAO() {
     float quadVertices[] = {
             // positions        // texture Coords
             -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
@@ -295,8 +327,8 @@ void PBRShaderLoader::LoadPlaneVAO() {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) (3 * sizeof(float)));
 }
 
-void PBRShaderLoader::RenderPlaneVAO() {
+void SEnvironmentMgr::RenderPlaneVAO() {
     glBindVertexArray(m_planeVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 4);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
 }

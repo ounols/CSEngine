@@ -77,11 +77,22 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
     if (i <= 0) return;
 
     glUniform1i(handle->Uniforms.LightSize, m_objects.size());
+}
+
+void LightMgr::RenderShadowMap() const {
 
 }
 
 void LightMgr::Init() {
 
+}
+
+void LightMgr::RegisterShadowObject(SIRender* object) {
+    m_shadowObject.push_back(object);
+}
+
+void LightMgr::RemoveShadowObject(SIRender* object) {
+    m_shadowObject.remove(object);
 }
 
 //void LightMgr::AttachDirectionalLight(const GLProgramHandle* handle, const SLight* light, int index) const {

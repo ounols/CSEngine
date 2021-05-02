@@ -4,7 +4,6 @@
 
 #include "EngineCore.h"
 #include "../Sample/FirstDemoScene.h"
-#include "../Util/Render/PBRShaderLoader.h"
 
 using namespace CSE;
 IMPLEMENT_SINGLETON(EngineCore);
@@ -26,10 +25,8 @@ void EngineCore::Init(unsigned int width, unsigned int height) {
     }
     m_oglMgr->setupEGLGraphics(width, height);
 
-    PBRShaderLoader* asdfasdf = new PBRShaderLoader();
-
-    asdfasdf->LoadShader();
-    SAFE_DELETE(asdfasdf);
+    m_environmentMgr = new SEnvironmentMgr();
+    m_environmentMgr->RenderPBREnvironment();
 
     m_oglMgr->ResizeWindow(width, height);
 
@@ -56,6 +53,7 @@ void EngineCore::Exterminate() {
         SAFE_DELETE(core);
     }
     m_cores.clear();
+    SAFE_DELETE(m_environmentMgr);
 }
 
 void EngineCore::GenerateCores() {

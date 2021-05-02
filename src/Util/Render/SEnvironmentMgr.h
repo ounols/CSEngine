@@ -8,13 +8,18 @@
 
 namespace CSE {
 
-    class PBRShaderLoader {
+    class SEnvironmentMgr {
     public:
-        PBRShaderLoader();
+        SEnvironmentMgr();
 
-        ~PBRShaderLoader();
+        ~SEnvironmentMgr();
 
-        void LoadShader();
+        void RenderPBREnvironment();
+
+        void InitShadowEnvironment();
+        GLProgramHandle* GetShadowEnvironment() const {
+            return m_shadowDepthMapShader;
+        }
 
     private:
         void LoadCubeVAO();
@@ -31,11 +36,14 @@ namespace CSE {
         GLProgramHandle* m_prefilterShader;
         GLProgramHandle* m_brdfShader;
 
+        GLProgramHandle* m_shadowDepthMapShader;
+
 
         STexture* m_hdrTexture;
         SCubeTexture* m_envCubemap;
         SCubeTexture* m_irradianceMap;
         SCubeTexture* m_prefilterMap;
+        STexture* m_brdfMap;
 
         unsigned int m_cubeVBO;
         unsigned int m_cubeVAO;

@@ -4,6 +4,7 @@
 <var name="TEX2D_ALBEDO" type="tex" count="1">File:Stormtrooper_D.jpg</var>
 <var name="TEXCUBE_IRRADIANCE" type="tex" count="1">irradiance.textureCubeMap</var>
 <var name="TEXCUBE_PREFILTER" type="tex" count="1">prefilter.textureCubeMap</var>
+<var name="TEX2D_BRDFLUT" type="tex" count="1">brdfLUT.texture</var>
 <var name="FLOAT_ALBEDO" type="vec3" count="1">1 1 1</var>
 </shader>
 </CSEMAT>

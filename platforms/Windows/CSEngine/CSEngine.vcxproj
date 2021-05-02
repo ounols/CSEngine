@@ -154,7 +154,6 @@
     <ClInclude Include="..\..\..\src\Component\DrawableSkinnedMeshComponent.h" />
     <ClInclude Include="..\..\..\src\Component\DrawableStaticMeshComponent.h" />
     <ClInclude Include="..\..\..\src\Component\LightComponent.h" />
-    <ClInclude Include="..\..\..\src\Component\MaterialComponent.h" />
     <ClInclude Include="..\..\..\src\Component\RenderComponent.h" />
     <ClInclude Include="..\..\..\src\Component\SComponent.h" />
     <ClInclude Include="..\..\..\src\Component\SISComponent.h" />
@@ -218,7 +217,7 @@
     <ClInclude Include="..\..\..\src\Util\Quaternion.h" />
     <ClInclude Include="..\..\..\src\Util\Render\LightHelper.h" />
     <ClInclude Include="..\..\..\src\Util\Render\MeshSurface.h" />
-    <ClInclude Include="..\..\..\src\Util\Render\PBRShaderLoader.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\SEnvironmentMgr.h" />
     <ClInclude Include="..\..\..\src\Util\Render\RenderInterfaces.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SCubeTexture.h" />
     <ClInclude Include="..\..\..\src\Util\Render\ShaderUtil.h" />
@@ -239,7 +238,6 @@
     <ClCompile Include="..\..\..\src\Component\DrawableSkinnedMeshComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\DrawableStaticMeshComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\LightComponent.cpp" />
-    <ClCompile Include="..\..\..\src\Component\MaterialComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\RenderComponent.cpp" />
     <ClCompile Include="..\..\..\src\Component\TransformComponent.cpp" />
     <ClCompile Include="..\..\..\src\Manager\AssetMgr.cpp" />
@@ -277,7 +275,7 @@
     <ClCompile Include="..\..\..\src\Util\Loader\ZIP\zip.cpp" />
     <ClCompile Include="..\..\..\src\Util\MoreComponentFunc.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\MeshSurface.cpp" />
-    <ClCompile Include="..\..\..\src\Util\Render\PBRShaderLoader.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Render\SEnvironmentMgr.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\SCubeTexture.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\ShaderUtil.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\SMaterial.cpp" />

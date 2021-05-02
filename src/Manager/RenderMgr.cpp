@@ -16,13 +16,23 @@ RenderMgr::~RenderMgr() {
 
 
 void RenderMgr::Init() {
+    m_environmentMgr = new SEnvironmentMgr();
+    m_environmentMgr->RenderPBREnvironment();
 }
 
+void RenderMgr::SetViewport(int width, int height) {
+    m_width = width;
+    m_height = height;
+}
 
 void RenderMgr::Render() const {
 
     auto cameraMgr = CORE->GetCore(CameraMgr);
     auto lightMgr = CORE->GetCore(LightMgr);
+
+    lightMgr->RenderShadowMap(m_environmentMgr->GetShadowEnvironment());
+
+    glViewport(0, 0, (GLsizei) m_width, (GLsizei) m_height);
 
     CameraComponent* cameraComponent = cameraMgr->GetCurrentCamera();
     mat4 camera = (cameraComponent != nullptr) ?
@@ -38,7 +48,6 @@ void RenderMgr::Render() const {
         ProgramRenderLayer programComp(orderLayer.begin(), orderLayer.end());
 
         for (const auto& programPair : programComp) {
-
             const auto& handler = *programPair.first;
             const auto& renderComp = programPair.second;
 
@@ -83,5 +92,5 @@ void RenderMgr::Render() const {
 
 void RenderMgr::Exterminate() {
     m_rendersLayer.clear();
-
+    SAFE_DELETE(m_environmentMgr);
 }

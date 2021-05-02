@@ -25,7 +25,7 @@ namespace CSE {
 
         void SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection) override;
 
-        void Render() const override;
+        void Render(bool ignore_material) const override;
 
         void SetIsEnable(bool is_enable) override;
 
@@ -37,9 +37,10 @@ namespace CSE {
         void SetJointMatrix() const;
 
     private:
-        DrawableStaticMeshComponent* m_mesh;
-        DrawableSkinnedMeshComponent* m_skinningMesh;
+        DrawableStaticMeshComponent* m_mesh = nullptr;
+        DrawableSkinnedMeshComponent* m_skinningMesh = nullptr;
         SMaterial* m_material_clone = nullptr;
         // SMaterial* material (Override)
+        bool m_disableShadow = false;
     };
 }

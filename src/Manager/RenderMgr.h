@@ -3,6 +3,8 @@
 #include "RenderContainer.h"
 #include "CameraMgr.h"
 #include "Base/RenderCoreBase.h"
+#include "../Util/Render/SEnvironmentMgr.h"
+
 
 namespace CSE {
 
@@ -14,6 +16,8 @@ namespace CSE {
     public:
         void Init() override;
 
+        void SetViewport(int width, int height);
+
         void Render() const override;
 
     private:
@@ -21,5 +25,9 @@ namespace CSE {
 
     private:
         mat4 m_NoneCamera;
+        int m_width = 1;
+        int m_height = 1;
+
+        SEnvironmentMgr* m_environmentMgr = nullptr;
     };
 }
