@@ -13,13 +13,14 @@ namespace CSE {
     public:
         const int SHADOW_WIDTH = 1024;
         const int SHADOW_HEIGHT = 1024;
+        const float SHADOW_DISTANCE = 10.f;
 
     public:
         explicit LightMgr();
         ~LightMgr();
 
         void AttachLightToShader(const GLProgramHandle* handle) const;
-        void RenderShadowMap() const;
+        void RenderShadowMap(GLProgramHandle* handle) const;
 
         void Init() override;
 

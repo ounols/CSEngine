@@ -30,6 +30,8 @@ namespace CSE {
 
         void SetColor(vec3 color) const;
 
+        LIGHT GetType() const;
+
         vec4 GetDirection(vec4 direction) const;
 
         vec3 GetColor() const;
@@ -44,21 +46,6 @@ namespace CSE {
         void SetSunrising(bool active);
 
         SLight* GetLight() const {
-            //switch (m_type) {
-            //case DIRECTIONAL: {
-            //	return (m_light);
-            //}
-
-            //case POINT:
-            //	return (m_light);
-
-            //case SPOT:
-            //	return (m_light);
-            //
-            //default:
-            //	return m_light;
-            //}
-
             return m_light;
         }
 
@@ -67,6 +54,12 @@ namespace CSE {
 		void SetValue(std::string name_str, Arguments value) override;
 
 		std::string PrintValue() const override;
+
+        const mat4& GetLightProjectionMatrix() const;
+
+        const mat4& GetLightViewMatrix() const;
+
+        void BindDepthMap() const;
 
     private:
         void SetLightPosition() const;
@@ -84,6 +77,10 @@ namespace CSE {
         bool m_isSunRising = false;
         unsigned int m_depthMapFBO = -1;
         STexture* m_shadowTexture = nullptr;
+        mat4 m_lightProjectionMatrix;
+        mat4 m_lightViewMatrix;
+        float m_near = 0.1f;
+        float m_far = 100.f;
     };
 
 }

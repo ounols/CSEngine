@@ -15,6 +15,8 @@
 namespace CSE {
 
     class SMaterial : public SResource {
+    public:
+        enum SMaterialMode { NORMAL = 0, CUTOUT = 1 };
     private:
         struct Element {
             int id = HANDLE_NULL;
@@ -41,10 +43,6 @@ namespace CSE {
 
 		void SetAttribute(const GLMeshID& meshId) const;
 
-		void SetCameraUniform(mat4 camera, vec3 cameraPosition, mat4 projection, TransformInterface* transform) const;
-
-		void SetSkinningUniform(const GLMeshID& mesh, const std::vector<mat4>& jointMatrix);
-
 		void SetInt(std::string name, int value);
 
 		void SetFloat(std::string name, float value);
@@ -56,6 +54,10 @@ namespace CSE {
         short GetOrderLayer() const;
 
         void SetOrderLayer(int orderLayer);
+
+        SMaterialMode GetMode() const;
+
+        void SetMode(SMaterialMode mode);
 
         GLProgramHandle* GetHandle() const;
 
@@ -87,5 +89,6 @@ namespace CSE {
 		std::unordered_map<std::string, Element*> m_elements;
 		std::unordered_map<std::string, Element*> m_attributeElements;
 		int m_textureLayout = 0;
+        SMaterialMode m_mode = NORMAL;
     };
 }

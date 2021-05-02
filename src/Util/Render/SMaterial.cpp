@@ -7,6 +7,7 @@
 #include "../Loader/XML/XML.h"
 #include "../Loader/XML/XMLParser.h"
 #include "../../Component/TransformComponent.h"
+#include "ShaderUtil.h"
 
 using namespace CSE;
 
@@ -101,86 +102,7 @@ void SMaterial::InitElements() {
 }
 
 void SMaterial::SetAttribute(const GLMeshID& meshId) const {
-    int stride = 4 * sizeof(vec3) + sizeof(vec2);    //normal + position + uv
-    const GLvoid* offset = (const GLvoid*) sizeof(vec3);
-    GLint position = m_handle->Attributes.Position;
-    GLint normal = m_handle->Attributes.Normal;
-    GLint tex = m_handle->Attributes.TextureCoord;
-    GLint weight = m_handle->Attributes.Weight;
-    GLint jointId = m_handle->Attributes.JointId;
-
-    bool isTex = tex != HANDLE_NULL;
-
-    if (meshId.m_indexSize < 0) {
-        glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
-        glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
-        glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, offset);
-        if (isTex) {
-            offset = (GLvoid*) (sizeof(vec3) * 2);
-            glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, stride, offset);
-        }
-        if (meshId.m_hasJoint) {
-            offset = (GLvoid*) (sizeof(vec3) * 2 + sizeof(vec2));
-            glVertexAttribPointer(weight, 3, GL_FLOAT, GL_FALSE, stride, offset);
-
-            offset = (GLvoid*) (sizeof(vec3) * 3 + sizeof(vec2));
-            glVertexAttribPointer(jointId, 3, GL_FLOAT, GL_FALSE, stride, offset);
-        }
-        glDrawArrays(GL_TRIANGLES, 0, meshId.m_vertexSize);
-
-    } else {
-        glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
-        glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
-        glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, offset);
-        if (isTex) {
-            offset = (GLvoid*) (sizeof(vec3) * 2);
-            glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, stride, offset);
-        }
-        if (meshId.m_hasJoint) {
-            offset = (GLvoid*) (sizeof(vec3) * 2 + sizeof(vec2));
-            glVertexAttribPointer(weight, 3, GL_FLOAT, GL_FALSE, stride, offset);
-
-            offset = (GLvoid*) (sizeof(vec3) * 3 + sizeof(vec2));
-            glVertexAttribPointer(jointId, 3, GL_FLOAT, GL_FALSE, stride, offset);
-        }
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshId.m_indexBuffer);
-        glDrawElements(GL_TRIANGLES, meshId.m_indexSize * 3, GL_UNSIGNED_SHORT, 0);
-
-    }
-}
-
-void SMaterial::SetCameraUniform(mat4 camera, vec3 cameraPosition, mat4 projection, TransformInterface* transform) const {
-
-    mat4 modelNoCameraView = static_cast<TransformComponent*>(transform)->GetMatrix();
-    mat4 modelView = modelNoCameraView * camera;
-    glUniformMatrix4fv(m_handle->Uniforms.Modelview, 1, 0, modelView.Pointer());
-    glUniformMatrix4fv(m_handle->Uniforms.ModelNoCameraMatrix, 1, 0, modelNoCameraView.Pointer());
-    glUniform3fv(m_handle->Uniforms.CameraPosition, 1, cameraPosition.Pointer());
-
-    //normal matrix
-//    glUniformMatrix3fv(handler->Uniforms.NormalMatrix, 1, 0, modelView.ToMat3().Pointer());
-
-
-    //projection transform
-    glUniformMatrix4fv(m_handle->Uniforms.Projection, 1, 0, projection.Pointer());
-}
-
-void SMaterial::SetSkinningUniform(const GLMeshID& mesh, const std::vector<mat4>& jointMatrix) {
-    if (!mesh.m_hasJoint || jointMatrix.empty()) {
-        glUniform1i(m_handle->Uniforms.SkinningMode, 0);
-        return;
-    }
-
-    std::vector<float> result;
-    for (mat4 matrix : jointMatrix) {
-        for (int i = 0; i < 16; ++i) {
-            result.push_back(matrix.Pointer()[i]);
-
-        }
-    }
-
-    glUniformMatrix4fv(m_handle->Uniforms.JointMatrix, MAX_JOINTS, 0, &result[0]);
-    glUniform1i(m_handle->Uniforms.SkinningMode, 1);
+    ShaderUtil::BindAttributeToShader(*m_handle, meshId);
 }
 
 void SMaterial::SetInt(std::string name, int value) {
@@ -358,4 +280,12 @@ void SMaterial::SetOrderLayer(int orderLayer) {
 
 GLProgramHandle* SMaterial::GetHandle() const {
     return m_handle;
+}
+
+SMaterial::SMaterialMode SMaterial::GetMode() const {
+    return m_mode;
+}
+
+void SMaterial::SetMode(SMaterial::SMaterialMode mode) {
+    m_mode = mode;
 }

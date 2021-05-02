@@ -177,9 +177,9 @@ void FirstDemoScene::Init() {
     ab->AddChild(d);
     d->GetComponent<LightComponent>()->SetDirection(vec4{ 1.f, 0.5f, 1.f, 1.0f });
     d->GetComponent<LightComponent>()->SetColor(vec3{ 10, 10, 10 });
-    d->GetComponent<LightComponent>()->DisableSpecular = false;
     d->GetComponent<LightComponent>()->SetLightType(LightComponent::POINT);
     d->GetComponent<LightComponent>()->SetLightRadius(1);
+    d->GetComponent<LightComponent>()->m_disableShadow = true;
     d->CreateComponent<DrawableStaticMeshComponent>();
     d->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 //    d->CreateComponent<MaterialComponent>();
