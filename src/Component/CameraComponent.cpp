@@ -26,8 +26,6 @@ void CameraComponent::Exterminate() {
 
 void CameraComponent::Init() {
     m_eye = static_cast<TransformComponent*>(gameObject->GetTransform())->GetPosition();
-    m_target = vec3(0, 0, -1);
-    m_up = vec3(0, 1, 0);
 
     m_resultTarget = vec3();
     m_pRatio = const_cast<float*>(CORE->GetCore(CameraMgr)->GetProjectionRatio());
@@ -162,7 +160,7 @@ void CameraComponent::SetProjectionMatrix() {
         m_projectionMatrix = mat4::Perspective(m_pFov, *m_pRatio, m_Near, m_Far);
 
     } else {
-        m_projectionMatrix = mat4::Ortho(m_oLeft, m_oRight, m_oBottom, m_oTop, m_Near, m_Far);
+        m_projectionMatrix = mat4::Ortho(m_oLeft, m_oRight, m_oTop, m_oBottom, m_Near, m_Far);
     }
 
     m_isProjectionInited = true;

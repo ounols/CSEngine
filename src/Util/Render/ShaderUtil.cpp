@@ -265,9 +265,6 @@ void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMe
     GLint weight = handle.Attributes.Weight;
     GLint jointId = handle.Attributes.JointId;
 
-    bool isNormal = normal != HANDLE_NULL;
-    bool isTex = tex != HANDLE_NULL;
-
     if (meshId.m_indexSize < 0) {
         glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
         glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
@@ -306,11 +303,11 @@ void ShaderUtil::BindSkinningDataToShader(const GLProgramHandle& handle, const G
     }
 
     std::vector<float> result;
-    result.reserve(jointMatrix.size() * 16);
+    result.reserve(jointMatrix.size() * 16 + 1);
     for (const mat4& matrix : jointMatrix) {
-        for (int i = 0; i < 16; ++i) {
-            result.push_back(matrix.Pointer()[i]);
-
+        const auto* pointer = matrix.Pointer();
+        for (int i = 0; i < 16; ++i, ++pointer) {
+            result.push_back(*(pointer));
         }
     }
 

@@ -103,8 +103,8 @@ void LightMgr::RenderShadowMap(GLProgramHandle* handle) const {
             if(!shadowObject->isRenderActive) continue;
             const auto& shadow_transform = static_cast<RenderComponent*>(shadowObject)->GetGameObject()->GetTransform();
 
-//            if(SHADOW_DISTANCE > vec3::Distance(light_transform->m_position, shadow_transform->m_position))
-//                continue;
+            if(SHADOW_DISTANCE < vec3::Distance(light_transform->m_position, shadow_transform->m_position))
+                continue;
 
             shadowObject->SetMatrix(viewMatrix, light_transform->m_position, projectionMatrix, handle);
             shadowObject->Render(handle);

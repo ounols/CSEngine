@@ -594,7 +594,7 @@ namespace CSE {
 
             m.MAT4_XX = 2.0f / xDiff;
             m.MAT4_YY = 2.0f / yDiff;
-            m.MAT4_ZZ = 2.0f / zDiff;
+            m.MAT4_ZZ = -2.0f / zDiff;
 
             m.MAT4_WX = -(xMax + xMin) / xDiff;
             m.MAT4_WY = -(yMax + yMin) / yDiff;

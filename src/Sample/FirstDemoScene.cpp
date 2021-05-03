@@ -154,16 +154,16 @@ void FirstDemoScene::Init() {
     SGameObject* direction = new SGameObject();
     direction->SetParent(root);
     direction->SetName("directional");
-    direction->GetTransform()->m_position = vec3{ 0.f, 1.f, 0.f };
+    direction->GetTransform()->m_position = vec3{ 0.f, 2.f, 4.f };
     direction->CreateComponent<LightComponent>();
 //	direction->GetComponent<LightComponent>()->SetColorAmbient(vec4{ 0.07f, 0.07f, 0.07f, 1 });
 //	direction->GetComponent<LightComponent>()->SetColorDiffuse(vec4{ 0.3f, 0.5f, 0.5f, 1 });
     direction->GetComponent<LightComponent>()->DisableSpecular = false;
     direction->GetComponent<LightComponent>()->SetSunrising(true);
     direction->GetComponent<LightComponent>()->SetLightType(LightComponent::DIRECTIONAL);
-    direction->GetComponent<LightComponent>()->SetDirection(vec4{ 0.0f, 1.0f, 0, 0 });
+    direction->GetComponent<LightComponent>()->SetDirection(vec4{ 0.0f, 1.0f, 1, 0 });
     direction->CreateComponent<CustomComponent>();
-    direction->GetComponent<CustomComponent>()->SetClassName("directionalLight.script");
+//    direction->GetComponent<CustomComponent>()->SetClassName("directionalLight.script");
 //
 //
 //    SComponent* test_comp = direction->GetComponent<CustomComponent>();
@@ -193,8 +193,12 @@ void FirstDemoScene::Init() {
     //d->GetComponent<LightComponent>()->DisableDiffuse = true;
 
     a->CreateComponent<CameraComponent>();
-    a->GetTransform()->m_position = vec3{ 0, 0, 3.f };
-    a->GetComponent<CameraComponent>()->SetTarget(d);
+    a->GetComponent<CameraComponent>()->SetOrtho(-3.f, 3.f, -3.f, 3.f);
+    a->GetComponent<CameraComponent>()->SetCameraType(CSE::CameraComponent::ORTHO);
+//    a->GetTransform()->m_position = vec3{ 0, 0, 3.f };
+    a->GetTransform()->m_position = vec3{ 0.f, 2.f, 4.f };
+//    a->GetTransform()->m_scale = vec3{ 2.f, 2.f, 2.f };
+    a->GetComponent<CameraComponent>()->SetTarget(vec3{ 0.0f, -1.0f, -1.f });
     //===============
 
     SSceneLoader::SavePrefab(root, CSE::NativeAssetsPath() + "Scene/test_scene.scene");

@@ -38,8 +38,8 @@ void LightComponent::Init() {
 void LightComponent::Tick(float elapsedTime) {
 
     auto eye = static_cast<TransformComponent*>(gameObject->GetTransform())->GetPosition();
-    auto target = vec3(m_light->direction.x, m_light->direction.y, m_light->direction.z);
-    m_lightViewMatrix = mat4::LookAt(*eye, target, vec3{ 0, 1, 0});
+    auto target = *eye + vec3(-m_light->direction.x, -m_light->direction.y, -m_light->direction.z);
+    m_lightViewMatrix = mat4::LookAt(*eye, target, vec3{ 0, 1, 0 });
 
     if (m_isSunRising && m_type == DIRECTIONAL) {
         float value = m_light->direction.y;
@@ -61,14 +61,12 @@ void LightComponent::SetLightType(LIGHT type) {
 
     m_type = type;
 
-    // 임시
-    m_lightProjectionMatrix = mat4::Ortho(-1.f, 1.f, -1.f, 1.f, m_near, m_far);
 
     if (m_type == POINT || m_type == SPOT) {
         SetLightPosition();
     }
     else {
-        m_lightProjectionMatrix = mat4::Ortho(-1.f, 1.f, -1.f, 1.f, m_near, m_far);
+        m_lightProjectionMatrix = mat4::Ortho(-3.f, 3.f, -3.f, 3.f, m_near, m_far);
     }
 
 }

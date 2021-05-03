@@ -67,8 +67,8 @@ namespace CSE {
 
     private:
         vec3* m_eye;
-        vec3 m_target;
-        vec3 m_up;
+        vec3 m_target = vec3(0, 0, -1);
+        vec3 m_up = vec3(0, 1, 0);
         SGameObject* m_targetObject;
 
         mat4 m_cameraMatrix;
