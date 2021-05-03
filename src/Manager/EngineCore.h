@@ -8,15 +8,7 @@
 #include <list>
 #include "../MacroDef.h"
 #include "Base/CoreBase.h"
-#include "ResMgr.h"
-#include "GameObjectMgr.h"
-#include "OGLMgr.h"
-#include "ScriptMgr.h"
-#include "CameraMgr.h"
-#include "LightMgr.h"
-#include "RenderMgr.h"
-#include "SceneMgr.h"
-#include "../Util/Render/SEnvironmentMgr.h"
+#include "Base/RenderCoreBase.h"
 
 #define GET_CORE_FUNCTION(CORENAME, core_instance)  \
 CORENAME* Get##CORENAME##Core() const {               \
@@ -25,6 +17,19 @@ CORENAME* Get##CORENAME##Core() const {               \
 
 #define CORE EngineCore::getInstance()
 #define GetCore(CORENAME) Get##CORENAME##Core()
+
+// Core Class Predeclaration
+namespace CSE {
+    class ResMgr;
+    class GameObjectMgr;
+    class RenderMgr;
+    class CameraMgr;
+    class LightMgr;
+    class SceneMgr;
+    class MemoryMgr;
+    class ScriptMgr;
+    class OGLMgr;
+}
 
 namespace CSE {
     class EngineCore {
@@ -54,14 +59,14 @@ namespace CSE {
         std::list<CoreBase*> m_updateCores;
 
         //For Reference
-        CoreBase* m_resMgr = nullptr;
-        CoreBase* m_gameObjectMgr = nullptr;
-        CoreBase* m_renderMgr = nullptr;
-        CoreBase* m_cameraMgr = nullptr;
-        CoreBase* m_lightMgr = nullptr;
-        CoreBase* m_sceneMgr = nullptr;
-        CoreBase* m_memoryMgr = nullptr;
-        CoreBase* m_scriptMgr = nullptr;
+        ResMgr* m_resMgr = nullptr;
+        GameObjectMgr* m_gameObjectMgr = nullptr;
+        RenderMgr* m_renderMgr = nullptr;
+        CameraMgr* m_cameraMgr = nullptr;
+        LightMgr* m_lightMgr = nullptr;
+        SceneMgr* m_sceneMgr = nullptr;
+        MemoryMgr* m_memoryMgr = nullptr;
+        ScriptMgr* m_scriptMgr = nullptr;
 
         OGLMgr* m_oglMgr = nullptr;
 

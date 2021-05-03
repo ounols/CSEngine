@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "GameObjectMgr.h"
+#include "MemoryMgr.h"
 #include "EngineCore.h"
 
 using namespace CSE;

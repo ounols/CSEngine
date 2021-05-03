@@ -7,6 +7,7 @@
 #include "../Util/AssetsDef.h"
 #include "../Util/MoreString.h"
 #include "EngineCore.h"
+#include "ResMgr.h"
 #include <iostream>
 
 #ifdef __linux__

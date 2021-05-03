@@ -3,6 +3,14 @@
 //
 
 #include "EngineCore.h"
+#include "ResMgr.h"
+#include "GameObjectMgr.h"
+#include "OGLMgr.h"
+#include "ScriptMgr.h"
+#include "CameraMgr.h"
+#include "LightMgr.h"
+#include "RenderMgr.h"
+#include "SceneMgr.h"
 #include "../Sample/FirstDemoScene.h"
 
 using namespace CSE;
