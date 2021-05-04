@@ -30,7 +30,7 @@ OGLMgr::~OGLMgr() {
 void OGLMgr::setShaderProgram() {
 
 
-    SResource::Create<GLProgramHandle>("PBR.shader");
+//    SResource::Create<GLProgramHandle>("PBR.shader");
 
 }
 

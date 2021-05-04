@@ -27,9 +27,14 @@ namespace CSE {
         void RegisterShadowObject(SIRender* object);
         void RemoveShadowObject(SIRender* object);
 
+        int GetShadowCount() const {
+            return m_shadowCount;
+        }
+
     private:
         SCubeTexture* m_currentSkybox = nullptr;
         std::list<SIRender*> m_shadowObject;
+        mutable int m_shadowCount = 0;
     };
 
 }

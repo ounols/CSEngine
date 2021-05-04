@@ -6,6 +6,8 @@
 
 namespace CSE {
 
+    class GLProgramHandle;
+
     class LightComponent : public SComponent {
 
     public:
@@ -59,7 +61,8 @@ namespace CSE {
 
         const mat4& GetLightViewMatrix() const;
 
-        void BindDepthMap() const;
+        void BindDepthBuffer() const;
+        void BindShadowTexture(const GLProgramHandle& handle, int index) const;
 
     private:
         void SetLightPosition() const;

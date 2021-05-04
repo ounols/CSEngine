@@ -189,7 +189,12 @@ const mat4& LightComponent::GetLightViewMatrix() const {
     return m_lightViewMatrix;
 }
 
-void LightComponent::BindDepthMap() const {
+void LightComponent::BindDepthBuffer() const {
     glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void LightComponent::BindShadowTexture(const GLProgramHandle& handle, int index) const {
+    if(m_shadowTexture == nullptr) return;
+    m_shadowTexture->Bind(handle.Uniforms.LightShadowMap + index, index);
 }

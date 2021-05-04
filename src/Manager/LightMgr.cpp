@@ -30,7 +30,8 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
     //std::vector<float> lightRadius;
     //std::vector<float> lightColor;
 
-    int i = 0;
+    int index = 0;
+    int shadow_index = 0;
     for (const auto& light : m_objects) {
 
         if (light == nullptr) continue;
@@ -39,10 +40,10 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
         LightComponent::LIGHT type = light->m_type;
         SLight* lightObject = light->GetLight();
 
-		float lightPosition[4] = { 0.f };
+        float lightPosition[4] = { 0.f };
 
         //LightMode
-        //SetLightMode(handle, light, i);
+        //SetLightMode(handle, light, index);
 
         switch (type) {
 
@@ -53,30 +54,33 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
                 lightPosition[3] = lightObject->direction.w;
                 break;
             case LightComponent::POINT:
-				lightPosition[0] = lightObject->position->x;
-				lightPosition[1] = lightObject->position->y;
-				lightPosition[2] = lightObject->position->z;
-				lightPosition[3] = 1.0f;
+                lightPosition[0] = lightObject->position->x;
+                lightPosition[1] = lightObject->position->y;
+                lightPosition[2] = lightObject->position->z;
+                lightPosition[3] = 1.0f;
                 break;
             case LightComponent::SPOT:
                 break;
             default:
                 break;
-
         }
-
-
-		glUniform4f(handle->Uniforms.LightPosition + i, lightPosition[0], lightPosition[1], lightPosition[2], lightPosition[3]);
-		glUniform3f(handle->Uniforms.LightColor + i, lightObject->color.x, lightObject->color.y, lightObject->color.z);
-		glUniform1i(handle->Uniforms.LightType + i, type);
-		glUniform1f(handle->Uniforms.LightRadius + i, lightObject->radius);
-        if(handle->Uniforms.LightRadius >= 0)
-            glUniform1f(handle->Uniforms.LightRadius + i, lightObject->radius);
-
-        i++;
+        glUniform4f(handle->Uniforms.LightPosition + index,
+                    lightPosition[0], lightPosition[1], lightPosition[2], lightPosition[3]);
+        glUniform3f(handle->Uniforms.LightColor + index, lightObject->color.x, lightObject->color.y,
+                    lightObject->color.z);
+        glUniform1i(handle->Uniforms.LightType + index, type);
+        glUniform1f(handle->Uniforms.LightRadius + index, lightObject->radius);
+        if (handle->Uniforms.LightRadius >= 0)
+            glUniform1f(handle->Uniforms.LightRadius + index, lightObject->radius);
+        // Shadow
+        if (!light->m_disableShadow) {
+            light->BindShadowTexture(*handle, shadow_index);
+            ++shadow_index;
+        }
+        ++index;
     }
 
-    if (i <= 0) return;
+    if (index <= 0) return;
 
     glUniform1i(handle->Uniforms.LightSize, m_objects.size());
 }
@@ -92,13 +96,14 @@ void LightMgr::RenderShadowMap(GLProgramHandle* handle) const {
     glEnableVertexAttribArray(handle->Attributes.Weight);
     glEnableVertexAttribArray(handle->Attributes.JointId);
 
+    m_shadowCount = 0;
     for (const auto& light : m_objects) {
         if(light->m_disableShadow) continue;
         const auto& light_transform = light->GetGameObject()->GetTransform();
         const auto& projectionMatrix = light->GetLightProjectionMatrix();
         const auto& viewMatrix = light->GetLightViewMatrix();
 
-        light->BindDepthMap();
+        light->BindDepthBuffer();
         for (const auto& shadowObject : m_shadowObject) {
             if(!shadowObject->isRenderActive) continue;
             const auto& shadow_transform = static_cast<RenderComponent*>(shadowObject)->GetGameObject()->GetTransform();
@@ -108,10 +113,8 @@ void LightMgr::RenderShadowMap(GLProgramHandle* handle) const {
 
             shadowObject->SetMatrix(viewMatrix, light_transform->m_position, projectionMatrix, handle);
             shadowObject->Render(handle);
-
-
         }
-
+        ++m_shadowCount;
 //        std::string save_str = CSE::AssetsPath() + "test.bmp";
 //        saveScreenshot(save_str.c_str());
     }

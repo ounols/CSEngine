@@ -5,6 +5,7 @@
 
 #include "../../OGLDef.h"
 #include "STexture.h"
+#include "../GLProgramHandle.h"
 
 #include "../Loader/STB/stb_image.h"
 #include "../../Manager/ResMgr.h"
