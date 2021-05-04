@@ -23,6 +23,8 @@ namespace CSE {
         GLint LightRadius = HANDLE_NULL;
         GLint LightColor = HANDLE_NULL;
         GLint LightShadowMap = HANDLE_NULL;
+        GLint LightMatrix = HANDLE_NULL;
+        GLint LightShadowMode = HANDLE_NULL;
         GLint LightSize = HANDLE_NULL;
         GLint JointMatrix = HANDLE_NULL;
         GLint SkinningMode = HANDLE_NULL;

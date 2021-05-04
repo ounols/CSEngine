@@ -194,7 +194,10 @@ void LightComponent::BindDepthBuffer() const {
     glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void LightComponent::BindShadowTexture(const GLProgramHandle& handle, int index) const {
-    if(m_shadowTexture == nullptr) return;
+void LightComponent::BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const {
+    if(m_shadowTexture == nullptr || m_disableShadow) return;
+
     m_shadowTexture->Bind(handle.Uniforms.LightShadowMap + index, index);
+    auto matrix = m_lightViewMatrix * m_lightProjectionMatrix;
+    glUniformMatrix4fv(handle.Uniforms.LightMatrix + handleIndex, 1, 0, matrix.Pointer());
 }

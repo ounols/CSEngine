@@ -219,6 +219,8 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
     auto lightRaius = handle->UniformLocation("LIGHT_RADIUS");
     auto lightColor = handle->UniformLocation("LIGHT_COLOR");
     auto lightShadowMap = handle->UniformLocation("LIGHT_SHADOW_MAP");
+    auto lightMatrix = handle->UniformLocation("LIGHT_MATRIX");
+    auto lightShadowMode = handle->UniformLocation("LIGHT_SHADOW_MODE");
     auto lightSize = handle->UniformLocation("LIGHT_SIZE");
 
     handle->Attributes.Position = position != nullptr ? position->id : HANDLE_NULL;
@@ -239,6 +241,8 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
     handle->Uniforms.LightRadius = lightRaius != nullptr ? lightRaius->id : HANDLE_NULL;
     handle->Uniforms.LightColor = lightColor != nullptr ? lightColor->id : HANDLE_NULL;
     handle->Uniforms.LightShadowMap = lightShadowMap != nullptr ? lightShadowMap->id : HANDLE_NULL;
+    handle->Uniforms.LightMatrix = lightMatrix != nullptr ? lightMatrix->id : HANDLE_NULL;
+    handle->Uniforms.LightShadowMode = lightShadowMode != nullptr ? lightShadowMode->id : HANDLE_NULL;
     handle->Uniforms.LightSize = lightSize != nullptr ? lightSize->id : HANDLE_NULL;
 }
 

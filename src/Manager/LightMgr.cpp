@@ -73,10 +73,9 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
         if (handle->Uniforms.LightRadius >= 0)
             glUniform1f(handle->Uniforms.LightRadius + index, lightObject->radius);
         // Shadow
-        if (!light->m_disableShadow) {
-            light->BindShadowTexture(*handle, shadow_index);
-            ++shadow_index;
-        }
+        glUniform1i(handle->Uniforms.LightShadowMode + index, !light->m_disableShadow);
+        light->BindShadow(*handle, index, shadow_index);
+        if (!light->m_disableShadow) ++shadow_index;
         ++index;
     }
 
