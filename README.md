@@ -1,7 +1,7 @@
 
 # CSEngine - Cross Platform C++ Game Engine
 
-![intro-image](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/a90dcf3b-a8e6-4412-a31c-291bbaec8a39/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5/20210518/us-west-2/s3/aws4_request&X-Amz-Date=20210518T094537Z&X-Amz-Expires=86400&X-Amz-Signature=78641c0a61fa63e40a0c80dc3de451613ed84a9d6a638f7dbdcc3d9f292a3835&X-Amz-SignedHeaders=host&response-content-disposition=filename%20=%22Untitled.png%22)</br>
+![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)</br>
 ![platform](https://img.shields.io/badge/platform-windows_%7C_linux_%7C_android-00B274?style=flat-square) ![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) </br>
 CSEngine is a cross-platform 3D game engine.
 
