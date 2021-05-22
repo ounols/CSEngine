@@ -1,29 +1,82 @@
-# CSEngine - Cross Platform C++ Game Engine #
-CSEngine은 크로스 플랫폼 3D 게임 엔진입니다.
+
+# CSEngine - Cross Platform C++ Game Engine
+
+![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)</br>
+![platform](https://img.shields.io/badge/platform-windows_%7C_linux_%7C_android-00B274?style=flat-square) ![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) </br>
+CSEngine is a cross-platform 3D game engine.
+
+`💡 As it is under development, it is not yet suitable for practical use.`
+
+## Requirements
+
+### In all environments
+
+* CMake 3.15 or higher
+* C++14 compatible compiler
+* GLEW 2.1.0 or higher
+* GLFW 3.3 or higher
+* OpenGL 
+
+### Android
+
+* Gradle 4.1.3 or higher
+* NDK 21.2.6472646 or higher
+
+## Building
+
+CSEngine is built using CMake. In the case of Windows, it is possible to build with Visual Studio because it supports MSVC build through CMake.
+
+### Windows
+
+Put the GLEW library folder in the `External/glew` folder within the project.
+
+#### Visual Studio IDE
+
+Open the project via `platforms/Windows/CSEngine.sln`
+
+#### CMake (MSVC)
+
+Set the compiler settings to Visual Studio. (For setting method, refer to the help of each IDE such as VS, Clion, etc.)
+</p>
+
+    cmake -DCMAKE_BUILD_TYPE=Debug [Project Path]/CSEngine/platforms/Windows
+Create make files.
+</p>
+
+	cmake --build [Directory containing make files]
+Build through the created make files.
+
+### Linux
+
+    apt install build-essential cmake
+    apt install mesa-common-dev libglfw3 libglfw3-dev libglew-dev
+Install external libraries required at build. 
+</p>
+
+	cd [Project Path]/CSEngine/platforms/Linux
+	mkdir build
+	cd build
+	cmake -DCMAKE_BUILD_TYPE=Debug ../
+Create make files.
+</p>
 
 
+	cmake --build [Directory containing make files]
+Build through the created make files.
 
-----------------
-# [빌드 방식](https://bitbucket.org/MSnack/csengine/wiki/빌드) #
-빌드 방식은 해당 링크를 통해 확인하실 수 있습니다.
+## Stability
 
----------------
-# LICENCE #
-The CSEngine source code:
+Currently, only Linux build tests are available. In the future, various stabilization tests such as build tests for various platforms and several unit tests will be added.
+|Branch|Build status|
+|--|--|
+|master|![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) |
 
-The BSD 2-Clause License
+## See more
 
-Copyright 2017-2021, ounols.
+Review the following documentation:
+* [`wiki`](https://github.com/ounols/CSEngine/wiki): Documentation that details of the structure and function of CSEngine.
 
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
----------------
-# 3rd Party Copyright & Licence #
+## 3rd Party Copyright & Licence 
 
 - GLEW : Modified BSD License, the Mesa 3-D License (MIT), Khronos License (MIT)
 - GLAD : The MIT License (MIT)
