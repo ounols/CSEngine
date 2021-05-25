@@ -39,7 +39,7 @@ SGameObject* DAEConvertSGameObject::CreateJoints(SGameObject* parent, Joint* dat
     return jointObject;
 }
 
-SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameObject* mesh,
+SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, JointComponent* rootJoint,
                                                     AnimationData* animationData,
                                                     std::string name, Animation* animation) {
     if (parent == nullptr) return nullptr;
@@ -60,7 +60,7 @@ SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, SGameOb
     animation->SetKeyframe(animationData->lengthSeconds, frames);
 
     animator->PlayAnimation(animation);
-    animator->SetMesh(mesh->GetComponent<DrawableSkinnedMeshComponent>());
+    animator->SetRootJoint(rootJoint);
 
     parent->AddChild(animationObject);
 

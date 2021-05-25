@@ -33,7 +33,7 @@ MeshSurface::~MeshSurface() {
 }
 
 bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords, float* weights,
-                               float* jointIds) {
+                               short* jointIds) {
     if (!m_Verts.empty()) return false;
 
     struct Vertex {
@@ -235,16 +235,17 @@ void MeshSurface::Init(const AssetMgr::AssetReference* asset) {
     auto model = CORE->GetCore(ResMgr)->GetAssetReference(parent_id);
     AssetMgr::TYPE type = model->type;
 
-    //프리팹에 모든 정보가 있으므로 아예 프리팹 새로 생성
-    SPrefab* prefab = nullptr;
-
-    switch (type) {
-        case AssetMgr::DAE:
-            prefab = DAELoader::GeneratePrefab(model->path.c_str(), nullptr, this, nullptr, nullptr);
-            break;
-        default:
-            break;
-    }
+    // 프리팹에 모든 정보가 있으므로 아예 프리팹 새로 생성
+    // 프리팹 객체에서만 모든걸 만들어야 로직이 꼬이지 않기 때문에 해당 예외처리는 허용되지 않음 (삭제 예정)
+//    SPrefab* prefab = nullptr;
+//
+//    switch (type) {
+//        case AssetMgr::DAE:
+//            prefab = DAELoader::GeneratePrefab(model->path.c_str(), nullptr, this, nullptr, nullptr);
+//            break;
+//        default:
+//            break;
+//    }
 
     return;
 }
