@@ -47,17 +47,12 @@ void SEnvironmentMgr::RenderPBREnvironment() {
 
     glDisable(GL_CULL_FACE);
 
-//    glGenRenderbuffers(1, &captureRBO_color);
-//    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO_color);
-//    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 512, 512);
     glGenRenderbuffers(1, &captureRBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 512, 512);
 
     glGenFramebuffers(1, &captureFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-//    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-//                              GL_RENDERBUFFER, captureRBO_color);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                               GL_RENDERBUFFER, captureRBO);
 

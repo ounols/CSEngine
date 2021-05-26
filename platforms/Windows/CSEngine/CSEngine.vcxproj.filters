@@ -150,6 +150,9 @@
     <ClCompile Include="..\..\..\src\Util\Loader\ZIP\zip.cpp">
       <Filter>src\Util\Loader</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\Util\Render\SFrameBuffer.cpp">
+      <Filter>src\Util\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Sample\FirstDemoScene.h" />
@@ -393,6 +396,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\Util\Loader\ZIP\miniz.h">
       <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\Render\SFrameBuffer.h">
+      <Filter>src\Util\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
