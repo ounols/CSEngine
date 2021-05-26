@@ -28,7 +28,7 @@ namespace CSE {
 
         std::string PrintValue() const override;
 
-        void SetMesh(DrawableSkinnedMeshComponent* mesh);
+        void SetRootJoint(JointComponent* mesh);
         // void SetAnimation(Animation* animation);
 
         void PlayAnimation(Animation* animation);
@@ -52,7 +52,7 @@ namespace CSE {
         float m_animationTime = -1;
         float m_startTime = -1;
 
-        DrawableSkinnedMeshComponent* m_entity = nullptr;
+        JointComponent* m_rootJoint = nullptr;
         Animation* m_currentAnimation = nullptr;
         //차후 애니메이션 컨트롤러도 제작
 

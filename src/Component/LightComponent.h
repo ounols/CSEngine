@@ -6,6 +6,8 @@
 
 namespace CSE {
 
+    class GLProgramHandle;
+
     class LightComponent : public SComponent {
 
     public:
@@ -15,7 +17,7 @@ namespace CSE {
     public:
         LightComponent();
 
-        ~LightComponent();
+        ~LightComponent() override;
 
 
         void Exterminate() override;
@@ -59,7 +61,8 @@ namespace CSE {
 
         const mat4& GetLightViewMatrix() const;
 
-        void BindDepthMap() const;
+        void BindDepthBuffer() const;
+        void BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const;
 
     private:
         void SetLightPosition() const;
@@ -79,8 +82,8 @@ namespace CSE {
         STexture* m_shadowTexture = nullptr;
         mat4 m_lightProjectionMatrix;
         mat4 m_lightViewMatrix;
-        float m_near = 0.1f;
-        float m_far = 100.f;
+        float m_near = -10.f;
+        float m_far = 10.f;
     };
 
 }

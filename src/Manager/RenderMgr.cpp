@@ -58,6 +58,8 @@ void RenderMgr::Render() const {
             if (programPair.first == nullptr) continue;
             if (renderComp.empty()) continue;
 
+            glCullFace(GL_BACK);
+            glFrontFace(GL_CCW);
             glUseProgram(handler.Program);
             //Attach Light
             lightMgr->AttachLightToShader(&handler);

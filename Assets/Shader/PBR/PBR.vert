@@ -1,7 +1,7 @@
 #version 330 core
 
 
-#define MAX_LIGHTS 12
+#define MAX_LIGHTS 8
 #define MAX_WEIGHTS 3
 #define MAX_JOINTS 60
 
@@ -28,6 +28,10 @@ uniform mat4 u_modelViewMatrix;//Modelview;
 uniform mat4 u_modelViewNoCameraMatrix;//Modelview - no camera matrix;
 //[LIGHT_POSITION]//
 uniform vec4 u_lightPosition[MAX_LIGHTS];//LightPosition;
+//[LIGHT_MATRIX]//
+uniform mat4 u_lightMatrix[MAX_LIGHTS];
+//[LIGHT_SHADOW_MODE]//
+uniform lowp int u_shadowMode[MAX_LIGHTS];
 //[LIGHT_SIZE]//
 uniform int u_lightSize;
 //[LIGHT_TYPE]//
@@ -40,11 +44,12 @@ uniform lowp int u_isSkinning;
 
 
 // Varying
-out vec3 v_eyespaceNormal;//EyespaceNormal
-out vec3 v_lightPosition[MAX_LIGHTS];
-out vec2 v_textureCoordOut;
-out float v_distance[MAX_LIGHTS];
-out vec3 v_worldPosition;
+out mediump vec3 v_eyespaceNormal;//EyespaceNormal
+out lowp vec3 v_lightPosition[MAX_LIGHTS];
+out lowp vec4 v_fragPosLightSpace[MAX_LIGHTS];
+out mediump vec2 v_textureCoordOut;
+out lowp float v_distance[MAX_LIGHTS];
+out mediump vec3 v_worldPosition;
 //varying vec3 v_vertPosition;
 
 
@@ -60,7 +65,7 @@ void main(void) {
     if(u_isSkinning == 1) {
         vec4 totalNormal = vec4(0.0);
 
-        for(int i=0; i<MAX_WEIGHTS; i++) {
+        for(int i=0; i<MAX_WEIGHTS; ++i) {
             mat4 jointTransform = u_jointMatrix[int(a_jointIndices[i])];
             vec4 posePosition = jointTransform * a_position;
             position_final += posePosition * a_weights[i];
@@ -80,23 +85,28 @@ void main(void) {
     v_worldPosition = vec3(u_modelViewNoCameraMatrix * position_final);
 
 
-    for(int i = 0; i < u_lightSize; i++) {
-        	vec4 positionLight;
-        	vec4 directionLight = u_lightPosition[i];
+    for(int i = 0; i < u_lightSize; ++i) {
+        lowp vec4 lightPurePosition = u_modelViewNoCameraMatrix * position_final;
+        lowp vec4 positionLight = lightPurePosition;
+        vec4 directionLight = u_lightPosition[i];
 
-        	//direction & position light
-        	if(u_lightType[i] == 1) {
-        		positionLight = vec4(c_zero, c_zero, c_zero, c_one);
-        	}else {
-        		positionLight = u_modelViewNoCameraMatrix * position_final;
-        	}
+        //direction & position light
+        if (u_lightType[i] == 1) {
+            positionLight = vec4(c_zero, c_zero, c_zero, c_one);
+        }
 
-        	//for positional light
-        	vec3 aux = vec3(directionLight - positionLight);
+        //for positional light
+        vec3 aux = vec3(directionLight - positionLight);
 
-        	// Varying
-        	v_lightPosition[i] = normalize(aux);
-        	v_distance[i] = length(aux);
+        // Varying
+        v_lightPosition[i] = normalize(aux);
+        v_distance[i] = length(aux);
+        // Varying Shadow
+        if (u_shadowMode[i] == 1) {
+            v_fragPosLightSpace[i] = u_lightMatrix[i] * lightPurePosition;
+        } else {
+            v_fragPosLightSpace[i] = vec4(c_zero, c_zero, c_zero, c_one);
+        }
     }
 
 	//vec4 vertPosition = u_modelViewMatrix * a_position;

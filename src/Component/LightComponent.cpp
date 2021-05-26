@@ -189,7 +189,15 @@ const mat4& LightComponent::GetLightViewMatrix() const {
     return m_lightViewMatrix;
 }
 
-void LightComponent::BindDepthMap() const {
+void LightComponent::BindDepthBuffer() const {
     glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void LightComponent::BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const {
+    if(m_shadowTexture == nullptr || m_disableShadow) return;
+
+    m_shadowTexture->Bind(handle.Uniforms.LightShadowMap + index, index);
+    auto matrix = m_lightViewMatrix * m_lightProjectionMatrix;
+    glUniformMatrix4fv(handle.Uniforms.LightMatrix + handleIndex, 1, 0, matrix.Pointer());
 }

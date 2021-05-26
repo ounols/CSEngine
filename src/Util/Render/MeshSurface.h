@@ -45,7 +45,7 @@ namespace CSE {
 
 
         bool
-        MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords, float* weights, float* jointIds);
+        MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords, float* weights, short* jointIds);
 
         bool MakeIndices(int sizeIndic, int* indices);
 

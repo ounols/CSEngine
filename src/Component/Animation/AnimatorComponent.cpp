@@ -24,7 +24,7 @@ void AnimatorComponent::Tick(float elapsedTime) {
     UpdateAnimationTime(elapsedTime);
 
     std::map<int, mat4> currentPose = calculateCurrentAnimationPose();
-    applyPoseToJoints(currentPose, m_entity->GetRootJoint(), mat4::Identity());
+    applyPoseToJoints(currentPose, m_rootJoint, mat4::Identity());
 
 }
 
@@ -32,8 +32,8 @@ void AnimatorComponent::Tick(float elapsedTime) {
 void AnimatorComponent::Exterminate() {
 }
 
-void AnimatorComponent::SetMesh(DrawableSkinnedMeshComponent* mesh) {
-    m_entity = mesh;
+void AnimatorComponent::SetRootJoint(JointComponent* mesh) {
+    m_rootJoint = mesh;
 }
 
 // void AnimatorComponent::SetAnimation(Animation* animation) {
@@ -136,7 +136,7 @@ void AnimatorComponent::CopyReference(SComponent* src, std::map<SGameObject*, SG
     AnimatorComponent* convert = static_cast<AnimatorComponent*>(src);
 
     //Copy Components
-    FIND_COMP_REFERENCE(m_entity, convert, DrawableSkinnedMeshComponent);
+    FIND_COMP_REFERENCE(m_rootJoint, convert, JointComponent);
 
 }
 
@@ -147,8 +147,8 @@ void AnimatorComponent::SetValue(std::string name_str, Arguments value) {
         m_startTime = std::stof(value[0]);
     } else if (name_str == "m_currentAnimation") {
         m_currentAnimation = SResource::Create<Animation>(value[0]);
-    } else if (name_str == "m_entity") {
-        m_entity = gameObject->GetComponentByID<DrawableSkinnedMeshComponent>(value[0]);
+    } else if (name_str == "m_rootJoint") {
+        m_rootJoint = gameObject->GetComponentByID<JointComponent>(value[0]);
     }
 }
 
@@ -159,7 +159,7 @@ std::string AnimatorComponent::PrintValue() const {
     PRINT_VALUE(m_animationTime, m_animationTime);
     PRINT_VALUE(m_startTime, m_startTime);
     PRINT_VALUE(m_currentAnimation, ConvertSpaceStr(m_currentAnimation->GetID()));
-    PRINT_VALUE(m_entity, ConvertSpaceStr(m_entity->GetGameObject()->GetID(m_entity)));
+    PRINT_VALUE(m_rootJoint, ConvertSpaceStr(m_rootJoint->GetGameObject()->GetID(m_rootJoint)));
 
 
     PRINT_END("component");

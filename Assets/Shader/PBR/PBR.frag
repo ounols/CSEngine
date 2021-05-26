@@ -1,6 +1,6 @@
 #version 330 core
 //#version 100
-#define MAX_LIGHTS 12
+#define MAX_LIGHTS 8
 
 precision highp float;
 precision highp int;
@@ -42,6 +42,10 @@ uniform int u_lightType[MAX_LIGHTS];
 uniform float u_lightRadius[MAX_LIGHTS];
 //[LIGHT_COLOR]//
 uniform vec3 u_lightColor[MAX_LIGHTS];
+//[LIGHT_SHADOW_MAP]//
+uniform sampler2D u_shadowMap[MAX_LIGHTS];
+//[LIGHT_SHADOW_MODE]//
+uniform lowp int u_shadowMode[MAX_LIGHTS];
 //[LIGHT_SIZE]//
 uniform int u_lightSize;
 //[CAMERA_POSITION]//
@@ -49,11 +53,11 @@ uniform vec3 u_cameraPosition;
 
 //Varying
 in mediump vec3 v_eyespaceNormal;//EyespaceNormal;
-in vec3 v_lightPosition[MAX_LIGHTS];
-in lowp vec3 v_diffuse;//Diffuse;
+in lowp vec3 v_lightPosition[MAX_LIGHTS];
+in lowp vec4 v_fragPosLightSpace[MAX_LIGHTS];
 in mediump vec2 v_textureCoordOut;
-in float v_distance[MAX_LIGHTS];
-in vec3 v_worldPosition;
+in lowp float v_distance[MAX_LIGHTS];
+in mediump vec3 v_worldPosition;
 
 out vec4 FragColor;
 
@@ -72,6 +76,7 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
 float GeometrySmith_Fast(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 fresnelSchlick(float cosTheta, vec3 F0);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
+float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D);
 
 //Macro Functions
 float ClampedPow(float X, float Y) {
@@ -81,10 +86,10 @@ float ClampedPow(float X, float Y) {
 
 void main(void) {
 
-	vec3 albedo     = u_albedo.r < 0.0 ? pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2)) : u_albedo;
-	float metallic  = u_metallic < 0.0 ? texture(u_sampler_metallic, v_textureCoordOut).r : u_metallic;
-	float roughness = u_roughness < 0.0 ? texture(u_sampler_roughness, v_textureCoordOut).r : u_roughness;
-	float ao        = u_ao < 0.0 ? texture(u_sampler_ao, v_textureCoordOut).r : u_ao;
+	lowp vec3 albedo     = pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2)) * u_albedo;
+	lowp float metallic  = texture(u_sampler_albedo, v_textureCoordOut).b / 2;
+	lowp float roughness = 0.5 - (texture(u_sampler_albedo, v_textureCoordOut).b / 2);
+	lowp float ao        = 1.f;
 
 	vec3 N = normalize(v_eyespaceNormal);
 	vec3 V0 = normalize(N - v_worldPosition);
@@ -98,7 +103,8 @@ void main(void) {
 	// reflectance equation
 	vec3 Lo = vec3(0.0);
 
-	for(int i = 0; i < u_lightSize; i++) {
+	lowp int index_shadow = 0;
+	for(int i = 0; i < u_lightSize; ++i) {
 
 		// calculate per-light radiance
 		vec3 V = (u_lightType[i] > 1) ? V0 : N;
@@ -106,8 +112,12 @@ void main(void) {
 		vec3 H = normalize(V + L);
 		float distance = v_distance[i];
 		float attenuation = 1.0 / (distance * distance);
-		vec3 radiance = u_lightColor[i] * attenuation;
-
+		float shadow = 0;
+		if(u_shadowMode[i] == 1) {
+			shadow = ShadowCalculation(index_shadow, v_fragPosLightSpace[i], N, L);
+			++index_shadow;
+		}
+		vec3 radiance = (u_lightColor[i] * attenuation) * (1.0 - shadow);
 		// Cook-Torrance BRDF
 		float NDF = DistributionGGX(N, H, roughness);
 		float G   = GeometrySmith(N, V, L, roughness);
@@ -141,7 +151,7 @@ void main(void) {
 	vec3 kS = fresnelSchlickRoughness(max(dot(N, V0), 0.0), F0, roughness);
 	vec3 kD = 1.0 - kS;
 	kD *= 1.0 - metallic;
-	vec3 irradiance = u_irradiance.r < 0.0 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
+	vec3 irradiance = texture(u_sampler_irradiance, N).rgb;
 	vec3 diffuse      = irradiance * albedo;
 
 	// sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
@@ -231,4 +241,38 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0) {
 
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) {
 	return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
+float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
+{
+	// perform perspective divide
+	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	// transform to [0,1] range
+	projCoords = projCoords * 0.5 + 0.5;
+	// get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+	float closestDepth = texture(u_shadowMap[index], projCoords.xy).r;
+	// get depth of current fragment from light's perspective
+	float currentDepth = projCoords.z;
+	// calculate bias (based on depth map resolution and slope)
+	float bias = max(0.05 * (1.0 - dot(N, D)), 0.005);
+	// check whether current frag pos is in shadow
+	// float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+	// PCF
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(u_shadowMap[index], 0);
+	for(int x = -1; x <= 1; ++x)
+	{
+		for(int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(u_shadowMap[index], projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
+		}
+	}
+	shadow /= 9.0;
+
+	// keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+	if(projCoords.z > 1.0)
+	shadow = 0.0;
+
+	return shadow;
 }

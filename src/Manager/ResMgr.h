@@ -4,6 +4,7 @@
 #include "Base/SContainer.h"
 #include "../Object/SResource.h"
 #include "AssetMgr.h"
+#include "Base/CoreBase.h"
 
 #ifdef __ANDROID__
 #include <android/asset_manager.h>

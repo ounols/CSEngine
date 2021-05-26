@@ -6,8 +6,8 @@
 
 
 #include <vector>
-#include "../GLProgramHandle.h"
 #include "../../Object/SResource.h"
+#include "../../OGLDef.h"
 
 namespace CSE {
 

@@ -2,11 +2,14 @@
 
 #include "SComponent.h"
 #include "../Util/Render/RenderInterfaces.h"
-#include "DrawableStaticMeshComponent.h"
-#include "DrawableSkinnedMeshComponent.h"
 #include "../Util/Render/SMaterial.h"
 
 namespace CSE {
+
+    class DrawableStaticMeshComponent;
+    class DrawableSkinnedMeshComponent;
+    class LightMgr;
+    class RenderMgr;
 
     class RenderComponent : public SComponent, public SIRender {
     public:
@@ -40,6 +43,8 @@ namespace CSE {
         void SetJointMatrix(const GLProgramHandle* handle) const;
 
     private:
+        LightMgr* m_lightMgr = nullptr;
+        RenderMgr* m_renderMgr = nullptr;
         DrawableStaticMeshComponent* m_mesh = nullptr;
         DrawableSkinnedMeshComponent* m_skinningMesh = nullptr;
         SMaterial* m_material_clone = nullptr;

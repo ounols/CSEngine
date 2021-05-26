@@ -4,12 +4,13 @@
 #include "../Manager/EngineCore.h"
 #include "../Util/Render/ShaderUtil.h"
 #include "TransformComponent.h"
+#include "DrawableSkinnedMeshComponent.h"
 
 using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(RenderComponent) {
-    auto renderMgr = CORE->GetCore(RenderMgr);
-    renderMgr->Register(this);
+    m_renderMgr = CORE->GetCore(RenderMgr);
+    m_renderMgr->Register(this);
     SetMaterial(nullptr);
 }
 
@@ -18,7 +19,8 @@ RenderComponent::~RenderComponent() {}
 
 
 void RenderComponent::Exterminate() {
-//    RenderMgr::getInstance()->Remove(this);
+    if(m_renderMgr != nullptr) m_renderMgr->Remove(this);
+    if(m_lightMgr != nullptr) m_lightMgr->RemoveShadowObject(this);
     SAFE_DELETE(m_material_clone);
 }
 
@@ -26,8 +28,8 @@ void RenderComponent::Exterminate() {
 void RenderComponent::Init() {
 
     if(!m_disableShadow) {
-        auto lightMgr = CORE->GetCore(LightMgr);
-        lightMgr->RegisterShadowObject(this);
+        m_lightMgr = CORE->GetCore(LightMgr);
+        m_lightMgr->RegisterShadowObject(this);
     }
 
     m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();

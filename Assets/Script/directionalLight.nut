@@ -14,7 +14,7 @@ class directionalLight extends CSEngineScript {
         count += 0.01;
         local direction = vec4();
         local a = sin(count);
-        direction.Set(sin(count), cos(count), 0, 1);
+        direction.Set(sin(count), cos(count), 0.3, 1);
         lightComp.SetDirection(direction);
     }
 

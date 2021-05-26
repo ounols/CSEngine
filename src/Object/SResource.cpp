@@ -6,6 +6,8 @@
 #include "SResource.h"
 #include "../Manager/ResMgr.h"
 #include "../Manager/EngineCore.h"
+#include "../Manager/MemoryMgr.h"
+
 
 using namespace CSE;
 
@@ -16,7 +18,7 @@ SResource::SResource() {
 }
 
 SResource::SResource(bool isRegister) {
-    m_name = "Unregisted Resource";
+    m_name = "Unregister Resource";
 }
 
 SResource::SResource(const SResource* resource, bool isRegister) : SObject(isRegister) {

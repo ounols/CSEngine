@@ -7,7 +7,6 @@
 #include <string>
 #include "../Manager/AssetMgr.h"
 #include "../SObject.h"
-#include "../Manager/MemoryMgr.h"
 
 namespace CSE {
 
