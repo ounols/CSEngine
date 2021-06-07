@@ -4,7 +4,6 @@
 #include "Base/SContainer.h"
 #include "../Component/LightComponent.h"
 #include "../Util/GLProgramHandle.h"
-#include "../Util/Render/SCubeTexture.h"
 #include "../Util/Render/RenderInterfaces.h"
 
 namespace CSE {
@@ -32,7 +31,7 @@ namespace CSE {
         }
 
     private:
-        SCubeTexture* m_currentSkybox = nullptr;
+        STexture* m_currentSkybox = nullptr;
         std::list<SIRender*> m_shadowObject;
         mutable int m_shadowCount = 0;
     };

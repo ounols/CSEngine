@@ -120,9 +120,6 @@
     <ClCompile Include="..\..\..\src\Manager\SCloneFactory.cpp">
       <Filter>src\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\Util\Render\SCubeTexture.cpp">
-      <Filter>src\Util\Render</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\Util\Render\ShaderUtil.cpp">
       <Filter>src\Util\Render</Filter>
     </ClCompile>
@@ -329,9 +326,6 @@
       <Filter>src\Util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\Util\Render\ShaderUtil.h">
-      <Filter>src\Util\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\Util\Render\SCubeTexture.h">
       <Filter>src\Util\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\Util\Animation\Skeleton.h">

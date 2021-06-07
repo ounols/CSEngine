@@ -219,7 +219,6 @@
     <ClInclude Include="..\..\..\src\Util\Render\MeshSurface.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SEnvironmentMgr.h" />
     <ClInclude Include="..\..\..\src\Util\Render\RenderInterfaces.h" />
-    <ClInclude Include="..\..\..\src\Util\Render\SCubeTexture.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SFrameBuffer.h" />
     <ClInclude Include="..\..\..\src\Util\Render\ShaderUtil.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SkyboxUtil.h" />
@@ -277,7 +276,6 @@
     <ClCompile Include="..\..\..\src\Util\MoreComponentFunc.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\MeshSurface.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\SEnvironmentMgr.cpp" />
-    <ClCompile Include="..\..\..\src\Util\Render\SCubeTexture.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\SFrameBuffer.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\ShaderUtil.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\SMaterial.cpp" />

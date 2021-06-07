@@ -14,10 +14,11 @@ namespace CSE {
     class STexture : public SResource {
     public:
         enum TYPE {
-            PNG, UNKOWN
+            TEX_2D, TEX_CUBE
         };
     public:
         STexture();
+        STexture(TYPE type);
 
         virtual ~STexture();
 
@@ -38,6 +39,9 @@ namespace CSE {
         virtual bool InitTexture(int width, int height, int channel = GL_RGB, int internalFormat = GL_RGB,
                                  int glType = GL_UNSIGNED_BYTE);
 
+        bool InitTextureMipmap(int width, int height, int channel = GL_RGB, int internalFormat = GL_RGB,
+                                 int glType = GL_UNSIGNED_BYTE);
+
         virtual void SetParameteri(int targetName, int value) const;
 
         virtual void SetParameterfv(int targetName, float* value) const;
@@ -49,10 +53,18 @@ namespace CSE {
 
         virtual void Bind(GLint location, int layout);
 
+        void GenerateMipmap();
+
+        TYPE GetType() const;
+
+        void SetType(TYPE type);
+
     protected:
         virtual void Init(const AssetMgr::AssetReference* asset) override;
 
     protected:
+        TYPE m_type = TEX_2D;
+        int m_targetGL = GL_TEXTURE_2D;
         int m_width = 0;
         int m_height = 0;
         int m_channels = 0;
