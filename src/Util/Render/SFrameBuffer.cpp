@@ -26,7 +26,7 @@ void SFrameBuffer::Init(const AssetMgr::AssetReference* asset) {
 
 // Init function for SFrameBuffer
 void SFrameBuffer::Init(SFrameBuffer::BufferType type, int width, int height) {
-    m_type = type;
+    m_bufferType = type;
     m_width = width;
     m_height = height;
 
@@ -36,6 +36,9 @@ void SFrameBuffer::Init(SFrameBuffer::BufferType type, int width, int height) {
 
     glGenFramebuffers(1, &m_fbo);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_fbo);
+
+    // 렌더링 함수에 적용하도록 수정이 필요함
+    glFramebufferTexture2D(GL_FRAMEBUFFER, m_attachmentGL, GL_TEXTURE_2D, m_texId, 0);
 }
 
 void SFrameBuffer::AttachFrameBuffer() const {

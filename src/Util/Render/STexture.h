@@ -13,12 +13,12 @@ namespace CSE {
 
     class STexture : public SResource {
     public:
-        enum TYPE {
+        enum Type {
             TEX_2D, TEX_CUBE
         };
     public:
         STexture();
-        STexture(TYPE type);
+        STexture(Type type);
 
         virtual ~STexture();
 
@@ -55,15 +55,15 @@ namespace CSE {
 
         void GenerateMipmap();
 
-        TYPE GetType() const;
+        Type GetType() const;
 
-        void SetType(TYPE type);
+        void SetType(Type type);
 
     protected:
         virtual void Init(const AssetMgr::AssetReference* asset) override;
 
     protected:
-        TYPE m_type = TEX_2D;
+        Type m_type = TEX_2D;
         int m_targetGL = GL_TEXTURE_2D;
         int m_width = 0;
         int m_height = 0;

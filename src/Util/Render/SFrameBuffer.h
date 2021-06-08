@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../Object/SResource.h"
+#include "STexture.h"
 
 
 namespace CSE {
 
-    class SFrameBuffer : public SResource {
+    class SFrameBuffer : public STexture {
     public:
         enum BufferType {
             RENDER = 0, DEPTH = 1, STENCIL = 2,
@@ -23,7 +23,8 @@ namespace CSE {
         void Init(const AssetMgr::AssetReference* asset) override;
 
     private:
-        BufferType m_type = RENDER;
+        BufferType m_bufferType = RENDER;
+        int m_attachmentGL = GL_COLOR_ATTACHMENT0;
         int m_width = 512;
         int m_height = 512;
 

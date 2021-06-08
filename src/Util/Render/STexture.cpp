@@ -17,7 +17,7 @@ STexture::STexture() {
     SetUndestroyable(true);
 }
 
-STexture::STexture(STexture::TYPE type) {
+STexture::STexture(STexture::Type type) {
     SetUndestroyable(true);
     SetType(type);
 }
@@ -179,11 +179,11 @@ void STexture::GenerateMipmap() {
     glGenerateMipmap(m_targetGL);
 }
 
-STexture::TYPE STexture::GetType() const {
+STexture::Type STexture::GetType() const {
     return m_type;
 }
 
-void STexture::SetType(STexture::TYPE type) {
+void STexture::SetType(STexture::Type type) {
     m_type = type;
     switch (m_type) {
         case TEX_2D:
