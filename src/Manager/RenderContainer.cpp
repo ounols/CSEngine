@@ -1,5 +1,5 @@
 #include "RenderContainer.h"
-#include "../Util/GLProgramHandle.h"
+#include "../Util/Render/SFrameBuffer.h"
 #include <iostream>
 
 using namespace CSE;
@@ -53,4 +53,13 @@ void RenderContainer::Remove(SIRender* object) {
             m_rendersLayer.erase(orderLayer);
         }
     }
+}
+
+void RenderContainer::RegisterFrameBuffer(SFrameBuffer* buffer) {
+    m_frameBuffer.push_back(buffer);
+}
+
+void RenderContainer::RemoveFrameBuffer(SFrameBuffer* buffer) {
+    auto it = std::find(m_frameBuffer.begin(), m_frameBuffer.end(), buffer);
+    m_frameBuffer.erase(it);
 }

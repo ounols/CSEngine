@@ -1,4 +1,5 @@
 #include "LightComponent.h"
+#include "CameraComponent.h"
 #include "../Manager/LightMgr.h"
 #include "TransformComponent.h"
 #include "../Manager/EngineCore.h"
@@ -200,4 +201,9 @@ void LightComponent::BindShadow(const GLProgramHandle& handle, int handleIndex, 
     m_shadowTexture->Bind(handle.Uniforms.LightShadowMap + index, index);
     auto matrix = m_lightViewMatrix * m_lightProjectionMatrix;
     glUniformMatrix4fv(handle.Uniforms.LightMatrix + handleIndex, 1, 0, matrix.Pointer());
+}
+
+CameraMatrixStruct LightComponent::GetCameraMatrixStruct() {
+    const auto& position = gameObject->GetTransform();
+    return CameraMatrixStruct(m_lightViewMatrix, m_lightProjectionMatrix, position->m_position);
 }

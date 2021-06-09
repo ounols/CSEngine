@@ -98,24 +98,20 @@ void LightMgr::RenderShadowMap(GLProgramHandle* handle) const {
     m_shadowCount = 0;
     for (const auto& light : m_objects) {
         if(light->m_disableShadow) continue;
-        const auto& light_transform = light->GetGameObject()->GetTransform();
-        const auto& projectionMatrix = light->GetLightProjectionMatrix();
-        const auto& viewMatrix = light->GetLightViewMatrix();
+        const auto camera = light->GetCameraMatrixStruct();
 
         light->BindDepthBuffer();
         for (const auto& shadowObject : m_shadowObject) {
             if(!shadowObject->isRenderActive) continue;
             const auto& shadow_transform = static_cast<RenderComponent*>(shadowObject)->GetGameObject()->GetTransform();
 
-            if(SHADOW_DISTANCE < vec3::Distance(light_transform->m_position, shadow_transform->m_position))
+            if(SHADOW_DISTANCE < vec3::Distance(camera.cameraPosition, shadow_transform->m_position))
                 continue;
 
-            shadowObject->SetMatrix(viewMatrix, light_transform->m_position, projectionMatrix, handle);
+            shadowObject->SetMatrix(camera, handle);
             shadowObject->Render(handle);
         }
         ++m_shadowCount;
-//        std::string save_str = CSE::AssetsPath() + "test.bmp";
-//        saveScreenshot(save_str.c_str());
     }
     glDisableVertexAttribArray(handle->Attributes.Position);
     glDisableVertexAttribArray(handle->Attributes.Weight);

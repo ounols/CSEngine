@@ -41,11 +41,39 @@ void SFrameBuffer::Init(SFrameBuffer::BufferType type, int width, int height) {
     glFramebufferTexture2D(GL_FRAMEBUFFER, m_attachmentGL, GL_TEXTURE_2D, m_texId, 0);
 }
 
-void SFrameBuffer::AttachFrameBuffer() const {
+void SFrameBuffer::AttachFrameBuffer(int index, int level) const {
     glViewport(0, 0, m_width, m_height);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    if(m_type == TEX_CUBE) {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, m_attachmentGL, GL_TEXTURE_CUBE_MAP_POSITIVE_X + index,
+                               m_texId, level);
+    }
+    else {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, m_attachmentGL, GL_TEXTURE_2D, m_texId, level);
+    }
 }
 
 void SFrameBuffer::DetachFrameBuffer() const {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+unsigned int SFrameBuffer::GetRenderBufferID() const {
+    return m_rbo;
+}
+
+unsigned int SFrameBuffer::GetFrameBufferID() const {
+    return m_fbo;
+}
+
+void SFrameBuffer::SetBufferType(SFrameBuffer::BufferType bufferType) {
+    m_bufferType = bufferType;
+    switch (bufferType) {
+        case RENDER:
+            m_attachmentGL = GL_COLOR_ATTACHMENT0; break;
+        case DEPTH:
+            m_attachmentGL = GL_DEPTH_ATTACHMENT; break;
+        case STENCIL:
+        default:
+            break;
+    }
 }

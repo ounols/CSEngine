@@ -1,6 +1,7 @@
 #include "RenderMgr.h"
 #include "LightMgr.h"
 #include "EngineCore.h"
+#include "../Util/Render/SFrameBuffer.h"
 // #include <iostream>
 
 using namespace CSE;
@@ -41,9 +42,7 @@ void RenderMgr::Render() const {
 
     CameraComponent* cameraComponent = cameraMgr->GetCurrentCamera();
     if(cameraComponent == nullptr) return;
-    mat4 camera = cameraComponent->GetCameraMatrix();
-    mat4 projection = cameraComponent->GetProjectionMatrix();
-    vec3 cameraPosition = cameraComponent->GetCameraPosition();
+    const auto camera = cameraComponent->GetCameraMatrixStruct();
 
     OrderRenderLayer orderRenderLayer(m_rendersLayer.begin(), m_rendersLayer.end());
 
@@ -75,7 +74,7 @@ void RenderMgr::Render() const {
                 if (render == nullptr) continue;
                 if (!render->isRenderActive) continue;
 
-                render->SetMatrix(camera, cameraPosition, projection);
+                render->SetMatrix(camera);
                 render->Render();
             }
 
@@ -93,8 +92,13 @@ void RenderMgr::Render() const {
 
 }
 
+void RenderMgr::RenderInstance(const GLProgramHandle* handle) const {
+
+}
+
 
 void RenderMgr::Exterminate() {
     m_rendersLayer.clear();
     SAFE_DELETE(m_environmentMgr);
 }
+

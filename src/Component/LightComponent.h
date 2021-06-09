@@ -7,6 +7,7 @@
 namespace CSE {
 
     class GLProgramHandle;
+    struct CameraMatrixStruct;
 
     class LightComponent : public SComponent {
 
@@ -60,6 +61,8 @@ namespace CSE {
         const mat4& GetLightProjectionMatrix() const;
 
         const mat4& GetLightViewMatrix() const;
+
+        CameraMatrixStruct GetCameraMatrixStruct();
 
         void BindDepthBuffer() const;
         void BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const;

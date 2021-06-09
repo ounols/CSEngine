@@ -3,6 +3,7 @@
 #include "SComponent.h"
 #include "../Util/Render/RenderInterfaces.h"
 #include "../Util/Render/SMaterial.h"
+#include "CameraComponent.h"
 
 namespace CSE {
 
@@ -27,7 +28,8 @@ namespace CSE {
 
 
         void
-        SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection, const GLProgramHandle* handle = nullptr) override;
+        SetMatrix(const CameraMatrixStruct& cameraMatrixStruct,
+                  const GLProgramHandle* handle = nullptr) override;
 
         void Render(const GLProgramHandle* handle = nullptr) const override;
 

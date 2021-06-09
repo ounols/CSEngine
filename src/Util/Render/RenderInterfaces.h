@@ -7,6 +7,8 @@
 #include "GLMeshID.h"
 
 namespace CSE {
+    struct CameraMatrixStruct;
+
     class SISurface : public SResource {
     public:
 
@@ -41,7 +43,8 @@ namespace CSE {
         virtual ~SIRender() {}
 
         virtual void
-        SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection, const GLProgramHandle* handle = nullptr) = 0;
+        SetMatrix(const CameraMatrixStruct& cameraMatrixStruct,
+                  const GLProgramHandle* handle = nullptr) = 0;
 
         virtual void Render(const GLProgramHandle* handle = nullptr) const = 0;
 

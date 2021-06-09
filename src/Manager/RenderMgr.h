@@ -20,6 +20,8 @@ namespace CSE {
 
         void Render() const override;
 
+        void RenderInstance(const GLProgramHandle* handle = nullptr) const;
+
     private:
         void Exterminate();
 

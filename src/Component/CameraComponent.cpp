@@ -219,3 +219,7 @@ std::string CameraComponent::PrintValue() const {
 
     PRINT_END("component");
 }
+
+CameraMatrixStruct CameraComponent::GetCameraMatrixStruct() {
+    return CameraMatrixStruct(m_cameraMatrix, GetProjectionMatrix(), GetCameraPosition());
+}

@@ -15,9 +15,14 @@ namespace CSE {
         ~SFrameBuffer();
 
         void Init(BufferType type, int width, int height);
-        void AttachFrameBuffer() const;
+        void AttachFrameBuffer(int index = 0, int level = 0) const;
         void DetachFrameBuffer() const;
         void Exterminate() override;
+
+        unsigned int GetRenderBufferID() const;
+        unsigned int GetFrameBufferID() const;
+
+        void SetBufferType(BufferType bufferType);
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;

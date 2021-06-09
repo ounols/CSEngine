@@ -1,4 +1,5 @@
 #include "RenderComponent.h"
+#include "CameraComponent.h"
 #include "../Manager/RenderMgr.h"
 #include "../Manager/LightMgr.h"
 #include "../Manager/EngineCore.h"
@@ -56,9 +57,11 @@ void RenderComponent::Tick(float elapsedTime) {
 }
 
 
-void RenderComponent::SetMatrix(mat4 camera, vec3 cameraPosition, mat4 projection, const GLProgramHandle* handle) {
+void
+RenderComponent::SetMatrix(const CameraMatrixStruct& cameraMatrixStruct, const GLProgramHandle* handle) {
     const auto& current_handle = handle == nullptr ? m_material_clone->GetHandle() : handle;
-    ShaderUtil::BindCameraToShader(*current_handle, camera, cameraPosition, projection,
+    ShaderUtil::BindCameraToShader(*current_handle, cameraMatrixStruct.camera, cameraMatrixStruct.cameraPosition,
+                                   cameraMatrixStruct.projection,
                                    static_cast<const TransformComponent*>(gameObject->GetTransform())->GetMatrix());
 }
 

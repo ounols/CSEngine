@@ -6,6 +6,15 @@
 
 namespace CSE {
 
+    struct CameraMatrixStruct {
+        mat4 camera;
+        mat4 projection;
+        vec3 cameraPosition;
+
+        CameraMatrixStruct(mat4 camera, mat4 projection, vec3 cameraPosition)
+                : camera(camera), projection(projection), cameraPosition(cameraPosition) {}
+    };
+
     class CameraComponent : public SComponent {
     public:
         enum CAMERATYPE {
@@ -42,6 +51,8 @@ namespace CSE {
             }
             return m_projectionMatrix;
         }
+
+        CameraMatrixStruct GetCameraMatrixStruct();
 
         void SetTarget(vec3 target);
 

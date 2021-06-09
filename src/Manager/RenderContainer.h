@@ -6,6 +6,8 @@
 
 namespace CSE {
 
+    class SFrameBuffer;
+
     class RenderContainer {
     public:
         RenderContainer();
@@ -19,11 +21,14 @@ namespace CSE {
 
     public:
         void Register(SIRender* object);
+        void RegisterFrameBuffer(SFrameBuffer* buffer);
 
         void Remove(SIRender* object);
+        void RemoveFrameBuffer(SFrameBuffer* buffer);
 
     protected:
         OrderRenderLayer m_rendersLayer;
+        std::vector<SFrameBuffer*> m_frameBuffer;
     };
 
 }
