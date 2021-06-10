@@ -14,7 +14,7 @@ namespace CSE {
         SFrameBuffer();
         ~SFrameBuffer();
 
-        void Init(BufferType type, int width, int height);
+        void InitFrameBuffer(BufferType type, int width, int height);
         void AttachFrameBuffer(int index = 0, int level = 0) const;
         void DetachFrameBuffer() const;
         void Exterminate() override;
@@ -23,6 +23,11 @@ namespace CSE {
         unsigned int GetFrameBufferID() const;
 
         void SetBufferType(BufferType bufferType);
+
+        int GetWidth() const;
+        int GetHeight() const;
+
+        BufferType GetBufferType() const;
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;

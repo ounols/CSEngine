@@ -2,6 +2,7 @@
 #include "TransformComponent.h"
 #include "../Manager/CameraMgr.h"
 #include "../Manager/EngineCore.h"
+#include "../Util/Render/SFrameBuffer.h"
 
 #include <mutex>
 
@@ -54,6 +55,7 @@ SComponent* CameraComponent::Clone(SGameObject* object) {
     comp->m_cameraMatrix = m_cameraMatrix;
     comp->m_projectionMatrix = m_projectionMatrix;
     comp->m_resultTarget = m_resultTarget;
+    comp->m_frameBuffer = m_frameBuffer;
 
 
     comp->m_type = m_type;
@@ -152,7 +154,7 @@ vec3 CameraComponent::GetCameraPosition() const {
 }
 
 
-void CameraComponent::SetProjectionMatrix() {
+void CameraComponent::SetProjectionMatrix() const {
 	std::mutex mutex;
 
 	mutex.lock();
@@ -198,6 +200,8 @@ void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments v
     } else if (name_str == "m_distance") {
         m_Near = std::stof(value[0]);
         m_Far = std::stof(value[1]);
+    } else if (name_str == "m_frameBuffer") {
+        m_frameBuffer = SResource::Create<SFrameBuffer>(value[0]);
     }
 
 }
@@ -215,11 +219,19 @@ std::string CameraComponent::PrintValue() const {
     PRINT_VALUE(m_pFov, m_pFov);
     PRINT_VALUE(m_orthoValue, m_oLeft, ' ', m_oRight, ' ', m_oBottom, ' ', m_oTop);
     PRINT_VALUE(m_distance, m_Near, ' ', m_Far);
-
+    if(m_frameBuffer != nullptr) PRINT_VALUE(m_frameBuffer, ConvertSpaceStr(m_frameBuffer->GetID()));
 
     PRINT_END("component");
 }
 
-CameraMatrixStruct CameraComponent::GetCameraMatrixStruct() {
+CameraMatrixStruct CameraComponent::GetCameraMatrixStruct() const {
     return CameraMatrixStruct(m_cameraMatrix, GetProjectionMatrix(), GetCameraPosition());
+}
+
+SFrameBuffer* CameraComponent::GetFrameBuffer() const {
+    return m_frameBuffer;
+}
+
+void CameraComponent::SetFrameBuffer(SFrameBuffer* frameBuffer) {
+    m_frameBuffer = frameBuffer;
 }

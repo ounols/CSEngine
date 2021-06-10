@@ -18,7 +18,7 @@ namespace CSE {
     class AssetMgr {
     public:
         enum TYPE {
-            NONE, TEX_2D, TEX_CUBEMAP, MATERIAL, DAE, PREFAB, SCENE, SCRIPT, TXT, SHADER, SHADER_HANDLE, INI
+            NONE, TEX_2D, TEX_CUBEMAP, TEX_FRAMEBUFFER, MATERIAL, DAE, PREFAB, SCENE, SCRIPT, TXT, SHADER, SHADER_HANDLE, INI
         };
 
         struct AssetReference {

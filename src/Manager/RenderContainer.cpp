@@ -54,12 +54,3 @@ void RenderContainer::Remove(SIRender* object) {
         }
     }
 }
-
-void RenderContainer::RegisterFrameBuffer(SFrameBuffer* buffer) {
-    m_frameBuffer.push_back(buffer);
-}
-
-void RenderContainer::RemoveFrameBuffer(SFrameBuffer* buffer) {
-    auto it = std::find(m_frameBuffer.begin(), m_frameBuffer.end(), buffer);
-    m_frameBuffer.erase(it);
-}

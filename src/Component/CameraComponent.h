@@ -2,6 +2,7 @@
 
 #include "SComponent.h"
 #include "../Util/Vector.h"
+#include "../Util/Render/CameraBase.h"
 #include "DrawableStaticMeshComponent.h"
 
 namespace CSE {
@@ -15,7 +16,9 @@ namespace CSE {
                 : camera(camera), projection(projection), cameraPosition(cameraPosition) {}
     };
 
-    class CameraComponent : public SComponent {
+    class SFrameBuffer;
+
+    class CameraComponent : public SComponent, public CameraBase {
     public:
         enum CAMERATYPE {
             PERSPECTIVE, ORTHO
@@ -45,14 +48,14 @@ namespace CSE {
 
         vec3 GetCameraPosition() const;
 
-        mat4 GetProjectionMatrix() {
+        mat4 GetProjectionMatrix() const {
             if (!m_isProjectionInited) {
                 SetProjectionMatrix();
             }
             return m_projectionMatrix;
         }
 
-        CameraMatrixStruct GetCameraMatrixStruct();
+        CameraMatrixStruct GetCameraMatrixStruct() const override;
 
         void SetTarget(vec3 target);
 
@@ -70,7 +73,11 @@ namespace CSE {
 
         void SetOrtho(float left, float right, float top, float bottom);
 
-        void SetProjectionMatrix();
+        void SetProjectionMatrix() const;
+
+        SFrameBuffer* GetFrameBuffer() const override;
+
+        void SetFrameBuffer(SFrameBuffer* frameBuffer);
 
 
     private:
@@ -83,12 +90,13 @@ namespace CSE {
         SGameObject* m_targetObject;
 
         mat4 m_cameraMatrix;
-        mat4 m_projectionMatrix;
+        mutable mat4 m_projectionMatrix;
         vec3 m_resultTarget;
+        SFrameBuffer* m_frameBuffer = nullptr;
 
 
         CAMERATYPE m_type = PERSPECTIVE;
-        bool m_isProjectionInited = false;
+        mutable bool m_isProjectionInited = false;
 
         //perspective
         float m_pFov = 45.f;

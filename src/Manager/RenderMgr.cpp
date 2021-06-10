@@ -2,6 +2,8 @@
 #include "LightMgr.h"
 #include "EngineCore.h"
 #include "../Util/Render/SFrameBuffer.h"
+#include "../Util/Render/SEnvironmentMgr.h"
+#include "CameraMgr.h"
 // #include <iostream>
 
 using namespace CSE;
@@ -36,14 +38,42 @@ void RenderMgr::SetViewport(int width, int height) {
 }
 
 void RenderMgr::Render() const {
+    // Render Order : Depth Buffers -> Render Buffers -> Main Render Buffer
+
     lightMgr->RenderShadowMap(m_environmentMgr->GetShadowEnvironment());
 
-    glViewport(0, 0, (GLsizei) m_width, (GLsizei) m_height);
+    const auto& cameraObjects = cameraMgr->GetAll();
+    const auto& mainCamera = cameraMgr->GetCurrentCamera();
 
-    CameraComponent* cameraComponent = cameraMgr->GetCurrentCamera();
-    if(cameraComponent == nullptr) return;
-    const auto camera = cameraComponent->GetCameraMatrixStruct();
+    // Render active sub cameras.
+    for (const auto& camera : cameraObjects) {
+        if(!camera->GetIsEnable() || camera == mainCamera) continue;
+        RenderInstance(*camera);
+    }
 
+    if(mainCamera == nullptr) return;
+    // Main Render Buffer
+    RenderInstance(*mainCamera);
+
+}
+
+void RenderMgr::RenderInstance(const CameraBase& camera, const GLProgramHandle* custom_handler) const {
+
+    const auto cameraMatrix = camera.GetCameraMatrixStruct();
+    const auto& frameBuffer = camera.GetFrameBuffer();
+    int customHandlerID = custom_handler != nullptr ? custom_handler->Program : -1;
+    if(frameBuffer == nullptr) {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, (GLsizei) m_width, (GLsizei) m_height);
+    }
+    else {
+        // If the framebuffer is a depth buffer
+        if(frameBuffer->GetBufferType() == SFrameBuffer::DEPTH) {
+            customHandlerID = m_environmentMgr->GetShadowEnvironment()->Program;
+        }
+        frameBuffer->AttachFrameBuffer();
+        glViewport(0, 0, (GLsizei) frameBuffer->GetWidth(), (GLsizei) frameBuffer->GetHeight());
+    }
     OrderRenderLayer orderRenderLayer(m_rendersLayer.begin(), m_rendersLayer.end());
 
     for (const auto& orderLayerPair : orderRenderLayer) {
@@ -59,7 +89,7 @@ void RenderMgr::Render() const {
 
             glCullFace(GL_BACK);
             glFrontFace(GL_CCW);
-            glUseProgram(handler.Program);
+            glUseProgram(customHandlerID < 0 ? handler.Program : customHandlerID);
             //Attach Light
             lightMgr->AttachLightToShader(&handler);
 
@@ -74,7 +104,7 @@ void RenderMgr::Render() const {
                 if (render == nullptr) continue;
                 if (!render->isRenderActive) continue;
 
-                render->SetMatrix(camera);
+                render->SetMatrix(cameraMatrix);
                 render->Render();
             }
 
@@ -92,13 +122,11 @@ void RenderMgr::Render() const {
 
 }
 
-void RenderMgr::RenderInstance(const GLProgramHandle* handle) const {
+void RenderMgr::RenderShadowInstance(const CameraBase& camera, const GLProgramHandle* handle) const {
 
 }
-
 
 void RenderMgr::Exterminate() {
     m_rendersLayer.clear();
     SAFE_DELETE(m_environmentMgr);
 }
-
