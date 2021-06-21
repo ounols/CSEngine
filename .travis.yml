@@ -8,7 +8,7 @@ compiler:
 jobs:
   include:
     stage: BuildEngine
-    if: branch = master
+    if: (branch = master) OR (branch = build_testing)
     name: "Build Engine"
     before_install:
       # Setting Environment
