@@ -25,7 +25,8 @@ namespace CSE {
 
     private:
         void RenderInstance(const CameraBase& camera, const GLProgramHandle* custom_handler = nullptr) const;
-        void RenderShadowInstance(const CameraBase& camera, const GLProgramHandle* handle) const;
+        void RenderShadowInstance(const CameraBase& camera, const GLProgramHandle& custom_handler,
+                                  const std::list<SIRender*>& render_objects = std::list<SIRender*>()) const;
 
         void Exterminate();
 

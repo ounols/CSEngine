@@ -4,6 +4,7 @@
 #include "../Util/Render/SFrameBuffer.h"
 #include "../Util/Render/SEnvironmentMgr.h"
 #include "CameraMgr.h"
+#include "../Component/RenderComponent.h"
 // #include <iostream>
 
 using namespace CSE;
@@ -40,19 +41,27 @@ void RenderMgr::SetViewport(int width, int height) {
 void RenderMgr::Render() const {
     // Render Order : Depth Buffers -> Render Buffers -> Main Render Buffer
 
-    lightMgr->RenderShadowMap(m_environmentMgr->GetShadowEnvironment());
+    // 1. Render depth buffer for shadows.
+    const auto& lightObjects = lightMgr->GetAll();
+    const auto& shadowObjects = lightMgr->GetShadowObject();
+    const auto& shadowEnvironment = m_environmentMgr->GetShadowEnvironment();
+    for (const auto& light : lightObjects) {
+        if(light->m_disableShadow) continue;
+        RenderShadowInstance(*light, *shadowEnvironment, shadowObjects);
+    }
+    lightMgr->RefreshShadowCount();
 
     const auto& cameraObjects = cameraMgr->GetAll();
     const auto& mainCamera = cameraMgr->GetCurrentCamera();
 
-    // Render active sub cameras.
+    // 2. Render active sub cameras.
     for (const auto& camera : cameraObjects) {
-        if(!camera->GetIsEnable() || camera == mainCamera) continue;
+        if(!camera->GetIsEnable() || camera == mainCamera || camera->GetFrameBuffer() == nullptr) continue;
         RenderInstance(*camera);
     }
 
     if(mainCamera == nullptr) return;
-    // Main Render Buffer
+    // 3. Main Render Buffer
     RenderInstance(*mainCamera);
 
 }
@@ -72,7 +81,6 @@ void RenderMgr::RenderInstance(const CameraBase& camera, const GLProgramHandle* 
             customHandlerID = m_environmentMgr->GetShadowEnvironment()->Program;
         }
         frameBuffer->AttachFrameBuffer();
-        glViewport(0, 0, (GLsizei) frameBuffer->GetWidth(), (GLsizei) frameBuffer->GetHeight());
     }
     OrderRenderLayer orderRenderLayer(m_rendersLayer.begin(), m_rendersLayer.end());
 
@@ -87,8 +95,6 @@ void RenderMgr::RenderInstance(const CameraBase& camera, const GLProgramHandle* 
             if (programPair.first == nullptr) continue;
             if (renderComp.empty()) continue;
 
-            glCullFace(GL_BACK);
-            glFrontFace(GL_CCW);
             glUseProgram(customHandlerID < 0 ? handler.Program : customHandlerID);
             //Attach Light
             lightMgr->AttachLightToShader(&handler);
@@ -122,8 +128,44 @@ void RenderMgr::RenderInstance(const CameraBase& camera, const GLProgramHandle* 
 
 }
 
-void RenderMgr::RenderShadowInstance(const CameraBase& camera, const GLProgramHandle* handle) const {
+void RenderMgr::RenderShadowInstance(const CameraBase& camera, const GLProgramHandle& custom_handler,
+                                     const std::list<SIRender*>& render_objects) const {
+    const auto cameraMatrix = camera.GetCameraMatrixStruct();
+    const auto& frameBuffer = camera.GetFrameBuffer();
+    int customHandlerID = custom_handler.Program;
+    if(frameBuffer == nullptr) {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, (GLsizei) m_width, (GLsizei) m_height);
+    }
+    else {
+        // If the framebuffer is a depth buffer
+        if(frameBuffer->GetBufferType() == SFrameBuffer::DEPTH) {
+            customHandlerID = m_environmentMgr->GetShadowEnvironment()->Program;
+        }
+        frameBuffer->AttachFrameBuffer();
+    }
 
+    glUseProgram(customHandlerID);
+    // Initialize various state.
+    glEnableVertexAttribArray(custom_handler.Attributes.Position);
+    glEnableVertexAttribArray(custom_handler.Attributes.Weight);
+    glEnableVertexAttribArray(custom_handler.Attributes.JointId);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+    for (const auto& shadowObject : render_objects) {
+        if(!shadowObject->isRenderActive) continue;
+        const auto& shadow_transform = static_cast<RenderComponent*>(shadowObject)->GetGameObject()->GetTransform();
+
+        if(LightMgr::SHADOW_DISTANCE < vec3::Distance(cameraMatrix.cameraPosition, shadow_transform->m_position))
+            continue;
+
+        shadowObject->SetMatrix(cameraMatrix, &custom_handler);
+        shadowObject->Render(&custom_handler);
+    }
+    glDisableVertexAttribArray(custom_handler.Attributes.Position);
+    glDisableVertexAttribArray(custom_handler.Attributes.Weight);
+    glDisableVertexAttribArray(custom_handler.Attributes.JointId);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void RenderMgr::Exterminate() {

@@ -84,41 +84,6 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
     glUniform1i(handle->Uniforms.LightSize, m_objects.size());
 }
 
-void LightMgr::RenderShadowMap(GLProgramHandle* handle) const {
-    if(handle == nullptr) return;
-    glViewport(0, 0, (GLsizei) SHADOW_WIDTH, (GLsizei) SHADOW_HEIGHT);
-
-    glUseProgram(handle->Program);
-
-    // Initialize various state.
-    glEnableVertexAttribArray(handle->Attributes.Position);
-    glEnableVertexAttribArray(handle->Attributes.Weight);
-    glEnableVertexAttribArray(handle->Attributes.JointId);
-
-    m_shadowCount = 0;
-    for (const auto& light : m_objects) {
-        if(light->m_disableShadow) continue;
-        const auto camera = light->GetCameraMatrixStruct();
-
-        light->BindDepthBuffer();
-        for (const auto& shadowObject : m_shadowObject) {
-            if(!shadowObject->isRenderActive) continue;
-            const auto& shadow_transform = static_cast<RenderComponent*>(shadowObject)->GetGameObject()->GetTransform();
-
-            if(SHADOW_DISTANCE < vec3::Distance(camera.cameraPosition, shadow_transform->m_position))
-                continue;
-
-            shadowObject->SetMatrix(camera, handle);
-            shadowObject->Render(handle);
-        }
-        ++m_shadowCount;
-    }
-    glDisableVertexAttribArray(handle->Attributes.Position);
-    glDisableVertexAttribArray(handle->Attributes.Weight);
-    glDisableVertexAttribArray(handle->Attributes.JointId);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
 void LightMgr::Init() {
 
 }
@@ -129,6 +94,23 @@ void LightMgr::RegisterShadowObject(SIRender* object) {
 
 void LightMgr::RemoveShadowObject(SIRender* object) {
     m_shadowObject.remove(object);
+}
+
+const std::list<SIRender*>& LightMgr::GetShadowObject() const {
+    return m_shadowObject;
+}
+
+void LightMgr::RefreshShadowCount(int shadowCount) const {
+    if(shadowCount < 0) {
+        int tempCount = 0;
+        for (const auto& light : m_objects) {
+            if(light->m_disableShadow) continue;
+            ++tempCount;
+        }
+        m_shadowCount = tempCount;
+        return;
+    }
+    m_shadowCount = shadowCount;
 }
 
 //void LightMgr::AttachDirectionalLight(const GLProgramHandle* handle, const SLight* light, int index) const {
