@@ -4,7 +4,7 @@
 #pragma once
 
 #include "../GLProgramHandle.h"
-#include "SCubeTexture.h"
+#include "STexture.h"
 
 namespace CSE {
 
@@ -40,9 +40,9 @@ namespace CSE {
 
 
         STexture* m_hdrTexture;
-        SCubeTexture* m_envCubemap;
-        SCubeTexture* m_irradianceMap;
-        SCubeTexture* m_prefilterMap;
+        STexture* m_envCubemap;
+        STexture* m_irradianceMap;
+        STexture* m_prefilterMap;
         STexture* m_brdfMap;
 
         unsigned int m_cubeVBO;

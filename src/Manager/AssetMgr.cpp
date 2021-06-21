@@ -204,6 +204,13 @@ void AssetMgr::SetType() {
             continue;
         }
 
+        //cube map texture data
+        if (type_str == "framebuffer") {
+            asset->type = TEX_FRAMEBUFFER;
+            asset->name += ".frameBuffer";
+            continue;
+        }
+
         //material data
         if (type_str == "mat") {
             asset->type = MATERIAL;

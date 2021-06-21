@@ -6,18 +6,19 @@
 
 
 #include <vector>
-#include "../GLProgramHandle.h"
 #include "../../Object/SResource.h"
+#include "../../OGLDef.h"
 
 namespace CSE {
 
     class STexture : public SResource {
     public:
-        enum TYPE {
-            PNG, UNKOWN
+        enum Type {
+            TEX_2D, TEX_CUBE
         };
     public:
         STexture();
+        STexture(Type type);
 
         virtual ~STexture();
 
@@ -38,6 +39,9 @@ namespace CSE {
         virtual bool InitTexture(int width, int height, int channel = GL_RGB, int internalFormat = GL_RGB,
                                  int glType = GL_UNSIGNED_BYTE);
 
+        bool InitTextureMipmap(int width, int height, int channel = GL_RGB, int internalFormat = GL_RGB,
+                                 int glType = GL_UNSIGNED_BYTE);
+
         virtual void SetParameteri(int targetName, int value) const;
 
         virtual void SetParameterfv(int targetName, float* value) const;
@@ -49,10 +53,18 @@ namespace CSE {
 
         virtual void Bind(GLint location, int layout);
 
+        void GenerateMipmap();
+
+        Type GetType() const;
+
+        void SetType(Type type);
+
     protected:
         virtual void Init(const AssetMgr::AssetReference* asset) override;
 
     protected:
+        Type m_type = TEX_2D;
+        int m_targetGL = GL_TEXTURE_2D;
         int m_width = 0;
         int m_height = 0;
         int m_channels = 0;

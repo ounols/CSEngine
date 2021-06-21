@@ -6,6 +6,8 @@
 
 namespace CSE {
 
+    class SFrameBuffer;
+
     class RenderContainer {
     public:
         RenderContainer();

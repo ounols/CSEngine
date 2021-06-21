@@ -48,7 +48,7 @@ namespace CSE {
             return this;
         }
 
-        void SetValue(std::string name_str, Arguments value) override {}
+        virtual void SetValue(std::string name_str, Arguments value) override {}
 
         std::string PrintValue() const override { return std::string(); }
 

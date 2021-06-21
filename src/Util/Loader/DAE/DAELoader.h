@@ -19,18 +19,35 @@ namespace CSE {
         enum LOAD_TYPE {
             ALL, MESH, ANIMATION, AUTO, NOTHING
         };
+    private:
+        class DAEMeshData {
+        public:
+            DAEMeshData() {
+                meshSurface = new MeshSurface();
+            };
+            ~DAEMeshData() {
+                std::cout << "\ndeleting " << vertices.size() << " DAE Vertexes...\n";
+                for (auto vertex : vertices) {
+                    SAFE_DELETE(vertex);
+                }
+                vertices.clear();
+            }
+
+            MeshSurface* meshSurface;
+            std::vector<Vertex*> vertices;
+            std::vector<vec3> normals;
+            std::vector<vec2> texUVs;
+            std::vector<int> indices;
+            std::string meshName;
+        };
     public:
-        DAELoader(const char* path, MeshSurface* obj, LOAD_TYPE type = ALL, bool isLoad = true);
+        DAELoader(const char* path, LOAD_TYPE type, bool isLoad);
 
         ~DAELoader();
 
         void Load(const char* path, LOAD_TYPE type);
 
         void LoadTexture(const AssetMgr::AssetReference* asset);
-
-        MeshSurface* GetMesh() const {
-            return m_obj;
-        }
 
         Skeleton* getSkeleton() const {
             return m_skeletonData;
@@ -46,26 +63,27 @@ namespace CSE {
 
         void LoadSkeleton(XNode root_s);
 
-        void LoadGeometry(XNode root_g);
+        void LoadGeometry(XNode root_g, DAEMeshData* meshData);
 
 //===================================================================
 // GeometryLoader Functions
 //===================================================================
-        void ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWeight);
+        void ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWeight, DAEMeshData* meshData);
 
-        void ReadNormals(XNode data, std::string normalsId);
+        void ReadNormals(XNode data, std::string normalsId, DAEMeshData* meshData);
 
-        void ReadUVs(XNode data, std::string texCoordsId);
+        void ReadUVs(XNode data, std::string texCoordsId, DAEMeshData* meshData);
 
-        void AssembleVertices(XNode data);
+        void AssembleVertices(XNode data, DAEMeshData* meshData);
 
-        Vertex* processVertex(int posIndex, int normIndex, int texIndex);
+        Vertex* processVertex(int posIndex, int normIndex, int texIndex, DAEMeshData* meshData);
 
-        Vertex* dealWithAlreadyProcessedVertex(Vertex* previousVertex, int newTextureIndex, int newNormalIndex);
+        Vertex* dealWithAlreadyProcessedVertex(Vertex* previousVertex, int newTextureIndex, int newNormalIndex,
+                                               DAEMeshData* meshData);
 
-        void removeUnusedVertices();
+        void removeUnusedVertices(DAEMeshData* meshData);
 
-        void ConvertDataToVectors();
+        void ConvertDataToVectors(DAEMeshData* meshData);
 
 //===================================================================
 // SkinLoader Functions
@@ -90,24 +108,17 @@ namespace CSE {
         void LoadTexturePath(XNode imageNode);
 
 
-        void AttachDataToObjSurface();
+        void AttachDataToObjSurface(int vertices_size, std::vector<float> vertices, std::vector<float> normals,
+                                    std::vector<float> texUVs, std::vector<int> indices, std::vector<short> jointIDs,
+                                    std::vector<float> weights, DAEMeshData* meshData);
 
         void Exterminate();
 
     private:
         const XNode* m_root{};
-        MeshSurface* m_obj;
 
-        std::vector<Vertex*> m_vertices;
-        std::vector<vec3> m_normals;
-        std::vector<vec2> m_texUVs;
-        std::vector<int> m_indices;
+        std::vector<DAEMeshData*> m_meshList;
 
-        std::vector<float> m_f_vertices;
-        std::vector<float> m_f_normals;
-        std::vector<float> m_f_texUVs;
-        std::vector<int> m_f_jointIDs;
-        std::vector<float> m_f_weights;
 
         SkinningData* m_skinningData = nullptr;
         Skeleton* m_skeletonData = nullptr;

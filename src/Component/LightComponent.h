@@ -3,10 +3,14 @@
 #include "SComponent.h"
 #include "../Util/Render/LightHelper.h"
 #include "../Util/Render/STexture.h"
+#include "../Util/Render/CameraBase.h"
 
 namespace CSE {
 
-    class LightComponent : public SComponent {
+    class GLProgramHandle;
+    struct CameraMatrixStruct;
+
+    class LightComponent : public SComponent, public CameraBase {
 
     public:
         enum LIGHT {
@@ -15,7 +19,7 @@ namespace CSE {
     public:
         LightComponent();
 
-        ~LightComponent();
+        ~LightComponent() override;
 
 
         void Exterminate() override;
@@ -59,7 +63,12 @@ namespace CSE {
 
         const mat4& GetLightViewMatrix() const;
 
-        void BindDepthMap() const;
+        CameraMatrixStruct GetCameraMatrixStruct() const override;
+
+        SFrameBuffer* GetFrameBuffer() const override;
+
+        void BindDepthBuffer() const;
+        void BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const;
 
     private:
         void SetLightPosition() const;
@@ -75,12 +84,11 @@ namespace CSE {
     private:
         SLight* m_light = nullptr;
         bool m_isSunRising = false;
-        unsigned int m_depthMapFBO = -1;
-        STexture* m_shadowTexture = nullptr;
+        SFrameBuffer* m_frameBuffer = nullptr;
         mat4 m_lightProjectionMatrix;
         mat4 m_lightViewMatrix;
-        float m_near = 0.1f;
-        float m_far = 100.f;
+        float m_near = -10.f;
+        float m_far = 10.f;
     };
 
 }

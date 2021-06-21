@@ -11,6 +11,7 @@
 #include "LightMgr.h"
 #include "RenderMgr.h"
 #include "SceneMgr.h"
+#include "MemoryMgr.h"
 #include "../Sample/FirstDemoScene.h"
 
 using namespace CSE;
@@ -63,10 +64,8 @@ void EngineCore::Exterminate() {
 void EngineCore::GenerateCores() {
     if(m_isGenerated) return;
     m_isGenerated = true;
-    SafeLog::Log("m_isGenerated");
     m_cores = std::vector<CoreBase*>();
     m_cores.reserve(ENGINE_COUNT);
-    SafeLog::Log(" m_cores = std::vector<CoreBase*>();");
 
     m_resMgr = new ResMgr();
     m_gameObjectMgr = new GameObjectMgr();

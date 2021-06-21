@@ -14,6 +14,8 @@
 
 namespace CSE {
 
+    class LightMgr;
+
     class SMaterial : public SResource {
     public:
         enum SMaterialMode { NORMAL = 0, CUTOUT = 1 };
@@ -88,7 +90,9 @@ namespace CSE {
         //std::vector<Element*> m_elements;
 		std::unordered_map<std::string, Element*> m_elements;
 		std::unordered_map<std::string, Element*> m_attributeElements;
-		int m_textureLayout = 0;
+		mutable int m_textureLayout = 0;
         SMaterialMode m_mode = NORMAL;
+
+        LightMgr* m_lightMgr = nullptr;
     };
 }

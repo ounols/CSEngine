@@ -5,6 +5,7 @@
 
 #include "../../OGLDef.h"
 #include "STexture.h"
+#include "../GLProgramHandle.h"
 
 #include "../Loader/STB/stb_image.h"
 #include "../../Manager/ResMgr.h"
@@ -14,6 +15,11 @@ using namespace CSE;
 
 STexture::STexture() {
     SetUndestroyable(true);
+}
+
+STexture::STexture(STexture::Type type) {
+    SetUndestroyable(true);
+    SetType(type);
 }
 
 STexture::~STexture() {
@@ -38,18 +44,18 @@ bool STexture::Load(unsigned char* data) {
     }
 
     glGenTextures(1, &m_texId);
-    glBindTexture(GL_TEXTURE_2D, m_texId);
+    glBindTexture(m_targetGL, m_texId);
 
     m_channels = GL_RGB;
     if (m_channels == 4) m_channels = GL_RGBA;
 
     m_internalFormat = m_channels;
-    glTexImage2D(GL_TEXTURE_2D, 0, m_channels, m_width, m_height, 0, m_internalFormat, m_glType, data);
+    glTexImage2D(m_targetGL, 0, m_channels, m_width, m_height, 0, m_internalFormat, m_glType, data);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(m_targetGL, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(m_targetGL, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     stbi_image_free(data);
     return true;
@@ -65,11 +71,11 @@ bool STexture::LoadEmpty() {
     m_glType = GL_UNSIGNED_BYTE;
 
     glGenTextures(1, &m_texId);
-    glBindTexture(GL_TEXTURE_2D, m_texId);
+    glBindTexture(m_targetGL, m_texId);
 
     GLubyte data[] = { 255, 255, 255, 255 };
 
-    glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_width, m_height, 0, m_channels, m_glType, data);
+    glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_channels, m_glType, data);
 
     return true;
 }
@@ -104,7 +110,7 @@ void STexture::Bind(GLint location, int layout) {
     glUniform1i(location, layout);
 
     glActiveTexture(GL_TEXTURE0 + layout);
-    glBindTexture(GL_TEXTURE_2D, m_texId);
+    glBindTexture(m_targetGL, m_texId);
 }
 
 bool STexture::InitTexture(int width, int height, int channel, int internalFormat, int glType) {
@@ -119,16 +125,34 @@ bool STexture::InitTexture(int width, int height, int channel, int internalForma
     m_glType = glType;
 
     glGenTextures(1, &m_texId);
-    glBindTexture(GL_TEXTURE_2D, m_texId);
+    glBindTexture(m_targetGL, m_texId);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_width, m_height, 0, m_channels, m_glType, nullptr);
+    switch (m_type) {
+        case TEX_CUBE:
+            for (GLuint i = 0; i < 6; ++i) {
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_internalFormat, m_width, m_height, 0, m_channels,
+                             m_glType, nullptr);
+            }
+            break;
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        default:
+            glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_channels, m_glType, nullptr);
+    }
+
+    glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(m_targetGL, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(m_targetGL, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     return true;
+}
+
+bool STexture::InitTextureMipmap(int width, int height, int channel, int internalFormat, int glType) {
+    auto result = InitTexture(width, height, channel, internalFormat, glType);
+    if(!result) return false;
+    glTexParameteri(m_targetGL, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    return result;
 }
 
 void STexture::SetParameteri(int targetName, int value) const {
@@ -149,6 +173,26 @@ void STexture::Init(const AssetMgr::AssetReference* asset) {
     Load(data);
 
 }
+
+void STexture::GenerateMipmap() {
+    glBindTexture(m_targetGL, m_texId);
+    glGenerateMipmap(m_targetGL);
+}
+
+STexture::Type STexture::GetType() const {
+    return m_type;
+}
+
+void STexture::SetType(STexture::Type type) {
+    m_type = type;
+    switch (m_type) {
+        case TEX_2D:
+            m_targetGL = GL_TEXTURE_2D; break;
+        case TEX_CUBE:
+            m_targetGL = GL_TEXTURE_CUBE_MAP; break;
+    }
+}
+
 
 
 

@@ -47,17 +47,12 @@ void SEnvironmentMgr::RenderPBREnvironment() {
 
     glDisable(GL_CULL_FACE);
 
-//    glGenRenderbuffers(1, &captureRBO_color);
-//    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO_color);
-//    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 512, 512);
     glGenRenderbuffers(1, &captureRBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 512, 512);
 
     glGenFramebuffers(1, &captureFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-//    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-//                              GL_RENDERBUFFER, captureRBO_color);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                               GL_RENDERBUFFER, captureRBO);
 
@@ -70,7 +65,7 @@ void SEnvironmentMgr::RenderPBREnvironment() {
 
     // pbr: setup cubemap to render to and attach to framebuffer
     // ---------------------------------------------------------
-    m_envCubemap = new SCubeTexture();
+    m_envCubemap = new STexture(STexture::TEX_CUBE);
     m_envCubemap->SetName("envCubemap.textureCubeMap");
     m_envCubemap->SetID("envCubemap.textureCubeMap");
     m_envCubemap->InitTextureMipmap(512, 512);
@@ -119,7 +114,7 @@ void SEnvironmentMgr::RenderPBREnvironment() {
 
     // pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
     // --------------------------------------------------------------------------------
-    m_irradianceMap = new SCubeTexture();
+    m_irradianceMap = new STexture(STexture::TEX_CUBE);
     m_irradianceMap->SetName("irradiance.textureCubeMap");
     m_irradianceMap->SetID("irradiance.textureCubeMap");
     m_irradianceMap->InitTexture(32, 32);
@@ -152,7 +147,7 @@ void SEnvironmentMgr::RenderPBREnvironment() {
 
     // pbr: create a pre-filter cubemap, and re-scale capture FBO to pre-filter scale.
     // --------------------------------------------------------------------------------
-    m_prefilterMap = new SCubeTexture();
+    m_prefilterMap = new STexture(STexture::TEX_CUBE);
     m_prefilterMap->SetName("prefilter.textureCubeMap");
     m_prefilterMap->SetID("prefilter.textureCubeMap");
     m_prefilterMap->InitTextureMipmap(128, 128);

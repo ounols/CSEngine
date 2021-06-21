@@ -19,7 +19,7 @@ DAEAnimationLoader::DAEAnimationLoader() {
 
 DAEAnimationLoader::~DAEAnimationLoader() {
     SAFE_DELETE(m_root);
-
+    if(m_animationData == nullptr) return;
     for (auto frame : m_animationData->keyFrames) {
         for (auto joint : frame->jointTransforms) {
             SAFE_DELETE(joint);

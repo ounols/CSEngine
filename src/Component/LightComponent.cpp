@@ -1,7 +1,9 @@
 #include "LightComponent.h"
+#include "CameraComponent.h"
 #include "../Manager/LightMgr.h"
 #include "TransformComponent.h"
 #include "../Manager/EngineCore.h"
+#include "../Util/Render/SFrameBuffer.h"
 
 using namespace CSE;
 
@@ -23,9 +25,8 @@ void LightComponent::Exterminate() {
 
     CORE->GetCore(LightMgr)->Remove(this);
     SAFE_DELETE(m_light);
-    glDeleteFramebuffers(1, &m_depthMapFBO);
     auto resMgr = CORE->GetCore(ResMgr);
-    if(m_shadowTexture != nullptr) resMgr->Remove(m_shadowTexture);
+    if(m_frameBuffer != nullptr) resMgr->Remove(m_frameBuffer);
 }
 
 
@@ -113,24 +114,19 @@ void LightComponent::SetLightPosition() const {
 }
 
 void LightComponent::SetDepthMap() {
-    if(m_shadowTexture != nullptr) return;
+    if(m_frameBuffer != nullptr) return;
 
-    glGenFramebuffers(1, &m_depthMapFBO);
-    m_shadowTexture = new STexture();
     auto lightMgr = CORE->GetCore(LightMgr);
-    m_shadowTexture->InitTexture(lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT,
+    m_frameBuffer = new SFrameBuffer();
+    m_frameBuffer->InitFrameBuffer(SFrameBuffer::DEPTH, lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT);
+    m_frameBuffer->InitTexture(lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT,
                                  GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
-    m_shadowTexture->SetParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    m_shadowTexture->SetParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    m_shadowTexture->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    m_shadowTexture->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    m_frameBuffer->SetParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    m_frameBuffer->SetParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-    m_shadowTexture->SetParameterfv(GL_TEXTURE_BORDER_COLOR, borderColor);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_shadowTexture->GetTextureID(), 0);
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    m_frameBuffer->SetParameterfv(GL_TEXTURE_BORDER_COLOR, borderColor);
 
 }
 
@@ -189,7 +185,24 @@ const mat4& LightComponent::GetLightViewMatrix() const {
     return m_lightViewMatrix;
 }
 
-void LightComponent::BindDepthMap() const {
-    glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
+void LightComponent::BindDepthBuffer() const {
+    m_frameBuffer->AttachFrameBuffer();
     glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void LightComponent::BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const {
+    if(m_frameBuffer == nullptr || m_disableShadow) return;
+
+    m_frameBuffer->Bind(handle.Uniforms.LightShadowMap + index, index);
+    auto matrix = m_lightViewMatrix * m_lightProjectionMatrix;
+    glUniformMatrix4fv(handle.Uniforms.LightMatrix + handleIndex, 1, 0, matrix.Pointer());
+}
+
+CameraMatrixStruct LightComponent::GetCameraMatrixStruct() const {
+    const auto& position = gameObject->GetTransform();
+    return CameraMatrixStruct(m_lightViewMatrix, m_lightProjectionMatrix, position->m_position);
+}
+
+SFrameBuffer* LightComponent::GetFrameBuffer() const {
+    return m_frameBuffer;
 }

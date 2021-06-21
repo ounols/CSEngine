@@ -1,12 +1,13 @@
 #pragma once
 #include "../MacroDef.h"
 #include "RenderContainer.h"
-#include "CameraMgr.h"
 #include "Base/RenderCoreBase.h"
-#include "../Util/Render/SEnvironmentMgr.h"
 
 
 namespace CSE {
+
+    class SEnvironmentMgr;
+    class CameraBase;
 
     class RenderMgr : public RenderContainer, public CoreBase, public RenderCoreBase {
     public:
@@ -20,7 +21,13 @@ namespace CSE {
 
         void Render() const override;
 
+
+
     private:
+        void RenderInstance(const CameraBase& camera, const GLProgramHandle* custom_handler = nullptr) const;
+        void RenderShadowInstance(const CameraBase& camera, const GLProgramHandle& custom_handler,
+                                  const std::list<SIRender*>& render_objects = std::list<SIRender*>()) const;
+
         void Exterminate();
 
     private:

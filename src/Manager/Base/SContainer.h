@@ -45,6 +45,10 @@ namespace CSE {
             return *iter;
         }
 
+        std::list<T> GetAll() const {
+            return m_objects;
+        }
+
         int GetID(T object) const {
             auto it = std::find(m_objects.begin(), m_objects.end(), object);
             if (it == m_objects.end())

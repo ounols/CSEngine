@@ -8,11 +8,12 @@
 #include "../Loader/XML/XMLParser.h"
 #include "../../Component/TransformComponent.h"
 #include "ShaderUtil.h"
+#include "../../Manager/LightMgr.h"
 
 using namespace CSE;
 
 SMaterial::SMaterial() {
-
+    m_lightMgr = CORE->GetCore(LightMgr);
 }
 
 
@@ -29,6 +30,7 @@ SMaterial::SMaterial(const SMaterial* material) : SResource(material, false) {
         m_elements.insert(std::pair<std::string, Element*>(element_pair.first, element_copy));
     }
     SetHandle(material->m_handle);
+    m_lightMgr = CORE->GetCore(LightMgr);
 }
 
 SMaterial::~SMaterial() {
@@ -59,21 +61,20 @@ void SMaterial::SetHandle(GLProgramHandle* handle) {
 }
 
 void SMaterial::AttachElement() const {
-
+    m_textureLayout = m_lightMgr->GetShadowCount();
 	for (const auto& element_pair : m_elements) {
 		const auto& element = element_pair.second;
 		if(element->id < 0) continue;
 		element->attachFunc();
 	}
-    for (const auto& element_pair : m_attributeElements) {
-        const auto& element = element_pair.second;
-        if(element->id < 0) continue;
-        element->attachFunc();
-    }
+//    for (const auto& element_pair : m_attributeElements) {
+//        const auto& element = element_pair.second;
+//        if(element->id < 0) continue;
+//        element->attachFunc();
+//    }
 }
 
 void SMaterial::InitElements() {
-
 	for (const auto& element_pair : m_elements) {
 		const auto& element_name = element_pair.first.c_str();
 		const auto& element = element_pair.second;
@@ -264,9 +265,11 @@ void SMaterial::SetVec2Func(SMaterial::Element* element, vec2 value) {
 void SMaterial::SetTextureFunc(SMaterial::Element* element, SResource* texture) {
     if(element == nullptr || texture == nullptr) return;
     STexture* value = static_cast<STexture*>(texture);
-    element->count = m_textureLayout++;
-    element->attachFunc = [element, value]() {
-        value->Bind(element->id, element->count);
+//    element->count = m_textureLayout++;
+    auto* texture_layout = &m_textureLayout;
+    element->attachFunc = [element, value, texture_layout]() {
+        value->Bind(element->id, *texture_layout);
+        ++(*texture_layout);
     };
 }
 
