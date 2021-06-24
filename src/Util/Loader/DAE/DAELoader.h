@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "../../../Object/SPrefab.h"
 #include "DAEUtil/VertexSkinData.h"
 #include "DAEUtil/SkinningData.h"

@@ -120,13 +120,18 @@ void LightComponent::SetDepthMap() {
     m_frameBuffer = new SFrameBuffer();
     m_frameBuffer->InitFrameBuffer(SFrameBuffer::DEPTH, lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT);
     m_frameBuffer->InitTexture(lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT,
-                                 GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
+                                 GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_UNSIGNED_SHORT);
     m_frameBuffer->SetParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     m_frameBuffer->SetParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+#ifdef ANDROID
+    m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#else
     m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
     m_frameBuffer->SetParameterfv(GL_TEXTURE_BORDER_COLOR, borderColor);
+#endif
 
 }
 

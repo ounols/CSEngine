@@ -6,6 +6,7 @@
 #include <android/asset_manager_jni.h>
 #include <android/log.h>
 #include <Manager/EngineCore.h>
+#include <Manager/ResMgr.h>
 
 #define  LOG_TAG    "SCENGINE"
 
@@ -57,7 +58,7 @@ namespace CSE {
 		AAsset_read(asset, strbuf, fileSize);
 		AAsset_close(asset);
 		buf = std::string(strbuf, fileSize);
-		delete strbuf;
+		delete[] strbuf;
 #elif defined (WIN32) || defined(__linux__)
 		std::ifstream fin(path, std::ios::binary);
 		if (!fin.is_open()) return "";

@@ -33,19 +33,19 @@ file(GLOB SQUIRREL_SRC
                         "../../../External/Squirrel/lib/sqstdlib/*.*"
                         "../../../External/Squirrel/lib/squirrel/*.*")
 
-if (${ANDROID_PLATFORM_LEVEL} LESS 12)
-    message(FATAL_ERROR "OpenGL 2 is not supported before API level 11 \
-                      (currently using ${ANDROID_PLATFORM_LEVEL}).")
-    return()
-elseif (${ANDROID_PLATFORM_LEVEL} LESS 18)
-    add_definitions("-DDYNAMIC_ES3")
-    set(GL3STUB_SRC src/main/cpp/gl3stub.c)
-    message(WARNING  "OpenGL 2")
-    set(OPENGL_LIB GLESv2)
-else ()
-    message(WARNING  "OpenGL 3")
-#    set(OPENGL_LIB GLESv3)
-endif (${ANDROID_PLATFORM_LEVEL} LESS 12)
+#if (${ANDROID_PLATFORM_LEVEL} LESS 12)
+#    message(FATAL_ERROR "OpenGL 2 is not supported before API level 11 \
+#                      (currently using ${ANDROID_PLATFORM_LEVEL}).")
+#    return()
+#elseif (${ANDROID_PLATFORM_LEVEL} LESS 18)
+#    add_definitions("-DDYNAMIC_ES3")
+#    set(GL3STUB_SRC src/main/cpp/gl3stub.c)
+#    message(WARNING  "OpenGL 2")
+#    set(OPENGL_LIB GLESv2)
+#else ()
+#    message(WARNING  "OpenGL 3")
+##    set(OPENGL_LIB GLESv3)
+#endif (${ANDROID_PLATFORM_LEVEL} LESS 12)
 
 add_library( CSEngineLib
               SHARED

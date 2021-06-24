@@ -66,6 +66,11 @@ const lowp float c_zero = 0.0;
 const lowp float c_one = 1.0;
 const float PI = 3.14159265359;
 
+#if __VERSION__ == 300 // For ES
+/** for android **/
+const lowp float c_shadow_width = 1024.f;
+const lowp float c_shadow_height = 1024.f;
+#endif
 
 //Functions
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -77,6 +82,7 @@ float GeometrySmith_Fast(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 fresnelSchlick(float cosTheta, vec3 F0);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D);
+vec4 GetTextureInArray(sampler2D src[MAX_LIGHTS], int index, vec2 uv);
 
 //Macro Functions
 float ClampedPow(float X, float Y) {
@@ -87,8 +93,8 @@ float ClampedPow(float X, float Y) {
 void main(void) {
 
 	lowp vec3 albedo     = pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2)) * u_albedo;
-	lowp float metallic  = texture(u_sampler_albedo, v_textureCoordOut).b / 2;
-	lowp float roughness = 0.5 - (texture(u_sampler_albedo, v_textureCoordOut).b / 2);
+	lowp float metallic  = texture(u_sampler_albedo, v_textureCoordOut).b / 2.0;
+	lowp float roughness = 0.5 - (texture(u_sampler_albedo, v_textureCoordOut).b / 2.0);
 	lowp float ao        = 1.f;
 
 	vec3 N = normalize(v_eyespaceNormal);
@@ -112,7 +118,7 @@ void main(void) {
 		vec3 H = normalize(V + L);
 		float distance = v_distance[i];
 		float attenuation = 1.0 / (distance * distance);
-		float shadow = 0;
+		float shadow = 0.0;
 		if(u_shadowMode[i] == 1) {
 			shadow = ShadowCalculation(index_shadow, v_fragPosLightSpace[i], N, L);
 			++index_shadow;
@@ -250,7 +256,8 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	// transform to [0,1] range
 	projCoords = projCoords * 0.5 + 0.5;
 	// get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-	float closestDepth = texture(u_shadowMap[index], projCoords.xy).r;
+	float closestDepth = GetTextureInArray(u_shadowMap, index, projCoords.xy).r;
+//	float closestDepth = texture(u_shadowMap[index], projCoords.xy).r;
 	// get depth of current fragment from light's perspective
 	float currentDepth = projCoords.z;
 	// calculate bias (based on depth map resolution and slope)
@@ -259,12 +266,17 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	// float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
 	// PCF
 	float shadow = 0.0;
+#if __VERSION__ == 300 // For ES
+	vec2 texelSize = 1.0 / vec2(c_shadow_width, c_shadow_height);
+#else
 	vec2 texelSize = 1.0 / textureSize(u_shadowMap[index], 0);
+#endif
 	for(int x = -1; x <= 1; ++x)
 	{
 		for(int y = -1; y <= 1; ++y)
 		{
-			float pcfDepth = texture(u_shadowMap[index], projCoords.xy + vec2(x, y) * texelSize).r;
+			float pcfDepth = GetTextureInArray(u_shadowMap, index, projCoords.xy + vec2(x, y) * texelSize).r;
+//			float pcfDepth = texture(u_shadowMap[index], projCoords.xy + vec2(x, y) * texelSize).r;
 			shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
 		}
 	}
@@ -275,4 +287,18 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	shadow = 0.0;
 
 	return shadow;
+}
+
+vec4 GetTextureInArray(sampler2D src[MAX_LIGHTS], int index, vec2 uv) {
+	if(index >= MAX_LIGHTS) return vec4(0.0f);
+	if(index == 0) return texture(src[0], uv);
+	if(index == 1) return texture(src[1], uv);
+	if(index == 2) return texture(src[2], uv);
+	if(index == 3) return texture(src[3], uv);
+	if(index == 4) return texture(src[4], uv);
+	if(index == 5) return texture(src[5], uv);
+	if(index == 6) return texture(src[6], uv);
+	if(index == 7) return texture(src[7], uv);
+
+	return texture(src[0], uv);
 }

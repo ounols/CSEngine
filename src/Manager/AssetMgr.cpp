@@ -24,6 +24,8 @@
 #include <android/asset_manager_jni.h>
 #include <android/log.h>
 #include <Manager/ResMgr.h>
+#include <Util/SafeLog.h>
+
 #endif
 using namespace CSE;
 
