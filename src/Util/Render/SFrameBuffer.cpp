@@ -36,12 +36,14 @@ void SFrameBuffer::InitFrameBuffer(SFrameBuffer::BufferType type, int width, int
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
 
     glGenFramebuffers(1, &m_fbo);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
 }
 
 void SFrameBuffer::AttachFrameBuffer(int index, int level) const {
     glViewport(0, 0, m_width, m_height);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+
     if(m_type == TEX_CUBE) {
         glFramebufferTexture2D(GL_FRAMEBUFFER, m_attachmentGL, GL_TEXTURE_CUBE_MAP_POSITIVE_X + index,
                                m_texId, level);

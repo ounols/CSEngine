@@ -81,6 +81,7 @@ void RenderMgr::RenderInstance(const CameraBase& camera, const GLProgramHandle* 
             customHandlerID = m_environmentMgr->GetShadowEnvironment()->Program;
         }
         frameBuffer->AttachFrameBuffer();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     OrderRenderLayer orderRenderLayer(m_rendersLayer.begin(), m_rendersLayer.end());
 

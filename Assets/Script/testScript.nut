@@ -1,17 +1,17 @@
 class TestScript extends CSEngineScript {
 
-	materialComp = null;
+	renderComp = null;
 	lightComp = null;
 	ambient = null;
 
 	function Init(){
-		materialComp = gameobject.GetComponent<RenderComponent>();
+		renderComp = gameobject.GetComponent<RenderComponent>();
 		lightComp = gameobject.GetComponent<LightComponent>();
 
 		local diffuse = vec3();
 		diffuse.Set(0, 1, 0);
-		if(materialComp != null) {
-		    local material = materialComp.GetMaterial();
+		if(renderComp != null) {
+		    local material = renderComp.GetMaterial();
 			material.SetFloat("FLOAT_ROUGHNESS", 0.4);
 			material.SetFloat("FLOAT_METALLIC", 0.4);
 			material.SetVec3("FLOAT_ALBEDO", diffuse);
@@ -22,7 +22,6 @@ class TestScript extends CSEngineScript {
 
 		
 		Log("light component : " + lightComp);			//???? ????????? ???????? ??????? null
-		Log("material component : " + materialComp);	//???? ????????? ???????? ?????? ??��??.
 
 		gameobject.SetName("test");
 	}

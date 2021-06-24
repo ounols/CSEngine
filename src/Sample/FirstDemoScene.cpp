@@ -15,6 +15,7 @@
 #include "../Util/AssetsDef.h"
 #include "../Manager/SCloneFactory.h"
 #include "../Util/Loader/SCENE/SSceneLoader.h"
+#include "../Util/Render/SFrameBuffer.h"
 
 using namespace CSE;
 
@@ -34,6 +35,7 @@ void FirstDemoScene::Init() {
     //DAE test
 //    SPrefab* stormtrooper = MeshLoader::LoadModel("stormtrooper.model");
     SPrefab* stormtrooper = SResource::Create<SPrefab>("stormtrooper.prefab");
+    SPrefab* plane = SResource::Create<SPrefab>("plane_circle.prefab");
 
 //	daeLoader->GeneratePrefab();
 
@@ -76,6 +78,11 @@ void FirstDemoScene::Init() {
 
     cube = new MeshSurface(CH02::teapot_smoothNumVerts, CH02::teapot_smoothVerts, CH02::teapot_smoothNormals);
     cube->SetUndestroyable(false);
+    SFrameBuffer* buffer = new SFrameBuffer();
+    buffer->SetName("framebuffer_test");
+    buffer->SetID("framebuffer_test");
+    buffer->InitFrameBuffer(SFrameBuffer::RENDER, 512, 512);
+    buffer->InitTexture(512, 512, GL_RGB, GL_RGB16F, GL_FLOAT);
     b->Destroy();
     c = new SGameObject("c");
     c->SetParent(root);
@@ -95,10 +102,20 @@ void FirstDemoScene::Init() {
     root->AddChild(testing);
 
     SGameObject* ab = stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
+    SGameObject* ab2 = plane->Clone(vec3{ 0.5f, 0, 0 }, testing);
     ab->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
+    ab2->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
+    ab2->GetTransform()->m_rotation.Rotate(Quaternion::AngleAxis(vec3{0, 0, 1}, 3.14f));
     ab->CreateComponent<CustomComponent>();
     ab->GetComponent<CustomComponent>()->SetClassName("testScript.script");
 //    auto ab_m = ab->GetComponent<RenderComponent>()->GetMaterial();
+
+    const auto& ab2_children = ab2->GetChildren();
+    for (const auto& gameObject : ab2_children) {
+        const auto& component = gameObject->GetComponent<RenderComponent>();
+        if(component == nullptr) continue;
+        component->SetMaterial(SResource::Create<SMaterial>("File:Material/ForFramebufferTest.mat"));
+    }
 
     c2 = new SGameObject();
     c2->SetParent(root);
@@ -151,6 +168,8 @@ void FirstDemoScene::Init() {
     c4->DeleteComponent(c4->GetComponent<CustomComponent>());
 
 
+
+
     SGameObject* direction = new SGameObject();
     direction->SetParent(root);
     direction->SetName("directional");
@@ -201,7 +220,12 @@ void FirstDemoScene::Init() {
 //    a->GetTransform()->m_position = vec3{ 0.f, 2.f, 4.f };
 //    a->GetTransform()->m_scale = vec3{ 2.f, 2.f, 2.f };
 //    a->GetComponent<CameraComponent>()->SetTarget(vec3{ 0.0f, -1.0f, -1.f });
-    a->GetComponent<CameraComponent>()->SetTarget(d);
+    auto a_cam = a->GetComponent<CameraComponent>();
+    a_cam->SetTarget(d);
+
+    c4->CreateComponent<CameraComponent>();
+    c4->GetComponent<CameraComponent>()->SetTarget(d);
+    c4->GetComponent<CameraComponent>()->SetFrameBuffer(buffer);
     //===============
 
     SSceneLoader::SavePrefab(root, CSE::NativeAssetsPath() + "Scene/test_scene.scene");

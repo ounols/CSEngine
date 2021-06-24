@@ -38,7 +38,7 @@ float XMLParser::parseFloat(const char* value) {
 }
 
 bool XMLParser::parseBool(const char* value) {
-	return value == "t";
+    return strncmp(value, "t", 1);
 }
 
 vec2 XMLParser::parseVec2(std::vector<std::string> values) {
