@@ -49,7 +49,6 @@ namespace CSE {
         virtual void Render(const GLProgramHandle* handle = nullptr) const = 0;
 
     protected:
-        short programRenderIndex = -1; //For RenderContainer
         SMaterial* material = nullptr;
     public:
         bool isRenderActive = false;

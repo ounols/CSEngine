@@ -18,7 +18,6 @@ void RenderContainer::Register(SIRender* object) {
     GLProgramHandle* handler = material->GetHandle();
 
     auto& layer = m_rendersLayer[orderLayer][handler];
-    object->programRenderIndex = layer.size();
     layer.push_back(object);
 
 }
@@ -40,8 +39,7 @@ void RenderContainer::Remove(SIRender* object) {
             auto handlerPair = programLayer.find(handler);
             if (handlerPair != programLayer.end()) {
                 auto& layerVector = handlerPair->second;
-                handlerPair->second.erase(layerVector.begin() + object->programRenderIndex);
-
+                handlerPair->second.erase(std::remove(layerVector.begin(), layerVector.end(), object), layerVector.end());
                 //빈공간은 제거
                 if (layerVector.empty()) {
                     programLayer.erase(handlerPair);

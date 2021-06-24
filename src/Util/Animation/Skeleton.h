@@ -64,7 +64,7 @@ namespace CSE {
 
     private:
         int m_jointCount;
-        Joint* m_headJoint;
+        Joint* m_headJoint = nullptr;
     };
 
 }
