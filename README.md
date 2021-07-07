@@ -77,6 +77,8 @@ Currently, only Linux build tests are available. In the future, various stabiliz
 
 Review the following documentation:
 * [`wiki`](https://github.com/ounols/CSEngine/wiki): Documentation that details of the structure and function of CSEngine.
+* [`to-do list`](https://www.notion.so/CSEngine-Todo-List-7ee24caed138466e83d81d2867b1f109): Documentation that contains the to-do list of the project and notes during development.
+
 
 ## 3rd Party Copyright & Licence
 
