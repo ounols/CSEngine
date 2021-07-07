@@ -41,6 +41,9 @@ namespace CSE {
             std::vector<int> indices;
             std::string meshName;
         };
+        enum POLYGON_TYPE {
+            POLYLIST = -1, TRIANGLES = 3,
+        };
     public:
         DAELoader(const char* path, LOAD_TYPE type, bool isLoad);
 
@@ -130,6 +133,7 @@ namespace CSE {
         int m_jointSize = 0;
 
         bool m_isSkinning = false;
+        POLYGON_TYPE m_polygonType = POLYGON_TYPE::POLYLIST;
 
         std::string m_name;
         std::string m_texture_name;

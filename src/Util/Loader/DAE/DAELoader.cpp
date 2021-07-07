@@ -166,6 +166,7 @@ void DAELoader::LoadGeometry(XNode root_g, DAEMeshData* meshData) {
                 .getAttribute("source").value.substr(1);
         XNode childWithAttribute = polylist.getNodeByAttribute("input", "semantic", "TEXCOORD");
         texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
+        m_polygonType = POLYGON_TYPE::POLYLIST;
     }
     catch (int error) {
         try {
@@ -175,6 +176,7 @@ void DAELoader::LoadGeometry(XNode root_g, DAEMeshData* meshData) {
             normalsId = normals.getAttribute("source").value.substr(1);
             XNode childWithAttribute = triangles.getNodeByAttribute("input", "semantic", "TEXCOORD");
             texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
+            m_polygonType = POLYGON_TYPE::TRIANGLES;
         }
         catch (int error) {}
     }
@@ -255,7 +257,7 @@ void DAELoader::ReadUVs(XNode data, std::string texCoordsId, DAEMeshData* meshDa
 }
 
 void DAELoader::AssembleVertices(XNode data, DAEMeshData* meshData) {
-    XNode poly = data.getChild("polylist");
+    XNode poly = data.getChild(m_polygonType == POLYLIST ? "polylist" : "triangles");
     int typeCount = 0;
 
     for (auto child : poly.children) {
@@ -365,17 +367,23 @@ std::vector<float> DAELoader::loadWeights(XNode skinningData) {
 }
 
 std::vector<int> DAELoader::getEffectiveJointsCounts(XNode node) {
-    return node.getChild("vcount").value.toIntegerVector();
+    if(m_polygonType == POLYLIST) {
+        return node.getChild("vcount").value.toIntegerVector();
+    }
+
+    return std::vector<int>();
 }
 
 std::vector<VertexSkinData*>
 DAELoader::getSkinData(XNode weightsDataNode, std::vector<int> counts, std::vector<float> weights) {
     auto rawData = weightsDataNode.getChild("v").value.toIntegerVector();
+    auto weightsCount = std::stoi(weightsDataNode.getAttribute("count").value);
     std::vector<VertexSkinData*> skinningData;
     int pointer = 0;
-    for (int count : counts) {
+    for (int index = 0; index < weightsCount; ++index) {
         VertexSkinData* skinData = new VertexSkinData();
-        for (int i = 0; i < count; i++) {
+        short count = (m_polygonType == POLYLIST) ? counts[index] : static_cast<short>(m_polygonType);
+        for (short i = 0; i < count; ++i) {
             int jointId = rawData[pointer++];
             int weightId = rawData[pointer++];
             skinData->addJointEffect(jointId, weights[weightId]);
