@@ -3,7 +3,9 @@
 //
 
 #include "SFrameBuffer.h"
-#include "../../OGLDef.h"
+#include "STexture.h"
+#include "../../Manager/EngineCore.h"
+#include "../../Manager/ResMgr.h"
 
 using namespace CSE;
 
@@ -17,30 +19,38 @@ SFrameBuffer::~SFrameBuffer() {
 
 void SFrameBuffer::Exterminate() {
     glDeleteFramebuffers(1, &m_fbo);
-    glDeleteRenderbuffers(1, &m_rbo);
+
+    for(const auto& buffer : m_buffers) {
+        if(buffer->renderbufferId > 0) glDeleteRenderbuffers(1, &buffer->renderbufferId);
+        if(buffer->texture != nullptr) {
+            auto resMgr = CORE->GetCore(ResMgr);
+            resMgr->Remove(buffer->texture);
+        }
+    }
 }
 
 // Init function for asset binding
 void SFrameBuffer::Init(const AssetMgr::AssetReference* asset) {
 }
 
-// Init function for SFrameBuffer
-void SFrameBuffer::InitFrameBuffer(SFrameBuffer::BufferType type, int width, int height) {
-    m_bufferType = type;
-    SetBufferType(type);
+
+void SFrameBuffer::GenerateRenderbuffer(SFrameBuffer::BufferType type, int width, int height, int internalFormat) {
+
+    auto buffer = new BufferObject();
+    buffer->type = type;
     m_width = width;
     m_height = height;
 
-    glGenRenderbuffers(1, &m_rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+    glGenRenderbuffers(1, &buffer->renderbufferId);
+    glBindRenderbuffer(GL_RENDERBUFFER, buffer->renderbufferId);
+    glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
 
-    glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GenerateAttachmentType(type), GL_RENDERBUFFER, buffer->renderbufferId);
 }
 
-void SFrameBuffer::AttachFrameBuffer(int index, int level) const {
+void SFrameBuffer::GenerateTexturebuffer(BufferType type, int width, int height, int internalFormat, int index,
+                                         int level) {
     glViewport(0, 0, m_width, m_height);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
@@ -57,26 +67,6 @@ void SFrameBuffer::DetachFrameBuffer() const {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-unsigned int SFrameBuffer::GetRenderBufferID() const {
-    return m_rbo;
-}
-
-unsigned int SFrameBuffer::GetFrameBufferID() const {
-    return m_fbo;
-}
-
-void SFrameBuffer::SetBufferType(SFrameBuffer::BufferType bufferType) {
-    m_bufferType = bufferType;
-    switch (bufferType) {
-        case RENDER:
-            m_attachmentGL = GL_COLOR_ATTACHMENT0; break;
-        case DEPTH:
-            m_attachmentGL = GL_DEPTH_ATTACHMENT; break;
-        case STENCIL:
-        default:
-            break;
-    }
-}
 
 int SFrameBuffer::GetWidth() const {
     return m_width;
@@ -86,6 +76,14 @@ int SFrameBuffer::GetHeight() const {
     return m_height;
 }
 
-SFrameBuffer::BufferType SFrameBuffer::GetBufferType() const {
-    return m_bufferType;
+int SFrameBuffer::GenerateAttachmentType(SFrameBuffer::BufferType type) const {
+    switch (type) {
+        case RENDER:
+            return GL_COLOR_ATTACHMENT0 + m_buffers.size();
+        case DEPTH:
+            return GL_DEPTH_ATTACHMENT;
+        case STENCIL:
+        default:
+            return GL_COLOR_ATTACHMENT0;
+    }
 }
