@@ -33,8 +33,15 @@ void SFrameBuffer::Exterminate() {
 void SFrameBuffer::Init(const AssetMgr::AssetReference* asset) {
 }
 
+void SFrameBuffer::GenerateFramebuffer(SFrameBuffer::BufferDimension dimension) {
+    m_dimension = dimension;
 
-void SFrameBuffer::GenerateRenderbuffer(SFrameBuffer::BufferType type, int width, int height, int internalFormat) {
+    glGenFramebuffers(1, &m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+}
+
+unsigned int SFrameBuffer::GenerateRenderbuffer(BufferType type, int width, int height, int internalFormat) {
+    if(m_dimension == CUBE) return 0;
 
     auto buffer = new BufferObject();
     buffer->type = type;
@@ -47,20 +54,62 @@ void SFrameBuffer::GenerateRenderbuffer(SFrameBuffer::BufferType type, int width
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GenerateAttachmentType(type), GL_RENDERBUFFER, buffer->renderbufferId);
+
+    m_buffers.push_back(buffer);
+    return buffer->renderbufferId;
 }
 
-void SFrameBuffer::GenerateTexturebuffer(BufferType type, int width, int height, int internalFormat, int index,
-                                         int level) {
-    glViewport(0, 0, m_width, m_height);
+STexture* SFrameBuffer::GenerateTexturebuffer(BufferType type, int width, int height, int channel, int level) {
+    auto buffer = new BufferObject();
+    buffer->type = type;
+    m_width = width;
+    m_height = height;
+    buffer->texture = new STexture(static_cast<STexture::Type>(m_dimension));
+    buffer->texture->InitTexture(width, height, channel, GenerateInternalFormatType(channel), GL_FLOAT);
+    int texId = buffer->texture->GetTextureID();
+    if(level > 0)
+
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-    if(m_type == TEX_CUBE) {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, m_attachmentGL, GL_TEXTURE_CUBE_MAP_POSITIVE_X + index,
-                               m_texId, level);
+    if(m_dimension == PLANE)  {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GenerateAttachmentType(type), GL_TEXTURE_2D, texId, level);
     }
     else {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, m_attachmentGL, GL_TEXTURE_2D, m_texId, level);
+        GenerateAttachmentType(buffer->type, false);
     }
+
+    m_buffers.push_back(buffer);
+    return buffer->texture;
+}
+
+void SFrameBuffer::RasterizeFramebuffer() {
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+
+    // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
+    if(m_colorAttachmentSize > 1) {
+        std::vector<unsigned int> attachments;
+        attachments.reserve(m_colorAttachmentSize);
+        for (int i = 0; i < m_colorAttachmentSize; ++i) {
+            attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
+        }
+        glDrawBuffers(m_colorAttachmentSize, &attachments[0]);
+    }
+}
+
+void SFrameBuffer::AttachCubeBuffer(int index, int level) const {
+    if(m_dimension != CUBE) return;
+
+    for (const auto& buffer : m_buffers) {
+        const auto& texture = buffer->texture;
+        if(texture == nullptr) continue;
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GenerateAttachmentType(buffer->type, false),
+                               GL_TEXTURE_CUBE_MAP_POSITIVE_X + index, texture->GetTextureID(), level);
+    }
+}
+
+void SFrameBuffer::AttachFrameBuffer() const {
+    glViewport(0, 0, m_width, m_height);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 }
 
 void SFrameBuffer::DetachFrameBuffer() const {
@@ -76,14 +125,37 @@ int SFrameBuffer::GetHeight() const {
     return m_height;
 }
 
-int SFrameBuffer::GenerateAttachmentType(SFrameBuffer::BufferType type) const {
+int SFrameBuffer::GenerateAttachmentType(SFrameBuffer::BufferType type, bool isIncreaseAttachment) const {
     switch (type) {
         case RENDER:
-            return GL_COLOR_ATTACHMENT0 + m_buffers.size();
+            if(m_bufferStatus == BufferStatus::NONE) m_bufferStatus = COLOR_ONLY;
+            if(m_bufferStatus == BufferStatus::DEPTH_ONLY) m_bufferStatus = MULTI;
+            if(isIncreaseAttachment)
+                return GL_COLOR_ATTACHMENT0 + (m_colorAttachmentSize++);
+            else
+                return GL_COLOR_ATTACHMENT0 + m_colorAttachmentSize;
         case DEPTH:
+            if(m_bufferStatus == BufferStatus::NONE) m_bufferStatus = DEPTH_ONLY;
+            if(m_bufferStatus == BufferStatus::COLOR_ONLY) m_bufferStatus = MULTI;
             return GL_DEPTH_ATTACHMENT;
         case STENCIL:
         default:
             return GL_COLOR_ATTACHMENT0;
     }
+}
+
+int SFrameBuffer::GenerateInternalFormatType(int channel) const {
+    switch (channel) {
+        case GL_RG:
+            return GL_RG16F;
+        case GL_DEPTH_COMPONENT:
+            return GL_DEPTH_COMPONENT32F;
+        case GL_RGB:
+        default:
+            return GL_RGB16F;
+    }
+}
+
+SFrameBuffer::BufferStatus SFrameBuffer::GetBufferStatus() const {
+    return m_bufferStatus;
 }

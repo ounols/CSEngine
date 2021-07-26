@@ -77,7 +77,7 @@ void RenderMgr::RenderInstance(const CameraBase& camera, const GLProgramHandle* 
     }
     else {
         // If the framebuffer is a depth buffer
-        if(frameBuffer->GetBufferType() == SFrameBuffer::DEPTH) {
+        if(frameBuffer->GetBufferStatus() == SFrameBuffer::DEPTH_ONLY) {
             customHandlerID = m_environmentMgr->GetShadowEnvironment()->Program;
         }
         frameBuffer->AttachFrameBuffer();
@@ -140,7 +140,7 @@ void RenderMgr::RenderShadowInstance(const CameraBase& camera, const GLProgramHa
     }
     else {
         // If the framebuffer is a depth buffer
-        if(frameBuffer->GetBufferType() == SFrameBuffer::DEPTH) {
+        if(frameBuffer->GetBufferStatus() == SFrameBuffer::DEPTH_ONLY) {
             customHandlerID = m_environmentMgr->GetShadowEnvironment()->Program;
         }
         frameBuffer->AttachFrameBuffer();

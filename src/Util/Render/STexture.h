@@ -14,7 +14,7 @@ namespace CSE {
     class STexture : public SResource {
     public:
         enum Type {
-            TEX_2D, TEX_CUBE
+            TEX_2D = 0, TEX_CUBE = 1
         };
     public:
         STexture();
