@@ -3,29 +3,29 @@ language: cpp
 jobs:
   include:
   #==============================================================================================================================================================
-    - stage: Build engine (Linux)
-      if: (branch = master) OR (branch = build_testing)
-      os: linux
-      dist: bionic
-      compiler:
-        - gcc
-        - clang
-      addons:
-        apt:
-          packages:
-            - cmake
-            - build-essential
-            - mesa-common-dev
-            - libglfw3
-            - libglfw3-dev
-            - libglew-dev
-      script:
-        - cd platforms/Linux
-        - export CXXFLAGS="-DBUILD_TEST_MODE"
-        - mkdir build
-        - cd build
-        - cmake -DCMAKE_BUILD_TYPE=Debug ../
-        - cmake --build .
+    stage: Build engine (Linux)
+    if: (branch = master) OR (branch = build_testing)
+    os: linux
+    dist: bionic
+    compiler:
+      - gcc
+      - clang
+    addons:
+      apt:
+        packages:
+          - cmake
+          - build-essential
+          - mesa-common-dev
+          - libglfw3
+          - libglfw3-dev
+          - libglew-dev
+    script:
+      - cd platforms/Linux
+      - export CXXFLAGS="-DBUILD_TEST_MODE"
+      - mkdir build
+      - cd build
+      - cmake -DCMAKE_BUILD_TYPE=Debug ../
+      - cmake --build .
     after_success:
       - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
       - chmod +x send.sh
