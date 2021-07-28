@@ -1,19 +1,22 @@
 language: cpp
-dist: bionic
-os:
-  - linux
-compiler:
-  - gcc
 
 jobs:
   include:
-    stage: BuildEngine
+    stage: Build engine (Linux gcc)
     if: (branch = master) OR (branch = build_testing)
-    name: "Build Engine"
-    before_install:
-      # Setting Environment
-      - sudo apt-get update
-      - sudo apt-get -y install cmake build-essential mesa-common-dev libglfw3 libglfw3-dev libglew-dev
+    name: "Build engine (Linux gcc)"
+    os: linux
+    dist: bionic
+    compiler: gcc
+    addons:
+      apt:
+        packages:
+          - cmake
+          - build-essential
+          - mesa-common-dev
+          - libglfw3
+          - libglfw3-dev
+          - libglew-dev
     script:
       - cd platforms/Linux
       - export CXXFLAGS="-DBUILD_TEST_MODE"
@@ -21,11 +24,11 @@ jobs:
       - cd build
       - cmake -DCMAKE_BUILD_TYPE=Debug ../
       - cmake --build .
-    after_success:
-      - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
-      - chmod +x send.sh
-      - ./send.sh success $WEBHOOK_URL
-    after_failure:
-      - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
-      - chmod +x send.sh
-      - ./send.sh failure $WEBHOOK_URL
+  after_success:
+    - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+    - chmod +x send.sh
+    - ./send.sh success $WEBHOOK_URL
+  after_failure:
+    - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+    - chmod +x send.sh
+    - ./send.sh failure $WEBHOOK_URL
