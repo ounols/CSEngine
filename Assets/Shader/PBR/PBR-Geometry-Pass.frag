@@ -1,8 +1,12 @@
-#version 330 core
-//#version 100
+#version 300 es
 
 precision highp float;
 precision highp int;
+
+layout (location = 0) out vec3 result_position;
+layout (location = 1) out vec3 result_normal;
+layout (location = 2) out vec3 result_albedo;
+layout (location = 3) out vec3 result_material;
 
 //Uniforms
 //[gbuffer.texture.albedo]//
@@ -31,20 +35,21 @@ in mediump vec3 v_worldPosition;
 out vec4 FragColor;
 
 //Defined
-const lowp float c_zero = 0.0;
-const lowp float c_one = 1.0;
+const lowp float c_zero = 0.0f;
+const lowp float c_one = 1.0f;
 
 
 void main(void) {
 
-	lowp vec3 albedo     = pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2f)) * u_albedo;
-	lowp float metallic  = texture(u_sampler_albedo, v_textureCoordOut).b / 2.0f;
-	lowp float roughness = 0.5f - (texture(u_sampler_albedo, v_textureCoordOut).b / 2.0f);
-	lowp float ao        = 1.f;
+	lowp vec3  albedo    = u_albedo.r < c_zero ? pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2f)) : u_albedo;
+	lowp float metallic  = u_metallic < c_zero ? texture(u_sampler_metallic, v_textureCoordOut).r : u_metallic;
+	lowp float roughness = u_roughness < c_zero ? texture(u_sampler_roughness, v_textureCoordOut).r : u_roughness;
+	lowp float ao        = u_ao < c_zero ? texture(u_sampler_ao, v_textureCoordOut).r : u_ao;
 
 	vec3 N = normalize(v_eyespaceNormal);
-	vec3 V0 = normalize(N - v_worldPosition);
 
-	FragColor = vec4(color, 1.0);
-
+	result_position = v_worldPosition;
+	result_normal = N;
+	result_albedo = albedo;
+	result_material = vec3(metallic, roughness, ao);
 }

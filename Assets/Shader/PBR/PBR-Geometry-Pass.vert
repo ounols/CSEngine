@@ -1,4 +1,4 @@
-#version 330 core
+#version 300 es
 
 #define MAX_WEIGHTS 3
 #define MAX_JOINTS 60
@@ -38,29 +38,29 @@ out mediump vec3 v_worldPosition;
 
 
 //defined
-const lowp float c_zero = 0.0;
-const lowp float c_one = 1.0;
+const lowp float c_zero = 0.0f;
+const lowp float c_one = 1.0f;
 
 void main(void) {
-	vec4 position_final = vec4(0.0);
-	vec4 normal_final = vec4(0.0);
+	vec4 position_final = vec4(c_zero);
+	vec4 normal_final = vec4(c_zero);
 
 	//skinning
     if(u_isSkinning == 1) {
-        vec4 totalNormal = vec4(0.0);
+        vec4 totalNormal = vec4(c_zero);
 
         for(int i=0; i<MAX_WEIGHTS; ++i) {
             mat4 jointTransform = u_jointMatrix[int(a_jointIndices[i])];
             vec4 posePosition = jointTransform * a_position;
             position_final += posePosition * a_weights[i];
 
-            vec4 worldNormal = jointTransform * vec4(a_normal, 0.0);
+            vec4 worldNormal = jointTransform * vec4(a_normal, c_zero);
             normal_final += worldNormal * a_weights[i];
         }
-        position_final = vec4(position_final.xyz, 1.0);
+        position_final = vec4(position_final.xyz, c_one);
     } else {
         position_final = a_position;
-        normal_final = vec4(a_normal, 0);
+        normal_final = vec4(a_normal, c_zero);
     }
 
 
