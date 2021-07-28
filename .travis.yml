@@ -1,36 +1,90 @@
 language: cpp
+os: linux
+dist: bionic
+compiler: gcc
+
+_build_job_linux: &build_job_linux
+  addons:
+    apt:
+      packages:
+        - cmake
+        - build-essential
+        - mesa-common-dev
+        - libglfw3
+        - libglfw3-dev
+        - libglew-dev
+  script:
+    - cd platforms/Linux
+    - export CXXFLAGS="-DBUILD_TEST_MODE"
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_BUILD_TYPE=Debug ../
+    - cmake --build .
 
 jobs:
   include:
-  #==============================================================================================================================================================
-    stage: Build engine (Linux)
-    if: (branch = master) OR (branch = build_testing)
-    os: linux
-    dist: bionic
-    compiler:
-      - gcc
-      - clang
-    addons:
-      apt:
-        packages:
-          - cmake
-          - build-essential
-          - mesa-common-dev
-          - libglfw3
-          - libglfw3-dev
-          - libglew-dev
-    script:
-      - cd platforms/Linux
-      - export CXXFLAGS="-DBUILD_TEST_MODE"
-      - mkdir build
-      - cd build
-      - cmake -DCMAKE_BUILD_TYPE=Debug ../
-      - cmake --build .
-    after_success:
-      - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
-      - chmod +x send.sh
-      - ./send.sh success $WEBHOOK_URL
-    after_failure:
-      - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
-      - chmod +x send.sh
-      - ./send.sh failure $WEBHOOK_URL
+  # Compiler ==============================================================================================================================================================
+    - stage: Build engine (Compilers Test)
+      # GCC Compiler
+      if: (branch = master) OR (branch = build_testing)
+      compiler: gcc
+      os: linux
+      dist: bionic
+      <<: *build_job_linux
+      #==============================================================================================================================================================
+    - # Clang Compiler
+      if: (branch = master) OR (branch = build_testing)
+      compiler: clang
+      os: linux
+      dist: bionic
+      <<: *build_job_linux
+  # OS ==============================================================================================================================================================
+    - stage: Build engine (OSs Test)
+      # Ubuntu 14.04
+      if: (branch = master) OR (branch = build_testing)
+      os: linux
+      dist: trusty
+      <<: *build_job_linux
+      #==============================================================================================================================================================
+    - # Ubuntu 16.04
+      if: (branch = master)
+      os: linux
+      dist: xenial
+      <<: *build_job_linux
+      #==============================================================================================================================================================
+    - # Ubuntu 18.04
+      if: (branch = master) OR (branch = build_testing)
+      os: linux
+      dist: bionic
+      <<: *build_job_linux
+      #==============================================================================================================================================================
+    - # Ubuntu 20.04
+      if: (branch = master)
+      os: linux
+      dist: focal
+      <<: *build_job_linux
+  # Architectures ==============================================================================================================================================================
+    - stage: Build engine (Architectures Test)
+      # arm64
+      if: (branch = master)
+      arch: arm64
+      os: linux
+      dist: bionic
+      <<: *build_job_linux
+      #==============================================================================================================================================================
+    - # arm64-graviton2
+      if: (branch = master) OR (branch = build_testing)
+      arch: arm64-graviton2
+      os: linux
+      dist: bionic
+      <<: *build_job_linux
+
+#==============================================================================================================================================================
+  after_success:
+    - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+    - chmod +x send.sh
+    - ./send.sh success $WEBHOOK_URL
+  after_failure:
+    - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+    - chmod +x send.sh
+    - ./send.sh failure $WEBHOOK_URL
