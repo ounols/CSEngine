@@ -24,7 +24,7 @@ _build_job_linux: &build_job_linux
 jobs:
   include:
   # Compiler ==============================================================================================================================================================
-    - stage: Build engine (Compilers Test)
+    - stage: Build engine (Compilers Test) (only Linux)
       # GCC Compiler
       if: (branch = master) OR (branch = build_testing)
       compiler: gcc
@@ -52,19 +52,13 @@ jobs:
       dist: xenial
       <<: *build_job_linux
       #==============================================================================================================================================================
-    - # Ubuntu 18.04
-      if: (branch = master) OR (branch = build_testing)
-      os: linux
-      dist: bionic
-      <<: *build_job_linux
-      #==============================================================================================================================================================
     - # Ubuntu 20.04
-      if: (branch = master)
+      if: (branch = master) OR (branch = build_testing)
       os: linux
       dist: focal
       <<: *build_job_linux
   # Architectures ==============================================================================================================================================================
-    - stage: Build engine (Architectures Test)
+    - stage: Build engine (Architectures Test) (only Linux)
       # arm64
       if: (branch = master)
       arch: arm64
