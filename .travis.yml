@@ -2,33 +2,35 @@ language: cpp
 
 jobs:
   include:
-    stage: Build engine (Linux gcc)
-    if: (branch = master) OR (branch = build_testing)
-    name: "Build engine (Linux gcc)"
-    os: linux
-    dist: bionic
-    compiler: gcc
-    addons:
-      apt:
-        packages:
-          - cmake
-          - build-essential
-          - mesa-common-dev
-          - libglfw3
-          - libglfw3-dev
-          - libglew-dev
-    script:
-      - cd platforms/Linux
-      - export CXXFLAGS="-DBUILD_TEST_MODE"
-      - mkdir build
-      - cd build
-      - cmake -DCMAKE_BUILD_TYPE=Debug ../
-      - cmake --build .
-  after_success:
-    - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
-    - chmod +x send.sh
-    - ./send.sh success $WEBHOOK_URL
-  after_failure:
-    - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
-    - chmod +x send.sh
-    - ./send.sh failure $WEBHOOK_URL
+  #==============================================================================================================================================================
+    - stage: Build engine (Linux)
+      if: (branch = master) OR (branch = build_testing)
+      os: linux
+      dist: bionic
+      compiler:
+        - gcc
+        - clang
+      addons:
+        apt:
+          packages:
+            - cmake
+            - build-essential
+            - mesa-common-dev
+            - libglfw3
+            - libglfw3-dev
+            - libglew-dev
+      script:
+        - cd platforms/Linux
+        - export CXXFLAGS="-DBUILD_TEST_MODE"
+        - mkdir build
+        - cd build
+        - cmake -DCMAKE_BUILD_TYPE=Debug ../
+        - cmake --build .
+    after_success:
+      - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+      - chmod +x send.sh
+      - ./send.sh success $WEBHOOK_URL
+    after_failure:
+      - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+      - chmod +x send.sh
+      - ./send.sh failure $WEBHOOK_URL
