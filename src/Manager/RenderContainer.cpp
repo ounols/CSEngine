@@ -13,6 +13,8 @@ RenderContainer::~RenderContainer() {}
 void RenderContainer::Register(SIRender* object) {
     SMaterial* material = object->material;
     if(material == nullptr) return;
+    if(material->GetMode() == SMaterial::DEFERRED)
+        return RegisterDeferred(object);
 
     short orderLayer = material->GetOrderLayer();
     GLProgramHandle* handler = material->GetHandle();
@@ -22,10 +24,20 @@ void RenderContainer::Register(SIRender* object) {
 
 }
 
+void RenderContainer::RegisterDeferred(SIRender* object) {
+    SMaterial* material = object->material;
+
+    GLProgramHandle* handler = material->GetHandle();
+
+    auto& layer = m_renderDeferredLayer[handler];
+    layer.push_back(object);
+}
 
 void RenderContainer::Remove(SIRender* object) {
     SMaterial* material = object->material;
     if(material == nullptr) return;
+    if(material->GetMode() == SMaterial::DEFERRED)
+        return RemoveDeferred(object);
 
     short orderLayer = material->GetOrderLayer();
     GLProgramHandle* handler = material->GetHandle();
@@ -49,6 +61,22 @@ void RenderContainer::Remove(SIRender* object) {
         //빈공간은 제거
         if (orderLayerIter->second.empty()) {
             m_rendersLayer.erase(orderLayer);
+        }
+    }
+}
+
+void RenderContainer::RemoveDeferred(SIRender* object) {
+    ProgramRenderLayer& programLayer = m_renderDeferredLayer;
+    SMaterial* material = object->material;
+    GLProgramHandle* handler = material->GetHandle();
+
+    auto handlerPair = programLayer.find(handler);
+    if (handlerPair != programLayer.end()) {
+        auto& layerVector = handlerPair->second;
+        handlerPair->second.erase(std::remove(layerVector.begin(), layerVector.end(), object), layerVector.end());
+        //빈공간은 제거
+        if (layerVector.empty()) {
+            programLayer.erase(handlerPair);
         }
     }
 }

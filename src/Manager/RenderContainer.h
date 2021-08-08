@@ -21,11 +21,14 @@ namespace CSE {
 
     public:
         void Register(SIRender* object);
+        void RegisterDeferred(SIRender* object);
 
         void Remove(SIRender* object);
+        void RemoveDeferred(SIRender* object);
 
     protected:
         OrderRenderLayer m_rendersLayer;
+        ProgramRenderLayer m_renderDeferredLayer;
     };
 
 }

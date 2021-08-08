@@ -27,7 +27,7 @@ namespace CSE {
         };
     public:
         SFrameBuffer();
-        ~SFrameBuffer();
+        ~SFrameBuffer() override;
 
         void GenerateFramebuffer(BufferDimension dimension);
         unsigned int GenerateRenderbuffer(BufferType type, int width, int height, int internalFormat);
@@ -46,7 +46,7 @@ namespace CSE {
 
 
     protected:
-        void Init(const AssetMgr::AssetReference* asset) override;\
+        void Init(const AssetMgr::AssetReference* asset) override;
 
     private:
         int GenerateAttachmentType(SFrameBuffer::BufferType type, bool isIncreaseAttachment = true) const;
