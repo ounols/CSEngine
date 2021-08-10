@@ -21,13 +21,32 @@ _build_job_linux: &build_job_linux
     - cmake -DCMAKE_BUILD_TYPE=Debug ../
     - cmake --build .
 
+_build_job_win: &build_job_win
+  install:
+    # Setting GLEW Environment
+    - wget -O glew.zip https://github.com/nigels-com/glew/releases/download/glew-2.2.0/glew-2.2.0-win32.zip
+    - unzip glew.zip
+    - mv glew-2.2.0 glew
+    - rm -rf External/glew
+    - mv -f glew/bin/Release/Win32/glew32.dll platforms/windows/csengine
+    - mv -f glew External
+    # Setting .net-core
+    - choco install dotnetcore-sdk
+  script:
+    - export PATH=$MSBUILD_PATH:$PATH
+    - dotnet restore platforms/windows/csengine
+    - MSBuild.exe -p:Configuration=Debug -p:Platform=x86 platforms/windows/csengine/csengine.vcxproj
+
+
+# =============================================================================================================================================================
 jobs:
   include:
   # Compiler ==============================================================================================================================================================
-    - stage: Build engine (Compilers Test) (only Linux)
+    - stage: Build engine (Compilers Test)
       # GCC Compiler
       if: (branch = master) OR (branch = build_testing)
       compiler: gcc
+      name: "Default (bionic-GCC-AMD64)"
       os: linux
       dist: bionic
       <<: *build_job_linux
@@ -35,11 +54,22 @@ jobs:
     - # Clang Compiler
       if: (branch = master) OR (branch = build_testing)
       compiler: clang
+      name: "Clang"
       os: linux
       dist: bionic
       <<: *build_job_linux
+      #==============================================================================================================================================================
+    - # VS2019 Compiler
+      if: (branch = master) OR (branch = build_testing)
+      name: "MSVC (VS2019)"
+      os: windows
+      env:
+        - MSBUILD_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin"
+      before_install:
+        - choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+      <<: *build_job_win
   # OS ==============================================================================================================================================================
-    - stage: Build engine (OSs Test)
+    - stage: Build engine (OS Test)
       # Ubuntu 16.04
       if: (branch = master) OR (branch = build_testing)
       name: "Ubuntu 16.04"
@@ -57,6 +87,7 @@ jobs:
     - stage: Build engine (Architectures Test) (only Linux)
       # arm64
       if: (branch = master)
+      name: "arm64 (v8)"
       arch: arm64
       os: linux
       dist: bionic
@@ -65,6 +96,7 @@ jobs:
     - # arm64-graviton2
       if: (branch = master) OR (branch = build_testing)
       arch: arm64-graviton2
+      name: "arm64-graviton2 (v8)"
       os: linux
       dist: bionic
       <<: *build_job_linux
