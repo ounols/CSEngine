@@ -72,7 +72,8 @@ make 파일들을 생성합니다.
 현재는 Linux 빌드 테스트만 지정되어 있습니다. 향후 다양한 플랫폼에 대한 빌드 및 단위 테스트와 같은 다양한 안정화 테스트가 추가 될 예정입니다.
 |Branch|Build status|
 |--|--|
-|master|![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) |
+|master|[<img src='https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square'/>](https://travis-ci.com/github/ounols/CSEngine) |
+|build_testing|[<img src='https://img.shields.io/travis/com/ounols/CSEngine/build_testing?style=flat-square'/>](https://travis-ci.com/github/ounols/CSEngine) |
 
 ## 더보기
 
