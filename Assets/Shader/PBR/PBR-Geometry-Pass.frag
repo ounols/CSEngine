@@ -9,22 +9,22 @@ layout (location = 2) out vec3 result_albedo;
 layout (location = 3) out vec3 result_material;
 
 //Uniforms
-//[gbuffer.texture.albedo]//
+//[texture.albedo]//
 uniform sampler2D u_sampler_albedo;
-//[gbuffer.texture.metallic]//
+//[texture.metallic]//
 uniform sampler2D u_sampler_metallic;
-//[gbuffer.texture.roughness]//
+//[texture.roughness]//
 uniform sampler2D u_sampler_roughness;
-//[gbuffer.texture.ao]//
+//[texture.ao]//
 uniform sampler2D u_sampler_ao;
 
-//[gbuffer.vec3.albedo]//
+//[vec3.albedo]//
 uniform vec3 u_albedo;
-//[gbuffer.float.metallic]//
+//[float.metallic]//
 uniform float u_metallic;
-//[gbuffer.float.roughness]//
+//[float.roughness]//
 uniform float u_roughness;
-//[gbuffer.float.ao]//
+//[float.ao]//
 uniform float u_ao;
 
 //Varying
@@ -41,7 +41,7 @@ const lowp float c_one = 1.0f;
 
 void main(void) {
 
-	lowp vec3  albedo    = u_albedo.r < c_zero ? pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2f)) : u_albedo;
+	lowp vec3  albedo    = pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2f)) * u_albedo;
 	lowp float metallic  = u_metallic < c_zero ? texture(u_sampler_metallic, v_textureCoordOut).r : u_metallic;
 	lowp float roughness = u_roughness < c_zero ? texture(u_sampler_roughness, v_textureCoordOut).r : u_roughness;
 	lowp float ao        = u_ao < c_zero ? texture(u_sampler_ao, v_textureCoordOut).r : u_ao;
