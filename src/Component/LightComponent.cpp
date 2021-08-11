@@ -118,21 +118,26 @@ void LightComponent::SetDepthMap() {
 
     auto lightMgr = CORE->GetCore(LightMgr);
     m_frameBuffer = new SFrameBuffer();
-    m_frameBuffer->InitFrameBuffer(SFrameBuffer::DEPTH, lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT);
-    m_frameBuffer->InitTexture(lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT,
-                                 GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_UNSIGNED_SHORT);
-    m_frameBuffer->SetParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    m_frameBuffer->SetParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    // 1. Generate a framebuffer.
+    // 큐브 텍스쳐도 호환되도록 수정이 필요함 (for point shadow)
+    m_frameBuffer->GenerateFramebuffer(SFrameBuffer::PLANE);
+    // 2. Generate a depth texture.
+    m_depthTexture = m_frameBuffer->GenerateTexturebuffer(SFrameBuffer::DEPTH,
+                                                          lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT,
+                                                          GL_DEPTH_COMPONENT);
+    m_depthTexture->SetParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    m_depthTexture->SetParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 #ifdef ANDROID
-    m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #else
-    m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-    m_frameBuffer->SetParameterfv(GL_TEXTURE_BORDER_COLOR, borderColor);
+    m_depthTexture->SetParameterfv(GL_TEXTURE_BORDER_COLOR, borderColor);
 #endif
-
+    // 3. Rasterize the framebuffer.
+    m_frameBuffer->RasterizeFramebuffer();
 }
 
 LightComponent::LIGHT LightComponent::GetType() const {
@@ -190,15 +195,10 @@ const mat4& LightComponent::GetLightViewMatrix() const {
     return m_lightViewMatrix;
 }
 
-void LightComponent::BindDepthBuffer() const {
-    m_frameBuffer->AttachFrameBuffer();
-    glClear(GL_DEPTH_BUFFER_BIT);
-}
-
 void LightComponent::BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const {
     if(m_frameBuffer == nullptr || m_disableShadow) return;
 
-    m_frameBuffer->Bind(handle.Uniforms.LightShadowMap + index, index);
+    m_depthTexture->Bind(handle.Uniforms.LightShadowMap + index, index);
     auto matrix = m_lightViewMatrix * m_lightProjectionMatrix;
     glUniformMatrix4fv(handle.Uniforms.LightMatrix + handleIndex, 1, 0, matrix.Pointer());
 }

@@ -79,10 +79,11 @@ void FirstDemoScene::Init() {
     cube = new MeshSurface(CH02::teapot_smoothNumVerts, CH02::teapot_smoothVerts, CH02::teapot_smoothNormals);
     cube->SetUndestroyable(false);
     SFrameBuffer* buffer = new SFrameBuffer();
-    buffer->SetName("framebuffer_test");
-    buffer->SetID("framebuffer_test");
-    buffer->InitFrameBuffer(SFrameBuffer::RENDER, 512, 512);
-    buffer->InitTexture(512, 512, GL_RGB, GL_RGB16F, GL_FLOAT);
+    buffer->GenerateFramebuffer(SFrameBuffer::PLANE);
+    const auto& buf_tex = buffer->GenerateTexturebuffer(SFrameBuffer::RENDER, 512, 512, GL_RGB);
+    buf_tex->SetName("framebuffer_test");
+    buf_tex->SetID("framebuffer_test");
+    buffer->RasterizeFramebuffer();
     b->Destroy();
     c = new SGameObject("c");
     c->SetParent(root);

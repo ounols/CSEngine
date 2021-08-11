@@ -1,47 +1,66 @@
 #pragma once
 
+#include "../../Object/SResource.h"
+#include "../../OGLDef.h"
 #include "STexture.h"
-
 
 namespace CSE {
 
-    class SFrameBuffer : public STexture {
+    class STexture;
+
+    class SFrameBuffer : public SResource {
     public:
         enum BufferType {
             RENDER = 0, DEPTH = 1, STENCIL = 2,
+        };
+        enum BufferDimension {
+            PLANE = 0, CUBE = 1,
+        };
+        enum BufferStatus {
+            NONE = 0, COLOR_ONLY = 1, DEPTH_ONLY = 2, MULTI = 3,
+        };
+    private:
+        struct BufferObject {
+            BufferType type = RENDER;
+            unsigned int renderbufferId = 0;
+            STexture* texture = nullptr;
         };
     public:
         SFrameBuffer();
         ~SFrameBuffer();
 
-        void InitFrameBuffer(BufferType type, int width, int height);
-        void AttachFrameBuffer(int index = 0, int level = 0) const;
+        void GenerateFramebuffer(BufferDimension dimension);
+        unsigned int GenerateRenderbuffer(BufferType type, int width, int height, int internalFormat);
+        STexture* GenerateTexturebuffer(BufferType type, int width, int height, int channel,
+                                        int level = 0);
+        void RasterizeFramebuffer();
+        void AttachCubeBuffer(int index, int level = 0) const;
+        void AttachFrameBuffer() const;
         void DetachFrameBuffer() const;
         void Exterminate() override;
-
-        unsigned int GetRenderBufferID() const;
-        unsigned int GetFrameBufferID() const;
-
-        void SetBufferType(BufferType bufferType);
 
         int GetWidth() const;
         int GetHeight() const;
 
-        BufferType GetBufferType() const;
+        BufferStatus GetBufferStatus() const;
+
 
     protected:
-        void Init(const AssetMgr::AssetReference* asset) override;
+        void Init(const AssetMgr::AssetReference* asset) override;\
 
     private:
-        BufferType m_bufferType = RENDER;
-        int m_attachmentGL = GL_COLOR_ATTACHMENT0;
+        int GenerateAttachmentType(SFrameBuffer::BufferType type, bool isIncreaseAttachment = true) const;
+        int GenerateInternalFormatType(int channel) const;
+
+    private:
         int m_width = 512;
         int m_height = 512;
+        BufferDimension m_dimension = PLANE;
 
-        unsigned int m_rbo = 0;
         unsigned int m_fbo = 0;
+        std::vector<BufferObject*> m_buffers;
 
-        bool m_isTexture = true;
-
+        mutable BufferStatus m_bufferStatus = BufferStatus::NONE;
+        mutable unsigned short m_colorAttachmentSize = 0;
     };
 }

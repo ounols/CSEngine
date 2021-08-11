@@ -67,7 +67,6 @@ namespace CSE {
 
         SFrameBuffer* GetFrameBuffer() const override;
 
-        void BindDepthBuffer() const;
         void BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const;
 
     private:
@@ -85,6 +84,7 @@ namespace CSE {
         SLight* m_light = nullptr;
         bool m_isSunRising = false;
         SFrameBuffer* m_frameBuffer = nullptr;
+        STexture* m_depthTexture = nullptr;
         mat4 m_lightProjectionMatrix;
         mat4 m_lightViewMatrix;
         float m_near = -10.f;
