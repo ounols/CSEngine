@@ -71,7 +71,8 @@ Build through the created make files.
 Currently, only Linux build tests are available. In the future, various stabilization tests such as build tests for various platforms and several unit tests will be added.
 |Branch|Build status|
 |--|--|
-|master|![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) |
+|master|[<img src='https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square'/>](https://travis-ci.com/github/ounols/CSEngine) |
+|build_testing|[<img src='https://img.shields.io/travis/com/ounols/CSEngine/build_testing?style=flat-square'/>](https://travis-ci.com/github/ounols/CSEngine) |
 
 ## See more
 
