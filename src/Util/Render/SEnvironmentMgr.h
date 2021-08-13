@@ -21,6 +21,16 @@ namespace CSE {
             return m_shadowDepthMapShader;
         }
 
+        static unsigned int GetWidth();
+        static unsigned int* GetPointerWidth();
+
+        static void SetWidth(unsigned int width);
+
+        static unsigned int GetHeight();
+        static unsigned int* GetPointerHeight();
+
+        static void SetHeight(unsigned int height);
+
     private:
         void LoadCubeVAO();
 
@@ -31,6 +41,9 @@ namespace CSE {
         void RenderPlaneVAO();
 
     private:
+        static unsigned int m_width;
+        static unsigned int m_height;
+
         GLProgramHandle* m_equirectangularToCubemapShader;
         GLProgramHandle* m_irradianceShader;
         GLProgramHandle* m_prefilterShader;
@@ -50,5 +63,4 @@ namespace CSE {
         unsigned int m_planeVBO;
         unsigned int m_planeVAO;
     };
-
 }

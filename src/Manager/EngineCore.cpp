@@ -34,7 +34,7 @@ void EngineCore::Init(unsigned int width, unsigned int height) {
     }
 
     m_oglMgr->ResizeWindow(width, height);
-    static_cast<RenderMgr*>(m_renderMgr)->SetViewport(width, height);
+    static_cast<RenderMgr*>(m_renderMgr)->SetViewport();
 
     //    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/test_scene.scene");
 //    SceneMgr::getInstance()->SetScene(scene);
@@ -97,6 +97,6 @@ void EngineCore::GenerateCores() {
 
 void EngineCore::ResizeWindow(unsigned int width, unsigned int height) {
     m_oglMgr->ResizeWindow(width, height);
-    static_cast<RenderMgr*>(m_renderMgr)->SetViewport(width, height);
+    static_cast<RenderMgr*>(m_renderMgr)->SetViewport();
 }
 
