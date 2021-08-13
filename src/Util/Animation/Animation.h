@@ -9,10 +9,11 @@
 #include "../Quaternion.h"
 #include "../../Manager/ResMgr.h"
 #include "../../MacroDef.h"
-#include "AnimationUtill.h"
+#include "AnimationUtil.h"
 #include <map>
 #include <string>
 #include <list>
+#include <utility>
 
 namespace CSE {
 
@@ -25,10 +26,10 @@ namespace CSE {
         Animation(float totalTime, std::list<KeyFrame*> keyframes) {
             SetUndestroyable(true);
             m_length = totalTime;
-            m_keyframes = keyframes;
+            m_keyframes = std::move(keyframes);
         }
 
-        ~Animation() {
+        ~Animation() override {
         }
 
         void SetKeyframe(float totalTime, std::list<KeyFrame*> keyframes);

@@ -10,7 +10,7 @@ using namespace CSE;
 
 void Animation::SetKeyframe(float totalTime, std::list<KeyFrame*> keyframes) {
     m_length = totalTime;
-    m_keyframes = keyframes;
+    m_keyframes = std::move(keyframes);
 }
 
 void Animation::Exterminate() {

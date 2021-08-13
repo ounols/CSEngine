@@ -2,7 +2,7 @@
 
 #include "../SComponent.h"
 #include "../DrawableSkinnedMeshComponent.h"
-#include "../../Util/Animation/AnimationUtill.h"
+#include "../../Util/Animation/AnimationUtil.h"
 #include "../../Util/Animation/Animation.h"
 
 namespace CSE {

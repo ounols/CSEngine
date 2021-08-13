@@ -4,6 +4,7 @@
 #include "../Manager/LightMgr.h"
 #include "../Manager/EngineCore.h"
 #include "../Util/Render/ShaderUtil.h"
+#include "../Util/Settings.h"
 #include "TransformComponent.h"
 #include "DrawableSkinnedMeshComponent.h"
 
@@ -118,7 +119,7 @@ SMaterial* RenderComponent::GetMaterial() const {
 void RenderComponent::SetMaterial(SMaterial* material) {
     auto renderMgr = CORE->GetCore(RenderMgr);
     renderMgr->Remove(this);
-    if(this->material == nullptr) this->material = SResource::Create<SMaterial>("File:Material/DefaultPBR.mat");
+    if(this->material == nullptr) this->material = SResource::Create<SMaterial>(Settings::GetDefaultFowardMaterialId());
     else this->material = material;
     renderMgr->Register(this);
 
