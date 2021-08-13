@@ -3,6 +3,7 @@
 #include "EngineCore.h"
 #include "../Util/Render/SFrameBuffer.h"
 #include "../Util/Render/SEnvironmentMgr.h"
+#include "../Util/Render/SGBuffer.h"
 #include "CameraMgr.h"
 #include "../Component/RenderComponent.h"
 // #include <iostream>
@@ -31,11 +32,18 @@ void RenderMgr::Init() {
 
     cameraMgr = CORE->GetCore(CameraMgr);
     lightMgr = CORE->GetCore(LightMgr);
+
+    m_width = SEnvironmentMgr::GetPointerWidth();
+    m_height = SEnvironmentMgr::GetPointerHeight();
+
 }
 
-void RenderMgr::SetViewport(int width, int height) {
-    m_width = width;
-    m_height = height;
+void RenderMgr::SetViewport() {
+    SAFE_DELETE(m_gbufferObject);
+    if((*m_width) * (*m_height) > 0) {
+        m_gbufferObject = new SGBuffer();
+        m_gbufferObject->GenerateGBuffer(*m_width, *m_height);
+    }
 }
 
 void RenderMgr::Render() const {
@@ -66,6 +74,28 @@ void RenderMgr::Render() const {
 
 }
 
+void RenderMgr::RenderGbuffer(const CameraBase& camera) const {
+    const auto cameraMatrix = camera.GetCameraMatrixStruct();
+    const auto& frameBuffer = camera.GetFrameBuffer();
+    if(frameBuffer == nullptr) {
+//        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//        glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
+    }
+    else {
+        // If the framebuffer is a depth buffer
+        if(frameBuffer->GetBufferStatus() == SFrameBuffer::DEPTH_ONLY) {
+//            customHandlerID = m_environmentMgr->GetShadowEnvironment()->Program;
+        }
+//        frameBuffer->AttachFrameBuffer();
+//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    m_gbufferObject->AttachFrameBuffer();
+    glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glUseProgram(NULL);
+}
+
 void RenderMgr::RenderInstance(const CameraBase& camera, const GLProgramHandle* custom_handler) const {
 
     const auto cameraMatrix = camera.GetCameraMatrixStruct();
@@ -73,7 +103,7 @@ void RenderMgr::RenderInstance(const CameraBase& camera, const GLProgramHandle* 
     int customHandlerID = custom_handler != nullptr ? custom_handler->Program : -1;
     if(frameBuffer == nullptr) {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, (GLsizei) m_width, (GLsizei) m_height);
+        glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
     }
     else {
         // If the framebuffer is a depth buffer
@@ -136,7 +166,7 @@ void RenderMgr::RenderShadowInstance(const CameraBase& camera, const GLProgramHa
     int customHandlerID = custom_handler.Program;
     if(frameBuffer == nullptr) {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, (GLsizei) m_width, (GLsizei) m_height);
+        glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
     }
     else {
         // If the framebuffer is a depth buffer

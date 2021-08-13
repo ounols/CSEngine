@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CSEMAT version="1.0.0">
+<shader id="File:Shader/PBR/PBR-Light-Pass.shader" deferred="1">
+
+<geometry name="texture.albedo" type="tex" count="1">File:Stormtrooper_D.jpg</geometry>
+<geometry name="texture.metallic" type="tex" count="1">File:Stormtrooper_D.jpg</geometry>
+<geometry name="texture.roughness" type="tex" count="1">File:Stormtrooper_D.jpg</geometry>
+<geometry name="texture.ao" type="tex" count="1">File:Stormtrooper_D.jpg</geometry>
+<geometry name="vec3.albedo" type="vec3" count="1">1 1 1</geometry>
+<geometry name="float.metallic" type="float" count="1">-1</geometry>
+<geometry name="float.roughness" type="float" count="1">-1</geometry>
+<geometry name="float.ao" type="float" count="1">-1</geometry>
+
+<var name="TEXCUBE_IRRADIANCE" type="tex" count="1">irradiance.textureCubeMap</var>
+<var name="TEXCUBE_PREFILTER" type="tex" count="1">prefilter.textureCubeMap</var>
+<var name="TEX2D_BRDFLUT" type="tex" count="1">brdfLUT.texture</var>
+</shader>
+</CSEMAT>

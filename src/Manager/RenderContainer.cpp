@@ -25,12 +25,7 @@ void RenderContainer::Register(SIRender* object) {
 }
 
 void RenderContainer::RegisterDeferred(SIRender* object) {
-    SMaterial* material = object->material;
-
-    GLProgramHandle* handler = material->GetHandle();
-
-    auto& layer = m_renderDeferredLayer[handler];
-    layer.push_back(object);
+    m_renderDeferredLayer.push_back(object);
 }
 
 void RenderContainer::Remove(SIRender* object) {
@@ -66,17 +61,5 @@ void RenderContainer::Remove(SIRender* object) {
 }
 
 void RenderContainer::RemoveDeferred(SIRender* object) {
-    ProgramRenderLayer& programLayer = m_renderDeferredLayer;
-    SMaterial* material = object->material;
-    GLProgramHandle* handler = material->GetHandle();
-
-    auto handlerPair = programLayer.find(handler);
-    if (handlerPair != programLayer.end()) {
-        auto& layerVector = handlerPair->second;
-        handlerPair->second.erase(std::remove(layerVector.begin(), layerVector.end(), object), layerVector.end());
-        //빈공간은 제거
-        if (layerVector.empty()) {
-            programLayer.erase(handlerPair);
-        }
-    }
+    m_renderDeferredLayer.remove(object);
 }

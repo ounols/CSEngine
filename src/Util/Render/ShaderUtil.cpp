@@ -301,6 +301,10 @@ void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMe
     }
 }
 
+void ShaderUtil::BindAttributeToLightPass(const GLProgramHandle& handle) {
+
+}
+
 void ShaderUtil::BindSkinningDataToShader(const GLProgramHandle& handle, const GLMeshID& meshId,
                                           const std::vector<mat4>& jointMatrix) {
     if (!meshId.m_hasJoint || jointMatrix.empty()) {

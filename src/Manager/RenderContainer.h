@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
-#include "../Util/Render/RenderInterfaces.h"
+#include <list>
 #include <map>
+#include "../Util/Render/RenderInterfaces.h"
 
 
 namespace CSE {
@@ -28,7 +29,7 @@ namespace CSE {
 
     protected:
         OrderRenderLayer m_rendersLayer;
-        ProgramRenderLayer m_renderDeferredLayer;
+        std::list<SIRender*> m_renderDeferredLayer;
     };
 
 }
