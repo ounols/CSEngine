@@ -109,7 +109,6 @@ typedef char SQChar;
 #define scsprintf   _snprintf
 #else
 #define scsprintf   snprintf
-
 #endif
 #define scstrlen    strlen
 #define scstrtod    strtod

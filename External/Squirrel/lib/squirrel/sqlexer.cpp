@@ -67,6 +67,8 @@ void SQLexer::Init(SQSharedState *ss, SQLEXREADFUNC rg, SQUserPointer up,Compile
     ADD_KEYWORD(const,TK_CONST);
     ADD_KEYWORD(__LINE__,TK___LINE__);
     ADD_KEYWORD(__FILE__,TK___FILE__);
+    ADD_KEYWORD(rawcall, TK_RAWCALL);
+
 
     _readf = rg;
     _up = up;
@@ -381,7 +383,7 @@ SQInteger SQLexer::ReadString(SQInteger ndelim,bool verbatim)
                     break;
                     case _SC('U'):
                     case _SC('u'):  {
-                        const SQInteger maxdigits = x == 'u' ? 4 : 8;
+                        const SQInteger maxdigits = CUR_CHAR == 'u' ? 4 : 8;
                         SQChar temp[8 + 1];
                         ProcessStringHexEscape(temp, maxdigits);
                         SQChar *stemp;
@@ -389,7 +391,7 @@ SQInteger SQLexer::ReadString(SQInteger ndelim,bool verbatim)
 #if WCHAR_SIZE == 2
                         AddUTF16(scstrtoul(temp, &stemp, 16));
 #else
-                        ADD_CHAR((SQChar)scstrtoul(temp, &stemp, 16));
+                        APPEND_CHAR((SQChar)scstrtoul(temp, &stemp, 16));
 #endif
 #else
                         AddUTF8(scstrtoul(temp, &stemp, 16));
