@@ -41,10 +41,10 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
 
     if (type == LOAD_TYPE::MESH || type == LOAD_TYPE::ALL || type == LOAD_TYPE::AUTO) {
         try {
-            //
-            LoadSkin(collada.getChild("library_controllers"));
-            LoadSkeleton(collada.getChild("library_visual_scenes"));
-            m_isSkinning = true;
+            bool safe_result;
+            safe_result = LoadSkin(collada.getChild("library_controllers"));
+            safe_result &= LoadSkeleton(collada.getChild("library_visual_scenes"));
+            m_isSkinning = safe_result;
         } catch (int error) {
             std::cout << "passing skinning...\n";
             m_isSkinning = false;
@@ -73,18 +73,22 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
         }
 
     }
-
     //
     if (type == ANIMATION || type == ALL || type == AUTO) {
 
         try {
+            bool safe_exception;
             m_animationLoader = new DAEAnimationLoader();
-            m_animationLoader->Load(path, m_name);
+            safe_exception = m_animationLoader->Load(path, m_name);
+#ifdef __EMSCRIPTEN__
+            if(!safe_exception) {
+                SAFE_DELETE(m_animationLoader);
+            }
+#endif
         } catch (int error) {
             SAFE_DELETE(m_animationLoader);
             std::cout << "passing Animation...\n";
         }
-
 
     }
 
@@ -111,7 +115,10 @@ void DAELoader::Exterminate() {
 //    m_skeletonData->Destroy();
 }
 
-void DAELoader::LoadSkin(XNode root_s) {
+bool DAELoader::LoadSkin(XNode root_s) {
+#ifdef __EMSCRIPTEN__
+    if(!root_s.hasChild("controller")) return false;
+#endif
     XNode skinningData = root_s.getChild("controller").getChild("skin");
 
 
@@ -126,10 +133,14 @@ void DAELoader::LoadSkin(XNode root_s) {
     m_skinningData = new SkinningData();
     m_skinningData->set_jointOrder(jointsList);
     m_skinningData->set_verticesSkinData(vertexWeights);
-
+    return true;
 }
 
-void DAELoader::LoadSkeleton(XNode root_s) {
+bool DAELoader::LoadSkeleton(XNode root_s) {
+#ifdef __EMSCRIPTEN__
+    if(!root_s.hasChild("visual_scene")) return false;
+    if(!root_s.getChild("visual_scene").hasNodeByAttribute("node", "id", "Armature")) return false;
+#endif
     XNode armatureData = root_s.getChild("visual_scene").getNodeByAttribute("node", "id", "Armature");
 
     XNode headNode = armatureData.getChild("node");
@@ -142,9 +153,13 @@ void DAELoader::LoadSkeleton(XNode root_s) {
     else
         m_skeletonData->SetJoint(m_jointSize, headJoint);
 
+    return true;
 }
 
-void DAELoader::LoadGeometry(XNode root_g, DAEMeshData* meshData) {
+bool DAELoader::LoadGeometry(XNode root_g, DAEMeshData* meshData) {
+#ifdef __EMSCRIPTEN__
+    if(!root_g.hasChild("mesh")) return false;
+#endif
     XNode root_m = root_g.getChild("mesh");
     std::vector<VertexSkinData*> vertexSkinData;
     if (m_isSkinning) {
@@ -160,6 +175,9 @@ void DAELoader::LoadGeometry(XNode root_g, DAEMeshData* meshData) {
     std::string texCoordsId = "";
 
     try {
+#ifdef __EMSCRIPTEN__
+        if(!root_m.hasChild("polylist")) return false;
+#endif
         XNode polylist = root_m.getChild("polylist");
 
         normalsId = polylist.getNodeByAttribute("input", "semantic", "NORMAL")
@@ -188,6 +206,7 @@ void DAELoader::LoadGeometry(XNode root_g, DAEMeshData* meshData) {
 
     ConvertDataToVectors(meshData);
 
+    return true;
 }
 
 //===================================================================
@@ -433,6 +452,9 @@ Joint* DAELoader::loadJointData(XNode jointNode, bool isRoot) {
 }
 
 void DAELoader::LoadTexturePath(XNode imageNode) {
+#ifdef __EMSCRIPTEN__
+    if(!imageNode.hasChild("image")) return;
+#endif
     std::string path = imageNode.getChild("image").getChild("init_from").value;
     path = trim(path);
     auto asset = CORE->GetCore(ResMgr)->GetAssetReference(path);

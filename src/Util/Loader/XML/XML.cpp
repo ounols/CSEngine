@@ -154,6 +154,13 @@ const XAttrib& XNode::getAttribute(const char* name) const {
     throw -1;
 }
 
+bool XNode::hasAttribute(const char* name) const {
+    for (const auto & attribute : this->attributes) {
+        if (strcmp(attribute.name.c_str(), name) == 0) return true;
+    }
+    return false;
+}
+
 const XNode& XNode::getNodeByAttribute(const char* node_name, const char* attrib_name, const char* attrib_value) const {
     const XNode* res = this->_getNodeByAttribute(node_name, attrib_name, attrib_value);
     if (!res) {
@@ -168,6 +175,11 @@ const XNode& XNode::getNodeByAttribute(const char* node_name, const char* attrib
     return *res;
 }
 
+bool XNode::hasNodeByAttribute(const char* node_name, const char* attrib_name, const char* attrib_value) const {
+    const XNode* res = this->_getNodeByAttribute(node_name, attrib_name, attrib_value);
+    return res != nullptr;
+}
+
 const XNode& XNode::getChild(const char* name) const {
     for (unsigned int i = 0; i < this->children.size(); i++) {
         if (strcmp(this->children[i].name.c_str(), name) == 0) return this->children[i];
@@ -175,6 +187,13 @@ const XNode& XNode::getChild(const char* name) const {
 
     printf("Error: Node [%s] not found.\n", name);
     throw -1;
+}
+
+bool XNode::hasChild(const char* name) const {
+    for (const auto & child : this->children) {
+        if (strcmp(child.name.c_str(), name) == 0) return true;
+    }
+    return false;
 }
 
 /************************************************************************************************************************************************/

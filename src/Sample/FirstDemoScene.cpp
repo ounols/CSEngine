@@ -6,7 +6,6 @@
 #include "../Component/DrawableSkinnedMeshComponent.h"
 #include "../Component/CameraComponent.h"
 #include "../../Assets/teapot_smooth.h"
-#include "../../Assets/cube.h"
 #include "../Component/RenderComponent.h"
 #include "../Component/CustomComponent.h"
 #include "../Manager/GameObjectMgr.h"

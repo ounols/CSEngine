@@ -14,11 +14,11 @@ set(CMAKE_BUILD_TYPE Debug)
 #link_directories(/usr/local/lib)
 
 #find_package(glfw3 REQUIRED)
-find_package(OpenGL REQUIRED)
-
-
-
 #find_package(OpenGL REQUIRED)
+
+
+
+find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
 
 #find_package(PkgConfig REQUIRED)

@@ -60,11 +60,11 @@ namespace CSE {
                                        SPrefab* prefab = nullptr);
 
     private:
-        void LoadSkin(XNode root_s);
+        bool LoadSkin(XNode root_s);
 
-        void LoadSkeleton(XNode root_s);
+        bool LoadSkeleton(XNode root_s);
 
-        void LoadGeometry(XNode root_g, DAEMeshData* meshData);
+        bool LoadGeometry(XNode root_g, DAEMeshData* meshData);
 
 //===================================================================
 // GeometryLoader Functions

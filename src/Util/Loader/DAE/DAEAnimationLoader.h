@@ -46,7 +46,7 @@ namespace CSE {
 
 		~DAEAnimationLoader();
 
-		void Load(const char* path, std::string name);
+		bool Load(const char* path, std::string name);
 
 		AnimationData* GetAnimation() const {
 			return m_animationData;

@@ -15,28 +15,26 @@
 #include <iostream>
 #include <sys/time.h>
 #include <math.h>
+#include <chrono>
+#include <ctime>
 
 using namespace CSE;
+using std::chrono::duration_cast;
+using std::chrono::milliseconds;
+using std::chrono::seconds;
+using std::chrono::system_clock;
 
-float timeGetTime() {
-    long ms; // Milliseconds
-    int s;  // Seconds
-    struct timespec spec;
+long long int timeGetTime() {
+    auto ms_since_epoch = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 
-    clock_gettime(CLOCK_REALTIME, &spec);
-
-    s = spec.tv_sec * 1000;
-    ms = round(spec.tv_nsec / 1.0e6); // Convert nanoseconds to milliseconds
-
-    return ms + s;
+    return ms_since_epoch;
 }
-float elapsedTime = 0.f;
+long long int elapsedTime = 0;
 GLFWwindow* window = nullptr;
 MainProc* mainProc = nullptr;
 
 void mainLoop() {
-    elapsedTime += 1;
-    float deltaTime = elapsedTime;
+    auto deltaTime = timeGetTime() - elapsedTime;
     // std::cout << deltaTime <<'\n';
     /* Render here */
     mainProc->Update(deltaTime);
@@ -73,8 +71,8 @@ int main(void) {
 //    glfwWindowHint(GLFW_SAMPLES, 4);
 //    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    int width = 500;
-    int height = 400;
+    int width = 600;
+    int height = 250;
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(width, height, "CSEngine", NULL, NULL);
@@ -96,10 +94,11 @@ int main(void) {
 
     printf("GL_VERSION  : %s\n", glGetString(GL_VERSION));
     printf("GL_RENDERER : %s\n", glGetString(GL_RENDERER));
+    printf("GLSL_VERSION : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     mainProc = new MainProc();
     mainProc->Init(width, height);
-    elapsedTime = 0;
+    elapsedTime = timeGetTime();
     /* Loop until the user closes the window */
     emscripten_set_main_loop(&mainLoop, 0, 1);
     SAFE_DELETE(mainProc);

@@ -30,16 +30,25 @@ DAEAnimationLoader::~DAEAnimationLoader() {
     m_animationData->keyFrames.clear();
     SAFE_DELETE(m_animationData);
 }
-
-void DAEAnimationLoader::Load(const char* path, std::string name) {
+#include <iostream>
+bool DAEAnimationLoader::Load(const char* path, std::string name) {
     m_name = name;
 
     m_root = XFILE(path).getRoot();
     XNode collada = m_root->getChild("COLLADA");
 
+#ifdef __EMSCRIPTEN__
+    if(!collada.hasChild("library_animations")) return false;
+    if(!collada.hasChild("library_visual_scenes")) return false;
+#endif
     m_animation = collada.getChild("library_animations");
     m_joint = collada.getChild("library_visual_scenes");
+#ifdef __EMSCRIPTEN__
+    if(!m_animation.getChild("animation").hasChild("source")) return false;
+    if(!m_joint.getChild("visual_scene").hasChild("node")) return false;
+#endif
     LoadAnimation();
+    return true;
 }
 
 void DAEAnimationLoader::LoadAnimation() {

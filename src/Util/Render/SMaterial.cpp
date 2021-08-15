@@ -149,6 +149,9 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
     auto shaderHandle = SResource::Create<GLProgramHandle>(shader_file_id);
 
     try {
+#ifdef __EMSCRIPTEN__
+        if(!shader_node.hasAttribute("deferred")) goto CSE_SMaterial_catched;
+#endif
         auto get_deferred = std::stoi(shader_node.getAttribute("deferred").value);
         if(get_deferred == 1) {
             m_mode = SMaterialMode::DEFERRED;
@@ -156,6 +159,9 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
             m_geometryPassHandle = geometryShaderHandle;
         }
     } catch (int error) {}
+#ifdef __EMSCRIPTEN__
+CSE_SMaterial_catched:
+#endif
     if(shaderHandle == nullptr) return;
 
     for (const auto& node : var_nodes) {

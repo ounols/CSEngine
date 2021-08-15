@@ -90,11 +90,6 @@ void CustomComponent::RegisterScript() {
     }
     catch (Sqrat::Exception e) { m_funcExterminate = -1; }
 
-	try {
-		m_specialization->bind(9, "GetCount");
-	}
-	catch (Sqrat::Exception e) { }
-
 }
 
 
@@ -196,7 +191,7 @@ void CustomComponent::CreateClassInstance(std::vector<std::string> variables) {
 
     if(variables.empty()) return;
 
-    for (auto val : variables) {
+    for (const auto& val : variables) {
         auto obj = m_classInstance->get(val.c_str());
         auto r_obj = obj.GetObject()._type;
 
