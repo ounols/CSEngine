@@ -4,21 +4,21 @@
 #define MAX_JOINTS 60
 
 // Attributes
-//[POSITION]//
+//[att.position]//
 in vec4 a_position;
-//[JOINT_INDICES]//
+//[att.joint_indices]//
 in vec3 a_jointIndices;
-//[WEIGHTS]//
+//[att.weight]//
 in vec3 a_weights;
 
 // Uniforms
-//[PROJECTION_MATRIX]//
+//[matrix.projection]//
 uniform mat4 lightSpaceMatrix;
-//[MODELVIEW_MATRIX]//
+//[matrix.modelview]//
 uniform mat4 model;
-//[JOINT_MATRIX]//
+//[matrix.joint]//
 uniform mat4 u_jointMatrix[MAX_JOINTS];
-//[SKINNING_MODE]//
+//[matrix.skinning_mode]//
 uniform lowp int u_isSkinning;
 
 void main() {

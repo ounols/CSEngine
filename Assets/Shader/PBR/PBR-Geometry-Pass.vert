@@ -6,28 +6,28 @@
 
 
 // Attributes
-//[POSITION]//
+//[att.position]//
 in vec4 a_position;
-//[NORMAL]//
+//[att.normal]//
 in vec3 a_normal;
-//[JOINT_INDICES]//
+//[att.joint_indices]//
 in vec3 a_jointIndices;
-//[WEIGHTS]//
+//[att.weight]//
 in vec3 a_weights;
-//[TEX_UV]//
+//[att.tex_uv]//
 in vec2 a_textureCoordIn;
 
 // Uniforms
-//[PROJECTION_MATRIX]//
+//[matrix.projection]//
 uniform mat4 u_projectionMatrix;//Projection;
-//[MODELVIEW_MATRIX]//
+//[matrix.modelview]//
 uniform mat4 u_modelViewMatrix;//Modelview;
-//[MODELVIEW_NOCAMERA_MATRIX]//
+//[matrix.modelview_nc]//
 uniform mat4 u_modelViewNoCameraMatrix;//Modelview - no camera matrix;
-//[JOINT_MATRIX]//
+//[matrix.joint]//
 uniform mat4 u_jointMatrix[MAX_JOINTS];
 
-//[SKINNING_MODE]//
+//[matrix.skinning_mode]//
 uniform lowp int u_isSkinning;
 
 

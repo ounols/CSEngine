@@ -1,5 +1,4 @@
 #version 330 core
-//#version 100
 #define MAX_LIGHTS 8
 
 precision highp float;
@@ -7,14 +6,14 @@ precision highp int;
 
 
 //Uniforms
-//[texture.albedo]//
+//[geo.position]//
+uniform sampler2D u_sampler_position;
+//[geo.normal]//
+uniform sampler2D u_sampler_normal;
+//[geo.albedo]//
 uniform sampler2D u_sampler_albedo;
-//[texture.metallic]//
-uniform sampler2D u_sampler_metallic;
-//[texture.roughness]//
-uniform sampler2D u_sampler_roughness;
-//[texture.ao]//
-uniform sampler2D u_sampler_ao;
+//[geo.material]//
+uniform sampler2D u_sampler_material;
 
 //IBL
 //[light.irradiance]//
@@ -24,20 +23,11 @@ uniform samplerCube u_prefilterMap;
 //[light.brdf]//
 uniform sampler2D u_brdfLUT;
 
-//[vec3.albedo]//
-uniform vec3 u_albedo;
-//[float.metallic]//
-uniform float u_metallic;
-//[float.roughness]//
-uniform float u_roughness;
-//[float.ao]//
-uniform float u_ao;
-//[FLOAT_IRRADIANCE]//
-uniform vec3 u_irradiance;
-
 
 //[light.type]//
 uniform int u_lightType[MAX_LIGHTS];
+//[light.position]//
+uniform vec4 u_lightPosition[MAX_LIGHTS];
 //[light.radius]//
 uniform float u_lightRadius[MAX_LIGHTS];
 //[light.color]//
@@ -48,14 +38,11 @@ uniform sampler2D u_shadowMap[MAX_LIGHTS];
 uniform lowp int u_shadowMode[MAX_LIGHTS];
 //[light.size]//
 uniform int u_lightSize;
+//[light.matrix]//
+uniform mat4 u_lightMatrix[MAX_LIGHTS];
 
 //Varying
-in mediump vec3 v_eyespaceNormal;//EyespaceNormal;
-in lowp vec3 v_lightPosition[MAX_LIGHTS];
-in lowp vec4 v_fragPosLightSpace[MAX_LIGHTS];
 in mediump vec2 v_textureCoordOut;
-in lowp float v_distance[MAX_LIGHTS];
-in mediump vec3 v_worldPosition;
 
 out vec4 FragColor;
 
@@ -89,14 +76,17 @@ float ClampedPow(float X, float Y) {
 
 
 void main(void) {
+	// retrieve data from gbuffer
+	lowp vec3  fragPos	 = texture(u_sampler_position, v_textureCoordOut).rgb;
+	lowp vec3  normal	 = texture(u_sampler_normal, v_textureCoordOut).rgb;
 
-	lowp vec3 albedo     = pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2)) * u_albedo;
-	lowp float metallic  = texture(u_sampler_albedo, v_textureCoordOut).b / 2.0;
-	lowp float roughness = 0.5 - (texture(u_sampler_albedo, v_textureCoordOut).b / 2.0);
-	lowp float ao        = 1.f;
+	lowp vec3  albedo    = texture(u_sampler_albedo, v_textureCoordOut).rgb;
+	lowp float metallic  = texture(u_sampler_material, v_textureCoordOut).r;
+	lowp float roughness = texture(u_sampler_material, v_textureCoordOut).g;
+	lowp float ao        = texture(u_sampler_material, v_textureCoordOut).b;
 
-	vec3 N = normalize(v_eyespaceNormal);
-	vec3 V0 = normalize(N - v_worldPosition);
+	vec3 N = normalize(normal);
+	vec3 V0 = normalize(N - fragPos);
 	vec3 R = reflect(-V0, N);
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
@@ -110,15 +100,20 @@ void main(void) {
 	lowp int index_shadow = 0;
 	for(int i = 0; i < u_lightSize; ++i) {
 
+		// direction light : position light
+		lowp vec4 lightFragPosition = (u_lightType[i] == 1) ? vec4(c_zero, c_zero, c_zero, c_one) : vec4(fragPos, c_one);
+		vec3 aux = vec3(u_lightPosition[i] - lightFragPosition);
+
 		// calculate per-light radiance
 		vec3 V = (u_lightType[i] > 1) ? V0 : N;
-		vec3 L = v_lightPosition[i];
+		vec3 L = normalize(aux);
 		vec3 H = normalize(V + L);
-		float distance = v_distance[i];
+		float distance = length(aux);
 		float attenuation = 1.0 / (distance * distance);
 		float shadow = 0.0;
 		if(u_shadowMode[i] == 1) {
-			shadow = ShadowCalculation(index_shadow, v_fragPosLightSpace[i], N, L);
+			lowp vec4 fragPosLightSpace = u_lightMatrix[i] * vec4(fragPos, c_one);
+			shadow = ShadowCalculation(index_shadow, fragPosLightSpace, N, L);
 			++index_shadow;
 		}
 		vec3 radiance = (u_lightColor[i] * attenuation) * (1.0 - shadow);
@@ -166,8 +161,8 @@ void main(void) {
 
 	vec3 ambient = (kD * diffuse + specular) * ao;
 
-//	vec3 irradiance = u_irradiance.r < 0.00 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
-//	vec3 ambient = irradiance * albedo * ao;
+	//	vec3 irradiance = u_irradiance.r < 0.00 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
+	//	vec3 ambient = irradiance * albedo * ao;
 
 	vec3 color = ambient + Lo;
 
@@ -191,7 +186,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness) {
 float DistributionGGXMobile(vec3 N, vec3 H, float roughness) {
 	// Walter et al. 2007, "Microfacet Models for Refraction through Rough Surfaces"
 
-	vec3 NxH = cross(v_eyespaceNormal, H);
+	vec3 NxH = cross(N, H);
 	float NoH = max(dot(N, H), 0.0);
 	float oneMinusNoHSquared = dot(NxH, NxH);
 
@@ -255,7 +250,7 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	projCoords = projCoords * 0.5 + 0.5;
 	// get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
 	float closestDepth = GetTextureInArray(u_shadowMap, index, projCoords.xy).r;
-//	float closestDepth = texture(u_shadowMap[index], projCoords.xy).r;
+	//	float closestDepth = texture(u_shadowMap[index], projCoords.xy).r;
 	// get depth of current fragment from light's perspective
 	float currentDepth = projCoords.z;
 	// calculate bias (based on depth map resolution and slope)
@@ -264,17 +259,17 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	// float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
 	// PCF
 	float shadow = 0.0;
-#if __VERSION__ == 300 // For ES
+	#if __VERSION__ == 300 // For ES
 	vec2 texelSize = 1.0 / vec2(c_shadow_width, c_shadow_height);
-#else
+	#else
 	vec2 texelSize = 1.0 / textureSize(u_shadowMap[index], 0);
-#endif
+	#endif
 	for(int x = -1; x <= 1; ++x)
 	{
 		for(int y = -1; y <= 1; ++y)
 		{
 			float pcfDepth = GetTextureInArray(u_shadowMap, index, projCoords.xy + vec2(x, y) * texelSize).r;
-//			float pcfDepth = texture(u_shadowMap[index], projCoords.xy + vec2(x, y) * texelSize).r;
+			//			float pcfDepth = texture(u_shadowMap[index], projCoords.xy + vec2(x, y) * texelSize).r;
 			shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
 		}
 	}
