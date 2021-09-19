@@ -27,22 +27,13 @@ SMaterial::SMaterial(const SMaterial* material) : SResource(material, false) {
         element_copy->value_str = element_src->value_str;
         m_elements.insert(std::pair<std::string, Element*>(element_pair.first, element_copy));
     }
-    for(const auto& element_pair : material->m_geometryElements) {
-        const auto& element_src = element_pair.second;
-        Element* element_copy = new Element;
-        element_copy->count = element_src->count;
-        element_copy->type = element_src->type;
-        element_copy->value_str = element_src->value_str;
-        m_geometryElements.insert(std::pair<std::string, Element*>(element_pair.first, element_copy));
-    }
     m_mode = material->m_mode;
     m_handle = material->m_handle;
-    m_geometryPassHandle = material->m_geometryPassHandle;
+    m_lightPassHandle = material->m_lightPassHandle;
     m_orderLayer = material->m_orderLayer;
     m_textureLayout = material->m_textureLayout;
 
     InitElements(m_elements, m_handle);
-    InitElements(m_geometryElements, m_geometryPassHandle);
     m_lightMgr = CORE->GetCore(LightMgr);
 }
 
@@ -60,27 +51,18 @@ void SMaterial::ReleaseElements() {
 		SAFE_DELETE(element);
 	}
     m_elements.clear();
-
-    for (const auto pair : m_geometryElements) {
-        auto* element = pair.second;
-        SAFE_DELETE(element);
-    }
-    m_geometryElements.clear();
 }
 
 void SMaterial::SetHandle(GLProgramHandle* handle) {
     throw -1; // 사용할꺼면 꼭 수정이 필요함 그래서 에러띄움
     m_handle = handle;
     InitElements(m_elements, m_handle);
-    InitElements(m_geometryElements, m_geometryPassHandle);
 }
 
-void SMaterial::AttachElement(SMaterialPass renderPassType) const {
+void SMaterial::AttachElement() const {
     m_textureLayout = m_lightMgr->GetShadowCount();
 
-    const auto& elements = (renderPassType == (int)SMaterialPass::NONE) ? m_elements : m_geometryElements;
-
-    for (const auto& element_pair : elements) {
+    for (const auto& element_pair : m_elements) {
 		const auto& element = element_pair.second;
 		if(element->id < 0) continue;
 		element->attachFunc();
@@ -152,10 +134,18 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
         auto get_deferred = std::stoi(shader_node.getAttribute("deferred").value);
         if(get_deferred == 1) {
             m_mode = SMaterialMode::DEFERRED;
-            auto geometryShaderHandle = SResource::Create<GLProgramHandle>(Settings::GetDeferredGeometryPassShaderID());
-            m_geometryPassHandle = geometryShaderHandle;
         }
     } catch (int error) {}
+
+    if(m_mode == SMaterialMode::DEFERRED) {
+        auto geometryShaderHandle = SResource::Create<GLProgramHandle>(Settings::GetDeferredGeometryPassShaderID());
+        m_handle = geometryShaderHandle;
+        m_lightPassHandle = shaderHandle;
+    }
+    else {
+        m_handle = shaderHandle;
+    }
+
     if(shaderHandle == nullptr) return;
 
     for (const auto& node : var_nodes) {
@@ -170,16 +160,9 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
         element->type = type;
         element->count = std::stoi(element_count);
         element->value_str = element_value;
-        if(node.name == "geometry") {
-            m_geometryElements.insert(std::pair<std::string, Element*>(element_name, element));
-        }
-        else {
-            m_elements.insert(std::pair<std::string, Element*>(element_name, element));
-
-        }
+        m_elements.insert(std::pair<std::string, Element*>(element_name, element));
     }
     SAFE_DELETE(m_root);
-    m_handle = shaderHandle;
 }
 
 
@@ -300,10 +283,36 @@ GLProgramHandle* SMaterial::GetHandle() const {
     return m_handle;
 }
 
+GLProgramHandle* SMaterial::GetLightPassHandle() const {
+    return m_lightPassHandle;
+}
+
 SMaterial::SMaterialMode SMaterial::GetMode() const {
     return m_mode;
 }
 
 void SMaterial::SetMode(SMaterial::SMaterialMode mode) {
     m_mode = mode;
+}
+
+SMaterial* SMaterial::GenerateMaterial(GLProgramHandle* handle) {
+    if(handle == nullptr) return nullptr;
+
+    const auto& uniformList = handle->GetUniformsList();
+    auto material = new SMaterial();
+    material->m_handle = handle;
+
+    for (const auto& uniform_pair : uniformList) {
+        const auto& name = uniform_pair.first;
+        const auto& gl_element = uniform_pair.second;
+
+        auto element = new Element;
+        element->id = gl_element->id;
+        element->type = XMLParser::GetType(gl_element->type);
+
+        material->m_elements.insert(std::pair<std::string, Element*>(name, element));
+    }
+    material->InitElements(material->m_elements, handle);
+
+    return material;
 }

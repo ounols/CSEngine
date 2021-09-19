@@ -11,11 +11,15 @@
 #include <string>
 #include <iostream>
 #include "../Loader/STB/stb_image.h"
+#include "SMaterial.h"
+#include "../Settings.h"
+#include "../GLProgramHandle.h"
 
 using namespace CSE;
 
 unsigned int SEnvironmentMgr::m_width = 0;
 unsigned int SEnvironmentMgr::m_height = 0;
+unsigned int SEnvironmentMgr::m_planeVAO = 0;
 
 SEnvironmentMgr::SEnvironmentMgr() {
 
@@ -353,4 +357,11 @@ unsigned int* SEnvironmentMgr::GetPointerWidth() {
 
 unsigned int* SEnvironmentMgr::GetPointerHeight() {
     return &m_height;
+}
+
+void SEnvironmentMgr::BindPBREnvironmentMap(const GLProgramHandle* handle, int textureLayout) const {
+    if(handle == nullptr) return;
+    m_irradianceMap->Bind(handle->Uniforms.LightIrradiance, textureLayout);
+    m_prefilterMap->Bind(handle->Uniforms.LightPrefilter, textureLayout + 1);
+    m_brdfMap->Bind(handle->Uniforms.LightBrdfLut, textureLayout + 2);
 }

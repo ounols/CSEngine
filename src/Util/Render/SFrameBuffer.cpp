@@ -53,7 +53,7 @@ unsigned int SFrameBuffer::GenerateRenderbuffer(BufferType type, int width, int 
     glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GenerateAttachmentType(type), GL_RENDERBUFFER, buffer->renderbufferId);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GenerateAttachmentType(type, false), GL_RENDERBUFFER, buffer->renderbufferId);
 
     m_buffers.push_back(buffer);
     return buffer->renderbufferId;
@@ -66,8 +66,8 @@ STexture* SFrameBuffer::GenerateTexturebuffer(BufferType type, int width, int he
     m_height = height;
     buffer->texture = new STexture(static_cast<STexture::Type>(m_dimension));
     buffer->texture->InitTexture(width, height, channel, GenerateInternalFormatType(channel), GL_FLOAT);
-    int texId = buffer->texture->GetTextureID();
-    if(level > 0)
+    unsigned int texId = buffer->texture->GetTextureID();
+//    if(level > 0)
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
@@ -75,6 +75,7 @@ STexture* SFrameBuffer::GenerateTexturebuffer(BufferType type, int width, int he
         glFramebufferTexture2D(GL_FRAMEBUFFER, GenerateAttachmentType(type), GL_TEXTURE_2D, texId, level);
     }
     else {
+        // TODO: 큐브맵 텍스쳐 바인딩 설정 필요
         GenerateAttachmentType(buffer->type, false);
     }
 
@@ -82,7 +83,7 @@ STexture* SFrameBuffer::GenerateTexturebuffer(BufferType type, int width, int he
     return buffer->texture;
 }
 
-void SFrameBuffer::RasterizeFramebuffer() {
+void SFrameBuffer::RasterizeFramebuffer() const {
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
     // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
@@ -107,9 +108,9 @@ void SFrameBuffer::AttachCubeBuffer(int index, int level) const {
     }
 }
 
-void SFrameBuffer::AttachFrameBuffer() const {
+void SFrameBuffer::AttachFrameBuffer(int target) const {
     glViewport(0, 0, m_width, m_height);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glBindFramebuffer(target, m_fbo);
 }
 
 void SFrameBuffer::DetachFrameBuffer() const {
@@ -131,7 +132,7 @@ int SFrameBuffer::GenerateAttachmentType(SFrameBuffer::BufferType type, bool isI
             if(m_bufferStatus == BufferStatus::NONE) m_bufferStatus = COLOR_ONLY;
             if(m_bufferStatus == BufferStatus::DEPTH_ONLY) m_bufferStatus = MULTI;
             if(isIncreaseAttachment)
-                return GL_COLOR_ATTACHMENT0 + (m_colorAttachmentSize++);
+                return GL_COLOR_ATTACHMENT0 + (++m_colorAttachmentSize) - 1;
             else
                 return GL_COLOR_ATTACHMENT0 + m_colorAttachmentSize;
         case DEPTH:
@@ -150,6 +151,8 @@ int SFrameBuffer::GenerateInternalFormatType(int channel) const {
             return GL_RG16F;
         case GL_DEPTH_COMPONENT:
             return GL_DEPTH_COMPONENT32F;
+        case GL_RGBA:
+            return GL_RGBA16F;
         case GL_RGB:
         default:
             return GL_RGB16F;

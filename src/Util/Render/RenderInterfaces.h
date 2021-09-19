@@ -3,11 +3,11 @@
 #include "../../SObject.h"
 #include "../../Manager/ResMgr.h"
 #include "../Matrix.h"
-#include "SMaterial.h"
 #include "GLMeshID.h"
 
 namespace CSE {
     struct CameraMatrixStruct;
+    class SMaterial;
 
     class SISurface : public SResource {
     public:
@@ -16,8 +16,7 @@ namespace CSE {
             SetUndestroyable(true);
         }
 
-        virtual ~SISurface() {
-        }
+        ~SISurface() override = default;
 
         virtual int GetVertexCount() const = 0;
 
@@ -38,9 +37,9 @@ namespace CSE {
 
     class SIRender {
     public:
-        SIRender() {}
+        SIRender() = default;
 
-        virtual ~SIRender() {}
+        virtual ~SIRender() = default;
 
         virtual void
         SetMatrix(const CameraMatrixStruct& cameraMatrixStruct,
@@ -55,7 +54,7 @@ namespace CSE {
 
     public:
         friend class RenderContainer;
-
         friend class RenderMgr;
+        friend class SGBuffer;
     };
 }

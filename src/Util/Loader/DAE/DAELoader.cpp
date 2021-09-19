@@ -5,6 +5,7 @@
 #include "../../../Component/DrawableSkinnedMeshComponent.h"
 #include "../../../Component/RenderComponent.h"
 #include "../../Render/STexture.h"
+#include "../../Render/SMaterial.h"
 #include "../../../Manager/EngineCore.h"
 
 using namespace CSE;

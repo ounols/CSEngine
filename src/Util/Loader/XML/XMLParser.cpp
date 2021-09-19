@@ -95,3 +95,23 @@ SType XMLParser::GetType(std::string type) {
 
     return SType::UNKNOWN;
 }
+
+SType XMLParser::GetType(unsigned int type) {
+    if (type == GL_BOOL) return SType::BOOL;
+    if (type == GL_FLOAT) return SType::FLOAT;
+    if (type == GL_INT) return SType::INT;
+    //    if(type == "arr") dst = (void*)parseInt(values[0].c_str());
+
+    if (type == GL_SAMPLER_2D) return SType::TEXTURE;
+
+
+    if (type == GL_FLOAT_VEC2) return SType::VEC2;
+    if (type == GL_FLOAT_VEC3) return SType::VEC3;
+    if (type == GL_FLOAT_VEC4) return SType::VEC4;
+
+    if (type == GL_FLOAT_MAT2) return SType::MAT2;
+    if (type == GL_FLOAT_MAT3) return SType::MAT3;
+    if (type == GL_FLOAT_MAT4) return SType::MAT4;
+
+    return SType::UNKNOWN;
+}

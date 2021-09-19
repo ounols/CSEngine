@@ -16,7 +16,7 @@ namespace CSE {
         SResource(bool isRegister);
         SResource(const SResource* resource, bool isRegister);
 
-        virtual ~SResource();
+        ~SResource() override;
 
         void SetName(std::string name);
 

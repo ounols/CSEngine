@@ -40,6 +40,7 @@ void ResMgr::Register(SResource* m_object) {
 }
 
 void ResMgr::Remove(SResource* m_object) {
+    if(m_object == nullptr) return;
     auto iObj = std::find(m_resources.begin(), m_resources.end(), m_object);
 
     if (iObj != m_resources.end()) {

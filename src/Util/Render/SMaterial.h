@@ -15,7 +15,6 @@ namespace CSE {
     class SMaterial : public SResource {
     public:
         enum SMaterialMode { NORMAL = 0, DEFERRED = 1 };
-        enum SMaterialPass { NONE = 0, GEOMETRY_PASS = 1, LIGHT_PASS = 0 };
     private:
         struct Element {
             int id = HANDLE_NULL;
@@ -38,7 +37,7 @@ namespace CSE {
 
         void SetHandle(GLProgramHandle* handle);
 
-        void AttachElement(SMaterialPass renderPassType = SMaterialPass::NONE) const;
+        void AttachElement() const;
 
 		void InitElements(const ElementsMap& elements, GLProgramHandle* handle);
 
@@ -61,6 +60,10 @@ namespace CSE {
         void SetMode(SMaterialMode mode);
 
         GLProgramHandle* GetHandle() const;
+
+        GLProgramHandle* GetLightPassHandle() const;
+
+        static SMaterial* GenerateMaterial(GLProgramHandle* handle);
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
@@ -85,11 +88,10 @@ namespace CSE {
 
     private:
         GLProgramHandle* m_handle = nullptr;
-        GLProgramHandle* m_geometryPassHandle = nullptr;
+        GLProgramHandle* m_lightPassHandle = nullptr;
         short m_orderLayer = 5000;
         //std::vector<Element*> m_elements;
 		ElementsMap m_elements;
-		ElementsMap m_geometryElements;
 		mutable int m_textureLayout = 0;
         SMaterialMode m_mode = NORMAL;
 

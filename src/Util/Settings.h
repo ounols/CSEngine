@@ -12,10 +12,12 @@ namespace CSE {
         ~Settings();
 
         static const char* GetDeferredGeometryPassShaderID();
-        static const char* GetDefaultFowardMaterialId();
+        static const char* GetDefaultForwardMaterialId();
+        static const char* GetDefaultDeferredMaterialId();
 
     private:
         static const char* m_deferredGeometryPassShaderID;
-        static const char* m_defaultFowardMaterialID;
+        static const char* m_defaultForwardMaterialID;
+        static const char* m_defaultDeferredMaterialID;
     };
 }

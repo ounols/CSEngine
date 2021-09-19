@@ -4,6 +4,7 @@
 #include "../Manager/LightMgr.h"
 #include "../Manager/EngineCore.h"
 #include "../Util/Render/ShaderUtil.h"
+#include "../Util/Render/SMaterial.h"
 #include "../Util/Settings.h"
 #include "TransformComponent.h"
 #include "DrawableSkinnedMeshComponent.h"
@@ -72,7 +73,7 @@ void RenderComponent::Render(const GLProgramHandle* handle) const {
     if (m_mesh == nullptr || m_material_clone == nullptr) return;
 
     const auto& current_handle = handle == nullptr ? m_material_clone->GetHandle() : handle;
-    if(handle == nullptr) AttachMaterials();
+    if(handle == nullptr) m_material_clone->AttachElement();
     SetJointMatrix(current_handle);
     ShaderUtil::BindAttributeToShader(*current_handle, m_mesh->GetMeshID());
 }
@@ -82,19 +83,6 @@ void RenderComponent::SetIsEnable(bool is_enable) {
     SComponent::SetIsEnable(is_enable);
 
     isRenderActive = isEnable;
-}
-
-
-void RenderComponent::AttachMaterials() const {
-
-    //Set Materials
-    if (m_material_clone == nullptr) {
-        return;
-    } else {
-        m_material_clone->AttachElement();
-    }
-
-
 }
 
 SComponent* RenderComponent::Clone(SGameObject* object) {
@@ -119,8 +107,10 @@ SMaterial* RenderComponent::GetMaterial() const {
 void RenderComponent::SetMaterial(SMaterial* material) {
     auto renderMgr = CORE->GetCore(RenderMgr);
     renderMgr->Remove(this);
-    if(this->material == nullptr) this->material = SResource::Create<SMaterial>(Settings::GetDefaultFowardMaterialId());
-    else this->material = material;
+    if(this->material == nullptr)
+        this->material = SResource::Create<SMaterial>(Settings::GetDefaultDeferredMaterialId());
+    else
+        this->material = material;
     renderMgr->Register(this);
 
     SAFE_DELETE(m_material_clone)

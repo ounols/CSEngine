@@ -33,9 +33,9 @@ namespace CSE {
         unsigned int GenerateRenderbuffer(BufferType type, int width, int height, int internalFormat);
         STexture* GenerateTexturebuffer(BufferType type, int width, int height, int channel,
                                         int level = 0);
-        void RasterizeFramebuffer();
+        void RasterizeFramebuffer() const;
         void AttachCubeBuffer(int index, int level = 0) const;
-        void AttachFrameBuffer() const;
+        void AttachFrameBuffer(int target = GL_FRAMEBUFFER) const;
         void DetachFrameBuffer() const;
         void Exterminate() override;
 
