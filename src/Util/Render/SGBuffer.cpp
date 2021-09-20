@@ -38,7 +38,6 @@ void SGBuffer::GenerateGBuffer(int width, int height) {
     m_materialTexture = m_geometryFrameBuffer->GenerateTexturebuffer(SFrameBuffer::RENDER, width, height, GL_RGB);
     m_geometryFrameBuffer->RasterizeFramebuffer();
 
-    m_depthRbo = m_geometryFrameBuffer->GenerateRenderbuffer(SFrameBuffer::DEPTH, width, height, GL_DEPTH_COMPONENT);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer not complete!" << std::endl;

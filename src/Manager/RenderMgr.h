@@ -24,6 +24,7 @@ namespace CSE {
         void Exterminate() override;
 
     private:
+        void ResetBuffer(const CameraBase& camera) const;
         void RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer) const;
         void RenderGbuffers(const CameraBase& camera) const;
         void RenderInstances(const CameraBase& camera, const GLProgramHandle* custom_handler = nullptr) const;

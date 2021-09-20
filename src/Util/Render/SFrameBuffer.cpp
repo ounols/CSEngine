@@ -83,7 +83,7 @@ STexture* SFrameBuffer::GenerateTexturebuffer(BufferType type, int width, int he
     return buffer->texture;
 }
 
-void SFrameBuffer::RasterizeFramebuffer() const {
+void SFrameBuffer::RasterizeFramebuffer() {
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
     // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
@@ -94,6 +94,10 @@ void SFrameBuffer::RasterizeFramebuffer() const {
             attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
         }
         glDrawBuffers(m_colorAttachmentSize, &attachments[0]);
+    }
+
+    if(m_bufferStatus == COLOR_ONLY) {
+        GenerateRenderbuffer(SFrameBuffer::DEPTH, m_width, m_height, GL_DEPTH_COMPONENT);
     }
 }
 
