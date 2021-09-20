@@ -7,7 +7,7 @@
 #include "CameraMgr.h"
 #include "../Component/RenderComponent.h"
 #include "../Util/Settings.h"
-// #include <iostream>
+#include "../Util/GLProgramHandle.h"
 
 using namespace CSE;
 
@@ -25,11 +25,6 @@ RenderMgr::~RenderMgr() {
 
 
 void RenderMgr::Init() {
-    // Setting PBS Environment
-    m_environmentMgr = new SEnvironmentMgr();
-    m_environmentMgr->RenderPBREnvironment();
-    // Setting Shadow Environment
-    m_environmentMgr->InitShadowEnvironment();
 
     cameraMgr = CORE->GetCore(CameraMgr);
     lightMgr = CORE->GetCore(LightMgr);
@@ -54,10 +49,10 @@ void RenderMgr::Render() const {
     // 1. Render depth buffer for shadows.
     const auto& lightObjects = lightMgr->GetAll();
     const auto& shadowObjects = lightMgr->GetShadowObject();
-    const auto& shadowEnvironment = m_environmentMgr->GetShadowEnvironment();
+    const auto& shadowHandle = lightMgr->GetShadowHandle();
     for (const auto& light : lightObjects) {
         if(light->m_disableShadow) continue;
-        RenderShadowInstance(*light, *shadowEnvironment, shadowObjects);
+        RenderShadowInstance(*light, *shadowHandle, shadowObjects);
     }
     lightMgr->RefreshShadowCount();
 
@@ -136,11 +131,10 @@ void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer)
     glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     gbuffer.AttachLightPass();
-    // TODO: LightMgr에서만 Environment 관련 요소들 접근 가능하도록 수정이 필요함
-    m_environmentMgr->BindPBREnvironmentMap(lightPassHandle, lightMgr->GetShadowCount());
     //Attach Light
     lightMgr->AttachLightToShader(lightPassHandle);
-    gbuffer.AttachLightPassTexture(lightMgr->GetShadowCount() + 3/*PBR 관련 반드시 수정 필요*/);
+    lightMgr->AttachLightMapToShader(lightPassHandle, lightMgr->GetShadowCount());
+    gbuffer.AttachLightPassTexture(lightMgr->GetShadowCount() + lightMgr->GetLightMapCount());
 
     gbuffer.RenderLightPass();
 
@@ -171,7 +165,7 @@ void RenderMgr::RenderInstances(const CameraBase& camera, const GLProgramHandle*
 
     const auto cameraMatrix = camera.GetCameraMatrixStruct();
     const auto& frameBuffer = camera.GetFrameBuffer();
-    int customHandlerID = custom_handler != nullptr ? custom_handler->Program : -1;
+    int customHandlerID = custom_handler != nullptr ? (int)custom_handler->Program : -1;
     if(frameBuffer == nullptr) {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
@@ -179,7 +173,7 @@ void RenderMgr::RenderInstances(const CameraBase& camera, const GLProgramHandle*
     else {
         // If the framebuffer is a depth buffer
         if(frameBuffer->GetBufferStatus() == SFrameBuffer::DEPTH_ONLY) {
-            customHandlerID = m_environmentMgr->GetShadowEnvironment()->Program;
+            customHandlerID = (int)lightMgr->GetShadowHandle()->Program;
         }
         frameBuffer->AttachFrameBuffer();
     }
@@ -241,7 +235,7 @@ void RenderMgr::RenderShadowInstance(const CameraBase& camera, const GLProgramHa
     else {
         // If the framebuffer is a depth buffer
         if(frameBuffer->GetBufferStatus() == SFrameBuffer::DEPTH_ONLY) {
-            customHandlerID = m_environmentMgr->GetShadowEnvironment()->Program;
+            customHandlerID = (int)lightMgr->GetShadowHandle()->Program;
         }
         frameBuffer->AttachFrameBuffer();
     }
@@ -271,7 +265,6 @@ void RenderMgr::RenderShadowInstance(const CameraBase& camera, const GLProgramHa
 
 void RenderMgr::Exterminate() {
     RenderContainer::Exterminate();
-    SAFE_DELETE(m_environmentMgr);
 }
 
 void RenderMgr::ResetBuffer(const CameraBase& camera) const {

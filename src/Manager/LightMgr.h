@@ -3,10 +3,12 @@
 #include <list>
 #include "Base/SContainer.h"
 #include "../Component/LightComponent.h"
-#include "../Util/GLProgramHandle.h"
 #include "../Util/Render/RenderInterfaces.h"
 
 namespace CSE {
+
+    class GLProgramHandle;
+    class SEnvironmentMgr;
 
     class LightMgr : public SContainer<LightComponent*>, public CoreBase {
     public:
@@ -19,6 +21,7 @@ namespace CSE {
         ~LightMgr();
 
         void AttachLightToShader(const GLProgramHandle* handle) const;
+        void AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const;
 
         void Init() override;
 
@@ -29,14 +32,23 @@ namespace CSE {
             return m_shadowCount;
         }
 
-        void RefreshShadowCount(int shadowCount = -1) const;
+        int GetLightMapCount() const {
+            return m_lightMapCount;
+        }
 
+        void RefreshShadowCount(int shadowCount = -1) const;
         const std::list<SIRender*>& GetShadowObject() const;
+        GLProgramHandle* GetShadowHandle() const;
 
     private:
-        STexture* m_currentSkybox = nullptr;
         std::list<SIRender*> m_shadowObject;
         mutable int m_shadowCount = 0;
+        GLProgramHandle* m_shadowHandle = nullptr;
+
+        /*mutable*/ int m_lightMapCount = 3;
+
+        SEnvironmentMgr* m_environmentMgr = nullptr;
+
     };
 
 }

@@ -6,7 +6,6 @@
 
 namespace CSE {
 
-    class SEnvironmentMgr;
     class CameraBase;
     class SGBuffer;
 
@@ -33,8 +32,6 @@ namespace CSE {
 
     private:
         mat4 m_NoneCamera;
-
-        SEnvironmentMgr* m_environmentMgr = nullptr;
         GLProgramHandle* m_geometryHandle = nullptr;
     };
 }

@@ -34,7 +34,6 @@ void RenderContainer::RegisterDeferred(SIRender* object, const SMaterial* materi
     SGBuffer* gbuffer;
     if(key == m_gbufferLayer.end()) {
         gbuffer = new SGBuffer();
-        // TODO: 카메라에 맞게 능동적으로 프레임 버퍼를 수정할 수 있도록 수정이 필요함
         gbuffer->GenerateGBuffer(*m_width, *m_height);
         m_gbufferLayer[lightPassHandle] = gbuffer;
     }

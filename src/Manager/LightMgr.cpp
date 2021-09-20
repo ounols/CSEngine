@@ -2,6 +2,8 @@
 #include "../OGLDef.h"
 #include "../Component/RenderComponent.h"
 #include "../Util/AssetsDef.h"
+#include "../Util/GLProgramHandle.h"
+#include "../Util/Render/SEnvironmentMgr.h"
 
 using namespace CSE;
 
@@ -15,7 +17,7 @@ LightMgr::LightMgr() {
 
 
 LightMgr::~LightMgr() {
-
+    SAFE_DELETE(m_environmentMgr);
 }
 
 
@@ -80,11 +82,20 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
 
     if (index <= 0) return;
 
-    glUniform1i(handle->Uniforms.LightSize, m_objects.size());
+    glUniform1i(handle->Uniforms.LightSize, (int)m_objects.size());
+}
+
+void LightMgr::AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const {
+    m_environmentMgr->BindPBREnvironmentMap(handle, textureLayout);
 }
 
 void LightMgr::Init() {
-
+    // Setting PBS Environment
+    m_environmentMgr = new SEnvironmentMgr();
+    m_environmentMgr->RenderPBREnvironment();
+    // Setting Shadow Environment
+    m_environmentMgr->InitShadowEnvironment();
+    m_shadowHandle = m_environmentMgr->GetShadowEnvironment();
 }
 
 void LightMgr::RegisterShadowObject(SIRender* object) {
@@ -112,64 +123,6 @@ void LightMgr::RefreshShadowCount(int shadowCount) const {
     m_shadowCount = shadowCount;
 }
 
-//void LightMgr::AttachDirectionalLight(const GLProgramHandle* handle, const SLight* light, int index) const {
-//
-//
-//	//����
-////	glUniform4fv(handle->Uniforms.LightPosition[index], 1, light->direction.Pointer());
-//	glUniform1i(handle->Uniforms.IsDirectional[index], 1);
-//
-//	//���������
-//	glUniform1i(handle->Uniforms.IsAttenuation[index], 0);
-//
-//	//����
-//	glUniform4fv(handle->Uniforms.DiffuseLight[index], 1, light->diffuseColor.Pointer());
-//	glUniform4fv(handle->Uniforms.AmbientLight[index], 1, light->ambientColor.Pointer());
-//	glUniform4fv(handle->Uniforms.SpecularLight[index], 1, light->specularColor.Pointer());
-//
-//
-//
-//}
-
-
-//void LightMgr::AttachPositionalLight(const GLProgramHandle* handle, const SLight* light, int index) const {
-//
-//	vec4 position(light->position->x, light->position->y, light->position->z, 1);
-//	//��ġ
-//	glUniform4fv(handle->Uniforms.LightPosition[index], 1, position.Pointer());
-//	glUniform1i(handle->Uniforms.IsDirectional[index], 0);
-//
-//	//���������
-//	glUniform1i(handle->Uniforms.IsAttenuation[index], 1);
-//	glUniform3fv(handle->Uniforms.AttenuationFactor[index], 1, light->att.Pointer());
-//	glUniform1f(handle->Uniforms.LightRadius[index], light->radius);
-//
-//	//����
-//	glUniform4fv(handle->Uniforms.DiffuseLight[index], 1, light->diffuseColor.Pointer());
-//	glUniform4fv(handle->Uniforms.AmbientLight[index], 1, light->ambientColor.Pointer());
-//	glUniform4fv(handle->Uniforms.SpecularLight[index], 1, light->specularColor.Pointer());
-//
-//}
-
-
-//void LightMgr::SetLightMode(const GLProgramHandle* handle, const LightComponent* light, int index) {
-//
-//	GLuint mode = 0;
-//
-//	if(!light->DisableAmbient) {
-//		mode = Amb;
-//	}
-//
-//	if(!light->DisableDiffuse) {
-//		mode *= 10;
-//		mode += Dif;
-//	}
-//
-//	if(!light->DisableSpecular) {
-//		mode *= 10;
-//		mode += Spec;
-//	}
-//
-//	glUniform1i(handle->Uniforms.LightMode[index], mode);
-//
-//}
+GLProgramHandle* LightMgr::GetShadowHandle() const {
+    return m_shadowHandle;
+}
