@@ -95,10 +95,13 @@ void SFrameBuffer::RasterizeFramebuffer() {
         }
         glDrawBuffers(m_colorAttachmentSize, &attachments[0]);
     }
-
+    
+#ifndef __ANDROID__
     if(m_bufferStatus == COLOR_ONLY) {
         GenerateRenderbuffer(SFrameBuffer::DEPTH, m_width, m_height, GL_DEPTH_COMPONENT);
     }
+#endif
+
 }
 
 void SFrameBuffer::AttachCubeBuffer(int index, int level) const {

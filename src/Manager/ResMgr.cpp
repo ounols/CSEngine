@@ -4,6 +4,10 @@
 #include "EngineCore.h"
 #include "../Util/AssetsDef.h"
 
+#ifdef __ANDROID__
+#include <Util/SafeLog.h>
+#endif
+
 using namespace CSE;
 
 ResMgr::ResMgr() {
