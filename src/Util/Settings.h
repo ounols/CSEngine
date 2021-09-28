@@ -19,5 +19,6 @@ namespace CSE {
         static const char* m_deferredGeometryPassShaderID;
         static const char* m_defaultForwardMaterialID;
         static const char* m_defaultDeferredMaterialID;
+        static const char* m_defaultDeferredProxyMaterialID;
     };
 }
