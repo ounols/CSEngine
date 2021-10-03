@@ -78,7 +78,7 @@ make 파일들을 생성합니다.
 ## 더보기
 
 아래의 문서들을 통해 자세한 내용을 확인하실 수 있습니다.
-* [`wiki`](https://github.com/ounols/CSEngine/wiki): CSEngine의 구조와 기능을 자세히 설명하는 위키입니다.
+* [`documentation`](https://ounols.github.io/CSEngine-doc): CSEngine의 구조와 기능을 자세히 설명하는 위키입니다.
 * [`to-do list`](https://www.notion.so/CSEngine-Todo-List-7ee24caed138466e83d81d2867b1f109): CSEngine의 할일 리스트이자 개발 진행하며 메모한 내용을 정리하였습니다.
 
 ## 3rd Party Copyright & Licence

@@ -77,7 +77,7 @@ Various stabilization tests such as build tests for various platforms and severa
 ## See more
 
 Review the following documentation:
-* [`wiki`](https://github.com/ounols/CSEngine/wiki): Documentation that details of the structure and function of CSEngine.
+* [`documentation`](https://ounols.github.io/CSEngine-doc): Documentation that details of the structure and function of CSEngine.
 * [`to-do list`](https://www.notion.so/CSEngine-Todo-List-7ee24caed138466e83d81d2867b1f109): Documentation that contains the to-do list of the project and notes during development.
 
 
