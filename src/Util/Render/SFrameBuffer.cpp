@@ -47,7 +47,7 @@ unsigned int SFrameBuffer::GenerateRenderbuffer(BufferType type, int width, int 
 
     glGenRenderbuffers(1, &buffer->renderbufferId);
     glBindRenderbuffer(GL_RENDERBUFFER, buffer->renderbufferId);
-    glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
+    glRenderbufferStorage(GL_RENDERBUFFER, GenerateInternalFormatType(internalFormat), width, height);
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GenerateAttachmentType(type, false), GL_RENDERBUFFER, buffer->renderbufferId);
@@ -95,13 +95,11 @@ void SFrameBuffer::RasterizeFramebuffer() {
         }
         glDrawBuffers(m_colorAttachmentSize, &attachments[0]);
     }
-    
-#ifndef __ANDROID__
+
     if(m_bufferStatus == COLOR_ONLY) {
         GenerateRenderbuffer(SFrameBuffer::DEPTH, m_width, m_height, GL_DEPTH_COMPONENT);
         m_bufferStatus = MULTI;
     }
-#endif
 
 }
 
