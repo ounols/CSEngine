@@ -215,17 +215,22 @@
     <ClInclude Include="..\..\..\src\Util\MoreMath.h" />
     <ClInclude Include="..\..\..\src\Util\MoreString.h" />
     <ClInclude Include="..\..\..\src\Util\Quaternion.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\CameraBase.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\GLMeshID.h" />
     <ClInclude Include="..\..\..\src\Util\Render\LightHelper.h" />
     <ClInclude Include="..\..\..\src\Util\Render\MeshSurface.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SEnvironmentMgr.h" />
     <ClInclude Include="..\..\..\src\Util\Render\RenderInterfaces.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SFrameBuffer.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\SGBuffer.h" />
     <ClInclude Include="..\..\..\src\Util\Render\ShaderUtil.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SkyboxUtil.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SMaterial.h" />
     <ClInclude Include="..\..\..\src\Util\Render\STexture.h" />
     <ClInclude Include="..\..\..\src\Util\SafeLog.h" />
     <ClInclude Include="..\..\..\src\Util\ScriptDef.h" />
+    <ClInclude Include="..\..\..\src\Util\Settings.h" />
+    <ClInclude Include="..\..\..\src\Util\STypeDef.h" />
     <ClInclude Include="..\..\..\src\Util\VariableBinder.h" />
     <ClInclude Include="..\..\..\src\Util\Vector.h" />
     <ClInclude Include="CSEngine.h" />
@@ -277,10 +282,12 @@
     <ClCompile Include="..\..\..\src\Util\Render\MeshSurface.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\SEnvironmentMgr.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\SFrameBuffer.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Render\SGBuffer.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\ShaderUtil.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\SMaterial.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\STexture.cpp" />
     <ClCompile Include="..\..\..\src\Util\SafeLog.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Settings.cpp" />
     <ClCompile Include="CSEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
