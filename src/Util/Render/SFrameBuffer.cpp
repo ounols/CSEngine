@@ -98,6 +98,7 @@ void SFrameBuffer::RasterizeFramebuffer() {
 
     if(m_bufferStatus == COLOR_ONLY) {
         GenerateRenderbuffer(SFrameBuffer::DEPTH, m_width, m_height, GL_DEPTH_COMPONENT);
+        m_bufferStatus = MULTI;
     }
 }
 
@@ -127,6 +128,7 @@ void SFrameBuffer::ResizeFrameBuffer(int width, int height) {
 
     m_buffers.clear();
     m_buffers.reserve(origBufferVector.size());
+    m_colorAttachmentSize = 0;
     glDeleteFramebuffers(1, &m_fbo);
     GenerateFramebuffer(m_dimension);
 
@@ -194,6 +196,7 @@ void SFrameBuffer::ReleaseBufferObject(const SFrameBuffer::BufferObject* bufferO
         auto resMgr = CORE->GetCore(ResMgr);
         resMgr->Remove(bufferObject->texture);
     }
+    delete bufferObject;
 }
 
 SFrameBuffer::BufferStatus SFrameBuffer::GetBufferStatus() const {
