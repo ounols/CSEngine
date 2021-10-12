@@ -18,6 +18,7 @@ namespace CSE {
         GLint ModelNoCameraMatrix = HANDLE_NULL;
         GLint Projection = HANDLE_NULL;
         GLint CameraPosition = HANDLE_NULL;
+        // Light
         GLint LightPosition = HANDLE_NULL;
         GLint LightType = HANDLE_NULL;
         GLint LightRadius = HANDLE_NULL;
@@ -26,6 +27,10 @@ namespace CSE {
         GLint LightMatrix = HANDLE_NULL;
         GLint LightShadowMode = HANDLE_NULL;
         GLint LightSize = HANDLE_NULL;
+        GLint LightIrradiance = HANDLE_NULL;
+        GLint LightPrefilter = HANDLE_NULL;
+        GLint LightBrdfLut = HANDLE_NULL;
+        // Skinning
         GLint JointMatrix = HANDLE_NULL;
         GLint SkinningMode = HANDLE_NULL;
     };
@@ -71,34 +76,34 @@ namespace CSE {
             return pair == UniformsList.end() ? nullptr : pair->second;
         }
 
-        void SetAttribVec3(std::string location, vec3& value);
+        void SetAttribVec3(const std::string& location, vec3& value);
 
-        void SetAttribVec4(std::string location, vec4& value);
+        void SetAttribVec4(const std::string& location, vec4& value);
 
-        void SetUniformInt(std::string location, int value);
+        void SetUniformInt(const std::string& location, int value);
 
-        void SetUniformFloat(std::string location, float value);
+        void SetUniformFloat(const std::string& location, float value);
 
-        void SetUniformMat4(std::string location, mat4& value);
+        void SetUniformMat4(const std::string& location, mat4& value);
 
-        void SetUniformMat3(std::string location, mat3& value);
+        void SetUniformMat3(const std::string& location, mat3& value);
 
 
         void SetAttributesList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag);
 
         void SetUniformsList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag);
 
-        GLElementList GetAttributesList();
+        GLElementList GetAttributesList() const;
 
-        GLElementList GetUniformsList();
+        GLElementList GetUniformsList() const;
 
-        void SaveShader(std::string path);
+        void SaveShader(const std::string& path);
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 
     private:
-        static std::string getImplementName(std::map<std::string, std::string>& list, std::string name);
+        static std::string getImplementName(std::map<std::string, std::string>& list, const std::string& name);
 
 
     public:

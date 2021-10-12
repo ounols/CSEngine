@@ -1,10 +1,9 @@
 #include "../Util/Matrix.h"
 #include "OGLMgr.h"
 #include "../Util/GLProgramHandle.h"
-#include "../Util/AssetsDef.h"
 #include "CameraMgr.h"
-#include "../Util/Render/ShaderUtil.h"
 #include "EngineCore.h"
+#include "../Util/Render/SEnvironmentMgr.h"
 
 #ifdef __linux__
 
@@ -75,7 +74,7 @@ void OGLMgr::setupEGLGraphics() {
 
     setBuffers();
     setShaderProgram();
-    setProjectionRatio();
+    setProjectionRatio(0, 0);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -88,11 +87,11 @@ void OGLMgr::setupEGLGraphics() {
 }
 
 
-void OGLMgr::setProjectionRatio() {
-    if (m_width > m_height)
-        m_projectionRatio = (GLfloat) m_width / (GLfloat) m_height;
+void OGLMgr::setProjectionRatio(int width, int height) {
+    if (width > height)
+        m_projectionRatio = (GLfloat) width / (GLfloat) height;
     else
-        m_projectionRatio = (GLfloat) m_height / (GLfloat) m_width;
+        m_projectionRatio = (GLfloat) height / (GLfloat) width;
 
 
     CORE->GetCore(CameraMgr)->SetProjectionRatio(m_projectionRatio);
@@ -127,26 +126,24 @@ void OGLMgr::ResizeWindow(GLuint width, GLuint height) {
     glBindRenderbuffer(GL_RENDERBUFFER, m_depthRenderbuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
 
-    /* Protect against a divide by zero */
+    // Protect against a divide by zero
     if (height == 0) {
         height = 1;
     }
 
-    /* Setup our viewport. */
+    // Setup our viewport.
     glViewport(0, 0, (GLsizei) width, (GLsizei) height);
 
-    m_width = width;
-    m_height = height;
+    SEnvironmentMgr::SetWidth(width);
+    SEnvironmentMgr::SetHeight(height);
 
-    setProjectionRatio();
+    setProjectionRatio(width, height);
 
 }
 
 
 void OGLMgr::releaseBuffers() {
 
-    glDeleteFramebuffers(1, &m_framebuffer);
-    m_framebuffer = 0;
     glDeleteRenderbuffers(1, &m_colorRenderbuffer);
     m_colorRenderbuffer = 0;
 
@@ -155,6 +152,7 @@ void OGLMgr::releaseBuffers() {
         m_depthRenderbuffer = 0;
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDeleteFramebuffers(1, &m_framebuffer);
+    m_framebuffer = 0;
 
 }

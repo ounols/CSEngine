@@ -4,6 +4,10 @@
 #include "EngineCore.h"
 #include "../Util/AssetsDef.h"
 
+#ifdef __ANDROID__
+#include <Util/SafeLog.h>
+#endif
+
 using namespace CSE;
 
 ResMgr::ResMgr() {
@@ -40,6 +44,7 @@ void ResMgr::Register(SResource* m_object) {
 }
 
 void ResMgr::Remove(SResource* m_object) {
+    if(m_object == nullptr) return;
     auto iObj = std::find(m_resources.begin(), m_resources.end(), m_object);
 
     if (iObj != m_resources.end()) {

@@ -3,10 +3,11 @@
 //
 #pragma once
 
-#include "../GLProgramHandle.h"
 #include "STexture.h"
 
 namespace CSE {
+
+    class GLProgramHandle;
 
     class SEnvironmentMgr {
     public:
@@ -21,6 +22,21 @@ namespace CSE {
             return m_shadowDepthMapShader;
         }
 
+        void BindPBREnvironmentMap(const GLProgramHandle* handle, int textureLayout) const;
+
+        static unsigned int GetWidth();
+        static unsigned int* GetPointerWidth();
+
+        static void SetWidth(unsigned int width);
+
+        static unsigned int GetHeight();
+        static unsigned int* GetPointerHeight();
+
+        static void SetHeight(unsigned int height);
+
+        static void RenderPlaneVAO();
+
+
     private:
         void LoadCubeVAO();
 
@@ -28,9 +44,11 @@ namespace CSE {
 
         void LoadPlaneVAO();
 
-        void RenderPlaneVAO();
 
     private:
+        static unsigned int m_width;
+        static unsigned int m_height;
+
         GLProgramHandle* m_equirectangularToCubemapShader;
         GLProgramHandle* m_irradianceShader;
         GLProgramHandle* m_prefilterShader;
@@ -48,7 +66,6 @@ namespace CSE {
         unsigned int m_cubeVBO;
         unsigned int m_cubeVAO;
         unsigned int m_planeVBO;
-        unsigned int m_planeVAO;
+        static unsigned int m_planeVAO;
     };
-
 }

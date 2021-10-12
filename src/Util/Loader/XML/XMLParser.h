@@ -42,6 +42,7 @@ namespace CSE {
 		static SGameObject* parseGameObject(const char* value);
 
 		static SType GetType(std::string type);
+		static SType GetType(unsigned int type);
 	};
 
 	template <class TYPE>

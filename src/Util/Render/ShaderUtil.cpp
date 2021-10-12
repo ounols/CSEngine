@@ -4,6 +4,7 @@
 
 #include "ShaderUtil.h"
 #include "../MoreString.h"
+#include "SEnvironmentMgr.h"
 
 #ifdef WIN32
 #include <Windows.h>
@@ -88,7 +89,7 @@ GLuint ShaderUtil::createProgram(GLuint vertexShader, GLuint fragmentShader) {
 
                 if (buf) {
 
-                    glGetProgramInfoLog(program, bufLength, NULL, buf);
+                    glGetProgramInfoLog(program, bufLength, nullptr, buf);
 #ifdef __ANDROID__
                     SafeLog::Log(buf);
 #else
@@ -136,7 +137,7 @@ GLuint ShaderUtil::loadShader(GLenum shaderType, const char* pSource) {
                 auto buf = static_cast<char*>(malloc(infoLen));
 
                 if (buf) {
-                    glGetShaderInfoLog(shader, infoLen, NULL, buf);
+                    glGetShaderInfoLog(shader, infoLen, nullptr, buf);
                     //LOGE("Could not compile shader %d:\n%s\n", shaderType, buf);
 #ifdef __ANDROID__
                     SafeLog::Log(buf);
@@ -163,13 +164,13 @@ std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLcha
 
     std::vector<std::string> str_line = split(source, ';');
 
-    std::string type_str = "";
+    std::string type_str;
 
     for (auto line : str_line) {
         line += ';';
         auto result = split(line, '\n');
 
-        for (auto str : result) {
+        for (const auto& str : result) {
             int start_index = 0;
             int end_index = 0;
             if ((start_index = str.find("//[")) != std::string::npos) {
@@ -180,7 +181,7 @@ std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLcha
             }
 
             int eoc_index = 0;
-            if (type_str != "" && (eoc_index = str.find(';')) != std::string::npos) {
+            if (!type_str.empty() && (eoc_index = str.find(';')) != std::string::npos) {
                 int start_index = str.substr(0, eoc_index).rfind(' ');
                 int end_index = str.rfind('[');
                 end_index = end_index == std::string::npos ? eoc_index : end_index;
@@ -201,27 +202,30 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
     if (handle == nullptr) return;
 
     //Attributes
-    auto position = handle->AttributeLocation("POSITION");
-    auto normal = handle->AttributeLocation("NORMAL");
-    auto jointId = handle->AttributeLocation("JOINT_INDICES");
-    auto weight = handle->AttributeLocation("WEIGHTS");
-    auto textureCoord = handle->AttributeLocation("TEX_UV");
-    auto color = handle->AttributeLocation("COLOR");
+    auto position = handle->AttributeLocation("att.position");
+    auto normal = handle->AttributeLocation("att.normal");
+    auto jointId = handle->AttributeLocation("att.joint_indices");
+    auto weight = handle->AttributeLocation("att.weight");
+    auto textureCoord = handle->AttributeLocation("att.tex_uv");
+    auto color = handle->AttributeLocation("att.color");
     //Uniforms
-    auto modelView = handle->UniformLocation("MODELVIEW_MATRIX");
-    auto modelViewNoCamera = handle->UniformLocation("MODELVIEW_NOCAMERA_MATRIX");
+    auto modelView = handle->UniformLocation("matrix.modelview");
+    auto modelViewNoCamera = handle->UniformLocation("matrix.modelview_nc");
     auto cameraPosition = handle->UniformLocation("CAMERA_POSITION");
-    auto projection = handle->UniformLocation("PROJECTION_MATRIX");
-    auto skinningMode = handle->UniformLocation("SKINNING_MODE");
-    auto jointMatrix = handle->UniformLocation("JOINT_MATRIX");
-    auto lightPosition = handle->UniformLocation("LIGHT_POSITION");
-    auto lightType = handle->UniformLocation("LIGHT_TYPE");
-    auto lightRaius = handle->UniformLocation("LIGHT_RADIUS");
-    auto lightColor = handle->UniformLocation("LIGHT_COLOR");
-    auto lightShadowMap = handle->UniformLocation("LIGHT_SHADOW_MAP");
-    auto lightMatrix = handle->UniformLocation("LIGHT_MATRIX");
-    auto lightShadowMode = handle->UniformLocation("LIGHT_SHADOW_MODE");
-    auto lightSize = handle->UniformLocation("LIGHT_SIZE");
+    auto projection = handle->UniformLocation("matrix.projection");
+    auto skinningMode = handle->UniformLocation("matrix.skinning_mode");
+    auto jointMatrix = handle->UniformLocation("matrix.joint");
+    auto lightPosition = handle->UniformLocation("light.position");
+    auto lightType = handle->UniformLocation("light.type");
+    auto lightRadius = handle->UniformLocation("light.radius");
+    auto lightColor = handle->UniformLocation("light.color");
+    auto lightShadowMap = handle->UniformLocation("light.shadow_map");
+    auto lightMatrix = handle->UniformLocation("light.matrix");
+    auto lightShadowMode = handle->UniformLocation("light.shadow_mode");
+    auto lightSize = handle->UniformLocation("light.size");
+    auto lightIrradiance = handle->UniformLocation("light.irradiance");
+    auto lightPrefilter = handle->UniformLocation("light.prefilter");
+    auto lightBrdf = handle->UniformLocation("light.brdf");
 
     handle->Attributes.Position = position != nullptr ? position->id : HANDLE_NULL;
     handle->Attributes.Normal = normal != nullptr ? normal->id : HANDLE_NULL;
@@ -238,12 +242,15 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
     handle->Uniforms.JointMatrix = jointMatrix != nullptr ? jointMatrix->id : HANDLE_NULL;
     handle->Uniforms.LightPosition = lightPosition != nullptr ? lightPosition->id : HANDLE_NULL;
     handle->Uniforms.LightType = lightType != nullptr ? lightType->id : HANDLE_NULL;
-    handle->Uniforms.LightRadius = lightRaius != nullptr ? lightRaius->id : HANDLE_NULL;
+    handle->Uniforms.LightRadius = lightRadius != nullptr ? lightRadius->id : HANDLE_NULL;
     handle->Uniforms.LightColor = lightColor != nullptr ? lightColor->id : HANDLE_NULL;
     handle->Uniforms.LightShadowMap = lightShadowMap != nullptr ? lightShadowMap->id : HANDLE_NULL;
     handle->Uniforms.LightMatrix = lightMatrix != nullptr ? lightMatrix->id : HANDLE_NULL;
     handle->Uniforms.LightShadowMode = lightShadowMode != nullptr ? lightShadowMode->id : HANDLE_NULL;
     handle->Uniforms.LightSize = lightSize != nullptr ? lightSize->id : HANDLE_NULL;
+    handle->Uniforms.LightIrradiance = lightIrradiance != nullptr ? lightIrradiance->id : HANDLE_NULL;
+    handle->Uniforms.LightPrefilter = lightPrefilter != nullptr ? lightPrefilter->id : HANDLE_NULL;
+    handle->Uniforms.LightBrdfLut = lightBrdf != nullptr ? lightBrdf->id : HANDLE_NULL;
 }
 
 void ShaderUtil::BindCameraToShader(const GLProgramHandle& handle, const mat4& view, const vec3& cameraPosition,
@@ -299,6 +306,10 @@ void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMe
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshId.m_indexBuffer);
         glDrawElements(GL_TRIANGLES, meshId.m_indexSize * 3, GL_UNSIGNED_SHORT, 0);
     }
+}
+
+void ShaderUtil::BindAttributeToPlane() {
+    SEnvironmentMgr::RenderPlaneVAO();
 }
 
 void ShaderUtil::BindSkinningDataToShader(const GLProgramHandle& handle, const GLMeshID& meshId,

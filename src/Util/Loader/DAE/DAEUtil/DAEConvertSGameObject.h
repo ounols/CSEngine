@@ -7,7 +7,7 @@
 #include "../../../Animation/Joint.h"
 #include "../DAEAnimationLoader.h"
 #include "../../../../Object/SGameObject.h"
-#include "../../../Animation/AnimationUtill.h"
+#include "../../../Animation/AnimationUtil.h"
 #include "../../../Animation/Animation.h"
 
 namespace CSE {

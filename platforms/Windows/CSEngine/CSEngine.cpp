@@ -104,7 +104,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	//GL20Lib::setupGLGraphics(WIDTH, HEIGHT);
 	mainProc->Init(WIDTH, HEIGHT);
-	mainProc->ResizeWindow(WIDTH, HEIGHT);
 		
 	MSG msg;
 	DWORD dwStartTime = timeGetTime();

@@ -16,6 +16,7 @@
 #include "../Manager/SCloneFactory.h"
 #include "../Util/Loader/SCENE/SSceneLoader.h"
 #include "../Util/Render/SFrameBuffer.h"
+#include "../Util/Render/SMaterial.h"
 
 using namespace CSE;
 

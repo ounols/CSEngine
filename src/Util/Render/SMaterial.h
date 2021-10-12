@@ -1,7 +1,3 @@
-//
-// Created by ounols on 19. 6. 1.
-//
-
 #pragma once
 
 #include <functional>
@@ -18,7 +14,7 @@ namespace CSE {
 
     class SMaterial : public SResource {
     public:
-        enum SMaterialMode { NORMAL = 0, CUTOUT = 1 };
+        enum SMaterialMode { NORMAL = 0, DEFERRED = 1 };
     private:
         struct Element {
             int id = HANDLE_NULL;
@@ -28,10 +24,12 @@ namespace CSE {
         	
 			std::function<void()> attachFunc = nullptr;
         };
+
+        typedef std::unordered_map<std::string, Element*> ElementsMap;
     public:
         SMaterial();
 
-        SMaterial(const SMaterial* material);
+        explicit SMaterial(const SMaterial* material);
 
         ~SMaterial() override;
 
@@ -41,7 +39,7 @@ namespace CSE {
 
         void AttachElement() const;
 
-		void InitElements();
+		void InitElements(const ElementsMap& elements, GLProgramHandle* handle);
 
 		void SetAttribute(const GLMeshID& meshId) const;
 
@@ -63,6 +61,10 @@ namespace CSE {
 
         GLProgramHandle* GetHandle() const;
 
+        GLProgramHandle* GetLightPassHandle() const;
+
+        static SMaterial* GenerateMaterial(GLProgramHandle* handle);
+
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 
@@ -71,25 +73,25 @@ namespace CSE {
 
 		void SetBindFuncByType(Element* element, bool isUniform);
 
-        void SetIntFunc(Element* element, int value);
-        void SetFloatFunc(Element* element, float value);
-        void SetBoolFunc(Element* element, bool value);
+        static void SetIntFunc(Element* element, int value);
+        static void SetFloatFunc(Element* element, float value);
+        static void SetBoolFunc(Element* element, bool value);
 
-        void SetMat4Func(Element* element, mat4 value);
-        void SetMat3Func(Element* element, mat3 value);
-        void SetMat2Func(Element* element, mat2 value);
-        void SetVec4Func(Element* element, vec4 value);
-        void SetVec3Func(Element* element, vec3 value);
-        void SetVec2Func(Element* element, vec2 value);
+        static void SetMat4Func(Element* element, mat4 value);
+        static void SetMat3Func(Element* element, mat3 value);
+        static void SetMat2Func(Element* element, mat2 value);
+        static void SetVec4Func(Element* element, vec4 value);
+        static void SetVec3Func(Element* element, vec3 value);
+        static void SetVec2Func(Element* element, vec2 value);
 
         void SetTextureFunc(Element* element, SResource* texture);
 
     private:
         GLProgramHandle* m_handle = nullptr;
+        GLProgramHandle* m_lightPassHandle = nullptr;
         short m_orderLayer = 5000;
         //std::vector<Element*> m_elements;
-		std::unordered_map<std::string, Element*> m_elements;
-		std::unordered_map<std::string, Element*> m_attributeElements;
+		ElementsMap m_elements;
 		mutable int m_textureLayout = 0;
         SMaterialMode m_mode = NORMAL;
 

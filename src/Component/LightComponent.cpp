@@ -4,6 +4,7 @@
 #include "TransformComponent.h"
 #include "../Manager/EngineCore.h"
 #include "../Util/Render/SFrameBuffer.h"
+#include "../Util/GLProgramHandle.h"
 
 using namespace CSE;
 

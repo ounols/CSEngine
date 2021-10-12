@@ -42,9 +42,6 @@ namespace CSE {
     	template <class TYPE>
 		TYPE* GetObjectById(std::string id) const;
 
-        template <class TYPE>
-        static TYPE* Create(std::string name);
-
         SResource* GetSResource(std::string name) const;
 
         int GetID(SResource* object) const;

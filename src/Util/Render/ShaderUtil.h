@@ -32,6 +32,7 @@ namespace CSE {
                                        const mat4& projection, const mat4& transform);
 
         static void BindAttributeToShader(const GLProgramHandle& handle, const GLMeshID& meshId);
+        static void BindAttributeToPlane();
 
         static void BindSkinningDataToShader(const GLProgramHandle& handle, const GLMeshID& meshId,
                                              const std::vector<mat4>& jointMatrix);

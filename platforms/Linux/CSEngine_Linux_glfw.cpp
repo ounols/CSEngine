@@ -83,7 +83,6 @@ int main(void) {
     MainProc* mainProc = new MainProc();
 
     mainProc->Init(width, height);
-    mainProc->ResizeWindow(width, height);
 
     float elapsedTime = timeGetTime();
 

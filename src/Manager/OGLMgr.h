@@ -28,10 +28,9 @@ namespace CSE {
         void releaseBuffers();
 
     private:
-        void setProjectionRatio();
+        void setProjectionRatio(int width, int height);
 
     private:
-        GLuint m_width, m_height;
         GLfloat m_projectionRatio;
 
         GLuint m_depthRenderbuffer = 0;
