@@ -17,7 +17,6 @@ SGBuffer::SGBuffer() {
 }
 
 SGBuffer::~SGBuffer() {
-
 }
 
 void SGBuffer::GenerateGBuffer(int width, int height) {
@@ -57,7 +56,6 @@ void SGBuffer::ResizeGBuffer(int width, int height) {
 }
 
 void SGBuffer::ReleaseGBuffer() {
-
     if(m_geometryFrameBuffer != nullptr) {
         resMgr->Remove(m_geometryFrameBuffer);
         SAFE_DELETE(m_geometryFrameBuffer);
@@ -83,8 +81,6 @@ void SGBuffer::AttachLightPassTexture(int textureLayout) const {
     m_normalTexture->Bind(m_normalTextureId, textureLayout + 1);
     m_albedoTexture->Bind(m_albedoTextureId, textureLayout + 2);
     m_materialTexture->Bind(m_materialTextureId, textureLayout + 3);
-
-
 }
 
 void SGBuffer::RenderLightPass() const {

@@ -48,7 +48,6 @@ namespace CSE {
         /*mutable*/ int m_lightMapCount = 3;
 
         SEnvironmentMgr* m_environmentMgr = nullptr;
-
     };
 
 }

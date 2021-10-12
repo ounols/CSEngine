@@ -13,11 +13,9 @@ const char* Settings::m_defaultDeferredProxyMaterialID = "File:Material/DefaultP
 const char* Settings::m_defaultMainBufferShaderID = "File:Shader/Main-Buffer.shader";
 
 Settings::Settings() {
-
 }
 
 Settings::~Settings() {
-
 }
 
 const char* Settings::GetDeferredGeometryPassShaderID() {

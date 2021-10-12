@@ -100,7 +100,6 @@ void SFrameBuffer::RasterizeFramebuffer() {
         GenerateRenderbuffer(SFrameBuffer::DEPTH, m_width, m_height, GL_DEPTH_COMPONENT);
         m_bufferStatus = MULTI;
     }
-
 }
 
 void SFrameBuffer::AttachCubeBuffer(int index, int level) const {
@@ -124,7 +123,6 @@ void SFrameBuffer::DetachFrameBuffer() const {
 }
 
 void SFrameBuffer::ResizeFrameBuffer(int width, int height) {
-
     std::vector<BufferObject*> origBufferVector(m_buffers);
 
     m_buffers.clear();
@@ -134,7 +132,6 @@ void SFrameBuffer::ResizeFrameBuffer(int width, int height) {
     GenerateFramebuffer(m_dimension);
 
     for (const auto& buffer : origBufferVector) {
-
         auto type = buffer->type;
         auto format = buffer->format;
         auto level = buffer->level;
