@@ -8,14 +8,17 @@
 #include "../Component/RenderComponent.h"
 #include "../Util/Settings.h"
 #include "../Util/GLProgramHandle.h"
+#include "../Util/Render/ShaderUtil.h"
 
 using namespace CSE;
 
 CameraMgr* cameraMgr = nullptr;
 LightMgr* lightMgr = nullptr;
 
+int mainTextureId = -1;
+STexture* mainTexture = nullptr;
+
 RenderMgr::RenderMgr() {
-    m_NoneCamera = mat4::LookAt(vec3(0, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0));
 }
 
 
@@ -33,14 +36,24 @@ void RenderMgr::Init() {
     m_height = SEnvironmentMgr::GetPointerHeight();
 
     m_geometryHandle = SResource::Create<GLProgramHandle>(Settings::GetDeferredGeometryPassShaderID());
+
+    m_mainBuffer = new SFrameBuffer();
+    m_mainBuffer->GenerateFramebuffer(SFrameBuffer::PLANE);
+    mainTexture = m_mainBuffer->GenerateTexturebuffer(SFrameBuffer::RENDER, (int)*m_width, (int)*m_height, GL_RGB);
+    m_mainBuffer->RasterizeFramebuffer();
+
+    m_mainProgramHandle = SResource::Create<GLProgramHandle>(Settings::GetDefaultMainBufferShaderID());
+    mainTextureId = m_mainProgramHandle->UniformLocation("main.albedo")->id;
 }
 
 void RenderMgr::SetViewport() {
-    // SGBuffer 레이어 모두 새로 크기 리셋해야 함
-    for (const auto& gbuffer_pair : m_gbufferLayer) {
-        const auto& gbuffer = gbuffer_pair.second;
-        gbuffer->ReleaseGBuffer();
+    for (const auto& gbufferPair : m_gbufferLayer) {
+        const auto& gbuffer = gbufferPair.second;
+        gbuffer->ResizeGBuffer((int)*m_width, (int)*m_height);
     }
+
+    m_mainBuffer->ResizeFrameBuffer((int)*m_width, (int)*m_height);
+    mainTexture = m_mainBuffer->GetTexture(0);
 }
 
 void RenderMgr::Render() const {
@@ -73,6 +86,12 @@ void RenderMgr::Render() const {
     RenderGbuffers(*mainCamera); // Deferred Render
     RenderInstances(*mainCamera); // Forward Render
 
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
+    glUseProgram(m_mainProgramHandle->Program);
+    mainTexture->Bind(mainTextureId, 0);
+
+    ShaderUtil::BindAttributeToPlane();
 }
 
 void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer) const {
@@ -120,8 +139,7 @@ void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer)
      *  2. Light Pass
      */
     if(frameBuffer == nullptr) {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
+        m_mainBuffer->AttachFrameBuffer();
     }
     else {
         frameBuffer->AttachFrameBuffer();
@@ -144,7 +162,7 @@ void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer)
      */
     gbuffer.AttachGeometryFrameBuffer(GL_READ_FRAMEBUFFER);
     if(frameBuffer == nullptr) {
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        m_mainBuffer->AttachFrameBuffer(GL_DRAW_FRAMEBUFFER);
     }
     else {
         frameBuffer->AttachFrameBuffer(GL_DRAW_FRAMEBUFFER);
@@ -167,8 +185,7 @@ void RenderMgr::RenderInstances(const CameraBase& camera, const GLProgramHandle*
     const auto& frameBuffer = camera.GetFrameBuffer();
     int customHandlerID = custom_handler != nullptr ? (int)custom_handler->Program : -1;
     if(frameBuffer == nullptr) {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
+        m_mainBuffer->AttachFrameBuffer();
     }
     else {
         // If the framebuffer is a depth buffer
@@ -229,8 +246,7 @@ void RenderMgr::RenderShadowInstance(const CameraBase& camera, const GLProgramHa
     const auto& frameBuffer = camera.GetFrameBuffer();
     int customHandlerID = custom_handler.Program;
     if(frameBuffer == nullptr) {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
+        m_mainBuffer->AttachFrameBuffer();
     }
     else {
         // If the framebuffer is a depth buffer
@@ -270,8 +286,7 @@ void RenderMgr::Exterminate() {
 void RenderMgr::ResetBuffer(const CameraBase& camera) const {
     const auto& frameBuffer = camera.GetFrameBuffer();
     if(frameBuffer == nullptr) {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
+        m_mainBuffer->AttachFrameBuffer();
     }
     else {
         frameBuffer->AttachFrameBuffer();

@@ -31,7 +31,8 @@ namespace CSE {
                                   const std::list<SIRender*>& render_objects = std::list<SIRender*>()) const;
 
     private:
-        mat4 m_NoneCamera;
+        SFrameBuffer* m_mainBuffer = nullptr;
+        GLProgramHandle* m_mainProgramHandle = nullptr;
         GLProgramHandle* m_geometryHandle = nullptr;
     };
 }

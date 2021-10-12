@@ -21,11 +21,7 @@ void SFrameBuffer::Exterminate() {
     glDeleteFramebuffers(1, &m_fbo);
 
     for(const auto& buffer : m_buffers) {
-        if(buffer->renderbufferId > 0) glDeleteRenderbuffers(1, &buffer->renderbufferId);
-        if(buffer->texture != nullptr) {
-            auto resMgr = CORE->GetCore(ResMgr);
-            resMgr->Remove(buffer->texture);
-        }
+        ReleaseBufferObject(buffer);
     }
 }
 
@@ -45,6 +41,7 @@ unsigned int SFrameBuffer::GenerateRenderbuffer(BufferType type, int width, int 
 
     auto buffer = new BufferObject();
     buffer->type = type;
+    buffer->format = internalFormat;
     m_width = width;
     m_height = height;
 
@@ -62,6 +59,8 @@ unsigned int SFrameBuffer::GenerateRenderbuffer(BufferType type, int width, int 
 STexture* SFrameBuffer::GenerateTexturebuffer(BufferType type, int width, int height, int channel, int level) {
     auto buffer = new BufferObject();
     buffer->type = type;
+    buffer->format = channel;
+    buffer->level = (short)level;
     m_width = width;
     m_height = height;
     buffer->texture = new STexture(static_cast<STexture::Type>(m_dimension));
@@ -85,6 +84,7 @@ STexture* SFrameBuffer::GenerateTexturebuffer(BufferType type, int width, int he
 
 void SFrameBuffer::RasterizeFramebuffer() {
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    m_buffers.reserve(m_buffers.size());
 
     // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
     if(m_colorAttachmentSize > 1) {
@@ -99,6 +99,7 @@ void SFrameBuffer::RasterizeFramebuffer() {
 #ifndef __ANDROID__
     if(m_bufferStatus == COLOR_ONLY) {
         GenerateRenderbuffer(SFrameBuffer::DEPTH, m_width, m_height, GL_DEPTH_COMPONENT);
+        m_bufferStatus = MULTI;
     }
 #endif
 
@@ -124,6 +125,32 @@ void SFrameBuffer::DetachFrameBuffer() const {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void SFrameBuffer::ResizeFrameBuffer(int width, int height) {
+
+    std::vector<BufferObject*> origBufferVector(m_buffers);
+
+    m_buffers.clear();
+    m_buffers.reserve(origBufferVector.size());
+    m_colorAttachmentSize = 0;
+    glDeleteFramebuffers(1, &m_fbo);
+    GenerateFramebuffer(m_dimension);
+
+    for (const auto& buffer : origBufferVector) {
+
+        auto type = buffer->type;
+        auto format = buffer->format;
+        auto level = buffer->level;
+        auto isTexture = buffer->texture != nullptr;
+
+        ReleaseBufferObject(buffer);
+
+        if(isTexture)
+            GenerateTexturebuffer(type, width, height, format, level);
+        else
+            GenerateRenderbuffer(type, width, height, format);
+    }
+    RasterizeFramebuffer();
+}
 
 int SFrameBuffer::GetWidth() const {
     return m_width;
@@ -166,6 +193,29 @@ int SFrameBuffer::GenerateInternalFormatType(int channel) const {
     }
 }
 
+void SFrameBuffer::ReleaseBufferObject(const SFrameBuffer::BufferObject* bufferObject) {
+    if(bufferObject->renderbufferId > 0) glDeleteRenderbuffers(1, &bufferObject->renderbufferId);
+    if(bufferObject->texture != nullptr) {
+        auto resMgr = CORE->GetCore(ResMgr);
+        resMgr->Remove(bufferObject->texture);
+    }
+    delete bufferObject;
+}
+
 SFrameBuffer::BufferStatus SFrameBuffer::GetBufferStatus() const {
     return m_bufferStatus;
+}
+
+STexture* SFrameBuffer::GetTexture(int index) const {
+    if(index < 0 || index > m_buffers.size() - 1) return nullptr;
+
+    auto texture = m_buffers[index]->texture;
+    return texture;
+}
+
+unsigned int SFrameBuffer::GetRenderbufferID(int index) const {
+    if(index < 0 || index > m_buffers.size() - 1) return 0;
+
+    auto id = m_buffers[index]->renderbufferId;
+    return id;
 }

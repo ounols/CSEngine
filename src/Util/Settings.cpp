@@ -10,6 +10,7 @@ const char* Settings::m_deferredGeometryPassShaderID = "File:Shader/PBR/PBR-Geom
 const char* Settings::m_defaultForwardMaterialID = "File:Material/DefaultPBR.mat";
 const char* Settings::m_defaultDeferredMaterialID = "File:Material/Default.mat";
 const char* Settings::m_defaultDeferredProxyMaterialID = "File:Material/DefaultPBR.mat";
+const char* Settings::m_defaultMainBufferShaderID = "File:Shader/Main-Buffer.shader";
 
 Settings::Settings() {
 
@@ -33,4 +34,8 @@ const char* Settings::GetDefaultDeferredMaterialId() {
 #else
     return m_defaultDeferredMaterialID;
 #endif
+}
+
+const char* Settings::GetDefaultMainBufferShaderID() {
+    return m_defaultMainBufferShaderID;
 }

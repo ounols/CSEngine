@@ -150,6 +150,12 @@
     <ClCompile Include="..\..\..\src\Util\Render\SFrameBuffer.cpp">
       <Filter>src\Util\Render</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\Util\Render\SGBuffer.cpp">
+      <Filter>src\Util\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Util\Settings.cpp">
+      <Filter>src\Util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Sample\FirstDemoScene.h" />
@@ -393,6 +399,21 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\Util\Render\SFrameBuffer.h">
       <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\Render\CameraBase.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\Render\GLMeshID.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\Render\SGBuffer.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\Settings.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\STypeDef.h">
+      <Filter>src\Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
