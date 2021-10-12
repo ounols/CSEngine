@@ -8,6 +8,23 @@ namespace CSE {
 
     class STexture;
 
+    /**
+     * @see To use the SFrameBuffer class, you need to follow the steps below:
+     *  1. Generate a framebuffer.
+     *  @code{.cpp}
+     *  m_frameBuffer->GenerateFramebuffer(SFrameBuffer::PLANE);
+     *  @endcode
+     *
+     *  2. Generate buffers.
+     *  @code{.cpp}
+     *  m_frameBuffer->GenerateTexturebuffer(SFrameBuffer::DEPTH, width, height, GL_DEPTH_COMPONENT);
+     *  @endcode
+     *
+     *  3. Rasterize the framebuffer.
+     *  @code{.cpp}
+     *  m_frameBuffer->RasterizeFramebuffer();
+     *  @endcode
+     */
     class SFrameBuffer : public SResource {
     public:
         enum BufferType {
@@ -24,6 +41,8 @@ namespace CSE {
             BufferType type = RENDER;
             unsigned int renderbufferId = 0;
             STexture* texture = nullptr;
+            int format = 0;
+            short level = 0;
         };
     public:
         SFrameBuffer();
@@ -37,13 +56,25 @@ namespace CSE {
         void AttachCubeBuffer(int index, int level = 0) const;
         void AttachFrameBuffer(int target = GL_FRAMEBUFFER) const;
         void DetachFrameBuffer() const;
+        void ResizeFrameBuffer(int width, int height);
         void Exterminate() override;
 
         int GetWidth() const;
         int GetHeight() const;
 
         BufferStatus GetBufferStatus() const;
-
+        /**
+         * Get textures that exist in the framebuffer.
+         * @param index buffer index in framebuffer
+         * @return if the corresponding index is an invalid texture type, nullptr is returned.
+         */
+        STexture* GetTexture(int index) const;
+        /**
+         * Get renderbuffer ID that exist in the framebuffer.
+         * @param index buffer index in framebuffer
+         * @return if the corresponding index is an invalid buffer ID, 0 is returned.
+         */
+        unsigned int GetRenderbufferID(int index) const;
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
@@ -51,6 +82,7 @@ namespace CSE {
     private:
         int GenerateAttachmentType(SFrameBuffer::BufferType type, bool isIncreaseAttachment = true) const;
         int GenerateInternalFormatType(int channel) const;
+        void ReleaseBufferObject(const SFrameBuffer::BufferObject* bufferObject);
 
     private:
         int m_width = 512;

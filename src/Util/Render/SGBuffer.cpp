@@ -21,14 +21,11 @@ SGBuffer::~SGBuffer() {
 }
 
 void SGBuffer::GenerateGBuffer(int width, int height) {
+    if(m_geometryFrameBuffer != nullptr) return;
 
     m_width = width;
     m_height = height;
 
-    if(m_geometryFrameBuffer != nullptr) {
-        resMgr->Remove(m_geometryFrameBuffer);
-        SAFE_DELETE(m_geometryFrameBuffer);
-    }
     m_geometryFrameBuffer = new SFrameBuffer();
     m_geometryFrameBuffer->GenerateFramebuffer(SFrameBuffer::PLANE);
 
@@ -39,8 +36,8 @@ void SGBuffer::GenerateGBuffer(int width, int height) {
     m_geometryFrameBuffer->RasterizeFramebuffer();
 
 
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "Framebuffer not complete!" << std::endl;
+//    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+//        std::cout << "Framebuffer not complete!" << std::endl;
 }
 
 void SGBuffer::AttachGeometryFrameBuffer() const {
@@ -55,6 +52,7 @@ void SGBuffer::AttachGeometryFrameBuffer(int target) const {
 }
 
 void SGBuffer::ResizeGBuffer(int width, int height) {
+    ReleaseGBuffer();
     GenerateGBuffer(width, height);
 }
 
@@ -90,7 +88,7 @@ void SGBuffer::AttachLightPassTexture(int textureLayout) const {
 }
 
 void SGBuffer::RenderLightPass() const {
-    ShaderUtil::BindAttributeToLightPass();
+    ShaderUtil::BindAttributeToPlane();
 }
 
 const std::vector<SIRender*>& SGBuffer::GetRendersLayer() const {

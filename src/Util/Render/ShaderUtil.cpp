@@ -308,7 +308,7 @@ void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMe
     }
 }
 
-void ShaderUtil::BindAttributeToLightPass() {
+void ShaderUtil::BindAttributeToPlane() {
     SEnvironmentMgr::RenderPlaneVAO();
 }
 

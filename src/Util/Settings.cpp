@@ -9,6 +9,7 @@ using namespace CSE;
 const char* Settings::m_deferredGeometryPassShaderID = "File:Shader/PBR/PBR-Geometry-Pass.shader";
 const char* Settings::m_defaultForwardMaterialID = "File:Material/DefaultPBR.mat";
 const char* Settings::m_defaultDeferredMaterialID = "File:Material/Default.mat";
+const char* Settings::m_defaultMainBufferShaderID = "File:Shader/Main-Buffer.shader";
 
 Settings::Settings() {
 
@@ -28,4 +29,8 @@ const char* Settings::GetDefaultForwardMaterialId() {
 
 const char* Settings::GetDefaultDeferredMaterialId() {
     return m_defaultDeferredMaterialID;
+}
+
+const char* Settings::GetDefaultMainBufferShaderID() {
+    return m_defaultMainBufferShaderID;
 }
