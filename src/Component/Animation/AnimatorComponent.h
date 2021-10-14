@@ -11,7 +11,7 @@ namespace CSE {
     public:
         AnimatorComponent();
 
-        ~AnimatorComponent();
+        ~AnimatorComponent() override;
 
         void Init() override;
 
@@ -39,7 +39,7 @@ namespace CSE {
 
         std::map<int, mat4> calculateCurrentAnimationPose() const;
 
-        static void applyPoseToJoints(std::map<int, mat4>& currentPose, JointComponent* joint, mat4 parentTransform);
+        static void applyPoseToJoints(std::map<int, mat4>& currentPose, JointComponent* joint, const mat4& parentTransform);
 
         std::vector<KeyFrame*> getPreviousAndNextFrames() const;
 

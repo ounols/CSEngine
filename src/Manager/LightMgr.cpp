@@ -1,7 +1,5 @@
 #include "LightMgr.h"
-#include "../OGLDef.h"
 #include "../Component/RenderComponent.h"
-#include "../Util/AssetsDef.h"
 #include "../Util/GLProgramHandle.h"
 #include "../Util/Render/SEnvironmentMgr.h"
 
@@ -11,9 +9,7 @@ enum LIGHTMODE {
     None, Amb, Dif, Spec, AMbDif = 12, AmbSpec = 13, DifSpec = 23, AmbDifSpec = 123
 };
 
-LightMgr::LightMgr() {
-
-}
+LightMgr::LightMgr() = default;
 
 
 LightMgr::~LightMgr() {
@@ -63,6 +59,7 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
                 break;
             case LightComponent::SPOT:
                 break;
+            case LightComponent::NONE:
             default:
                 break;
         }

@@ -20,7 +20,7 @@ namespace CSE {
         float radius = 1.0f;
         vec3 att = vec3{ 1.f, 0.f, 0.f };    //Kc, Kl, Kq
 
-        //Spot Light
+        //SpotLight
         float spot;
 
     };

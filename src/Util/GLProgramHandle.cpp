@@ -13,19 +13,17 @@ GLProgramHandle::GLProgramHandle() : Program(HANDLE_NULL) {
     SetUndestroyable(true);
 }
 
-GLProgramHandle::~GLProgramHandle() {
-
-}
+GLProgramHandle::~GLProgramHandle() = default;
 
 void GLProgramHandle::Exterminate() {
     glDeleteProgram(Program);
 
-    for (auto element_pair : AttributesList) {
+    for (const auto& element_pair : AttributesList) {
         Element* element = element_pair.second;
         SAFE_DELETE(element);
     }
 
-    for (auto element_pair : UniformsList) {
+    for (const auto& element_pair : UniformsList) {
         Element* element = element_pair.second;
         SAFE_DELETE(element);
     }
@@ -117,7 +115,7 @@ void GLProgramHandle::SetAttributesList(std::map<std::string, std::string>& vert
 
         int id = glGetAttribLocation(Program, (isTargetChanged ? frag : vert).find(imp_name)->second.c_str());
 
-        Element* element = new Element;
+        auto element = new Element;
         element->type = type;
         element->id = id;
 
@@ -152,7 +150,7 @@ GLProgramHandle::SetUniformsList(std::map<std::string, std::string>& vert, std::
 
         int id = glGetUniformLocation(Program, (isTargetChanged ? frag : vert).find(imp_name)->second.c_str());
 
-        Element* element = new Element;
+        auto element = new Element;
         element->type = type;
         element->id = id;
 

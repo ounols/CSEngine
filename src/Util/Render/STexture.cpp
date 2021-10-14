@@ -22,9 +22,7 @@ STexture::STexture(STexture::Type type) {
     SetType(type);
 }
 
-STexture::~STexture() {
-
-}
+STexture::~STexture() = default;
 
 bool STexture::LoadFile(const char* path) {
 
@@ -174,7 +172,7 @@ void STexture::Init(const AssetMgr::AssetReference* asset) {
 
 }
 
-void STexture::GenerateMipmap() {
+void STexture::GenerateMipmap() const {
     glBindTexture(m_targetGL, m_texId);
     glGenerateMipmap(m_targetGL);
 }

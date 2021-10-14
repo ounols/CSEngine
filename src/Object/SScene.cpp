@@ -10,9 +10,7 @@ SScene::SScene() {
     m_root = new SGameObject("__ROOT_OF_SCENE__");
 }
 
-SScene::~SScene() {
-
-}
+SScene::~SScene() = default;
 
 void SScene::Init() {
     InitGameObject(m_root);

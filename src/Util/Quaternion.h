@@ -265,13 +265,13 @@ namespace CSE {
         T sqz = z * z;
         T unit = sqx + sqy + sqz + sqw; // if normalised is one, otherwise is correction factor
         T test = x * y + z * w;
-        if (test > 0.499 * unit) { // singularity at north pole
+        if (test > 0.499 * unit) { // singularity at North Pole
             heading = 2 * atan2(x, w);
             attitude = M_PI / 2;
             bank = 0;
             return Vector3<T>(bank, heading, attitude);
         }
-        if (test < -0.499 * unit) { // singularity at south pole
+        if (test < -0.499 * unit) { // singularity at South Pole
             heading = -2 * atan2(x, w);
             attitude = -M_PI / 2;
             bank = 0;
@@ -303,7 +303,7 @@ namespace CSE {
 
     template <typename T>
     bool QuaternionT<T>::operator!=(const QuaternionT<T>& q) const {
-        return !(*this == q);
+        return *this != q;
     }
 
 // Compute the quaternion that rotates from a to b, avoiding numerical instability.

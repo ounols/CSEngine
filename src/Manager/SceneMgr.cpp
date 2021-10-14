@@ -4,14 +4,10 @@
 
 using namespace CSE;
 
-SceneMgr::SceneMgr() {
-
-}
+SceneMgr::SceneMgr() = default;
 
 
-SceneMgr::~SceneMgr() {
-
-}
+SceneMgr::~SceneMgr() = default;
 
 
 void SceneMgr::Init() {

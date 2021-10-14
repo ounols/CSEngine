@@ -2,9 +2,7 @@
 
 using namespace CSE;
 
-MemoryContainer::MemoryContainer() {
-}
+MemoryContainer::MemoryContainer() = default;
 
 
-MemoryContainer::~MemoryContainer() {
-}
+MemoryContainer::~MemoryContainer() = default;

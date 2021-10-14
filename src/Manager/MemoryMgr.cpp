@@ -2,16 +2,17 @@
 #include "MemoryMgr.h"
 
 #ifdef WIN32
+
 #include <windows.h>
+
 #ifdef _DEBUG
 #include <typeinfo>
-#include <iostream>
 
 #endif
 #elif __ANDROID__
+
 #define LOGE(...) __android_log_print(ANDROID_LOG_DEBUG,"SCEngineMomory",__VA_ARGS__)
 #include <android/log.h>
-
 
 #elif __linux__
 
@@ -22,12 +23,9 @@
 
 using namespace CSE;
 
-MemoryMgr::MemoryMgr() {
-}
+MemoryMgr::MemoryMgr() = default;
 
-
-MemoryMgr::~MemoryMgr() {
-}
+MemoryMgr::~MemoryMgr() = default;
 
 
 void MemoryMgr::ExterminateObjects(bool killAll) {
@@ -49,8 +47,6 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 #elif __linux__
         std::cout << "Auto Releasing Object : " << typeid(*object).name() << "...\n";
 #endif
-
-        //���Ű� �Ұ����� ������ �������� Ȯ��
         if (object->isUndestroyable && !killAll) {
 #ifdef WIN32
             OutputDebugStringA("denied.\n");
@@ -80,7 +76,6 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 void MemoryMgr::ReleaseObject(SObject* object, bool isForce) {
     if (object == nullptr) return;
 
-    //���Ű� �Ұ����� ������ �������� Ȯ��
     if (object->isUndestroyable && !isForce) {
 #ifdef WIN32
         OutputDebugStringA("Releasing Object is denied.");
@@ -90,7 +85,6 @@ void MemoryMgr::ReleaseObject(SObject* object, bool isForce) {
         return;
     }
 
-    //������ �����ϴ� ������Ʈ���� �Ǻ� �� SAFE_DELETE�� ȣ��
     auto iObj = std::find(m_objects.begin(), m_objects.end(), object);
 
     if (iObj != m_objects.end()) {
@@ -101,7 +95,6 @@ void MemoryMgr::ReleaseObject(SObject* object, bool isForce) {
 #elif __ANDROID__
         LOGE("Releasing Object : UNKOWN...");
 #endif
-
         object->Exterminate();
         Remove(object);
         SAFE_DELETE(object);
@@ -111,7 +104,6 @@ void MemoryMgr::ReleaseObject(SObject* object, bool isForce) {
 #elif __ANDROID__
         LOGE("deleted\n");
 #endif
-
     }
 }
 

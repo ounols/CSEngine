@@ -16,8 +16,7 @@ SGBuffer::SGBuffer() {
     resMgr = CORE->GetCore(ResMgr);
 }
 
-SGBuffer::~SGBuffer() {
-}
+SGBuffer::~SGBuffer() = default;
 
 void SGBuffer::GenerateGBuffer(int width, int height) {
     if(m_geometryFrameBuffer != nullptr) return;

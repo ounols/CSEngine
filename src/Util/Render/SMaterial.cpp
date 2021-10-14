@@ -16,12 +16,12 @@ SMaterial::SMaterial() {
 
 SMaterial::SMaterial(const SMaterial* material) : SResource(material, false) {
 
-    if(material == nullptr) throw -1;
+    if(material == nullptr) throw std::exception("[SMaterial] material is nullptr.");
 
 
     for(const auto& element_pair : material->m_elements) {
         const auto& element_src = element_pair.second;
-        Element* element_copy = new Element;
+        auto element_copy = new Element;
         element_copy->count = element_src->count;
         element_copy->type = element_src->type;
         element_copy->value_str = element_src->value_str;
@@ -46,7 +46,7 @@ void SMaterial::Exterminate() {
 }
 
 void SMaterial::ReleaseElements() {
-	for (const auto pair : m_elements) {
+	for (const auto& pair : m_elements) {
 		auto* element = pair.second;
 		SAFE_DELETE(element);
 	}
@@ -80,7 +80,7 @@ void SMaterial::InitElements(const ElementsMap& elements, GLProgramHandle* handl
 		if (handleElement == nullptr) continue;
 
 		element->id = handleElement->id;
-		SetBindFuncByType(element, isUniform);
+        SetBindFuncByType(element);
 	}
 	
 }
@@ -89,25 +89,25 @@ void SMaterial::SetAttribute(const GLMeshID& meshId) const {
     ShaderUtil::BindAttributeToShader(*m_handle, meshId);
 }
 
-void SMaterial::SetInt(std::string name, int value) {
+void SMaterial::SetInt(const std::string& name, int value) {
     auto find_iter = m_elements.find(name);
     if(find_iter == m_elements.end()) return;
     SetIntFunc(find_iter->second, value);
 }
 
-void SMaterial::SetFloat(std::string name, float value) {
+void SMaterial::SetFloat(const std::string& name, float value) {
     auto find_iter = m_elements.find(name);
     if(find_iter == m_elements.end()) return;
     SetFloatFunc(find_iter->second, value);
 }
 
-void SMaterial::SetVec3(std::string name, vec3 value) {
+void SMaterial::SetVec3(const std::string& name, const vec3& value) {
     auto find_iter = m_elements.find(name);
     if(find_iter == m_elements.end()) return;
     SetVec3Func(find_iter->second, value);
 }
 
-void SMaterial::SetTexture(std::string name, SResource* texture) {
+void SMaterial::SetTexture(const std::string& name, SResource* texture) {
     auto find_iter = m_elements.find(name);
     if(find_iter == m_elements.end()) return;
     SetTextureFunc(find_iter->second, texture);
@@ -156,7 +156,7 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
         auto element_name = node.getAttribute("name").value;
         auto element_count = node.getAttribute("count").value;
 
-        Element* element = new Element;
+        auto element = new Element;
         element->type = type;
         element->count = std::stoi(element_count);
         element->value_str = element_value;
@@ -166,7 +166,7 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
 }
 
 
-void SMaterial::SetBindFuncByType(Element* element, bool isUniform) {
+void SMaterial::SetBindFuncByType(Element* element) {
 
 	const GLenum type = element->type;
 
@@ -240,7 +240,6 @@ void SMaterial::SetMat2Func(SMaterial::Element* element, mat2 value) {
 }
 
 void SMaterial::SetVec4Func(SMaterial::Element* element, vec4 value) {
-    if(element == nullptr) return;
     element->attachFunc = [element, value]() {
         glUniform4fv(element->id, element->count, value.Pointer());
     };
@@ -262,7 +261,7 @@ void SMaterial::SetVec2Func(SMaterial::Element* element, vec2 value) {
 
 void SMaterial::SetTextureFunc(SMaterial::Element* element, SResource* texture) {
     if(element == nullptr || texture == nullptr) return;
-    STexture* value = static_cast<STexture*>(texture);
+    auto value = static_cast<STexture*>(texture);
 //    element->count = m_textureLayout++;
     auto* texture_layout = &m_textureLayout;
     element->attachFunc = [element, value, texture_layout]() {

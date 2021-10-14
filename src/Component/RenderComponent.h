@@ -16,7 +16,7 @@ namespace CSE {
     public:
         RenderComponent();
 
-        ~RenderComponent();
+        ~RenderComponent() override;
 
         void Exterminate() override;
 

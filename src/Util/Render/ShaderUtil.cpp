@@ -12,13 +12,9 @@
 
 using namespace CSE;
 
-ShaderUtil::ShaderUtil() {
+ShaderUtil::ShaderUtil() = default;
 
-}
-
-ShaderUtil::~ShaderUtil() {
-
-}
+ShaderUtil::~ShaderUtil() = default;
 
 
 GLProgramHandle*
@@ -171,8 +167,8 @@ std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLcha
         auto result = split(line, '\n');
 
         for (const auto& str : result) {
-            int start_index = 0;
-            int end_index = 0;
+            int start_index;
+            int end_index;
             if ((start_index = str.find("//[")) != std::string::npos) {
                 start_index += 3;
                 end_index = str.find("]//");
@@ -180,12 +176,12 @@ std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLcha
                 continue;
             }
 
-            int eoc_index = 0;
+            int eoc_index;
             if (!type_str.empty() && (eoc_index = str.find(';')) != std::string::npos) {
-                int start_index = str.substr(0, eoc_index).rfind(' ');
-                int end_index = str.rfind('[');
-                end_index = end_index == std::string::npos ? eoc_index : end_index;
-                auto detail = str.substr(start_index, end_index - start_index);
+                int startIndex = str.substr(0, eoc_index).rfind(' ');
+                int endIndex = str.rfind('[');
+                endIndex = endIndex == std::string::npos ? eoc_index : endIndex;
+                auto detail = str.substr(startIndex, endIndex - startIndex);
                 detail = trim(detail);
                 variables[type_str] = detail;
                 type_str.clear();
@@ -234,7 +230,7 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
     handle->Attributes.TextureCoord = textureCoord != nullptr ? textureCoord->id : HANDLE_NULL;
     handle->Attributes.Color = color != nullptr ? color->id : HANDLE_NULL;
 
-    handle->Uniforms.Modelview = modelView != nullptr ? modelView->id : HANDLE_NULL;
+    handle->Uniforms.ModelView = modelView != nullptr ? modelView->id : HANDLE_NULL;
     handle->Uniforms.ModelNoCameraMatrix = modelViewNoCamera != nullptr ? modelViewNoCamera->id : HANDLE_NULL;
     handle->Uniforms.CameraPosition = cameraPosition != nullptr ? cameraPosition->id : HANDLE_NULL;
     handle->Uniforms.Projection = projection != nullptr ? projection->id : HANDLE_NULL;
@@ -256,7 +252,7 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
 void ShaderUtil::BindCameraToShader(const GLProgramHandle& handle, const mat4& view, const vec3& cameraPosition,
                                     const mat4& projection, const mat4& transform) {
     mat4 modelView = transform * view;
-    glUniformMatrix4fv(handle.Uniforms.Modelview, 1, 0, modelView.Pointer());
+    glUniformMatrix4fv(handle.Uniforms.ModelView, 1, 0, modelView.Pointer());
     glUniformMatrix4fv(handle.Uniforms.ModelNoCameraMatrix, 1, 0, transform.Pointer());
     glUniform3fv(handle.Uniforms.CameraPosition, 1, cameraPosition.Pointer());
 
@@ -271,7 +267,7 @@ void ShaderUtil::BindCameraToShader(const GLProgramHandle& handle, const mat4& v
 // position(x y z) + normal(x y z) + tex(u v) + weight(x y z) + jointID(id1, id2, id3)
 void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMeshID& meshId) {
     int stride = 4 * sizeof(vec3) + sizeof(vec2);    //normal + position + uv = (4 * sizeof(vec3) + sizeof(vec2))
-    const GLvoid* offset = (const GLvoid*) sizeof(vec3);
+    auto offset = (GLvoid*) sizeof(vec3);
     GLint position = handle.Attributes.Position;
     GLint normal = handle.Attributes.Normal;
     GLint tex = handle.Attributes.TextureCoord;
@@ -304,7 +300,7 @@ void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMe
         offset = (GLvoid*) (sizeof(vec3) * 3 + sizeof(vec2));
         glVertexAttribPointer(jointId, 3, GL_FLOAT, GL_FALSE, stride, offset);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshId.m_indexBuffer);
-        glDrawElements(GL_TRIANGLES, meshId.m_indexSize * 3, GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_TRIANGLES, meshId.m_indexSize * 3, GL_UNSIGNED_SHORT, nullptr);
     }
 }
 

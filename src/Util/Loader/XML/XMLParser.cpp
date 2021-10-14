@@ -42,15 +42,15 @@ bool XMLParser::parseBool(const char* value) {
 }
 
 vec2 XMLParser::parseVec2(std::vector<std::string> values) {
-	return vec2(std::stof(values[0]), std::stof(values[1]));
+	return {std::stof(values[0]), std::stof(values[1])};
 }
 
 vec3 XMLParser::parseVec3(std::vector<std::string> values) {
-	return vec3(std::stof(values[0]), std::stof(values[1]), std::stof(values[2]));
+	return {std::stof(values[0]), std::stof(values[1]), std::stof(values[2])};
 }
 
 vec4 XMLParser::parseVec4(std::vector<std::string> values) {
-	return vec4(std::stof(values[0]), std::stof(values[1]), std::stof(values[2]), std::stof(values[3]));
+	return {std::stof(values[0]), std::stof(values[1]), std::stof(values[2]), std::stof(values[3])};
 }
 
 STexture* XMLParser::parseTexture(const char* value) {

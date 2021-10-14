@@ -88,10 +88,7 @@ void OGLMgr::setupEGLGraphics() {
 
 
 void OGLMgr::setProjectionRatio(int width, int height) {
-    if (width > height)
-        m_projectionRatio = (GLfloat) width / (GLfloat) height;
-    else
-        m_projectionRatio = (GLfloat) height / (GLfloat) width;
+    m_projectionRatio = (GLfloat) width / (GLfloat) height;
 
 
     CORE->GetCore(CameraMgr)->SetProjectionRatio(m_projectionRatio);

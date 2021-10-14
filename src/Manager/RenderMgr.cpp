@@ -18,8 +18,7 @@ LightMgr* lightMgr = nullptr;
 int mainTextureId = -1;
 STexture* mainTexture = nullptr;
 
-RenderMgr::RenderMgr() {
-}
+RenderMgr::RenderMgr() = default;
 
 
 RenderMgr::~RenderMgr() {

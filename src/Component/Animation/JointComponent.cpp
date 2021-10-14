@@ -14,9 +14,7 @@ JointComponent::JointComponent(const JointComponent& src) : SComponent(src) {
     m_inverseTransformMatrix = src.m_inverseTransformMatrix;
 }
 
-JointComponent::~JointComponent() {
-
-}
+JointComponent::~JointComponent() = default;
 
 void JointComponent::Exterminate() {
 
@@ -35,13 +33,13 @@ void JointComponent::SetAnimationMatrix(mat4&& animation) {
     m_animatedMatrix = animation;
 }
 
-void JointComponent::calcInverseBindTransform(mat4 parentTransform) {
+void JointComponent::calcInverseBindTransform(const mat4& parentTransform) {
     mat4 bindTransform = m_localBindMatrix * parentTransform;
     m_inverseTransformMatrix = mat4::Invert(bindTransform);
 
     auto children = gameObject->GetChildren();
     for (const auto& child : children) {
-        JointComponent* child_comp = child->GetComponent<JointComponent>();
+        auto child_comp = child->GetComponent<JointComponent>();
 
         if(child_comp == nullptr) continue;
 
@@ -61,7 +59,7 @@ SComponent* JointComponent::Clone(SGameObject* object) {
     return clone;
 }
 
-void JointComponent::SetBindLocalMatrix(mat4 mat) {
+void JointComponent::SetBindLocalMatrix(const mat4& mat) {
     m_localBindMatrix = mat;
 }
 

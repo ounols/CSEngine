@@ -20,7 +20,7 @@ namespace CSE {
 
         }
 
-        ~Skeleton() {
+        ~Skeleton() override {
             Exterminate();
         }
 

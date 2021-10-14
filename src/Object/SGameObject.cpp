@@ -1,5 +1,7 @@
 #include "SGameObject.h"
 
+#include <utility>
+
 #include "../Manager/MemoryMgr.h"
 #include "../Manager/GameObjectMgr.h"
 #include "../Component/TransformComponent.h"
@@ -15,7 +17,7 @@ SGameObject::SGameObject() {
     SGameObject::Init();
 }
 
-SGameObject::SGameObject(const SGameObject& src) {
+SGameObject::SGameObject(const SGameObject& src)  : SObject() {
     CORE->GetCore(GameObjectMgr)->Register(this);
     m_transform = CreateComponent<TransformComponent>();
 
@@ -26,15 +28,14 @@ SGameObject::SGameObject(const SGameObject& src) {
 
 SGameObject::SGameObject(std::string name) {
     CORE->GetCore(GameObjectMgr)->Register(this);
-    m_name = name;
+    m_name = std::move(name);
     m_transform = CreateComponent<TransformComponent>();
 
     SGameObject::Init();
 }
 
 
-SGameObject::~SGameObject() {
-}
+SGameObject::~SGameObject() = default;
 
 
 void SGameObject::Init() {
@@ -192,13 +193,11 @@ std::string SGameObject::GetID(const SComponent* component) const {
 
 
 SGameObject* SGameObject::Find(std::string name) const {
-
-    return CORE->GetCore(GameObjectMgr)->Find(ConvertSpaceStr(name, true));
-
+    return CORE->GetCore(GameObjectMgr)->Find(ConvertSpaceStr(std::move(name), true));
 }
 
 SGameObject* SGameObject::FindByID(std::string id) {
-    return CORE->GetCore(GameObjectMgr)->FindByID(ConvertSpaceStr(id, true));
+    return CORE->GetCore(GameObjectMgr)->FindByID(ConvertSpaceStr(std::move(id), true));
 }
 
 
@@ -262,7 +261,7 @@ std::string SGameObject::GetResourceID() const {
     return m_resourceID;
 }
 
-void SGameObject::SetResourceID(std::string resID, bool setChildren) {
+void SGameObject::SetResourceID(const std::string& resID, bool setChildren) {
     m_resourceID = resID;
 
     if (setChildren) {
@@ -272,7 +271,7 @@ void SGameObject::SetResourceID(std::string resID, bool setChildren) {
     }
 }
 
-SComponent* SGameObject::GetSComponentByID(std::string id) const {
+SComponent* SGameObject::GetSComponentByID(const std::string& id) const {
     return CORE->GetCore(GameObjectMgr)->FindComponentByID(id);
 }
 

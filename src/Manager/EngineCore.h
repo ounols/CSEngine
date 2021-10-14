@@ -34,7 +34,7 @@ namespace CSE {
 namespace CSE {
     class EngineCore {
     public:
-        DECLARE_SINGLETONE(EngineCore);
+        DECLARE_SINGLETON(EngineCore);
         ~EngineCore();
 
         GET_CORE_FUNCTION(ResMgr, m_resMgr);

@@ -8,7 +8,7 @@ namespace CSE {
     class SceneMgr : public CoreBase {
     public:
         explicit SceneMgr();
-        ~SceneMgr();
+        ~SceneMgr() override;
 
         void Init() override;
 

@@ -30,20 +30,20 @@ namespace CSE {
 
         void SetLightType(LIGHT type);
 
-        void SetDirection(vec4 direction) const;
+        void SetDirection(const vec4& direction) const;
 
-        void SetColor(vec3 color) const;
+        void SetColor(const vec3& color) const;
 
         LIGHT GetType() const;
 
-        vec4 GetDirection(vec4 direction) const;
+        vec4 GetDirection(const vec4& direction) const;
 
         vec3 GetColor() const;
 
-        //for Positional Light and Spot Light
+        //for Positional Light and SpotLight
         void SetLightRadius(float radius) const;
 
-        void SetAttenuationFactor(vec3 att) const;
+        void SetAttenuationFactor(const vec3& att) const;
 
         void SetAttenuationFactor(float Kc, float Kl, float Kq) const;
 

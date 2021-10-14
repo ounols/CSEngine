@@ -5,6 +5,7 @@
 #pragma once
 
 #include <string>
+#include <utility>
 #include "../Manager/AssetMgr.h"
 #include "../SObject.h"
 
@@ -13,7 +14,7 @@ namespace CSE {
     class SResource : public SObject {
     public:
         SResource();
-        SResource(bool isRegister);
+        explicit SResource(bool isRegister);
         SResource(const SResource* resource, bool isRegister);
 
         ~SResource() override;
@@ -35,11 +36,11 @@ namespace CSE {
         }
 
         void LinkResource(std::string name) {
-            SetResource(name, false);
+            SetResource(std::move(name), false);
         }
 
         template <class T>
-        static T* Create(std::string name, bool isForceCreate = false) {
+        static T* Create(const std::string& name, bool isForceCreate = false) {
             if (!isForceCreate) {
                 SResource* res = GetResource(name);
                 if (res != nullptr) return static_cast<T*>(res);
@@ -67,7 +68,7 @@ namespace CSE {
 
         template <class T>
         static T* Get(std::string name) {
-            SResource* res = GetResource(name);
+            SResource* res = GetResource(std::move(name));
             if (res != nullptr) return static_cast<T*>(res);
             return nullptr;
         }

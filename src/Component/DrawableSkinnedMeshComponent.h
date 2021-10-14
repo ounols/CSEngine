@@ -9,7 +9,7 @@ namespace CSE {
     public:
         DrawableSkinnedMeshComponent();
 
-        ~DrawableSkinnedMeshComponent();
+        ~DrawableSkinnedMeshComponent() override;
 
         SComponent* Clone(SGameObject* object) override;
 

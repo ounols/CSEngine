@@ -9,7 +9,6 @@
 #include "EngineCore.h"
 
 #include <map>
-#include <sstream>
 
 using namespace CSE;
 
@@ -17,13 +16,9 @@ static void CloningObjects(SGameObject* object, std::map<SComponent*, SComponent
                            std::map<SGameObject*, SGameObject*>& clone_obj, SGameObject* parent);
 
 
-SCloneFactory::SCloneFactory() {
+SCloneFactory::SCloneFactory() = default;
 
-}
-
-SCloneFactory::~SCloneFactory() {
-
-}
+SCloneFactory::~SCloneFactory() = default;
 
 SComponent* SCloneFactory::Clone(SComponent* component, SGameObject* parent) {
     if(parent == nullptr) {
@@ -70,7 +65,7 @@ void CloningObjects(SGameObject* object, std::map<SComponent*, SComponent*>& clo
     if(object == nullptr) return;
 
     //게임 오브젝트 복사
-    SGameObject* cloneObject = new SGameObject(object->GetName() + "");
+    auto cloneObject = new SGameObject(object->GetName() + "");
     clone_obj[object] = cloneObject;
     cloneObject->SetIsEnable(object->GetIsEnable());
     cloneObject->SetIsPrefab(object->isPrefab(true));
@@ -80,7 +75,7 @@ void CloningObjects(SGameObject* object, std::map<SComponent*, SComponent*>& clo
     const auto& target_component = object->GetComponents();
     for(const auto& component : target_component) {
         if(dynamic_cast<TransformComponent*>(component)) {
-            TransformComponent* transform_copy = static_cast<TransformComponent*>(cloneObject->GetTransform());
+            auto transform_copy = static_cast<TransformComponent*>(cloneObject->GetTransform());
             TransformInterface* transform_src = static_cast<TransformComponent*>(component);
             clone_comp[component] = transform_copy;
 

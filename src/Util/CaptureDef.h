@@ -23,7 +23,8 @@ namespace CSE {
         char* data = new char[width * height * 4];
 
 
-        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+//        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
         glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
         int saved = stbi_write_bmp(filename, width, height, 4, data);

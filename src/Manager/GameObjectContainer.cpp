@@ -2,10 +2,9 @@
 
 using namespace CSE;
 
-GameObjectContainer::GameObjectContainer() {
-}
+GameObjectContainer::GameObjectContainer() = default;
 
 
-GameObjectContainer::~GameObjectContainer() {}
+GameObjectContainer::~GameObjectContainer() = default;
 
 
