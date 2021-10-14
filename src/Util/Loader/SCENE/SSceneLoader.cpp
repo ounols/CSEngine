@@ -102,7 +102,6 @@ bool SSceneLoader::SavePrefab(SGameObject* root, std::string path) {
 	return Save(value.str(), std::move(path));
 }
 
-
 bool SSceneLoader::Save(const std::string& buf, const std::string& path) {
 #ifndef __ANDROID__
 	std::ofstream file(path);
@@ -128,13 +127,11 @@ SScene* SSceneLoader::LoadScene(const std::string& path) {
 
 	auto scene = new SScene();
 
-
 	XNode sce_scene = m_root->getChild("CSESCENE");
 
 	auto node_gameobjects = sce_scene.children;
 	std::vector<NodeKey*> gameobjects;
 	std::vector<ComponentValue*> components;
-
 
 	for (const auto& node_obj : node_gameobjects) {
 		if (node_obj.name == "gameobject") {
@@ -170,7 +167,6 @@ void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs
 	std::string id = ConvertSpaceStr(node.getAttribute("id").value);
 	auto obj_new = new SGameObject(name);
 
-
 	for (const auto& comp : node_components) {
 		if (comp.name != "component") continue;
 
@@ -187,8 +183,7 @@ void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs
 		comps.push_back(comp_val);
 	}
 
-
-	NodeKey* key = new NodeKey();
+	auto key = new NodeKey();
 	key->node = node;
 	key->id = id;
 	key->obj = obj_new;
@@ -279,11 +274,9 @@ void SSceneLoader::ExploringPrefab(const XNode& node, std::vector<NodeKey*>& obj
 	std::string id = ConvertSpaceStr(node.getAttribute("id").value, true);
 	std::string file_id = ConvertSpaceStr(node.getAttribute("fileid").value, true);
 
-
 	//Create!
 	auto prefab = SResource::Create<SPrefab>(file_id);
 	SGameObject* root = prefab->Clone(vec3(), scene->GetRoot());
-
 
 	//Change objects value
 	for (const auto& child : node_values) {
@@ -321,7 +314,6 @@ void SSceneLoader::LinkingResourceID(const XNode& node, SGameObject* root, std::
 		root->SetName(obj_name);
 		objs.push_back(key);
 
-
 		for (const auto& comp : node.children) {
 			if (comp.name != "component") continue;
 
@@ -352,7 +344,6 @@ void SSceneLoader::LinkingResourceID(const XNode& node, SGameObject* root, std::
 		LinkingResourceID(node, child, objs, comps);
 	}
 }
-
 
 std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 
@@ -437,7 +428,6 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 			isChanged = isChanged || p_parent_resID != o_parent_resID;
 
 		}
-
 
 		if (isChanged) {
 			std::string id = object_node.getAttribute("id").value;
