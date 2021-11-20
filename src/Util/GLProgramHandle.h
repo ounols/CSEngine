@@ -14,7 +14,7 @@
 namespace CSE {
 
     struct GLUniformHandles {
-        GLint Modelview = HANDLE_NULL;
+        GLint ModelView = HANDLE_NULL;
         GLint ModelNoCameraMatrix = HANDLE_NULL;
         GLint Projection = HANDLE_NULL;
         GLint CameraPosition = HANDLE_NULL;
@@ -57,7 +57,7 @@ namespace CSE {
         GLProgramHandle();
 
 
-        ~GLProgramHandle();
+        ~GLProgramHandle() override;
 
 
         void Exterminate() override;

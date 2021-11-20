@@ -18,8 +18,7 @@ LightMgr* lightMgr = nullptr;
 int mainTextureId = -1;
 STexture* mainTexture = nullptr;
 
-RenderMgr::RenderMgr() {
-}
+RenderMgr::RenderMgr() = default;
 
 
 RenderMgr::~RenderMgr() {
@@ -39,7 +38,7 @@ void RenderMgr::Init() {
 
     m_mainBuffer = new SFrameBuffer();
     m_mainBuffer->GenerateFramebuffer(SFrameBuffer::PLANE);
-    mainTexture = m_mainBuffer->GenerateTexturebuffer(SFrameBuffer::RENDER, (int)*m_width, (int)*m_height, GL_RGB);
+    m_mainBuffer->GenerateRenderbuffer(SFrameBuffer::RENDER, (int)*m_width, (int)*m_height, GL_RGB);
     m_mainBuffer->RasterizeFramebuffer();
 
     m_mainProgramHandle = SResource::Create<GLProgramHandle>(Settings::GetDefaultMainBufferShaderID());
@@ -86,12 +85,20 @@ void RenderMgr::Render() const {
     RenderGbuffers(*mainCamera); // Deferred Render
     RenderInstances(*mainCamera); // Forward Render
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
-    glUseProgram(m_mainProgramHandle->Program);
-    mainTexture->Bind(mainTextureId, 0);
 
-    ShaderUtil::BindAttributeToPlane();
+    /**
+     * @Todo 포스트 프로세싱을 적용하기 위한 코드
+     */
+//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//    glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
+//    glUseProgram(m_mainProgramHandle->Program);
+//    mainTexture->Bind(mainTextureId, 0);
+//
+//    ShaderUtil::BindAttributeToPlane();
+
+    m_mainBuffer->AttachFrameBuffer(GL_READ_FRAMEBUFFER);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBlitFramebuffer(0, 0, *m_width, *m_height, 0, 0, *m_width, *m_height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 
 void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer) const {

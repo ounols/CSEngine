@@ -10,7 +10,7 @@ namespace CSE {
     class GameObjectMgr : public GameObjectContainer, public CoreBase {
     public:
         explicit GameObjectMgr();
-        ~GameObjectMgr();
+        ~GameObjectMgr() override;
 
     public:
         void Init() override;
@@ -19,11 +19,11 @@ namespace CSE {
 
         void DeleteGameObject(SGameObject* object);
 
-        SGameObject* Find(std::string name) const;
+        SGameObject* Find(const std::string& name) const;
 
-        SGameObject* FindByID(std::string id) const;
+        SGameObject* FindByID(const std::string& id) const;
 
-        SComponent* FindComponentByID(std::string id) const;
+        SComponent* FindComponentByID(const std::string& id) const;
 
     };
 }

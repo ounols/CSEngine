@@ -29,8 +29,7 @@ namespace CSE {
             m_keyframes = std::move(keyframes);
         }
 
-        ~Animation() override {
-        }
+        ~Animation() override = default;
 
         void SetKeyframe(float totalTime, std::list<KeyFrame*> keyframes);
 

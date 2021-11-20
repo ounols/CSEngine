@@ -18,7 +18,7 @@ namespace CSE {
 
     public:
         explicit LightMgr();
-        ~LightMgr();
+        ~LightMgr() override;
 
         void AttachLightToShader(const GLProgramHandle* handle) const;
         void AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const;

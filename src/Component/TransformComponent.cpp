@@ -9,7 +9,7 @@ COMPONENT_CONSTRUCTOR(TransformComponent) {
 }
 
 
-TransformComponent::~TransformComponent() {}
+TransformComponent::~TransformComponent() = default;
 
 
 void TransformComponent::Init() {
@@ -51,7 +51,7 @@ Quaternion TransformComponent::GetRotation() const {
     return m_rotation.Multiplied(parent);
 }
 
-void TransformComponent::SetMatrix(mat4 matrix) {
+void TransformComponent::SetMatrix(const mat4& matrix) {
     m_position = vec3{ matrix.w.x, matrix.w.y, matrix.w.z };
     m_scale = vec3{ matrix.x.x, matrix.y.y, matrix.z.z };
     m_rotation = Quaternion::ToQuaternion(matrix);

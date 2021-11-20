@@ -12,7 +12,7 @@ namespace CSE {
     public:
         SScriptObject();
 
-        ~SScriptObject();
+        ~SScriptObject() override;
 
         void Exterminate() override;
 
@@ -26,13 +26,13 @@ namespace CSE {
         void Init(const AssetMgr::AssetReference* asset) override;
 
     private:
-        void RegisterScript(std::string script);
-        void RemakeScript(std::string path);
-        void GetVariables(std::string str);
+        void RegisterScript(const std::string& script);
+        void RemakeScript(const std::string& path);
+        void GetVariables(const std::string& str);
 
     private:
         std::vector<std::string> m_variables;
-        std::string m_className = "";
+        std::string m_className;
     };
 
 }

@@ -1,5 +1,3 @@
-#include <iostream>
-#include <sstream>
 #include "../Util/Render/SEnvironmentMgr.h"
 #include "FirstDemoScene.h"
 #include "../Component/LightComponent.h"
@@ -20,14 +18,10 @@
 
 using namespace CSE;
 
-FirstDemoScene::FirstDemoScene() {
-
-}
+FirstDemoScene::FirstDemoScene() = default;
 
 
-FirstDemoScene::~FirstDemoScene() {
-
-}
+FirstDemoScene::~FirstDemoScene() = default;
 
 
 void FirstDemoScene::Init() {
@@ -250,7 +244,7 @@ void FirstDemoScene::Tick(float elapsedTime) {
 
     if (elapsedTime - startTIme > 3000) {
         startTIme = elapsedTime;
-        isUnvisible = !isUnvisible;
+        isInvisible = !isInvisible;
 //		switchingObject();
     }
 }
@@ -262,9 +256,9 @@ void FirstDemoScene::Destroy() {
 
 void FirstDemoScene::switchingObject() {
 
-    c3->SetIsEnable(!isUnvisible);
+    c3->SetIsEnable(!isInvisible);
 
-    if (isUnvisible) {
+    if (isInvisible) {
         c2->Destroy();
 //        d->GetComponent<LightComponent>()->SetLightType(LightComponent::POINT);
 

@@ -12,8 +12,7 @@ namespace CSE {
     class SScene : public Scene {
     public:
         SScene();
-
-        ~SScene();
+        ~SScene() override;
 
         void Init() override;
 

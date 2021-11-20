@@ -11,12 +11,11 @@ namespace CSE {
     class SPrefab : public SResource {
     public:
         SPrefab();
+        ~SPrefab() override;
 
-        ~SPrefab();
+        SGameObject* Clone(const vec3& position, SGameObject* parent = nullptr);
 
-        SGameObject* Clone(vec3 position, SGameObject* parent = nullptr);
-
-        SGameObject* Clone(vec3 position, vec3 scale, Quaternion rotation, SGameObject* parent = nullptr);
+        SGameObject* Clone(const vec3& position, const vec3& scale, Quaternion rotation, SGameObject* parent = nullptr);
 
         bool SetGameObject(SGameObject* obj);
 

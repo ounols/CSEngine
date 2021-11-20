@@ -43,13 +43,13 @@ namespace CSE {
 
 		void SetAttribute(const GLMeshID& meshId) const;
 
-		void SetInt(std::string name, int value);
+		void SetInt(const std::string& name, int value);
 
-		void SetFloat(std::string name, float value);
+		void SetFloat(const std::string& name, float value);
 
-		void SetVec3(std::string name, vec3 value);
+		void SetVec3(const std::string& name, const vec3& value);
 
-		void SetTexture(std::string name, SResource* texture);
+		void SetTexture(const std::string& name, SResource* texture);
 
         short GetOrderLayer() const;
 
@@ -71,7 +71,7 @@ namespace CSE {
     private:
         void ReleaseElements();
 
-		void SetBindFuncByType(Element* element, bool isUniform);
+		void SetBindFuncByType(Element* element);
 
         static void SetIntFunc(Element* element, int value);
         static void SetFloatFunc(Element* element, float value);

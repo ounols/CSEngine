@@ -82,7 +82,7 @@ namespace CSE {
             return sqrt(LengthSquared());
         }
 
-        operator Vector2<float>() const {
+        explicit operator Vector2<float>() const {
             return Vector2<float>(x, y);
         }
 

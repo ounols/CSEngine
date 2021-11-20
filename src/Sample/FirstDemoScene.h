@@ -26,7 +26,7 @@ private:
 	CSE::MeshSurface* cube;
 	CSE::MeshSurface* cubemap;
 
-	bool isUnvisible = false;
+	bool isInvisible = false;
     unsigned int cubeVAO = 0;
     unsigned int cubeVBO = 0;
 };

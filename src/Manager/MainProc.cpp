@@ -3,8 +3,7 @@
 
 using namespace CSE;
 
-MainProc::MainProc() {
-}
+MainProc::MainProc() = default;
 
 
 MainProc::~MainProc() {

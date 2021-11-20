@@ -9,7 +9,7 @@ namespace CSE {
     protected:
         GameObjectContainer();
 
-        ~GameObjectContainer();
+        ~GameObjectContainer() override;
 
     };
 

@@ -1,5 +1,4 @@
 #include "RenderComponent.h"
-#include "CameraComponent.h"
 #include "../Manager/RenderMgr.h"
 #include "../Manager/LightMgr.h"
 #include "../Manager/EngineCore.h"
@@ -17,16 +16,13 @@ COMPONENT_CONSTRUCTOR(RenderComponent) {
     SetMaterial(nullptr);
 }
 
-
-RenderComponent::~RenderComponent() {}
-
+RenderComponent::~RenderComponent() = default;
 
 void RenderComponent::Exterminate() {
     if(m_renderMgr != nullptr) m_renderMgr->Remove(this);
     if(m_lightMgr != nullptr) m_lightMgr->RemoveShadowObject(this);
     SAFE_DELETE(m_material_clone);
 }
-
 
 void RenderComponent::Init() {
 
@@ -47,7 +43,6 @@ void RenderComponent::Init() {
     isRenderActive = isEnable;
 }
 
-
 void RenderComponent::Tick(float elapsedTime) {
 
     if (m_mesh == nullptr) {
@@ -58,7 +53,6 @@ void RenderComponent::Tick(float elapsedTime) {
     }
 }
 
-
 void
 RenderComponent::SetMatrix(const CameraMatrixStruct& cameraMatrixStruct, const GLProgramHandle* handle) {
     const auto& current_handle = handle == nullptr ? m_material_clone->GetHandle() : handle;
@@ -66,7 +60,6 @@ RenderComponent::SetMatrix(const CameraMatrixStruct& cameraMatrixStruct, const G
                                    cameraMatrixStruct.projection,
                                    static_cast<const TransformComponent*>(gameObject->GetTransform())->GetMatrix());
 }
-
 
 void RenderComponent::Render(const GLProgramHandle* handle) const {
 
@@ -77,7 +70,6 @@ void RenderComponent::Render(const GLProgramHandle* handle) const {
     SetJointMatrix(current_handle);
     ShaderUtil::BindAttributeToShader(*current_handle, m_mesh->GetMeshID());
 }
-
 
 void RenderComponent::SetIsEnable(bool is_enable) {
     SComponent::SetIsEnable(is_enable);

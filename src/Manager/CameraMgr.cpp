@@ -2,11 +2,10 @@
 
 using namespace CSE;
 
-CameraMgr::CameraMgr() {
-}
+CameraMgr::CameraMgr() = default;
 
 
-CameraMgr::~CameraMgr() {}
+CameraMgr::~CameraMgr() = default;
 
 
 void CameraMgr::Init() {

@@ -10,8 +10,7 @@
 
 using namespace CSE;
 
-ResMgr::ResMgr() {
-}
+ResMgr::ResMgr() = default;
 
 ResMgr::~ResMgr() {
     Exterminate();
@@ -62,7 +61,7 @@ bool ResMgr::IsEmpty() const {
     return m_resources.empty();
 }
 
-int ResMgr::GetStringHash(std::string str) {
+int ResMgr::GetStringHash(const std::string& str) {
 	auto result = std::find(m_stringIds.begin(), m_stringIds.end(), str);
 	if (result != m_stringIds.end()) 
 		return result - m_stringIds.begin();

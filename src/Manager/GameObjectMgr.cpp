@@ -6,10 +6,10 @@
 using namespace CSE;
 
 
-GameObjectMgr::GameObjectMgr() {}
+GameObjectMgr::GameObjectMgr() = default;
 
 
-GameObjectMgr::~GameObjectMgr() {}
+GameObjectMgr::~GameObjectMgr() = default;
 
 
 void GameObjectMgr::Init() {
@@ -23,9 +23,16 @@ void GameObjectMgr::Init() {
 
 
 void GameObjectMgr::Update(float elapsedTime) {
-    for (const auto& object : m_objects) {
+    auto iterator = m_objects.begin();
+    while (iterator != m_objects.end()) {
+        const auto& object = *iterator;
         if (object == nullptr) continue;
         object->Tick(elapsedTime);
+        ++iterator;
+
+        if(object->GetStatus() == SGameObject::DESTROY) {
+            DeleteGameObject(object);
+        }
     }
 }
 
@@ -43,7 +50,7 @@ void GameObjectMgr::DeleteGameObject(SGameObject* object) {
 }
 
 
-SGameObject* GameObjectMgr::Find(std::string name) const {
+SGameObject* GameObjectMgr::Find(const std::string& name) const {
 
     for (auto object : m_objects) {
         if (object->GetName() == name)
@@ -54,7 +61,7 @@ SGameObject* GameObjectMgr::Find(std::string name) const {
 
 }
 
-SGameObject* GameObjectMgr::FindByID(std::string id) const {
+SGameObject* GameObjectMgr::FindByID(const std::string& id) const {
 
     std::string obj_id = split(id, '?')[0];
 
@@ -68,7 +75,7 @@ SGameObject* GameObjectMgr::FindByID(std::string id) const {
     return nullptr;
 }
 
-SComponent* GameObjectMgr::FindComponentByID(std::string id) const {
+SComponent* GameObjectMgr::FindComponentByID(const std::string& id) const {
     auto object = FindByID(id);
     if (object == nullptr) return nullptr;
 

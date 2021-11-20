@@ -28,23 +28,23 @@ namespace CSE {
 
         ~SSceneLoader();
 
-        static SScene* LoadScene(std::string path);
+        static SScene* LoadScene(const std::string& path);
 
         static bool SaveScene(SScene* scene, std::string path);
 
         static bool SavePrefab(SGameObject* root, std::string path);
 
     private:
-        static void ExploringScene(XNode node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps);
+        static void ExploringScene(const XNode& node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps);
 
         static void LinkingID(std::vector<NodeKey*>& objs, SGameObject* root);
 
         static void LinkingReference(std::vector<ComponentValue*>& comps);
 
-        static void ExploringPrefab(XNode node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps,
+        static void ExploringPrefab(const XNode& node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps,
                                     SScene* scene);
 
-        static void LinkingResourceID(XNode node, SGameObject* root, std::vector<NodeKey*>& objs,
+        static void LinkingResourceID(const XNode& node, SGameObject* root, std::vector<NodeKey*>& objs,
                                       std::vector<ComponentValue*>& comps);
 
         static std::string GetGameObjectValue(SGameObject* obj, bool ignorePrefab = false);
@@ -53,6 +53,6 @@ namespace CSE {
 
         static std::string PrintGameObject(SGameObject* obj);
 
-        static bool Save(std::string buf, std::string path);
+        static bool Save(const std::string& buf, const std::string& path);
     };
 }

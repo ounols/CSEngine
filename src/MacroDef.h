@@ -1,15 +1,13 @@
 #pragma once
 
 
-//#define SINGLETONE(x) static inline x* getInstance() { static x t; return &t; }
-// ���� ���� ��ũ��
 #define MAKE_NO_COPY(CLASSNAME)                                             \
         private:                                                            \
                CLASSNAME(const CLASSNAME&);                                 \
                CLASSNAME& operator=(const CLASSNAME&);
 
-// ��Ŭ�� ���� ���� ��ũ��
-#define DECLARE_SINGLETONE(CLASSNAME)                                       \
+
+#define DECLARE_SINGLETON(CLASSNAME)                                       \
         MAKE_NO_COPY(CLASSNAME)                                             \
         private:                                                            \
                explicit CLASSNAME();                                               \
@@ -18,7 +16,7 @@
                static CLASSNAME* getInstance();                                \
                static void delInstance();
 
-// �̱��� ���� ���� ��ũ��
+
 #define IMPLEMENT_SINGLETON(CLASSNAME)                              \
                CLASSNAME* CLASSNAME::sInstance= nullptr;               \
                                                                     \
@@ -34,7 +32,7 @@
 
 
 #define NULLPTR(p) { (p) = nullptr; }
-#define SAFE_DELETE(p) { if(p) delete (p); NULLPTR(p); }
+#define SAFE_DELETE(p) { delete (p); NULLPTR(p); }
 #define SAFE_DELETE_SOBJECT(p) {if(p) MemoryMgr::getInstance()->ReleaseObject(p);}
 #define SAFE_DELETE_SGAMEOBJECT(p) {if(p) GameObjectMgr::getInstance()->DeleteGameObject(p);}
 #define SAFE_DELETE_ARRAY(p) { if(p) delete[] (p); NULLPTR(p); }

@@ -5,6 +5,8 @@
 #pragma once
 
 
+#include <utility>
+
 #include "../../Matrix.h"
 #include "../XML/XML.h"
 
@@ -15,8 +17,8 @@ namespace CSE {
 		int jointId;
 		mat4 jointLocalTransform;
 
-		JointTransformData(int jointId, const std::string& jointNameId, const mat4& jointLocalTransform) :
-			jointNameId(jointNameId),
+		JointTransformData(int jointId, std::string jointNameId, const mat4& jointLocalTransform) :
+			jointNameId(std::move(jointNameId)),
 			jointId(jointId),
 			jointLocalTransform(jointLocalTransform) {
 		}
@@ -26,7 +28,7 @@ namespace CSE {
 		float time = 0;
 		std::vector<JointTransformData*> jointTransforms;
 
-		KeyFrameData(float time) : time(time) {
+		explicit KeyFrameData(float time) : time(time) {
 		}
 	};
 
@@ -36,7 +38,7 @@ namespace CSE {
 
 		AnimationData(float lengthSeconds, std::vector<KeyFrameData*> keyFrames) :
 			lengthSeconds(lengthSeconds),
-			keyFrames(keyFrames) {
+			keyFrames(std::move(keyFrames)) {
 		}
 	};
 
@@ -59,22 +61,22 @@ namespace CSE {
 
 		std::vector<float> getKeyTimes();
 
-		std::vector<KeyFrameData*> initKeyFrames(std::vector<float> times);
+		static std::vector<KeyFrameData*> initKeyFrames(std::vector<float> times);
 
-		void loadJointTransforms(std::vector<KeyFrameData*> frames, XNode jointData,
+		static void loadJointTransforms(std::vector<KeyFrameData*> frames, const XNode& jointData,
 		                         std::string rootNodeId);
 
-		std::string getJointName(XNode jointData);
+		static std::string getJointName(const XNode& jointData);
 
-		std::string getDataId(XNode jointData);
+		static std::string getDataId(const XNode& jointData);
 
-		void
-		processTransforms(std::string jointName, std::vector<float> rawData,
+		static void
+		processTransforms(const std::string& jointName, std::vector<float> rawData,
 		                  std::vector<KeyFrameData*> keyFrames, bool root);
 
 	private:
 		std::string m_name;
-		const XNode* m_root;
+		const XNode* m_root{};
 		XNode m_joint;
 		XNode m_animation;
 

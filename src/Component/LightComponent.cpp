@@ -19,7 +19,7 @@ COMPONENT_CONSTRUCTOR(LightComponent) {
 }
 
 
-LightComponent::~LightComponent() {}
+LightComponent::~LightComponent() = default;
 
 
 void LightComponent::Exterminate() {
@@ -74,7 +74,7 @@ void LightComponent::SetLightType(LIGHT type) {
 }
 
 
-void LightComponent::SetDirection(vec4 direction) const {
+void LightComponent::SetDirection(const vec4& direction) const {
 
     switch (m_type) {
 
@@ -91,7 +91,7 @@ void LightComponent::SetDirection(vec4 direction) const {
 }
 
 
-void LightComponent::SetColor(vec3 color) const {
+void LightComponent::SetColor(const vec3& color) const {
     m_light->color = color;
 
 }
@@ -101,7 +101,7 @@ void LightComponent::SetLightRadius(float radius) const {
 }
 
 
-void LightComponent::SetAttenuationFactor(vec3 att) const {
+void LightComponent::SetAttenuationFactor(const vec3& att) const {
     m_light->att = att;
 }
 
@@ -145,7 +145,7 @@ LightComponent::LIGHT LightComponent::GetType() const {
     return m_type;
 }
 
-vec4 LightComponent::GetDirection(vec4 direction) const {
+vec4 LightComponent::GetDirection(const vec4& direction) const {
     return m_light->direction;
 }
 
@@ -206,7 +206,7 @@ void LightComponent::BindShadow(const GLProgramHandle& handle, int handleIndex, 
 
 CameraMatrixStruct LightComponent::GetCameraMatrixStruct() const {
     const auto& position = gameObject->GetTransform();
-    return CameraMatrixStruct(m_lightViewMatrix, m_lightProjectionMatrix, position->m_position);
+    return { m_lightViewMatrix, m_lightProjectionMatrix, position->m_position };
 }
 
 SFrameBuffer* LightComponent::GetFrameBuffer() const {

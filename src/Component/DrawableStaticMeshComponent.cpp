@@ -9,7 +9,7 @@ using namespace CSE;
 COMPONENT_CONSTRUCTOR(DrawableStaticMeshComponent) {}
 
 
-DrawableStaticMeshComponent::~DrawableStaticMeshComponent() {}
+DrawableStaticMeshComponent::~DrawableStaticMeshComponent() = default;
 
 
 void DrawableStaticMeshComponent::Init() {

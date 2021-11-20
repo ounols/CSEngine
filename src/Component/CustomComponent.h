@@ -4,6 +4,7 @@
 #include "sqext.h"
 
 #include <map>
+#include <utility>
 
 namespace CSE {
 
@@ -13,9 +14,9 @@ namespace CSE {
         struct VARIABLE {
 
             VARIABLE(std::string name, const char* type, std::string value) {
-                this->name = name;
+                this->name = std::move(name);
                 this->type = type;
-                this->value = value;
+                this->value = std::move(value);
             }
 
             std::string name;
@@ -25,7 +26,7 @@ namespace CSE {
     public:
         CustomComponent();
 
-        ~CustomComponent();
+        ~CustomComponent() override;
 
 
         void Exterminate() override;
@@ -64,7 +65,7 @@ namespace CSE {
 
     private:
         void RegisterScript();
-        void CreateClassInstance(std::vector<std::string> variables);
+        void CreateClassInstance(const std::vector<std::string>& variables);
 
         void BindValue(VARIABLE* variable, const char* value) const;
 
@@ -77,8 +78,8 @@ namespace CSE {
         int m_funcExterminate = 3;
         std::vector<VARIABLE> m_variables;
 
-        std::string m_className = "";
-        std::string m_classID = "";
+        std::string m_className;
+        std::string m_classID;
 
         bool m_isError = false;
     };

@@ -13,9 +13,7 @@ SFrameBuffer::SFrameBuffer() {
     SetUndestroyable(true);
 }
 
-SFrameBuffer::~SFrameBuffer() {
-
-}
+SFrameBuffer::~SFrameBuffer() = default;
 
 void SFrameBuffer::Exterminate() {
     glDeleteFramebuffers(1, &m_fbo);

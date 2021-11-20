@@ -8,13 +8,13 @@ namespace CSE {
     public:
         Scene();
 
-        virtual ~Scene();
+        ~Scene() override;
 
         virtual void Init() = 0;
 
         virtual void Tick(float elapsedTime) = 0;
 
-        virtual void Destroy() override = 0;
+        void Destroy() override = 0;
 
         void Exterminate() override;
 

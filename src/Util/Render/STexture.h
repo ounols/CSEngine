@@ -18,9 +18,9 @@ namespace CSE {
         };
     public:
         STexture();
-        STexture(Type type);
+        explicit STexture(Type type);
 
-        virtual ~STexture();
+        ~STexture() override;
 
         bool LoadFile(const char* path);
 
@@ -53,14 +53,14 @@ namespace CSE {
 
         virtual void Bind(GLint location, int layout);
 
-        void GenerateMipmap();
+        void GenerateMipmap() const;
 
         Type GetType() const;
 
         void SetType(Type type);
 
     protected:
-        virtual void Init(const AssetMgr::AssetReference* asset) override;
+        void Init(const AssetMgr::AssetReference* asset) override;
 
     protected:
         Type m_type = TEX_2D;

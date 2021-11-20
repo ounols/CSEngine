@@ -2,7 +2,6 @@
 #include "../Util/Render/SFrameBuffer.h"
 #include "../Util/Render/SMaterial.h"
 #include "../Util/Render/SGBuffer.h"
-#include <iostream>
 
 using namespace CSE;
 

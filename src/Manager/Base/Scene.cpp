@@ -10,9 +10,7 @@ Scene::Scene() {
 }
 
 
-Scene::~Scene() {
-
-}
+Scene::~Scene() = default;
 
 
 void Scene::Exterminate() {
