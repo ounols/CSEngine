@@ -185,7 +185,7 @@ AssetMgr::AssetReference* AssetMgr::CreateAsset(const std::string& path, const s
 void AssetMgr::SetType() {
 
 	for (int i = 0; i < m_assets.size(); ++i) {
-		const auto& asset = m_assets[i];
+		const auto asset = m_assets[i];
         std::string type_str = asset->extension;
         make_lower(type_str);
 

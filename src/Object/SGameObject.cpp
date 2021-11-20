@@ -59,10 +59,16 @@ void SGameObject::Exterminate() {
 
 void SGameObject::Destroy() {
 
-	for (auto& component : m_components) {
-		if (component == nullptr) continue;
-		CORE->GetCore(MemoryMgr)->ReleaseObject(component);
-	}
+    {
+        auto iter = m_components.begin();
+        while(iter != m_components.end()) {
+            auto component = *iter;
+            m_components.erase(iter++);
+
+            if (component == nullptr) continue;
+            CORE->GetCore(MemoryMgr)->ReleaseObject(component);
+        }
+    }
 
 	m_components.clear();
 
@@ -70,12 +76,17 @@ void SGameObject::Destroy() {
 		RemoveParent();
 	}
 
-	for (auto object : m_children) {
-		if (object == nullptr) continue;
-		object->Destroy();
-	}
+    {
+        auto iter = m_children.begin();
+        while(iter != m_children.end()) {
+            auto object = *iter;
+            m_children.erase(iter++);
 
-	CORE->GetCore(GameObjectMgr)->DeleteGameObject(this);
+            if (object == nullptr) continue;
+            object->Destroy();
+        }
+    }
+    m_status = DESTROY;
 }
 
 void SGameObject::AddChild(SGameObject* object) {
@@ -197,6 +208,7 @@ void SGameObject::SetIsEnable(bool is_enable) {
 
 void SGameObject::UpdateComponent(float elapsedTime) {
 	for (const auto& component : m_components) {
+        if(m_status < IDLE) return;
 		if (component == nullptr) continue;
 
 		if (m_status == INIT) {

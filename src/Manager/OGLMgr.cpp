@@ -26,9 +26,6 @@ OGLMgr::~OGLMgr() {
 }
 
 void OGLMgr::setShaderProgram() {
-
-	//    SResource::Create<GLProgramHandle>("PBR.shader");
-
 }
 
 void OGLMgr::setBuffers() {

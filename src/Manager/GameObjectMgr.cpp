@@ -23,9 +23,16 @@ void GameObjectMgr::Init() {
 
 
 void GameObjectMgr::Update(float elapsedTime) {
-    for (const auto& object : m_objects) {
+    auto iterator = m_objects.begin();
+    while (iterator != m_objects.end()) {
+        const auto& object = *iterator;
         if (object == nullptr) continue;
         object->Tick(elapsedTime);
+        ++iterator;
+
+        if(object->GetStatus() == SGameObject::DESTROY) {
+            DeleteGameObject(object);
+        }
     }
 }
 

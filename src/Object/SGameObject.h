@@ -14,9 +14,9 @@ namespace CSE {
     class SComponent;
 
     class SGameObject : public SObject {
-    private:
+    public:
         enum STATUS {
-            IDLE, INIT, DESTROY, UNKOWN
+            IDLE = 0, INIT = 1, DESTROY = -1, UNKOWN = -2
         };
     public:
         SGameObject();
@@ -98,6 +98,9 @@ namespace CSE {
             return m_transform;
         }
 
+        STATUS GetStatus() const {
+            return m_status;
+        }
 
         bool GetIsEnable() const;
 
