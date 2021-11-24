@@ -6,6 +6,7 @@
 #include "STexture.h"
 #include "../../Manager/EngineCore.h"
 #include "../../Manager/ResMgr.h"
+#include "../Loader/XML/XML.h"
 
 using namespace CSE;
 
@@ -25,6 +26,57 @@ void SFrameBuffer::Exterminate() {
 
 // Init function for asset binding
 void SFrameBuffer::Init(const AssetMgr::AssetReference* asset) {
+    const XNode* root;
+
+    try {
+        root = XFILE(asset->path.c_str()).getRoot();
+    }
+    catch (int e) {
+        return;
+    }
+
+    try {
+        const XNode& cse_framebuffer = root->getChild("CSEFRAMEBUFFER");
+        const XNode& info = cse_framebuffer.getChild("info");
+
+        auto width_str = info.getAttribute("width").value;
+        auto height_str = info.getAttribute("height").value;
+        auto dimension_str = info.getAttribute("dimension").value;
+
+        m_width = std::stoi(width_str);
+        m_height = std::stoi(height_str);
+        auto dimension = static_cast<BufferDimension>(std::stoi(dimension_str));
+        GenerateFramebuffer(dimension);
+
+        const XNode& buffers = cse_framebuffer.getChild("buffers");
+        int index = 0;
+        for (const auto& buffer_node : buffers.children) {
+            auto type_str = buffer_node.getAttribute("type").value;
+            auto format_str = buffer_node.getAttribute("format").value;
+            auto isTexture_str = buffer_node.getAttribute("isTexture").value;
+
+            auto type = static_cast<BufferType>(std::stoi(type_str));
+            auto format = std::stoi(format_str);
+            auto isTexture = std::stoi(isTexture_str) == 1;
+
+            if(isTexture) {
+                const auto& texture = GenerateTexturebuffer(type, m_width, m_height, format);
+                const auto& textureName = "?Texture" + std::to_string(index);
+                texture->SetName(GetName() + textureName);
+                texture->SetID(GetID() + textureName);
+            }
+            else {
+                GenerateRenderbuffer(type, m_width, m_height, format);
+            }
+            ++index;
+        }
+        RasterizeFramebuffer();
+    }
+    catch (int e) {
+        auto resMgr = CORE->GetCore(ResMgr);
+        resMgr->Remove(this);
+    }
+
 }
 
 void SFrameBuffer::GenerateFramebuffer(SFrameBuffer::BufferDimension dimension) {
@@ -204,6 +256,17 @@ STexture* SFrameBuffer::GetTexture(int index) const {
 
     auto texture = m_buffers[index]->texture;
     return texture;
+}
+
+STexture* SFrameBuffer::GetTexture(const char* id) const {
+    for (const auto& buffer : m_buffers) {
+        const auto& texture = buffer->texture;
+        if(texture == nullptr) continue;
+
+        std::string bufferId = texture->GetID();
+        if(bufferId == id) return texture;
+    }
+    return nullptr;
 }
 
 unsigned int SFrameBuffer::GetRenderbufferID(int index) const {

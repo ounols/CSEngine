@@ -48,10 +48,36 @@ namespace CSE {
         SFrameBuffer();
         ~SFrameBuffer() override;
 
+        /**
+         * This is the first function called when creating a framebuffer.
+         * You specify the dimensions of the framebuffer through that function.
+         * @param dimension Sets the dimensions of the framebuffer. The default is SFrameBuffer::PLANE.
+         */
         void GenerateFramebuffer(BufferDimension dimension);
+        /**
+         * Creates a render buffer in a non-texture format.
+         * @param type Specifies the type of buffer to create. The default is RENDER.
+         * @param width Write the width of the render buffer. The width is fixed at that value first written.
+         * @param height Writes the height of the render buffer. The height is fixed at that value first created.
+         * @param internalFormat Sets the internal format for the render buffer. Format details can be found at <a href="https://www.khronos.org/registry/OpenGL-Refpages/es3.0/html/glTexImage2D.xhtml">this link</a>.
+         * @return Returns the ID value of the created render buffer. If creation fails, 0 is returned.
+         */
         unsigned int GenerateRenderbuffer(BufferType type, int width, int height, int internalFormat);
+        /**
+         * Creates a render buffer in texture format.
+         * @param type Specifies the type of buffer to create. The default is RENDER.
+         * @param width Write the width of the render buffer. The width is fixed at that value first written.
+         * @param height Writes the height of the render buffer. The height is fixed at that value first created.
+         * @param channel Sets the channel format for the render buffer. Format details can be found at <a href="https://www.khronos.org/registry/OpenGL-Refpages/es3.0/html/glTexImage2D.xhtml">this link</a>.
+         * @param level Sets the texture mipmap level. Default is 0.
+         * @return Returns the STexture of the created render texture buffer. If creation fails, nullptr is returned.
+         */
         STexture* GenerateTexturebuffer(BufferType type, int width, int height, int channel,
                                         int level = 0);
+        /**
+         * Create all the render buffers to allocate to the framebuffer and proceed with rasterization.
+         * You can use the framebuffer after calling the function.
+         */
         void RasterizeFramebuffer();
         void AttachCubeBuffer(int index, int level = 0) const;
         void AttachFrameBuffer(int target = GL_FRAMEBUFFER) const;
@@ -69,6 +95,12 @@ namespace CSE {
          * @return if the corresponding index is an invalid texture type, nullptr is returned.
          */
         STexture* GetTexture(int index) const;
+        /**
+         * Get textures that exist in the framebuffer.
+         * @param id texture id in framebuffer
+         * @return if the corresponding index is an invalid texture type, nullptr is returned.
+         */
+        STexture* GetTexture(const char* id) const;
         /**
          * Get renderbuffer ID that exist in the framebuffer.
          * @param index buffer index in framebuffer

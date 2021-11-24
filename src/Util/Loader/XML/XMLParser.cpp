@@ -3,6 +3,9 @@
 
 #include "../../MoreComponentFunc.h"
 #include "../../../Manager/GameObjectMgr.h"
+#include "../../Render/SFrameBuffer.h"
+#include "../../Render/SMaterial.h"
+#include "../../Render/STexture.h"
 
 using namespace CSE;
 
@@ -14,10 +17,14 @@ void XMLParser::parse(std::vector<std::string> values, void* dst, SType type) {
 	//    else if(type == "arr") dst = (void*)parseInt(values[0].c_str());
 
 	else if (type == SType::RESOURCE) dst = (void*)parseResources<SResource>(values[0].c_str());
-	else if (type == SType::TEXTURE) dst = (void*)parseTexture(values[0].c_str());
 	else if (type == SType::MATERIAL) dst = (void*)parseMaterial(values[0].c_str());
-	
-	else if (type == SType::COMPONENT) dst = (void*)parseComponent(values[0].c_str());
+    else if (type == SType::TEXTURE) {
+        dst = (void*)parseTexture(values[0].c_str());
+        if(dst == nullptr) dst = (void*)parseFrameBuffer(values[0].c_str());
+    }
+
+
+    else if (type == SType::COMPONENT) dst = (void*)parseComponent(values[0].c_str());
 	else if (type == SType::GAME_OBJECT) dst = (void*)parseGameObject(values[0].c_str());
 
 	else if (type == SType::VEC2) *static_cast<vec2*>(dst) = parseVec2(values);
@@ -54,7 +61,29 @@ vec4 XMLParser::parseVec4(std::vector<std::string> values) {
 }
 
 STexture* XMLParser::parseTexture(const char* value) {
+    const auto& asset = CORE->GetCore(ResMgr)->GetAssetReference(value);
+    if(asset == nullptr || asset->type == AssetMgr::FRAMEBUFFER) {
+        const auto value_split = split(value, '?');
+        if(value_split.size() <= 1)
+            return SResource::Create<STexture>(value);
+
+        const auto& frameBuffer = SResource::Create<SFrameBuffer>(value_split[0]);
+        return frameBuffer->GetTexture(value);
+    }
 	return SResource::Create<STexture>(value);
+}
+
+SFrameBuffer* XMLParser::parseFrameBuffer(const char* value) {
+    std::string value_result = value;
+    const auto split_index = value_result.rfind('?');
+    if(split_index != std::string::npos)
+        value_result = value_result.substr(0, split_index - 1);
+
+    const auto& asset = CORE->GetCore(ResMgr)->GetAssetReference(value_result);
+    if(asset->type != AssetMgr::FRAMEBUFFER) {
+        return nullptr;
+    }
+    return SResource::Create<SFrameBuffer>(asset);
 }
 
 SMaterial* XMLParser::parseMaterial(const char* value) {
