@@ -53,6 +53,10 @@ namespace CSE {
             return m_light;
         }
 
+        void SetShadow(bool isActive) {
+            m_disableShadow = !isActive;
+        }
+
 		SComponent* Clone(SGameObject* object) override;
 
 		void SetValue(std::string name_str, Arguments value) override;
@@ -67,6 +71,8 @@ namespace CSE {
 
         SFrameBuffer* GetFrameBuffer() const override;
 
+        bool IsShadow() const;
+
         void BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const;
 
     private:
@@ -75,14 +81,11 @@ namespace CSE {
 
     public:
         LIGHT m_type = DIRECTIONAL;
-        bool DisableAmbient = false;
-        bool DisableDiffuse = false;
-        bool DisableSpecular = true;
-        bool m_disableShadow = false;
 
     private:
         SLight* m_light = nullptr;
         bool m_isSunRising = false;
+        bool m_disableShadow = false;
         SFrameBuffer* m_frameBuffer = nullptr;
         STexture* m_depthTexture = nullptr;
         mat4 m_lightProjectionMatrix;

@@ -7,7 +7,6 @@ namespace CSE {
 
     template <typename T>
     class Matrix2 {
-
     public:
         //    T m_mat[4] = {};
         vec2 x;

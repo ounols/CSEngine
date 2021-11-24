@@ -26,8 +26,6 @@ namespace CSE {
 
         virtual bool Load(unsigned char* data);
 
-        bool LoadEmpty();
-
         bool ReloadFile(const char* path);
 
         bool Reload(unsigned char* data);
@@ -53,6 +51,8 @@ namespace CSE {
 
         virtual void Bind(GLint location, int layout);
 
+        static void BindEmpty(GLint location, int layout, STexture::Type type = TEX_2D);
+
         void GenerateMipmap() const;
 
         Type GetType() const;
@@ -61,6 +61,11 @@ namespace CSE {
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
+
+    private:
+        static void LoadEmpty();
+
+        static int GetTypeToTargetGL(STexture::Type type);
 
     protected:
         Type m_type = TEX_2D;
@@ -72,6 +77,9 @@ namespace CSE {
         int m_glType = GL_UNSIGNED_BYTE;
 
         unsigned int m_texId = 0;
+
+    private:
+        static unsigned int m_emptyTextureId;
     };
 
 }

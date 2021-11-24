@@ -63,7 +63,7 @@ void RenderMgr::Render() const {
     const auto& shadowObjects = lightMgr->GetShadowObject();
     const auto& shadowHandle = lightMgr->GetShadowHandle();
     for (const auto& light : lightObjects) {
-        if(light->m_disableShadow) continue;
+        if(!light->IsShadow()) continue;
         RenderShadowInstance(*light, *shadowHandle, shadowObjects);
     }
     lightMgr->RefreshShadowCount();
