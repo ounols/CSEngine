@@ -26,12 +26,13 @@ void SFrameBuffer::Exterminate() {
 
 // Init function for asset binding
 void SFrameBuffer::Init(const AssetMgr::AssetReference* asset) {
-    const XNode* root;
+    const XNode* root = nullptr;
 
     try {
         root = XFILE(asset->path.c_str()).getRoot();
     }
     catch (int e) {
+        SAFE_DELETE(root);
         return;
     }
 
@@ -73,10 +74,11 @@ void SFrameBuffer::Init(const AssetMgr::AssetReference* asset) {
         RasterizeFramebuffer();
     }
     catch (int e) {
+        SAFE_DELETE(root);
         auto resMgr = CORE->GetCore(ResMgr);
         resMgr->Remove(this);
     }
-
+    SAFE_DELETE(root);
 }
 
 void SFrameBuffer::GenerateFramebuffer(SFrameBuffer::BufferDimension dimension) {
