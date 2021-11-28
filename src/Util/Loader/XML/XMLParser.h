@@ -9,6 +9,7 @@
 #include "../../../Component/SComponent.h"
 #include "../../STypeDef.h"
 #include "../../../Manager/EngineCore.h"
+#include "../../../Manager/ResMgr.h"
 
 namespace CSE {
 
