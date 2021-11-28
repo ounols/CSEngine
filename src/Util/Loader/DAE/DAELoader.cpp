@@ -64,7 +64,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
 
 			for (const auto& geometry : geometryData) {
 				auto meshData = new DAEMeshData();
-				meshData->meshName = geometry.getAttribute("id").toString();
+				meshData->meshName = geometry.getAttribute("id").value;
 				LoadGeometry(geometry, meshData);
 				m_meshList.push_back(meshData);
 			}

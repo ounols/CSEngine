@@ -171,6 +171,7 @@ void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs
 		if (comp.name != "component") continue;
 
 		std::string comp_type = comp.getAttribute("type").value;
+		bool comp_enable = comp.getAttribute("enable").value == "1";
 		SComponent* component = (comp_type == "TransformComponent")
 			                        ? static_cast<TransformComponent*>(obj_new->GetTransform())
 			                        : MoreComponentFunc::CreateComponent(obj_new, comp_type);
@@ -179,6 +180,7 @@ void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs
 		comp_val->id = id + "?" + comp_type;
 		comp_val->node = comp;
 		comp_val->comp = component;
+        component->SetIsEnable(comp_enable);
 
 		comps.push_back(comp_val);
 	}
