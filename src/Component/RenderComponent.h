@@ -39,6 +39,10 @@ namespace CSE {
 
         void SetMaterial(SMaterial* material);
 
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
+
     private:
         void SetJointMatrix(const GLProgramHandle* handle) const;
 

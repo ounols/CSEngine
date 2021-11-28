@@ -108,3 +108,17 @@ void RenderComponent::SetMaterial(SMaterial* material) {
     SAFE_DELETE(m_material_clone)
     m_material_clone = new SMaterial(this->material);
 }
+
+void RenderComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
+    if(name_str == "material") {
+        SetMaterial(SResource::Create<SMaterial>(value[0]));
+    }
+}
+
+std::string RenderComponent::PrintValue() const {
+    PRINT_START("component");
+
+    PRINT_VALUE(material, ConvertSpaceStr(material->GetID()));
+
+    PRINT_END("component");
+}
