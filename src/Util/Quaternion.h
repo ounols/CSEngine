@@ -16,6 +16,8 @@ namespace CSE {
 
         QuaternionT(T x, T y, T z, T w);
 
+        QuaternionT<T> Lerp(float t, const QuaternionT<T>& q) const;
+
         QuaternionT<T> Slerp(float t, const QuaternionT<T>& q) const;
 
         QuaternionT<T> Rotated(const QuaternionT<T>& b) const;
@@ -63,9 +65,8 @@ namespace CSE {
     inline QuaternionT<T>::QuaternionT(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {
     }
 
-
     template <typename T>
-    inline QuaternionT<T> QuaternionT<T>::Slerp(float t, const QuaternionT<T>& q) const {
+    inline QuaternionT<T> QuaternionT<T>::Lerp(float t, const QuaternionT<T>& q) const {
 
         QuaternionT<T> result = QuaternionT<T>(0, 0, 0, 1);
         float dot = w * q.w + x * q.x + y * q.y + z * q.z;
@@ -84,31 +85,41 @@ namespace CSE {
         result.Normalize();
 
         return result;
+    }
 
-//    const T epsilon = 0.0005f;
-//    T dot = Dot(v1);
-//
-//    if (dot > 1 - epsilon) {
-//        QuaternionT<T> result = v1 + (*this - v1).Scaled(t);
-//        result.Normalize();
-//        return result;
-//    }
-//
-//    if (dot < 0)
-//        dot = 0;
-//
-//    if (dot > 1)
-//        dot = 1;
-//
-//    T theta0 = std::acos(dot);
-//    T theta = theta0 * t;
-//
-//    QuaternionT<T> v2 = (v1 - Scaled(dot));
-//    v2.Normalize();
-//
-//    QuaternionT<T> q = Scaled(std::cos(theta)) + v2.Scaled(std::sin(theta));
-//    q.Normalize();
-//    return q;
+    template <typename T>
+    inline QuaternionT<T> QuaternionT<T>::Slerp(float t, const QuaternionT<T>& q) const {
+
+        // Get cosine of angle between quats.
+        const float rawCosom = x * q.x + y * q.y + z * q.z + w * q.w;
+        // Unaligned quats - compensate, results in taking shorter route.
+        const auto cosom = ValueSelect<float>(rawCosom, rawCosom, -rawCosom);
+
+        float scale0, scale1;
+
+        if (cosom < 0.9999f) {
+            const float omega = acosf(cosom);
+            const float invSin = 1.f / sinf(omega);
+            scale0 = sinf((1.f - t) * omega) * invSin;
+            scale1 = sinf(t * omega) * invSin;
+        }
+        else {
+            // Use linear interpolation.
+            scale0 = 1.0f - t;
+            scale1 = t;
+        }
+
+        // In keeping with our flipped cosom:
+        scale1 = ValueSelect<float>(rawCosom, scale1, -scale1);
+
+        QuaternionT<T> result;
+
+        result.x = scale0 * x + scale1 * q.x;
+        result.y = scale0 * y + scale1 * q.y;
+        result.z = scale0 * z + scale1 * q.z;
+        result.w = scale0 * w + scale1 * q.w;
+
+        return result;
     }
 
     template <typename T>
