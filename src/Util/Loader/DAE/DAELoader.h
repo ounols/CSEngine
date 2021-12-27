@@ -41,6 +41,9 @@ namespace CSE {
             std::vector<int> indices;
             std::string meshName;
         };
+        enum POLYGON_TYPE {
+            POLYLIST = -1, TRIANGLES = 3,
+        };
     public:
         DAELoader(const char* path, LOAD_TYPE type, bool isLoad);
 
@@ -84,7 +87,7 @@ namespace CSE {
 
         static void removeUnusedVertices(DAEMeshData* meshData);
 
-        void ConvertDataToVectors(DAEMeshData* meshData);
+        void ConvertDataToVectors(DAEMeshData* meshData) const;
 
 //===================================================================
 // SkinLoader Functions
@@ -93,7 +96,7 @@ namespace CSE {
 
         static std::vector<float> loadWeights(const XNode& skinningData);
 
-        static std::vector<int> getEffectiveJointsCounts(const XNode& node);
+        std::vector<int> getEffectiveJointsCounts(const XNode& node);
 
         std::vector<VertexSkinData*>
         getSkinData(const XNode& weightsDataNode, const std::vector<int>& counts, std::vector<float> weights) const;
@@ -130,6 +133,7 @@ namespace CSE {
         int m_jointSize = 0;
 
         bool m_isSkinning = false;
+        POLYGON_TYPE m_polygonType = POLYGON_TYPE::POLYLIST;
 
         std::string m_name;
         std::string m_texture_name;

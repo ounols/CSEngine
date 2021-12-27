@@ -17,7 +17,7 @@ CSEngine is a cross-platform 3D game engine.
 * C++14 compatible compiler
 * GLEW 2.1.0 or higher
 * GLFW 3.3 or higher
-* OpenGL
+* OpenGL 4.3 or higher
 
 ### Android
 
