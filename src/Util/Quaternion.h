@@ -16,6 +16,10 @@ namespace CSE {
 
         QuaternionT(T x, T y, T z, T w);
 
+        void Set(T x, T y, T z, T w);
+
+        QuaternionT<T> Clone() const;
+
         QuaternionT<T> Lerp(float t, const QuaternionT<T>& q) const;
 
         QuaternionT<T> Slerp(float t, const QuaternionT<T>& q) const;
@@ -63,6 +67,19 @@ namespace CSE {
 
     template <typename T>
     inline QuaternionT<T>::QuaternionT(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {
+    }
+
+    template <typename T>
+    void QuaternionT<T>::Set(T x, T y, T z, T w) {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+        this->w = w;
+    }
+
+    template <typename T>
+    QuaternionT<T> QuaternionT<T>::Clone() const {
+        return QuaternionT<T>(x, y, z, w);
     }
 
     template <typename T>
