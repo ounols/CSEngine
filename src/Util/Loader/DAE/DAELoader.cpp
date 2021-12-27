@@ -24,7 +24,6 @@ DAELoader::~DAELoader() {
 }
 
 void DAELoader::Load(const char* path, LOAD_TYPE type) {
-
     {
         std::string path_str = path;
         std::size_t index = path_str.rfind('/');
@@ -395,7 +394,6 @@ DAELoader::getSkinData(const XNode& weightsDataNode, const std::vector<int>& cou
     return skinningData;
 }
 
-
 //===================================================================
 // SkeletonLoader Functions
 //===================================================================
@@ -498,12 +496,10 @@ void DAELoader::ConvertDataToVectors(DAEMeshData* meshData) const {
         weights[i * 3] = weightsData->getWeights()[0];
         weights[i * 3 + 1] = weightsData->getWeights()[1];
         weights[i * 3 + 2] = weightsData->getWeights()[2];
-
     }
     AttachDataToObjSurface(meshData->vertices.size(), vertices, normals, texUVs, meshData->indices, jointIDs, weights,
                            meshData);
 }
-
 
 void
 DAELoader::AttachDataToObjSurface(int vertices_size, std::vector<float> vertices, std::vector<float> normals,
@@ -517,7 +513,6 @@ DAELoader::AttachDataToObjSurface(int vertices_size, std::vector<float> vertices
 }
 
 SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
-
     if (prefab == nullptr)
         prefab = new SPrefab();
     auto* root = new SGameObject(m_name);
@@ -564,13 +559,11 @@ SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
                                                                            m_name, animation);
     }
 
-
     return prefab;
 }
 
 SPrefab* DAELoader::GeneratePrefab(const char* path, Skeleton* skeleton, MeshSurface* mesh, Animation* animation,
                                    SPrefab* prefab) {
-
     DAELoader* loader = new DAELoader(path, AUTO, false);
     auto asset = CORE->GetCore(ResMgr)->GetAssetReference(path);
     if (asset == nullptr) {
