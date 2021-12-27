@@ -10,9 +10,7 @@ DrawableSkinnedMeshComponent::DrawableSkinnedMeshComponent() {
     m_classType = "DrawableSkinnedMeshComponent";
 }
 
-MeshComponent::~MeshComponent() {
-
-}
+MeshComponent::~MeshComponent() = default;
 
 void MeshComponent::SetRootJoint(SGameObject* joint_object, int joint_size) {
     m_jointRoot = joint_object->GetComponent<JointComponent>();

@@ -4,6 +4,7 @@
 #include "TransformComponent.h"
 #include "../Manager/EngineCore.h"
 #include "../Util/Render/SFrameBuffer.h"
+#include "../Util/GLProgramHandle.h"
 
 using namespace CSE;
 
@@ -18,7 +19,7 @@ COMPONENT_CONSTRUCTOR(LightComponent) {
 }
 
 
-LightComponent::~LightComponent() {}
+LightComponent::~LightComponent() = default;
 
 
 void LightComponent::Exterminate() {
@@ -73,7 +74,7 @@ void LightComponent::SetLightType(LIGHT type) {
 }
 
 
-void LightComponent::SetDirection(vec4 direction) const {
+void LightComponent::SetDirection(const vec4& direction) const {
 
     switch (m_type) {
 
@@ -90,7 +91,7 @@ void LightComponent::SetDirection(vec4 direction) const {
 }
 
 
-void LightComponent::SetColor(vec3 color) const {
+void LightComponent::SetColor(const vec3& color) const {
     m_light->color = color;
 
 }
@@ -100,7 +101,7 @@ void LightComponent::SetLightRadius(float radius) const {
 }
 
 
-void LightComponent::SetAttenuationFactor(vec3 att) const {
+void LightComponent::SetAttenuationFactor(const vec3& att) const {
     m_light->att = att;
 }
 
@@ -118,28 +119,33 @@ void LightComponent::SetDepthMap() {
 
     auto lightMgr = CORE->GetCore(LightMgr);
     m_frameBuffer = new SFrameBuffer();
-    m_frameBuffer->InitFrameBuffer(SFrameBuffer::DEPTH, lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT);
-    m_frameBuffer->InitTexture(lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT,
-                                 GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_UNSIGNED_SHORT);
-    m_frameBuffer->SetParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    m_frameBuffer->SetParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    // 1. Generate a framebuffer.
+    // 큐브 텍스쳐도 호환되도록 수정이 필요함 (for point shadow)
+    m_frameBuffer->GenerateFramebuffer(SFrameBuffer::PLANE);
+    // 2. Generate a depth texture.
+    m_depthTexture = m_frameBuffer->GenerateTexturebuffer(SFrameBuffer::DEPTH,
+                                                          lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT,
+                                                          GL_DEPTH_COMPONENT);
+    m_depthTexture->SetParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    m_depthTexture->SetParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 #ifdef ANDROID
-    m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #else
-    m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    m_frameBuffer->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-    m_frameBuffer->SetParameterfv(GL_TEXTURE_BORDER_COLOR, borderColor);
+    m_depthTexture->SetParameterfv(GL_TEXTURE_BORDER_COLOR, borderColor);
 #endif
-
+    // 3. Rasterize the framebuffer.
+    m_frameBuffer->RasterizeFramebuffer();
 }
 
 LightComponent::LIGHT LightComponent::GetType() const {
     return m_type;
 }
 
-vec4 LightComponent::GetDirection(vec4 direction) const {
+vec4 LightComponent::GetDirection(const vec4& direction) const {
     return m_light->direction;
 }
 
@@ -190,22 +196,17 @@ const mat4& LightComponent::GetLightViewMatrix() const {
     return m_lightViewMatrix;
 }
 
-void LightComponent::BindDepthBuffer() const {
-    m_frameBuffer->AttachFrameBuffer();
-    glClear(GL_DEPTH_BUFFER_BIT);
-}
-
 void LightComponent::BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const {
     if(m_frameBuffer == nullptr || m_disableShadow) return;
 
-    m_frameBuffer->Bind(handle.Uniforms.LightShadowMap + index, index);
+    m_depthTexture->Bind(handle.Uniforms.LightShadowMap + index, index);
     auto matrix = m_lightViewMatrix * m_lightProjectionMatrix;
     glUniformMatrix4fv(handle.Uniforms.LightMatrix + handleIndex, 1, 0, matrix.Pointer());
 }
 
 CameraMatrixStruct LightComponent::GetCameraMatrixStruct() const {
     const auto& position = gameObject->GetTransform();
-    return CameraMatrixStruct(m_lightViewMatrix, m_lightProjectionMatrix, position->m_position);
+    return { m_lightViewMatrix, m_lightProjectionMatrix, position->m_position };
 }
 
 SFrameBuffer* LightComponent::GetFrameBuffer() const {

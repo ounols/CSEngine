@@ -7,49 +7,47 @@ precision highp int;
 
 
 //Uniforms
-//[TEX2D_ALBEDO]//
+//[texture.albedo]//
 uniform sampler2D u_sampler_albedo;
-//[TEX2D_METALLIC]//
+//[texture.metallic]//
 uniform sampler2D u_sampler_metallic;
-//[TEX2D_ROUGHNESS]//
+//[texture.roughness]//
 uniform sampler2D u_sampler_roughness;
-//[TEX2D_AO]//
+//[texture.ao]//
 uniform sampler2D u_sampler_ao;
 
 //IBL
-//[TEXCUBE_IRRADIANCE]//
+//[light.irradiance]//
 uniform samplerCube u_sampler_irradiance;
-//[TEXCUBE_PREFILTER]//
+//[light.prefilter]//
 uniform samplerCube u_prefilterMap;
-//[TEX2D_BRDFLUT]//
+//[light.brdf]//
 uniform sampler2D u_brdfLUT;
 
-//[FLOAT_ALBEDO]//
+//[vec3.albedo]//
 uniform vec3 u_albedo;
-//[FLOAT_METALLIC]//
+//[float.metallic]//
 uniform float u_metallic;
-//[FLOAT_ROUGHNESS]//
+//[float.roughness]//
 uniform float u_roughness;
-//[FLOAT_AO]//
+//[float.ao]//
 uniform float u_ao;
 //[FLOAT_IRRADIANCE]//
 uniform vec3 u_irradiance;
 
 
-//[LIGHT_TYPE]//
+//[light.type]//
 uniform int u_lightType[MAX_LIGHTS];
-//[LIGHT_RADIUS]//
+//[light.radius]//
 uniform float u_lightRadius[MAX_LIGHTS];
-//[LIGHT_COLOR]//
+//[light.color]//
 uniform vec3 u_lightColor[MAX_LIGHTS];
-//[LIGHT_SHADOW_MAP]//
+//[light.shadow_map]//
 uniform sampler2D u_shadowMap[MAX_LIGHTS];
-//[LIGHT_SHADOW_MODE]//
+//[light.shadow_mode]//
 uniform lowp int u_shadowMode[MAX_LIGHTS];
-//[LIGHT_SIZE]//
+//[light.size]//
 uniform int u_lightSize;
-//[CAMERA_POSITION]//
-uniform vec3 u_cameraPosition;
 
 //Varying
 in mediump vec3 v_eyespaceNormal;//EyespaceNormal;
@@ -82,7 +80,7 @@ float GeometrySmith_Fast(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 fresnelSchlick(float cosTheta, vec3 F0);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D);
-vec4 GetTextureInArray(sampler2D src[MAX_LIGHTS], int index, vec2 uv);
+vec4 GetShadowTextureInArray(int index, vec2 uv);
 
 //Macro Functions
 float ClampedPow(float X, float Y) {
@@ -256,7 +254,7 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	// transform to [0,1] range
 	projCoords = projCoords * 0.5 + 0.5;
 	// get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-	float closestDepth = GetTextureInArray(u_shadowMap, index, projCoords.xy).r;
+	float closestDepth = GetShadowTextureInArray(index, projCoords.xy).r;
 //	float closestDepth = texture(u_shadowMap[index], projCoords.xy).r;
 	// get depth of current fragment from light's perspective
 	float currentDepth = projCoords.z;
@@ -275,7 +273,7 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	{
 		for(int y = -1; y <= 1; ++y)
 		{
-			float pcfDepth = GetTextureInArray(u_shadowMap, index, projCoords.xy + vec2(x, y) * texelSize).r;
+			float pcfDepth = GetShadowTextureInArray(index, projCoords.xy + vec2(x, y) * texelSize).r;
 //			float pcfDepth = texture(u_shadowMap[index], projCoords.xy + vec2(x, y) * texelSize).r;
 			shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
 		}
@@ -289,16 +287,16 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	return shadow;
 }
 
-vec4 GetTextureInArray(sampler2D src[MAX_LIGHTS], int index, vec2 uv) {
+vec4 GetShadowTextureInArray(int index, vec2 uv) {
 	if(index >= MAX_LIGHTS) return vec4(0.0f);
-	if(index == 0) return texture(src[0], uv);
-	if(index == 1) return texture(src[1], uv);
-	if(index == 2) return texture(src[2], uv);
-	if(index == 3) return texture(src[3], uv);
-	if(index == 4) return texture(src[4], uv);
-	if(index == 5) return texture(src[5], uv);
-	if(index == 6) return texture(src[6], uv);
-	if(index == 7) return texture(src[7], uv);
+	if(index == 0) return texture(u_shadowMap[0], uv);
+	if(index == 1) return texture(u_shadowMap[1], uv);
+	if(index == 2) return texture(u_shadowMap[2], uv);
+	if(index == 3) return texture(u_shadowMap[3], uv);
+	if(index == 4) return texture(u_shadowMap[4], uv);
+	if(index == 5) return texture(u_shadowMap[5], uv);
+	if(index == 6) return texture(u_shadowMap[6], uv);
+	if(index == 7) return texture(u_shadowMap[7], uv);
 
-	return texture(src[0], uv);
+	return texture(u_shadowMap[0], uv);
 }

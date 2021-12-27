@@ -15,9 +15,7 @@ COMPONENT_CONSTRUCTOR(CameraComponent), m_eye(nullptr), m_targetObject(nullptr) 
 }
 
 
-CameraComponent::~CameraComponent() {
-
-}
+CameraComponent::~CameraComponent() = default;
 
 
 void CameraComponent::Exterminate() {
@@ -65,7 +63,7 @@ SComponent* CameraComponent::Clone(SGameObject* object) {
     comp->m_pFov = m_pFov;
     comp->m_pRatio = m_pRatio;
 
-    //Ortho
+    //Orthographic
     comp->m_oLeft = m_oLeft;
     comp->m_oRight = m_oRight;
     comp->m_oBottom = m_oBottom;
@@ -80,7 +78,7 @@ SComponent* CameraComponent::Clone(SGameObject* object) {
 void CameraComponent::CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
                                     std::map<SComponent*, SComponent*> lists_comp) {
     if (src == nullptr) return;
-    CameraComponent* convert = static_cast<CameraComponent*>(src);
+    auto convert = static_cast<CameraComponent*>(src);
 
     //Copy GameObjects
     FIND_OBJ_REFERENCE(m_targetObject, convert);
@@ -88,19 +86,19 @@ void CameraComponent::CopyReference(SComponent* src, std::map<SGameObject*, SGam
 }
 
 
-void CameraComponent::SetTarget(vec3 target) {
+void CameraComponent::SetTarget(const vec3& target) {
 
     m_target = target;
 
 }
 
 
-void CameraComponent::SetTarget(SGameObject* gameobject) {
-    m_targetObject = gameobject;
+void CameraComponent::SetTarget(SGameObject* gameObject) {
+    m_targetObject = gameObject;
 }
 
 
-void CameraComponent::SetUp(vec3 up) {
+void CameraComponent::SetUp(const vec3& up) {
 
     m_up = up;
 
@@ -172,13 +170,13 @@ void CameraComponent::SetProjectionMatrix() const {
 void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
 
     if (name_str == "m_eye") {
-        m_eye = static_cast<TransformComponent*>(gameObject->FindByID(value[0])->GetTransform())->GetPosition();
+        m_eye = static_cast<TransformComponent*>(SGameObject::FindByID(value[0])->GetTransform())->GetPosition();
     } else if (name_str == "m_target") {
         SET_VEC3(m_target);
     } else if (name_str == "m_up") {
         SET_VEC3(m_up);
     } else if (name_str == "m_targetObject") {
-        m_targetObject = gameObject->FindByID(value[0]);
+        m_targetObject = SGameObject::FindByID(value[0]);
     } else if (name_str == "m_cameraMatrix") {
         SET_MAT4(m_cameraMatrix);
     } else if (name_str == "m_projectionMatrix") {
@@ -225,7 +223,7 @@ std::string CameraComponent::PrintValue() const {
 }
 
 CameraMatrixStruct CameraComponent::GetCameraMatrixStruct() const {
-    return CameraMatrixStruct(m_cameraMatrix, GetProjectionMatrix(), GetCameraPosition());
+    return { m_cameraMatrix, GetProjectionMatrix(), GetCameraPosition() };
 }
 
 SFrameBuffer* CameraComponent::GetFrameBuffer() const {

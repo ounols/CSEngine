@@ -13,25 +13,23 @@ GLProgramHandle::GLProgramHandle() : Program(HANDLE_NULL) {
     SetUndestroyable(true);
 }
 
-GLProgramHandle::~GLProgramHandle() {
-
-}
+GLProgramHandle::~GLProgramHandle() = default;
 
 void GLProgramHandle::Exterminate() {
     glDeleteProgram(Program);
 
-    for (auto element_pair : AttributesList) {
+    for (const auto& element_pair : AttributesList) {
         Element* element = element_pair.second;
         SAFE_DELETE(element);
     }
 
-    for (auto element_pair : UniformsList) {
+    for (const auto& element_pair : UniformsList) {
         Element* element = element_pair.second;
         SAFE_DELETE(element);
     }
 }
 
-void GLProgramHandle::SetAttribVec3(std::string location, vec3& value) {
+void GLProgramHandle::SetAttribVec3(const std::string& location, vec3& value) {
     glUseProgram(Program);
     auto iter = AttributesList.find(location);
     if (iter != AttributesList.end()) {
@@ -41,7 +39,7 @@ void GLProgramHandle::SetAttribVec3(std::string location, vec3& value) {
     glVertexAttrib3fv(glGetAttribLocation(Program, location.c_str()), value.Pointer());
 }
 
-void GLProgramHandle::SetAttribVec4(std::string location, vec4& value) {
+void GLProgramHandle::SetAttribVec4(const std::string& location, vec4& value) {
     glUseProgram(Program);
     auto iter = AttributesList.find(location);
     if (iter != AttributesList.end()) {
@@ -51,7 +49,7 @@ void GLProgramHandle::SetAttribVec4(std::string location, vec4& value) {
     glVertexAttrib4fv(glGetAttribLocation(Program, location.c_str()), value.Pointer());
 }
 
-void GLProgramHandle::SetUniformInt(std::string location, int value) {
+void GLProgramHandle::SetUniformInt(const std::string& location, int value) {
     glUseProgram(Program);
     auto iter = UniformsList.find(location);
     if (iter != UniformsList.end()) {
@@ -61,7 +59,7 @@ void GLProgramHandle::SetUniformInt(std::string location, int value) {
     glUniform1i(glGetUniformLocation(Program, location.c_str()), value);
 }
 
-void GLProgramHandle::SetUniformFloat(std::string location, float value) {
+void GLProgramHandle::SetUniformFloat(const std::string& location, float value) {
     glUseProgram(Program);
     auto iter = UniformsList.find(location);
     if (iter != UniformsList.end()) {
@@ -71,7 +69,7 @@ void GLProgramHandle::SetUniformFloat(std::string location, float value) {
     glUniform1f(glGetUniformLocation(Program, location.c_str()), value);
 }
 
-void GLProgramHandle::SetUniformMat4(std::string location, mat4& value) {
+void GLProgramHandle::SetUniformMat4(const std::string& location, mat4& value) {
     glUseProgram(Program);
     auto iter = UniformsList.find(location);
     if (iter != UniformsList.end()) {
@@ -81,7 +79,7 @@ void GLProgramHandle::SetUniformMat4(std::string location, mat4& value) {
     glUniformMatrix4fv(glGetUniformLocation(Program, location.c_str()), 1, 0, value.Pointer());
 }
 
-void GLProgramHandle::SetUniformMat3(std::string location, mat3& value) {
+void GLProgramHandle::SetUniformMat3(const std::string& location, mat3& value) {
     glUseProgram(Program);
     auto iter = UniformsList.find(location);
     if (iter != UniformsList.end()) {
@@ -117,7 +115,7 @@ void GLProgramHandle::SetAttributesList(std::map<std::string, std::string>& vert
 
         int id = glGetAttribLocation(Program, (isTargetChanged ? frag : vert).find(imp_name)->second.c_str());
 
-        Element* element = new Element;
+        auto element = new Element;
         element->type = type;
         element->id = id;
 
@@ -152,7 +150,7 @@ GLProgramHandle::SetUniformsList(std::map<std::string, std::string>& vert, std::
 
         int id = glGetUniformLocation(Program, (isTargetChanged ? frag : vert).find(imp_name)->second.c_str());
 
-        Element* element = new Element;
+        auto element = new Element;
         element->type = type;
         element->id = id;
 
@@ -160,20 +158,20 @@ GLProgramHandle::SetUniformsList(std::map<std::string, std::string>& vert, std::
     }
 }
 
-GLProgramHandle::GLElementList GLProgramHandle::GetAttributesList() {
+GLProgramHandle::GLElementList GLProgramHandle::GetAttributesList() const {
     return AttributesList;
 }
 
-GLProgramHandle::GLElementList GLProgramHandle::GetUniformsList() {
+GLProgramHandle::GLElementList GLProgramHandle::GetUniformsList() const {
     return UniformsList;
 }
 
 
-void GLProgramHandle::SaveShader(std::string path) {
+void GLProgramHandle::SaveShader(const std::string& path) {
     return;
 }
 
-std::string GLProgramHandle::getImplementName(std::map<std::string, std::string>& list, std::string name) {
+std::string GLProgramHandle::getImplementName(std::map<std::string, std::string>& list, const std::string& name) {
 
     for (auto it = list.begin(); it != list.end(); it++) {
         if (name.find(it->second) != std::string::npos) {
@@ -207,6 +205,4 @@ void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
     if (ShaderUtil::CreateProgramHandle(vert_str.c_str(), frag_str.c_str(), this) == nullptr) {
         return;
     }
-
-    return;
 }

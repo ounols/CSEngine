@@ -3,27 +3,22 @@
 //
 
 #include "DAEConvertSGameObject.h"
-#include "../../../Animation/Joint.h"
 #include "../../../../Component/Animation/JointComponent.h"
 #include "../../../../Component/Animation/AnimatorComponent.h"
-#include "../../../../Component/TransformComponent.h"
 #include "../../../../Manager/EngineCore.h"
 
 using namespace CSE;
 
-DAEConvertSGameObject::DAEConvertSGameObject() {
-}
+DAEConvertSGameObject::DAEConvertSGameObject() = default;
 
-DAEConvertSGameObject::~DAEConvertSGameObject() {
-
-}
+DAEConvertSGameObject::~DAEConvertSGameObject() = default;
 
 SGameObject* DAEConvertSGameObject::CreateJoints(SGameObject* parent, Joint* data) {
 
     if (parent == nullptr) return nullptr;
 
-    SGameObject* jointObject = new SGameObject(data->GetName());
-    JointComponent* joint = jointObject->CreateComponent<JointComponent>();
+    auto jointObject = new SGameObject(data->GetName());
+    auto joint = jointObject->CreateComponent<JointComponent>();
     joint->SetID(data->GetIndex());
 	int jointIndex = CORE->GetCore(ResMgr)->GetStringHash(data->GetName());
 	joint->SetAnimationJointId(jointIndex);
@@ -41,14 +36,14 @@ SGameObject* DAEConvertSGameObject::CreateJoints(SGameObject* parent, Joint* dat
 
 SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, JointComponent* rootJoint,
                                                     AnimationData* animationData,
-                                                    std::string name, Animation* animation) {
+                                                    const std::string& name, Animation* animation) {
     if (parent == nullptr) return nullptr;
 
-    SGameObject* animationObject = new SGameObject(parent->GetName() + "_animation");
-    AnimatorComponent* animator = animationObject->CreateComponent<AnimatorComponent>();
+    auto animationObject = new SGameObject(parent->GetName() + "_animation");
+    auto animator = animationObject->CreateComponent<AnimatorComponent>();
 
     std::list<KeyFrame*> frames;
-    int length = animationData->keyFrames.size();
+    unsigned int length = animationData->keyFrames.size();
 
     for (int i = 0; i < length; i++) {
         frames.push_back(CreateKeyFrame(animationData->keyFrames[i]));

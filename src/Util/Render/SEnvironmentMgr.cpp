@@ -11,8 +11,15 @@
 #include <string>
 #include <iostream>
 #include "../Loader/STB/stb_image.h"
+#include "SMaterial.h"
+#include "../Settings.h"
+#include "../GLProgramHandle.h"
 
 using namespace CSE;
+
+unsigned int SEnvironmentMgr::m_width = 0;
+unsigned int SEnvironmentMgr::m_height = 0;
+unsigned int SEnvironmentMgr::m_planeVAO = 0;
 
 SEnvironmentMgr::SEnvironmentMgr() {
 
@@ -326,4 +333,35 @@ void SEnvironmentMgr::RenderPlaneVAO() {
     glBindVertexArray(m_planeVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
+}
+
+unsigned int SEnvironmentMgr::GetWidth() {
+    return m_width;
+}
+
+void SEnvironmentMgr::SetWidth(unsigned int width) {
+    m_width = width;
+}
+
+unsigned int SEnvironmentMgr::GetHeight() {
+    return m_height;
+}
+
+void SEnvironmentMgr::SetHeight(unsigned int height) {
+    m_height = height;
+}
+
+unsigned int* SEnvironmentMgr::GetPointerWidth() {
+    return &m_width;
+}
+
+unsigned int* SEnvironmentMgr::GetPointerHeight() {
+    return &m_height;
+}
+
+void SEnvironmentMgr::BindPBREnvironmentMap(const GLProgramHandle* handle, int textureLayout) const {
+    if(handle == nullptr) return;
+    m_irradianceMap->Bind(handle->Uniforms.LightIrradiance, textureLayout);
+    m_prefilterMap->Bind(handle->Uniforms.LightPrefilter, textureLayout + 1);
+    m_brdfMap->Bind(handle->Uniforms.LightBrdfLut, textureLayout + 2);
 }

@@ -22,7 +22,7 @@ namespace CSE {
     class ResMgr : public CoreBase {
     public:
         explicit ResMgr();
-        ~ResMgr();
+        ~ResMgr() override;
 
     public:
 
@@ -42,9 +42,6 @@ namespace CSE {
     	template <class TYPE>
 		TYPE* GetObjectById(std::string id) const;
 
-        template <class TYPE>
-        static TYPE* Create(std::string name);
-
         SResource* GetSResource(std::string name) const;
 
         int GetID(SResource* object) const;
@@ -53,7 +50,7 @@ namespace CSE {
 
         bool IsEmpty() const;
 
-		int GetStringHash(std::string str);
+		int GetStringHash(const std::string& str);
 
         std::string RemoveDuplicatingName(std::string name) const;
 

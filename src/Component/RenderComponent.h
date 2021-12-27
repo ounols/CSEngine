@@ -2,7 +2,6 @@
 
 #include "SComponent.h"
 #include "../Util/Render/RenderInterfaces.h"
-#include "../Util/Render/SMaterial.h"
 #include "CameraComponent.h"
 
 namespace CSE {
@@ -11,12 +10,13 @@ namespace CSE {
     class DrawableSkinnedMeshComponent;
     class LightMgr;
     class RenderMgr;
+    class SMaterial;
 
     class RenderComponent : public SComponent, public SIRender {
     public:
         RenderComponent();
 
-        ~RenderComponent();
+        ~RenderComponent() override;
 
         void Exterminate() override;
 
@@ -40,8 +40,6 @@ namespace CSE {
         void SetMaterial(SMaterial* material);
 
     private:
-        void AttachMaterials() const;
-
         void SetJointMatrix(const GLProgramHandle* handle) const;
 
     private:

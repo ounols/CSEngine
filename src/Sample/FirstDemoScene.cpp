@@ -1,5 +1,3 @@
-#include <iostream>
-#include <sstream>
 #include "../Util/Render/SEnvironmentMgr.h"
 #include "FirstDemoScene.h"
 #include "../Component/LightComponent.h"
@@ -16,17 +14,14 @@
 #include "../Manager/SCloneFactory.h"
 #include "../Util/Loader/SCENE/SSceneLoader.h"
 #include "../Util/Render/SFrameBuffer.h"
+#include "../Util/Render/SMaterial.h"
 
 using namespace CSE;
 
-FirstDemoScene::FirstDemoScene() {
-
-}
+FirstDemoScene::FirstDemoScene() = default;
 
 
-FirstDemoScene::~FirstDemoScene() {
-
-}
+FirstDemoScene::~FirstDemoScene() = default;
 
 
 void FirstDemoScene::Init() {
@@ -79,10 +74,11 @@ void FirstDemoScene::Init() {
     cube = new MeshSurface(CH02::teapot_smoothNumVerts, CH02::teapot_smoothVerts, CH02::teapot_smoothNormals);
     cube->SetUndestroyable(false);
     SFrameBuffer* buffer = new SFrameBuffer();
-    buffer->SetName("framebuffer_test");
-    buffer->SetID("framebuffer_test");
-    buffer->InitFrameBuffer(SFrameBuffer::RENDER, 512, 512);
-    buffer->InitTexture(512, 512, GL_RGB, GL_RGB16F, GL_FLOAT);
+    buffer->GenerateFramebuffer(SFrameBuffer::PLANE);
+    const auto& buf_tex = buffer->GenerateTexturebuffer(SFrameBuffer::RENDER, 512, 512, GL_RGB);
+    buf_tex->SetName("framebuffer_test");
+    buf_tex->SetID("framebuffer_test");
+    buffer->RasterizeFramebuffer();
     b->Destroy();
     c = new SGameObject("c");
     c->SetParent(root);
@@ -248,7 +244,7 @@ void FirstDemoScene::Tick(float elapsedTime) {
 
     if (elapsedTime - startTIme > 3000) {
         startTIme = elapsedTime;
-        isUnvisible = !isUnvisible;
+        isInvisible = !isInvisible;
 //		switchingObject();
     }
 }
@@ -260,9 +256,9 @@ void FirstDemoScene::Destroy() {
 
 void FirstDemoScene::switchingObject() {
 
-    c3->SetIsEnable(!isUnvisible);
+    c3->SetIsEnable(!isInvisible);
 
-    if (isUnvisible) {
+    if (isInvisible) {
         c2->Destroy();
 //        d->GetComponent<LightComponent>()->SetLightType(LightComponent::POINT);
 

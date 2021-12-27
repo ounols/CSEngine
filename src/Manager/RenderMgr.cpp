@@ -3,18 +3,22 @@
 #include "EngineCore.h"
 #include "../Util/Render/SFrameBuffer.h"
 #include "../Util/Render/SEnvironmentMgr.h"
+#include "../Util/Render/SGBuffer.h"
 #include "CameraMgr.h"
 #include "../Component/RenderComponent.h"
-// #include <iostream>
+#include "../Util/Settings.h"
+#include "../Util/GLProgramHandle.h"
+#include "../Util/Render/ShaderUtil.h"
 
 using namespace CSE;
 
 CameraMgr* cameraMgr = nullptr;
 LightMgr* lightMgr = nullptr;
 
-RenderMgr::RenderMgr() {
-    m_NoneCamera = mat4::LookAt(vec3(0, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0));
-}
+int mainTextureId = -1;
+STexture* mainTexture = nullptr;
+
+RenderMgr::RenderMgr() = default;
 
 
 RenderMgr::~RenderMgr() {
@@ -23,31 +27,44 @@ RenderMgr::~RenderMgr() {
 
 
 void RenderMgr::Init() {
-    // Setting PBS Environment
-    m_environmentMgr = new SEnvironmentMgr();
-    m_environmentMgr->RenderPBREnvironment();
-    // Setting Shadow Environment
-    m_environmentMgr->InitShadowEnvironment();
 
     cameraMgr = CORE->GetCore(CameraMgr);
     lightMgr = CORE->GetCore(LightMgr);
+
+    m_width = SEnvironmentMgr::GetPointerWidth();
+    m_height = SEnvironmentMgr::GetPointerHeight();
+
+    m_geometryHandle = SResource::Create<GLProgramHandle>(Settings::GetDeferredGeometryPassShaderID());
+
+    m_mainBuffer = new SFrameBuffer();
+    m_mainBuffer->GenerateFramebuffer(SFrameBuffer::PLANE);
+    m_mainBuffer->GenerateRenderbuffer(SFrameBuffer::RENDER, (int)*m_width, (int)*m_height, GL_RGB);
+    m_mainBuffer->RasterizeFramebuffer();
+
+    m_mainProgramHandle = SResource::Create<GLProgramHandle>(Settings::GetDefaultMainBufferShaderID());
+    mainTextureId = m_mainProgramHandle->UniformLocation("main.albedo")->id;
 }
 
-void RenderMgr::SetViewport(int width, int height) {
-    m_width = width;
-    m_height = height;
+void RenderMgr::SetViewport() {
+    for (const auto& gbufferPair : m_gbufferLayer) {
+        const auto& gbuffer = gbufferPair.second;
+        gbuffer->ResizeGBuffer((int)*m_width, (int)*m_height);
+    }
+
+    m_mainBuffer->ResizeFrameBuffer((int)*m_width, (int)*m_height);
+    mainTexture = m_mainBuffer->GetTexture(0);
 }
 
 void RenderMgr::Render() const {
-    // Render Order : Depth Buffers -> Render Buffers -> Main Render Buffer
+    // Render Order : Depth Buffers -> Sub Render Buffers -> Main Render Buffers
 
     // 1. Render depth buffer for shadows.
     const auto& lightObjects = lightMgr->GetAll();
     const auto& shadowObjects = lightMgr->GetShadowObject();
-    const auto& shadowEnvironment = m_environmentMgr->GetShadowEnvironment();
+    const auto& shadowHandle = lightMgr->GetShadowHandle();
     for (const auto& light : lightObjects) {
         if(light->m_disableShadow) continue;
-        RenderShadowInstance(*light, *shadowEnvironment, shadowObjects);
+        RenderShadowInstance(*light, *shadowHandle, shadowObjects);
     }
     lightMgr->RefreshShadowCount();
 
@@ -57,31 +74,132 @@ void RenderMgr::Render() const {
     // 2. Render active sub cameras.
     for (const auto& camera : cameraObjects) {
         if(!camera->GetIsEnable() || camera == mainCamera || camera->GetFrameBuffer() == nullptr) continue;
-        RenderInstance(*camera);
+        ResetBuffer(*camera);
+        RenderGbuffers(*camera); // Deferred Render
+        RenderInstances(*camera); // Forward Render
     }
 
     if(mainCamera == nullptr) return;
     // 3. Main Render Buffer
-    RenderInstance(*mainCamera);
+    ResetBuffer(*mainCamera);
+    RenderGbuffers(*mainCamera); // Deferred Render
+    RenderInstances(*mainCamera); // Forward Render
 
+
+    /**
+     * @Todo 포스트 프로세싱을 적용하기 위한 코드
+     */
+//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//    glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
+//    glUseProgram(m_mainProgramHandle->Program);
+//    mainTexture->Bind(mainTextureId, 0);
+//
+//    ShaderUtil::BindAttributeToPlane();
+
+    m_mainBuffer->AttachFrameBuffer(GL_READ_FRAMEBUFFER);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBlitFramebuffer(0, 0, *m_width, *m_height, 0, 0, *m_width, *m_height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 
-void RenderMgr::RenderInstance(const CameraBase& camera, const GLProgramHandle* custom_handler) const {
+void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer) const {
+    const auto cameraMatrix = camera.GetCameraMatrixStruct();
+    const auto& frameBuffer = camera.GetFrameBuffer();
+    const bool hasFrameBuffer = frameBuffer != nullptr;
+    const auto& lightPassHandle = gbuffer.GetLightPassHandle();
+
+    const int bufferWidth = hasFrameBuffer ? frameBuffer->GetWidth() : *m_width;
+    const int bufferHeight = hasFrameBuffer ? frameBuffer->GetHeight() : *m_height;
+
+    /** ======================
+     *  1. Geometry Pass
+     */
+    gbuffer.AttachGeometryFrameBuffer();
+    glViewport(0, 0, *m_width, *m_height);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glUseProgram(m_geometryHandle->Program);
+    const auto& renderLayer = gbuffer.GetRendersLayer();
+
+    glEnableVertexAttribArray(m_geometryHandle->Attributes.Position);
+    glEnableVertexAttribArray(m_geometryHandle->Attributes.Normal);
+    glEnableVertexAttribArray(m_geometryHandle->Attributes.TextureCoord);
+    glEnableVertexAttribArray(m_geometryHandle->Attributes.Weight);
+    glEnableVertexAttribArray(m_geometryHandle->Attributes.JointId);
+
+    for (const auto& render : renderLayer) {
+        if (render == nullptr) continue;
+        if (!render->isRenderActive) continue;
+
+        render->SetMatrix(cameraMatrix);
+        render->Render();
+    }
+
+    glDisableVertexAttribArray(m_geometryHandle->Attributes.Position);
+    glDisableVertexAttribArray(m_geometryHandle->Attributes.Normal);
+    glDisableVertexAttribArray(m_geometryHandle->Attributes.TextureCoord);
+    glDisableVertexAttribArray(m_geometryHandle->Attributes.Weight);
+    glDisableVertexAttribArray(m_geometryHandle->Attributes.JointId);
+
+//    std::string save_str = CSE::AssetsPath() + "test.bmp";
+//    saveScreenshot(save_str.c_str());
+    /** ======================
+     *  2. Light Pass
+     */
+    if(frameBuffer == nullptr) {
+        m_mainBuffer->AttachFrameBuffer();
+    }
+    else {
+        frameBuffer->AttachFrameBuffer();
+    }
+    // TODO: Background 설정 따로 적용하도록 수정
+    // TODO: 뒷배경 색상 적용 안됨
+    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gbuffer.AttachLightPass();
+    //Attach Light
+    lightMgr->AttachLightToShader(lightPassHandle);
+    lightMgr->AttachLightMapToShader(lightPassHandle, lightMgr->GetShadowCount());
+    gbuffer.AttachLightPassTexture(lightMgr->GetShadowCount() + lightMgr->GetLightMapCount());
+
+    gbuffer.RenderLightPass();
+
+
+    /** ======================
+     *  3. Blit the depth buffer
+     */
+    gbuffer.AttachGeometryFrameBuffer(GL_READ_FRAMEBUFFER);
+    if(frameBuffer == nullptr) {
+        m_mainBuffer->AttachFrameBuffer(GL_DRAW_FRAMEBUFFER);
+    }
+    else {
+        frameBuffer->AttachFrameBuffer(GL_DRAW_FRAMEBUFFER);
+    }
+
+    glBlitFramebuffer(0, 0, *m_width, *m_height, 0, 0, bufferWidth, bufferHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+}
+
+void RenderMgr::RenderGbuffers(const CameraBase& camera) const {
+    for (const auto& gbuffer_pair : m_gbufferLayer) {
+        const auto& light_handle = gbuffer_pair.first;
+        const auto& gbuffer = gbuffer_pair.second;
+        RenderGbuffer(camera, *gbuffer);
+    }
+}
+
+void RenderMgr::RenderInstances(const CameraBase& camera, const GLProgramHandle* custom_handler) const {
 
     const auto cameraMatrix = camera.GetCameraMatrixStruct();
     const auto& frameBuffer = camera.GetFrameBuffer();
-    int customHandlerID = custom_handler != nullptr ? custom_handler->Program : -1;
+    int customHandlerID = custom_handler != nullptr ? (int)custom_handler->Program : -1;
     if(frameBuffer == nullptr) {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, (GLsizei) m_width, (GLsizei) m_height);
+        m_mainBuffer->AttachFrameBuffer();
     }
     else {
         // If the framebuffer is a depth buffer
-        if(frameBuffer->GetBufferType() == SFrameBuffer::DEPTH) {
-            customHandlerID = m_environmentMgr->GetShadowEnvironment()->Program;
+        if(frameBuffer->GetBufferStatus() == SFrameBuffer::DEPTH_ONLY) {
+            customHandlerID = (int)lightMgr->GetShadowHandle()->Program;
         }
         frameBuffer->AttachFrameBuffer();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     OrderRenderLayer orderRenderLayer(m_rendersLayer.begin(), m_rendersLayer.end());
 
@@ -135,13 +253,12 @@ void RenderMgr::RenderShadowInstance(const CameraBase& camera, const GLProgramHa
     const auto& frameBuffer = camera.GetFrameBuffer();
     int customHandlerID = custom_handler.Program;
     if(frameBuffer == nullptr) {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, (GLsizei) m_width, (GLsizei) m_height);
+        m_mainBuffer->AttachFrameBuffer();
     }
     else {
         // If the framebuffer is a depth buffer
-        if(frameBuffer->GetBufferType() == SFrameBuffer::DEPTH) {
-            customHandlerID = m_environmentMgr->GetShadowEnvironment()->Program;
+        if(frameBuffer->GetBufferStatus() == SFrameBuffer::DEPTH_ONLY) {
+            customHandlerID = (int)lightMgr->GetShadowHandle()->Program;
         }
         frameBuffer->AttachFrameBuffer();
     }
@@ -170,6 +287,16 @@ void RenderMgr::RenderShadowInstance(const CameraBase& camera, const GLProgramHa
 }
 
 void RenderMgr::Exterminate() {
-    m_rendersLayer.clear();
-    SAFE_DELETE(m_environmentMgr);
+    RenderContainer::Exterminate();
+}
+
+void RenderMgr::ResetBuffer(const CameraBase& camera) const {
+    const auto& frameBuffer = camera.GetFrameBuffer();
+    if(frameBuffer == nullptr) {
+        m_mainBuffer->AttachFrameBuffer();
+    }
+    else {
+        frameBuffer->AttachFrameBuffer();
+    }
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

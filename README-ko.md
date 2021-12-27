@@ -5,7 +5,7 @@
 # CSEngine - Cross Platform C++ Game Engine
 
 ![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)</br>
-![platform](https://img.shields.io/badge/platform-windows_%7C_linux_%7C_android-00B274?style=flat-square) ![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) </br>
+![platform](https://img.shields.io/badge/platform-windows_%7C_linux_%7C_android-00B274?style=flat-square) ![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) [![CodeFactor](https://www.codefactor.io/repository/github/ounols/csengine/badge/master)](https://www.codefactor.io/repository/github/ounols/csengine/overview/master) </br>
 CSEngine은 크로스 플랫폼 기반 3D 게임 엔진입니다.
 
 `💡 아직 개발 중이기 때문에 실사용으로 적합하지 않은 단계입니다.`
@@ -18,7 +18,7 @@ CSEngine은 크로스 플랫폼 기반 3D 게임 엔진입니다.
 * C++14 compatible compiler
 * GLEW 2.1.0 or higher
 * GLFW 3.3 or higher
-* OpenGL
+* OpenGL 4.3 or higher
 
 ### Android
 
@@ -69,15 +69,17 @@ make 파일들을 생성합니다.
 
 ## 테스트
 
-현재는 Linux 빌드 테스트만 지정되어 있습니다. 향후 다양한 플랫폼에 대한 빌드 및 단위 테스트와 같은 다양한 안정화 테스트가 추가 될 예정입니다.
+다양한 플랫폼에 대한 빌드 및 단위 테스트와 같은 다양한 안정화 테스트가 추가 될 예정입니다.
 |Branch|Build status|
 |--|--|
-|master|![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) |
+|master|[<img src='https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
+|build_testing|[<img src='https://img.shields.io/travis/com/ounols/CSEngine/build_testing?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
 
 ## 더보기
 
 아래의 문서들을 통해 자세한 내용을 확인하실 수 있습니다.
-* [`wiki`](https://github.com/ounols/CSEngine/wiki): CSEngine의 구조와 기능을 자세히 설명하는 위키입니다.
+* [`documentation`](https://ounols.github.io/CSEngine-doc): CSEngine의 구조와 기능을 자세히 설명하는 위키입니다.
+* [`to-do list`](https://www.notion.so/CSEngine-Todo-List-7ee24caed138466e83d81d2867b1f109): CSEngine의 할일 리스트이자 개발 진행하며 메모한 내용을 정리하였습니다.
 
 ## 3rd Party Copyright & Licence
 
@@ -85,6 +87,6 @@ make 파일들을 생성합니다.
 - GLAD : The MIT License (MIT)
 - GLFW : zlib License
 - IMGUI : The MIT License (MIT)
-- lodepng : zlib License
+- stb : The MIT License (MIT)
 - Squirrel Script : The MIT License (MIT)
 - kuba--/zip : The Unlicense

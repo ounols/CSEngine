@@ -9,19 +9,15 @@
 
 using namespace CSE;
 
-SPrefab::SPrefab() {
+SPrefab::SPrefab() = default;
 
-}
-
-SPrefab::~SPrefab() {
-
-}
+SPrefab::~SPrefab() = default;
 
 void SPrefab::Exterminate() {
 
 }
 
-SGameObject* SPrefab::Clone(vec3 position, SGameObject* parent) {
+SGameObject* SPrefab::Clone(const vec3& position, SGameObject* parent) {
 
     GenerateResourceID();
     SGameObject* clone = SCloneFactory::Clone(m_root, parent);
@@ -35,7 +31,7 @@ SGameObject* SPrefab::Clone(vec3 position, SGameObject* parent) {
 }
 
 
-SGameObject* SPrefab::Clone(vec3 position, vec3 scale, Quaternion rotation, SGameObject* parent) {
+SGameObject* SPrefab::Clone(const vec3& position, const vec3& scale, Quaternion rotation, SGameObject* parent) {
 
     GenerateResourceID();
     SGameObject* clone = SCloneFactory::Clone(m_root, parent);
@@ -72,8 +68,6 @@ void SPrefab::Init(const AssetMgr::AssetReference* asset) {
             DAELoader::GeneratePrefab(asset->path.c_str(), nullptr, nullptr, nullptr, this);
             break;
     }
-
-    return;
 }
 
 void SPrefab::GenerateResourceID(SGameObject* obj) {

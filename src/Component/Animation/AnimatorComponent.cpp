@@ -7,9 +7,7 @@ COMPONENT_CONSTRUCTOR(AnimatorComponent) {
 }
 
 
-AnimatorComponent::~AnimatorComponent() {
-
-}
+AnimatorComponent::~AnimatorComponent() = default;
 
 void AnimatorComponent::Init() {
 }
@@ -64,7 +62,7 @@ std::map<int, mat4> AnimatorComponent::calculateCurrentAnimationPose() const {
 }
 
 void AnimatorComponent::applyPoseToJoints(std::map<int, mat4>& currentPose, JointComponent* joint,
-                                          const mat4 parentTransform) {
+                                          const mat4& parentTransform) {
     const auto& object = joint->GetGameObject();
     const int jointId = joint->GetAnimationJointId();
     const mat4& currentLocalTransform = currentPose[jointId];
@@ -133,7 +131,7 @@ SComponent* AnimatorComponent::Clone(SGameObject* object) {
 void AnimatorComponent::CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
                                       std::map<SComponent*, SComponent*> lists_comp) {
     if (src == nullptr) return;
-    AnimatorComponent* convert = static_cast<AnimatorComponent*>(src);
+    auto convert = static_cast<AnimatorComponent*>(src);
 
     //Copy Components
     FIND_COMP_REFERENCE(m_rootJoint, convert, JointComponent);

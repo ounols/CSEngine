@@ -38,7 +38,7 @@ namespace CSE {
         return path;
 	}
 
-	static std::string OpenNativeAssetsTxtFile(std::string path) {
+	static std::string OpenNativeAssetsTxtFile(const std::string& path) {
 
 		std::string buf;
 #ifdef __ANDROID__

@@ -7,9 +7,8 @@ namespace CSE {
 
     class SIContainer {
     public:
-        SIContainer() {}
-
-        virtual ~SIContainer() {}
+        SIContainer() = default;
+        virtual ~SIContainer() = default;
     };
 
     template <class T>
@@ -17,13 +16,8 @@ namespace CSE {
     public:
         typedef SContainer<T> BaseSContainer;
     public:
-        SContainer() {
-        }
-
-
-        virtual ~SContainer() {
-        }
-
+        SContainer() = default;
+        ~SContainer() override = default;
 
         virtual void Register(T object) {
             m_objects.push_back(object);
@@ -32,7 +26,6 @@ namespace CSE {
 
         virtual void Remove(T object) {
 //            auto iObj = std::find(m_objects.begin(), m_objects.end(), object);
-
 //            if (iObj != m_objects.end()) {
                 m_objects.remove(object);
 //            }

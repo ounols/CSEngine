@@ -7,7 +7,7 @@
 #include "../../../Animation/Joint.h"
 #include "../DAEAnimationLoader.h"
 #include "../../../../Object/SGameObject.h"
-#include "../../../Animation/AnimationUtill.h"
+#include "../../../Animation/AnimationUtil.h"
 #include "../../../Animation/Animation.h"
 
 namespace CSE {
@@ -26,7 +26,7 @@ namespace CSE {
         static SGameObject* CreateJoints(SGameObject* parent, Joint* data);
 
         static SGameObject* CreateAnimation(SGameObject* parent, JointComponent* rootJoint, AnimationData* animationData,
-                                            std::string name, Animation* animation = nullptr);
+                                            const std::string& name, Animation* animation = nullptr);
 
     private:
         static KeyFrame* CreateKeyFrame(KeyFrameData* data);

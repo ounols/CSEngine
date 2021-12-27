@@ -42,7 +42,7 @@ namespace CSE {
 
         std::vector<AssetReference*> GetAssets(TYPE type) const;
 
-        static std::string LoadAssetFile(std::string path);
+        static std::string LoadAssetFile(const std::string& path);
 
 #ifdef __ANDROID__
         void SetAssetManager(AAssetManager* obj);
@@ -52,14 +52,14 @@ namespace CSE {
 #endif
 
     private:
-        void ReadDirectory(std::string path);
-        void ReadPackage(std::string path);
+        void ReadDirectory(const std::string& path);
+        void ReadPackage(const std::string& path);
 
-        AssetReference* CreateAsset(std::string path, std::string name_full, std::string name = "");
+        AssetReference* CreateAsset(const std::string& path, const std::string& name_full, std::string name = "");
 
         void SetType();
 
-        AssetReference* AppendSubName(AssetReference* asset, std::string sub_name);
+        static AssetReference* AppendSubName(AssetReference* asset, const std::string& sub_name);
 
     private:
         std::vector<AssetReference*> m_assets;
