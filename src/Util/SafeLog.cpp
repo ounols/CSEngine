@@ -2,6 +2,7 @@
 
 #ifdef WIN32
 #include <Windows.h>
+#include <cstdio>
 
 #elif __ANDROID__
 #define  LOG_TAG    "CSEngine"
@@ -10,7 +11,7 @@
 #include <android/log.h>
 #elif __linux__
 
-#include <iostream>
+#include <cstdio>
 
 #endif
 
@@ -18,10 +19,11 @@ void SafeLog::Log(const char* log) {
 
 #ifdef WIN32
 	OutputDebugStringA(log);
+    puts(log);
 #elif __ANDROID__
 	LOGE(log, 0);
 #elif __linux__
-	std::cout << log;
+	puts(log);
 #endif
 	
 }
