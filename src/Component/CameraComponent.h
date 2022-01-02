@@ -6,7 +6,6 @@
 #include "DrawableStaticMeshComponent.h"
 
 namespace CSE {
-
     struct CameraMatrixStruct {
         mat4 camera;
         mat4 projection;
@@ -27,7 +26,6 @@ namespace CSE {
         CameraComponent();
 
         ~CameraComponent() override;
-
 
         void Exterminate() override;
 
@@ -57,7 +55,7 @@ namespace CSE {
 
         CameraMatrixStruct GetCameraMatrixStruct() const override;
 
-        void SetTarget(const vec3& target);
+        void SetTargetVector(const vec3& target);
 
         void SetTarget(SGameObject* gameObject);
 
@@ -79,7 +77,6 @@ namespace CSE {
 
         void SetFrameBuffer(SFrameBuffer* frameBuffer);
 
-
     private:
         void SetCameraMatrix();
 
@@ -93,7 +90,6 @@ namespace CSE {
         mutable mat4 m_projectionMatrix;
         vec3 m_resultTarget;
         SFrameBuffer* m_frameBuffer = nullptr;
-
 
         CAMERATYPE m_type = PERSPECTIVE;
         mutable bool m_isProjectionInited = false;
@@ -110,7 +106,5 @@ namespace CSE {
 
         float m_Near = 0.1f;
         float m_Far = 100.f;
-
     };
-
 }

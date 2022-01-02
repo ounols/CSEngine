@@ -14,14 +14,11 @@ COMPONENT_CONSTRUCTOR(CameraComponent), m_eye(nullptr), m_targetObject(nullptr) 
     m_pRatio = const_cast<float*>(cameraMgr->GetProjectionRatio());
 }
 
-
 CameraComponent::~CameraComponent() = default;
-
 
 void CameraComponent::Exterminate() {
     CORE->GetCore(CameraMgr)->Remove(this);
 }
-
 
 void CameraComponent::Init() {
     m_eye = static_cast<TransformComponent*>(gameObject->GetTransform())->GetPosition();
@@ -30,17 +27,13 @@ void CameraComponent::Init() {
     m_pRatio = const_cast<float*>(CORE->GetCore(CameraMgr)->GetProjectionRatio());
 }
 
-
 void CameraComponent::Tick(float elapsedTime) {
-
     if (m_targetObject == nullptr)
         m_resultTarget = *m_eye + m_target;
     else {
         m_resultTarget = *static_cast<TransformComponent*>(m_targetObject->GetTransform())->GetPosition();
     }
-
     SetCameraMatrix();
-
 }
 
 SComponent* CameraComponent::Clone(SGameObject* object) {
@@ -54,7 +47,6 @@ SComponent* CameraComponent::Clone(SGameObject* object) {
     comp->m_projectionMatrix = m_projectionMatrix;
     comp->m_resultTarget = m_resultTarget;
     comp->m_frameBuffer = m_frameBuffer;
-
 
     comp->m_type = m_type;
     comp->m_isProjectionInited = m_isProjectionInited;
@@ -85,35 +77,25 @@ void CameraComponent::CopyReference(SComponent* src, std::map<SGameObject*, SGam
 
 }
 
-
-void CameraComponent::SetTarget(const vec3& target) {
-
+void CameraComponent::SetTargetVector(const vec3& target) {
     m_target = target;
-
 }
-
 
 void CameraComponent::SetTarget(SGameObject* gameObject) {
     m_targetObject = gameObject;
 }
 
-
 void CameraComponent::SetUp(const vec3& up) {
-
     m_up = up;
-
 }
-
 
 void CameraComponent::SetCameraType(CAMERATYPE type) {
     m_type = type;
 }
 
-
 void CameraComponent::SetPerspectiveFov(float fov) {
     m_pFov = fov;
 }
-
 
 void CameraComponent::SetZDepthRange(float near, float far) {
     m_Near = near;
@@ -121,22 +103,21 @@ void CameraComponent::SetZDepthRange(float near, float far) {
 
 }
 
-
 void CameraComponent::SetPerspective(float fov, float near, float far) {
+    m_type = PERSPECTIVE;
     m_pFov = fov;
     m_Near = near;
     m_Far = far;
 
 }
 
-
 void CameraComponent::SetOrtho(float left, float right, float top, float bottom) {
+    m_type = ORTHO;
     m_oLeft = left;
     m_oRight = right;
     m_oBottom = bottom;
     m_oTop = top;
 }
-
 
 void CameraComponent::SetCameraMatrix() {
     m_cameraMatrix = mat4::LookAt(*m_eye, m_resultTarget, m_up);
@@ -151,7 +132,6 @@ vec3 CameraComponent::GetCameraPosition() const {
     return vec3{ matrix.w.x, matrix.w.y, matrix.w.z };
 }
 
-
 void CameraComponent::SetProjectionMatrix() const {
 	std::mutex mutex;
 
@@ -162,13 +142,11 @@ void CameraComponent::SetProjectionMatrix() const {
     } else {
         m_projectionMatrix = mat4::Ortho(m_oLeft, m_oRight, m_oTop, m_oBottom, m_Near, m_Far);
     }
-
     m_isProjectionInited = true;
 	mutex.unlock();
 }
 
 void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
-
     if (name_str == "m_eye") {
         m_eye = static_cast<TransformComponent*>(SGameObject::FindByID(value[0])->GetTransform())->GetPosition();
     } else if (name_str == "m_target") {

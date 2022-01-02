@@ -191,6 +191,14 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
             .Func(_SC("SetDirection"), &LightComponent::SetDirection)
             .Func(_SC("GetDirection"), &LightComponent::GetDirection);
 
+    COMPONENT_DEF(CameraComponent)
+            .Func(_SC("SetTarget"), &CameraComponent::SetTarget)
+            .Func(_SC("SetTargetVector"), &CameraComponent::SetTargetVector)
+            .Func(_SC("SetUp"), &CameraComponent::SetUp)
+            .Func(_SC("SetOrtho"), &CameraComponent::SetOrtho)
+            .Func(_SC("SetZDepthRange"), &CameraComponent::SetZDepthRange)
+            .Func(_SC("SetPerspective"), &CameraComponent::SetPerspective);
+
 
     //Util
 
