@@ -29,26 +29,30 @@ void GameObjectMgr::Update(float elapsedTime) {
         if (object == nullptr) continue;
         object->Tick(elapsedTime);
         ++iterator;
+    }
+}
 
-        if(object->GetStatus() == SGameObject::DESTROY) {
-            DeleteGameObject(object);
+
+void GameObjectMgr::DestroyQueuedObject() {
+    if (m_destroyObjectsQueue.empty()) return;
+
+    for (; !m_destroyObjectsQueue.empty(); m_destroyObjectsQueue.pop()) {
+        const auto& object = m_destroyObjectsQueue.front();
+
+        auto iGameObj = std::find(m_objects.begin(), m_objects.end(), object);
+
+        if (iGameObj != m_objects.end()) {
+            m_size--;
+            m_objects.erase(iGameObj);
+            CORE->GetCore(MemoryMgr)->ReleaseObject(object);
         }
     }
 }
 
-
-void GameObjectMgr::DeleteGameObject(SGameObject* object) {
-    if (object == nullptr) return;
-
-    auto iGameObj = std::find(m_objects.begin(), m_objects.end(), object);
-
-    if (iGameObj != m_objects.end()) {
-        m_size--;
-        m_objects.erase(iGameObj);
-        CORE->GetCore(MemoryMgr)->ReleaseObject(object);
-    }
+void GameObjectMgr::AddDestroyObject(SGameObject* object) {
+    if(object->GetStatus() != SGameObject::DESTROY) return;
+    m_destroyObjectsQueue.push(object);
 }
-
 
 SGameObject* GameObjectMgr::Find(const std::string& name) const {
 

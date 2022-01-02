@@ -87,6 +87,7 @@ void SGameObject::Destroy() {
         }
     }
     m_status = DESTROY;
+    CORE->GetCore(GameObjectMgr)->AddDestroyObject(this);
 }
 
 void SGameObject::AddChild(SGameObject* object) {

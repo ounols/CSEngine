@@ -111,9 +111,7 @@ void CustomComponent::SetClassName(std::string name) {
 
 
 std::string CustomComponent::SGetClassName() const {
-
     return m_className;
-
 }
 
 

@@ -70,8 +70,8 @@ std::vector<float> DAEAnimationLoader::getKeyTimes() {
 std::vector<KeyFrameData*> DAEAnimationLoader::initKeyFrames(std::vector<float> times) {
     std::vector<KeyFrameData*> frames;
     frames.reserve(times.size());
-    for (int i = 0; i < times.size(); ++i) {
-        frames.push_back(new KeyFrameData(times[i]));
+    for (float time : times) {
+        frames.push_back(new KeyFrameData(time));
     }
     return frames;
 }

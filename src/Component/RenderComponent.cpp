@@ -22,6 +22,7 @@ void RenderComponent::Exterminate() {
     if(m_renderMgr != nullptr) m_renderMgr->Remove(this);
     if(m_lightMgr != nullptr) m_lightMgr->RemoveShadowObject(this);
     SAFE_DELETE(m_material_clone);
+    material = nullptr;
 }
 
 void RenderComponent::Init() {

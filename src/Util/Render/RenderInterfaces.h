@@ -32,7 +32,6 @@ namespace CSE {
 
     public:
         mutable GLMeshID m_meshId;
-
     };
 
     class SIRender {
