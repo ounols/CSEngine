@@ -1,6 +1,6 @@
-#version 330 core
+#version 300 es
 //#version 100
-#define MAX_LIGHTS 8
+#define MAX_LIGHTS 5
 
 precision highp float;
 precision highp int;
@@ -77,7 +77,7 @@ float GeometrySmith_Fast(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 fresnelSchlick(float cosTheta, vec3 F0);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D);
-vec4 GetShadowTextureInArray(int index, vec2 uv);
+vec4 GetTextureInArray(sampler2D src[MAX_LIGHTS], int index, vec2 uv);
 
 //Macro Functions
 float ClampedPow(float X, float Y) {
@@ -138,7 +138,7 @@ void main(void) {
 		// multiply kD by the inverse metalness such that only non-metals
 		// have diffuse lighting, or a linear blend if partly metal (pure metals
 		// have no diffuse light).
-		kD *= 1.0 - metallic;
+		kD *= 1.0f - metallic;
 
 		// scale light by NdotL
 		float NdotL = max(dot(N, L), 0.0);
@@ -251,7 +251,7 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	// transform to [0,1] range
 	projCoords = projCoords * 0.5 + 0.5;
 	// get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-	float closestDepth = GetShadowTextureInArray(index, projCoords.xy).r;
+	float closestDepth = GetTextureInArray(u_shadowMap, index, projCoords.xy).r;
 //	float closestDepth = texture(u_shadowMap[index], projCoords.xy).r;
 	// get depth of current fragment from light's perspective
 	float currentDepth = projCoords.z;
@@ -266,7 +266,7 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	{
 		for(int y = -1; y <= 1; ++y)
 		{
-			float pcfDepth = GetShadowTextureInArray(index, projCoords.xy + vec2(x, y) * texelSize).r;
+			float pcfDepth = GetTextureInArray(u_shadowMap, index, projCoords.xy + vec2(x, y) * texelSize).r;
 //			float pcfDepth = texture(u_shadowMap[index], projCoords.xy + vec2(x, y) * texelSize).r;
 			shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
 		}
@@ -280,16 +280,13 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	return shadow;
 }
 
-vec4 GetShadowTextureInArray(int index, vec2 uv) {
+vec4 GetTextureInArray(sampler2D src[MAX_LIGHTS], int index, vec2 uv) {
 	if(index >= MAX_LIGHTS) return vec4(0.0f);
-	if(index == 0) return texture(u_shadowMap[0], uv);
-	if(index == 1) return texture(u_shadowMap[1], uv);
-	if(index == 2) return texture(u_shadowMap[2], uv);
-	if(index == 3) return texture(u_shadowMap[3], uv);
-	if(index == 4) return texture(u_shadowMap[4], uv);
-	if(index == 5) return texture(u_shadowMap[5], uv);
-	if(index == 6) return texture(u_shadowMap[6], uv);
-	if(index == 7) return texture(u_shadowMap[7], uv);
+	if(index == 0) return texture(src[0], uv);
+	if(index == 1) return texture(src[1], uv);
+	if(index == 2) return texture(src[2], uv);
+	if(index == 3) return texture(src[3], uv);
+	if(index == 4) return texture(src[4], uv);
 
-	return texture(u_shadowMap[0], uv);
+	return texture(src[0], uv);
 }
