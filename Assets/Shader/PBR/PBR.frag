@@ -64,11 +64,8 @@ const lowp float c_zero = 0.0;
 const lowp float c_one = 1.0;
 const float PI = 3.14159265359;
 
-#if __VERSION__ == 300 // For ES
-/** for android **/
 const lowp float c_shadow_width = 1024.f;
 const lowp float c_shadow_height = 1024.f;
-#endif
 
 //Functions
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -264,11 +261,7 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	// float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
 	// PCF
 	float shadow = 0.0;
-#if __VERSION__ == 300 // For ES
 	vec2 texelSize = 1.0 / vec2(c_shadow_width, c_shadow_height);
-#else
-	vec2 texelSize = 1.0 / textureSize(u_shadowMap[index], 0);
-#endif
 	for(int x = -1; x <= 1; ++x)
 	{
 		for(int y = -1; y <= 1; ++y)
