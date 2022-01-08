@@ -270,35 +270,45 @@ void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMe
 	GLint weight = handle.Attributes.Weight;
 	GLint jointId = handle.Attributes.JointId;
 
-	if (meshId.m_indexSize < 0) {
-		glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
-		glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
-		glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, offset);
 
-		offset = (GLvoid*)(sizeof(vec3) * 2);
-		glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, stride, offset);
+    glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
+    glEnableVertexAttribArray(position);
+    glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
+    if(normal >= 0) {
+        glEnableVertexAttribArray(normal);
+        glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, offset);
+    }
 
-		offset = (GLvoid*)(sizeof(vec3) * 2 + sizeof(vec2));
-		glVertexAttribPointer(weight, 3, GL_FLOAT, GL_FALSE, stride, offset);
-		offset = (GLvoid*)(sizeof(vec3) * 3 + sizeof(vec2));
-		glVertexAttribPointer(jointId, 3, GL_FLOAT, GL_FALSE, stride, offset);
+    offset = (GLvoid*)(sizeof(vec3) * 2);
+    if(tex >= 0) {
+        glEnableVertexAttribArray(tex);
+        glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, stride, offset);
+    }
+
+    offset = (GLvoid*)(sizeof(vec3) * 2 + sizeof(vec2));
+    if(weight >= 0) {
+        glEnableVertexAttribArray(weight);
+        glVertexAttribPointer(weight, 3, GL_FLOAT, GL_FALSE, stride, offset);
+    }
+    offset = (GLvoid*)(sizeof(vec3) * 3 + sizeof(vec2));
+    if(jointId >= 0) {
+        glEnableVertexAttribArray(jointId);
+        glVertexAttribPointer(jointId, 3, GL_FLOAT, GL_FALSE, stride, offset);
+    }
+
+    if (meshId.m_indexSize < 0) {
 		glDrawArrays(GL_TRIANGLES, 0, meshId.m_vertexSize);
 	}
 	else {
-		glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
-		glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
-		glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, offset);
-
-		offset = (GLvoid*)(sizeof(vec3) * 2);
-		glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, stride, offset);
-
-		offset = (GLvoid*)(sizeof(vec3) * 2 + sizeof(vec2));
-		glVertexAttribPointer(weight, 3, GL_FLOAT, GL_FALSE, stride, offset);
-		offset = (GLvoid*)(sizeof(vec3) * 3 + sizeof(vec2));
-		glVertexAttribPointer(jointId, 3, GL_FLOAT, GL_FALSE, stride, offset);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshId.m_indexBuffer);
 		glDrawElements(GL_TRIANGLES, meshId.m_indexSize * 3, GL_UNSIGNED_SHORT, nullptr);
 	}
+
+    glDisableVertexAttribArray(position);
+    if(normal >= 0)     glDisableVertexAttribArray(normal);
+    if(tex >= 0)        glDisableVertexAttribArray(tex);
+    if(weight >= 0)     glDisableVertexAttribArray(weight);
+    if(jointId >= 0)    glDisableVertexAttribArray(jointId);
 }
 
 void ShaderUtil::BindAttributeToPlane() {
