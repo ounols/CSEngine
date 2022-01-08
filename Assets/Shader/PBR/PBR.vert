@@ -1,7 +1,7 @@
-#version 330 core
+#version 300 es
 
 
-#define MAX_LIGHTS 8
+#define MAX_LIGHTS 5
 #define MAX_WEIGHTS 3
 #define MAX_JOINTS 60
 
