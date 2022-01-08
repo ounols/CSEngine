@@ -120,12 +120,6 @@ void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer)
     glUseProgram(m_geometryHandle->Program);
     const auto& renderLayer = gbuffer.GetRendersLayer();
 
-    glEnableVertexAttribArray(m_geometryHandle->Attributes.Position);
-    glEnableVertexAttribArray(m_geometryHandle->Attributes.Normal);
-    glEnableVertexAttribArray(m_geometryHandle->Attributes.TextureCoord);
-    glEnableVertexAttribArray(m_geometryHandle->Attributes.Weight);
-    glEnableVertexAttribArray(m_geometryHandle->Attributes.JointId);
-
     for (const auto& render : renderLayer) {
         if (render == nullptr) continue;
         if (!render->isRenderActive) continue;
@@ -133,12 +127,6 @@ void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer)
         render->SetMatrix(cameraMatrix);
         render->Render();
     }
-
-    glDisableVertexAttribArray(m_geometryHandle->Attributes.Position);
-    glDisableVertexAttribArray(m_geometryHandle->Attributes.Normal);
-    glDisableVertexAttribArray(m_geometryHandle->Attributes.TextureCoord);
-    glDisableVertexAttribArray(m_geometryHandle->Attributes.Weight);
-    glDisableVertexAttribArray(m_geometryHandle->Attributes.JointId);
 
 //    std::string save_str = CSE::AssetsPath() + "test.bmp";
 //    saveScreenshot(save_str.c_str());
@@ -218,13 +206,6 @@ void RenderMgr::RenderInstances(const CameraBase& camera, const GLProgramHandle*
             //Attach Light
             lightMgr->AttachLightToShader(&handler);
 
-            // Initialize various state.
-            glEnableVertexAttribArray(handler.Attributes.Position);
-            glEnableVertexAttribArray(handler.Attributes.Normal);
-            glEnableVertexAttribArray(handler.Attributes.TextureCoord);
-            glEnableVertexAttribArray(handler.Attributes.Weight);
-            glEnableVertexAttribArray(handler.Attributes.JointId);
-
             for (const auto& render : renderComp) {
                 if (render == nullptr) continue;
                 if (!render->isRenderActive) continue;
@@ -232,12 +213,6 @@ void RenderMgr::RenderInstances(const CameraBase& camera, const GLProgramHandle*
                 render->SetMatrix(cameraMatrix);
                 render->Render();
             }
-
-            glDisableVertexAttribArray(handler.Attributes.Position);
-            glDisableVertexAttribArray(handler.Attributes.Normal);
-            glDisableVertexAttribArray(handler.Attributes.TextureCoord);
-            glDisableVertexAttribArray(handler.Attributes.Weight);
-            glDisableVertexAttribArray(handler.Attributes.JointId);
         }
     }
 
@@ -265,9 +240,6 @@ void RenderMgr::RenderShadowInstance(const CameraBase& camera, const GLProgramHa
 
     glUseProgram(customHandlerID);
     // Initialize various state.
-    glEnableVertexAttribArray(custom_handler.Attributes.Position);
-    glEnableVertexAttribArray(custom_handler.Attributes.Weight);
-    glEnableVertexAttribArray(custom_handler.Attributes.JointId);
 
     glClear(GL_DEPTH_BUFFER_BIT);
     for (const auto& shadowObject : render_objects) {
@@ -280,9 +252,6 @@ void RenderMgr::RenderShadowInstance(const CameraBase& camera, const GLProgramHa
         shadowObject->SetMatrix(cameraMatrix, &custom_handler);
         shadowObject->Render(&custom_handler);
     }
-    glDisableVertexAttribArray(custom_handler.Attributes.Position);
-    glDisableVertexAttribArray(custom_handler.Attributes.Weight);
-    glDisableVertexAttribArray(custom_handler.Attributes.JointId);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
