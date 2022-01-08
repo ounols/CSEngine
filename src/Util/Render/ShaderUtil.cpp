@@ -260,6 +260,7 @@ void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMe
 	GLint weight = handle.Attributes.Weight;
 	GLint jointId = handle.Attributes.JointId;
 
+    if(position < 0) return;
 
     glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
     glEnableVertexAttribArray(position);
