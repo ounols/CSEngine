@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CSEFRAMEBUFFER version="1.0.0">
+<info width="512" height="512" dimension="0"/>
+<buffers>
+<buffer type="0" format="6407" isTexture="1"/>
+</buffers>
+</CSEFRAMEBUFFER>
