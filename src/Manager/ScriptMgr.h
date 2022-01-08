@@ -10,19 +10,19 @@ namespace CSE {
     public:
         ScriptMgr();
 
-        ~ScriptMgr();
+        ~ScriptMgr() override;
 
         void Init() override;
 
 
-        static void RegisterScript(std::string script);
+        static void RegisterScript(const std::string& script);
 
     private:
         void DefineClasses(HSQUIRRELVM vm = Sqrat::DefaultVM::Get());
 
         void ReleaseSqratObject();
 
-        void ReadScriptList() const;
+        static void ReadScriptList() ;
 
         template <class T>
         Sqrat::Class<T>& SQRClassDef(std::string className, HSQUIRRELVM vm = Sqrat::DefaultVM::Get());

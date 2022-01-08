@@ -3,6 +3,9 @@
 
 #include "../../MoreComponentFunc.h"
 #include "../../../Manager/GameObjectMgr.h"
+#include "../../Render/SFrameBuffer.h"
+#include "../../Render/SMaterial.h"
+#include "../../Render/STexture.h"
 
 using namespace CSE;
 
@@ -14,10 +17,14 @@ void XMLParser::parse(std::vector<std::string> values, void* dst, SType type) {
 	//    else if(type == "arr") dst = (void*)parseInt(values[0].c_str());
 
 	else if (type == SType::RESOURCE) dst = (void*)parseResources<SResource>(values[0].c_str());
-	else if (type == SType::TEXTURE) dst = (void*)parseTexture(values[0].c_str());
 	else if (type == SType::MATERIAL) dst = (void*)parseMaterial(values[0].c_str());
-	
-	else if (type == SType::COMPONENT) dst = (void*)parseComponent(values[0].c_str());
+    else if (type == SType::TEXTURE) {
+        dst = (void*)parseTexture(values[0].c_str());
+        if(dst == nullptr) dst = (void*)parseFrameBuffer(values[0].c_str());
+    }
+
+
+    else if (type == SType::COMPONENT) dst = (void*)parseComponent(values[0].c_str());
 	else if (type == SType::GAME_OBJECT) dst = (void*)parseGameObject(values[0].c_str());
 
 	else if (type == SType::VEC2) *static_cast<vec2*>(dst) = parseVec2(values);
@@ -42,19 +49,41 @@ bool XMLParser::parseBool(const char* value) {
 }
 
 vec2 XMLParser::parseVec2(std::vector<std::string> values) {
-	return vec2(std::stof(values[0]), std::stof(values[1]));
+	return {std::stof(values[0]), std::stof(values[1])};
 }
 
 vec3 XMLParser::parseVec3(std::vector<std::string> values) {
-	return vec3(std::stof(values[0]), std::stof(values[1]), std::stof(values[2]));
+	return {std::stof(values[0]), std::stof(values[1]), std::stof(values[2])};
 }
 
 vec4 XMLParser::parseVec4(std::vector<std::string> values) {
-	return vec4(std::stof(values[0]), std::stof(values[1]), std::stof(values[2]), std::stof(values[3]));
+	return {std::stof(values[0]), std::stof(values[1]), std::stof(values[2]), std::stof(values[3])};
 }
 
 STexture* XMLParser::parseTexture(const char* value) {
+    const auto& asset = CORE->GetCore(ResMgr)->GetAssetReference(value);
+    if(asset == nullptr || asset->type == AssetMgr::FRAMEBUFFER) {
+        const auto value_split = split(value, '?');
+        if(value_split.size() <= 1)
+            return SResource::Create<STexture>(value);
+
+        const auto& frameBuffer = SResource::Create<SFrameBuffer>(value_split[0]);
+        return frameBuffer->GetTexture(value);
+    }
 	return SResource::Create<STexture>(value);
+}
+
+SFrameBuffer* XMLParser::parseFrameBuffer(const char* value) {
+    std::string value_result = value;
+    const auto split_index = value_result.rfind('?');
+    if(split_index != std::string::npos)
+        value_result = value_result.substr(0, split_index - 1);
+
+    const auto& asset = CORE->GetCore(ResMgr)->GetAssetReference(value_result);
+    if(asset->type != AssetMgr::FRAMEBUFFER) {
+        return nullptr;
+    }
+    return SResource::Create<SFrameBuffer>(asset);
 }
 
 SMaterial* XMLParser::parseMaterial(const char* value) {
@@ -92,6 +121,26 @@ SType XMLParser::GetType(std::string type) {
 	if (type == "mat2") return SType::MAT2;
 	if (type == "mat3") return SType::MAT3;
 	if (type == "mat4") return SType::MAT4;
+
+    return SType::UNKNOWN;
+}
+
+SType XMLParser::GetType(unsigned int type) {
+    if (type == GL_BOOL) return SType::BOOL;
+    if (type == GL_FLOAT) return SType::FLOAT;
+    if (type == GL_INT) return SType::INT;
+    //    if(type == "arr") dst = (void*)parseInt(values[0].c_str());
+
+    if (type == GL_SAMPLER_2D) return SType::TEXTURE;
+
+
+    if (type == GL_FLOAT_VEC2) return SType::VEC2;
+    if (type == GL_FLOAT_VEC3) return SType::VEC3;
+    if (type == GL_FLOAT_VEC4) return SType::VEC4;
+
+    if (type == GL_FLOAT_MAT2) return SType::MAT2;
+    if (type == GL_FLOAT_MAT3) return SType::MAT3;
+    if (type == GL_FLOAT_MAT4) return SType::MAT4;
 
     return SType::UNKNOWN;
 }

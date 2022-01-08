@@ -18,6 +18,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <utility>
 
 #endif
 
@@ -40,13 +41,9 @@ void Exploring(SGameObject* obj, int level = 0) {
 
 }
 
-SSceneLoader::SSceneLoader() {
+SSceneLoader::SSceneLoader() = default;
 
-}
-
-SSceneLoader::~SSceneLoader() {
-
-}
+SSceneLoader::~SSceneLoader() = default;
 
 bool SSceneLoader::SaveScene(SScene* scene, std::string path) {
 
@@ -58,7 +55,7 @@ bool SSceneLoader::SaveScene(SScene* scene, std::string path) {
 
 	value << "</CSESCENE>";
 
-	return Save(value.str(), path);
+	return Save(value.str(), std::move(path));
 }
 
 std::string SSceneLoader::GetGameObjectValue(SGameObject* obj, bool ignorePrefab) {
@@ -102,11 +99,10 @@ bool SSceneLoader::SavePrefab(SGameObject* root, std::string path) {
 
 	value << "</CSEPREFAB>";
 
-	return Save(value.str(), path);
+	return Save(value.str(), std::move(path));
 }
 
-
-bool SSceneLoader::Save(std::string buf, std::string path) {
+bool SSceneLoader::Save(const std::string& buf, const std::string& path) {
 #ifndef __ANDROID__
 	std::ofstream file(path);
 	if (!file.is_open()) return false;
@@ -119,7 +115,7 @@ bool SSceneLoader::Save(std::string buf, std::string path) {
 	return false;
 }
 
-SScene* SSceneLoader::LoadScene(std::string path) {
+SScene* SSceneLoader::LoadScene(const std::string& path) {
 	const XNode* m_root;
 
 	try {
@@ -129,8 +125,7 @@ SScene* SSceneLoader::LoadScene(std::string path) {
 		return nullptr;
 	}
 
-	SScene* scene = new SScene();
-
+	auto scene = new SScene();
 
 	XNode sce_scene = m_root->getChild("CSESCENE");
 
@@ -138,8 +133,7 @@ SScene* SSceneLoader::LoadScene(std::string path) {
 	std::vector<NodeKey*> gameobjects;
 	std::vector<ComponentValue*> components;
 
-
-	for (auto node_obj : node_gameobjects) {
+	for (const auto& node_obj : node_gameobjects) {
 		if (node_obj.name == "gameobject") {
 			ExploringScene(node_obj, gameobjects, components);
 		}
@@ -166,32 +160,32 @@ SScene* SSceneLoader::LoadScene(std::string path) {
 
 }
 
-void SSceneLoader::ExploringScene(XNode node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps) {
+void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps) {
 
 	std::string name = ConvertSpaceStr(node.getAttribute("name").value);
 	auto node_components = node.children;
 	std::string id = ConvertSpaceStr(node.getAttribute("id").value);
-	SGameObject* obj_new = new SGameObject(name);
+	auto obj_new = new SGameObject(name);
 
-
-	for (auto comp : node_components) {
+	for (const auto& comp : node_components) {
 		if (comp.name != "component") continue;
 
 		std::string comp_type = comp.getAttribute("type").value;
+		bool comp_enable = comp.getAttribute("enable").value == "1";
 		SComponent* component = (comp_type == "TransformComponent")
 			                        ? static_cast<TransformComponent*>(obj_new->GetTransform())
 			                        : MoreComponentFunc::CreateComponent(obj_new, comp_type);
 
-		ComponentValue* comp_val = new ComponentValue();
+		auto comp_val = new ComponentValue();
 		comp_val->id = id + "?" + comp_type;
 		comp_val->node = comp;
 		comp_val->comp = component;
+        component->SetIsEnable(comp_enable);
 
 		comps.push_back(comp_val);
 	}
 
-
-	NodeKey* key = new NodeKey();
+	auto key = new NodeKey();
 	key->node = node;
 	key->id = id;
 	key->obj = obj_new;
@@ -259,13 +253,13 @@ void SSceneLoader::LinkingReference(std::vector<ComponentValue*>& comps) {
 
 	for (auto comp : comps) {
 		auto node = comp->node;
-		for (auto value : node.children) {
+		for (const auto& value : node.children) {
 			if (value.name != "value") continue;
 
 			std::string v_name = value.getAttribute("name").value;
 			auto v_values = value.value.toStringVector();
 
-			for (int i = 0; i < v_values.size(); i++) {
+			for (int i = 0; i < v_values.size(); ++i) {
 				v_values[i] = ConvertSpaceStr(v_values[i], true);
 			}
 
@@ -275,18 +269,16 @@ void SSceneLoader::LinkingReference(std::vector<ComponentValue*>& comps) {
 
 }
 
-void SSceneLoader::ExploringPrefab(XNode node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps,
+void SSceneLoader::ExploringPrefab(const XNode& node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps,
                                    SScene* scene) {
 	std::string name = ConvertSpaceStr(node.getAttribute("name").value, true);
 	auto node_values = node.children;
 	std::string id = ConvertSpaceStr(node.getAttribute("id").value, true);
 	std::string file_id = ConvertSpaceStr(node.getAttribute("fileid").value, true);
 
-
 	//Create!
-	SPrefab* prefab = SResource::Create<SPrefab>(file_id);
+	auto prefab = SResource::Create<SPrefab>(file_id);
 	SGameObject* root = prefab->Clone(vec3(), scene->GetRoot());
-
 
 	//Change objects value
 	for (const auto& child : node_values) {
@@ -307,7 +299,7 @@ void SSceneLoader::ExploringPrefab(XNode node, std::vector<NodeKey*>& objs, std:
 
 }
 
-void SSceneLoader::LinkingResourceID(XNode node, SGameObject* root, std::vector<NodeKey*>& objs,
+void SSceneLoader::LinkingResourceID(const XNode& node, SGameObject* root, std::vector<NodeKey*>& objs,
                                      std::vector<ComponentValue*>& comps) {
 
 	std::string obj_fileid = ConvertSpaceStr(node.getAttribute("fileid").value, true);
@@ -317,13 +309,12 @@ void SSceneLoader::LinkingResourceID(XNode node, SGameObject* root, std::vector<
 		std::string obj_id = ConvertSpaceStr(node.getAttribute("id").value, true);
 		std::string obj_name = ConvertSpaceStr(node.getAttribute("name").value, true);
 
-		NodeKey* key = new NodeKey();
+		auto key = new NodeKey();
 		key->obj = root;
 		key->node = node;
 		key->id = obj_id;
 		root->SetName(obj_name);
 		objs.push_back(key);
-
 
 		for (const auto& comp : node.children) {
 			if (comp.name != "component") continue;
@@ -341,7 +332,7 @@ void SSceneLoader::LinkingResourceID(XNode node, SGameObject* root, std::vector<
 			if (component == nullptr)
 				component = MoreComponentFunc::CreateComponent(root, comp_type);
 
-			ComponentValue* comp_val = new ComponentValue();
+			auto comp_val = new ComponentValue();
 			comp_val->id = obj_id + "?" + comp_type;
 			comp_val->node = comp;
 			comp_val->comp = component;
@@ -356,10 +347,9 @@ void SSceneLoader::LinkingResourceID(XNode node, SGameObject* root, std::vector<
 	}
 }
 
-
 std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 
-	SPrefab* prefab = SResource::Get<SPrefab>(obj->GetResourceID());
+	auto prefab = SResource::Get<SPrefab>(obj->GetResourceID());
 	if (prefab == nullptr) return "";
 
 	std::string str_p = GetGameObjectValue(prefab->GetRoot(), true);
@@ -401,7 +391,7 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 
 		if (!isFind) continue;
 
-		bool isChanged = false;
+		bool isChanged;
 
 		//이름 확인
 		isChanged = obj_name != target_node.getAttribute("name").value;
@@ -421,14 +411,14 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 			std::string parent_o = object_node.getChild("parent").value;
 			std::string parent_p = target_node.getChild("parent").value;
 
-			for (auto obj_node : n_o->children) {
+			for (const auto& obj_node : n_o->children) {
 				if (obj_node.getAttribute("id").value == parent_o) {
 					o_parent_resID = obj_node.getAttribute("fileid").value;
 					break;
 				}
 			}
 
-			for (auto prf_node : n_p->children) {
+			for (const auto& prf_node : n_p->children) {
 				if (prf_node.getAttribute("id").value == parent_p) {
 					p_parent_resID = prf_node.getAttribute("fileid").value;
 					break;
@@ -440,7 +430,6 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 			isChanged = isChanged || p_parent_resID != o_parent_resID;
 
 		}
-
 
 		if (isChanged) {
 			std::string id = object_node.getAttribute("id").value;

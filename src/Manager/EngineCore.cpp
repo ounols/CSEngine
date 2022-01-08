@@ -13,7 +13,12 @@
 #include "SceneMgr.h"
 #include "MemoryMgr.h"
 #include "../Sample/FirstDemoScene.h"
+#include "../Util/Loader/SCENE/SSceneLoader.h"
+#include "../Util/AssetsDef.h"
+
+#ifdef __EMSCRIPTEN__
 #include "../Sample/WebDemoScene.h"
+#endif
 
 using namespace CSE;
 IMPLEMENT_SINGLETON(EngineCore);
@@ -51,6 +56,10 @@ void EngineCore::Update(float elapsedTime) {
     for (const auto& core : m_updateCores) {
         core->Update(elapsedTime);
     }
+}
+
+void EngineCore::LateUpdate(float elapsedTime) {
+    m_gameObjectMgr->DestroyQueuedObject();
 }
 
 void EngineCore::Render() const {

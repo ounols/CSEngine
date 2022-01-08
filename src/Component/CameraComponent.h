@@ -6,13 +6,12 @@
 #include "DrawableStaticMeshComponent.h"
 
 namespace CSE {
-
     struct CameraMatrixStruct {
         mat4 camera;
         mat4 projection;
         vec3 cameraPosition;
 
-        CameraMatrixStruct(mat4 camera, mat4 projection, vec3 cameraPosition)
+        CameraMatrixStruct(const mat4& camera, const mat4& projection, const vec3& cameraPosition)
                 : camera(camera), projection(projection), cameraPosition(cameraPosition) {}
     };
 
@@ -26,8 +25,7 @@ namespace CSE {
     public:
         CameraComponent();
 
-        ~CameraComponent();
-
+        ~CameraComponent() override;
 
         void Exterminate() override;
 
@@ -57,11 +55,11 @@ namespace CSE {
 
         CameraMatrixStruct GetCameraMatrixStruct() const override;
 
-        void SetTarget(vec3 target);
+        void SetTargetVector(const vec3& target);
 
-        void SetTarget(SGameObject* gameobject);
+        void SetTarget(SGameObject* gameObject);
 
-        void SetUp(vec3 up);
+        void SetUp(const vec3& up);
 
         void SetCameraType(CAMERATYPE type);
 
@@ -79,7 +77,6 @@ namespace CSE {
 
         void SetFrameBuffer(SFrameBuffer* frameBuffer);
 
-
     private:
         void SetCameraMatrix();
 
@@ -94,7 +91,6 @@ namespace CSE {
         vec3 m_resultTarget;
         SFrameBuffer* m_frameBuffer = nullptr;
 
-
         CAMERATYPE m_type = PERSPECTIVE;
         mutable bool m_isProjectionInited = false;
 
@@ -102,7 +98,7 @@ namespace CSE {
         float m_pFov = 45.f;
         float* m_pRatio;
 
-        //Ortho
+        //Orthographic
         float m_oLeft = -1.f;
         float m_oRight = 1.f;
         float m_oBottom = -1.f;
@@ -110,7 +106,5 @@ namespace CSE {
 
         float m_Near = 0.1f;
         float m_Far = 100.f;
-
     };
-
 }

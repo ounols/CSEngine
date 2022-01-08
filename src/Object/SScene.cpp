@@ -10,9 +10,7 @@ SScene::SScene() {
     m_root = new SGameObject("__ROOT_OF_SCENE__");
 }
 
-SScene::~SScene() {
-
-}
+SScene::~SScene() = default;
 
 void SScene::Init() {
     InitGameObject(m_root);
@@ -28,15 +26,16 @@ void SScene::Destroy() {
 
 void SScene::InitGameObject(SGameObject* obj) {
     obj->Init();
-    for (auto child : obj->GetChildren()) {
+    const auto& children = obj->GetChildren();
+    for (const auto& child : children) {
         InitGameObject(child);
     }
 }
 
 void SScene::TickGameObject(SGameObject* obj, float elapsedTime) {
     obj->Tick(elapsedTime);
-
-    for (auto child : obj->GetChildren()) {
+    const auto& children = obj->GetChildren();
+    for (const auto& child : children) {
         TickGameObject(child, elapsedTime);
     }
 }

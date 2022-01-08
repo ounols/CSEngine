@@ -1,10 +1,11 @@
-#include "DAELoader.h"
+﻿#include "DAELoader.h"
 #include "../../MoreString.h"
 #include "DAEUtil/DAEConvertSGameObject.h"
 #include <iostream>
 #include "../../../Component/DrawableSkinnedMeshComponent.h"
 #include "../../../Component/RenderComponent.h"
 #include "../../Render/STexture.h"
+#include "../../Render/SMaterial.h"
 #include "../../../Manager/EngineCore.h"
 
 using namespace CSE;
@@ -23,14 +24,13 @@ DAELoader::~DAELoader() {
 }
 
 void DAELoader::Load(const char* path, LOAD_TYPE type) {
-
     {
         std::string path_str = path;
-        std::size_t index = path_str.rfind("/");
+        std::size_t index = path_str.rfind('/');
         if (index == std::string::npos) {
-            index = path_str.rfind("\\");
+            index = path_str.rfind('\\');
         }
-        std::size_t name_index = path_str.rfind(".");
+        std::size_t name_index = path_str.rfind('.');
 
         m_name = path_str.substr(index + 1, name_index - index - 1);
 
@@ -99,7 +99,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
 void DAELoader::LoadTexture(const AssetMgr::AssetReference* asset) {
     if (asset == nullptr) return;
 
-    STexture* texture = SResource::Create<STexture>(asset);
+    auto* texture = SResource::Create<STexture>(asset);
     m_texture_name = texture->GetName();
 }
 
@@ -115,7 +115,7 @@ void DAELoader::Exterminate() {
 //    m_skeletonData->Destroy();
 }
 
-bool DAELoader::LoadSkin(XNode root_s) {
+bool DAELoader::LoadSkin(const XNode& root_s) {
 #ifdef __EMSCRIPTEN__
     if(!root_s.hasChild("controller")) return false;
 #endif
@@ -124,7 +124,7 @@ bool DAELoader::LoadSkin(XNode root_s) {
 
     std::vector<std::string> jointsList = loadJointsList(skinningData);
     std::vector<float> weights = loadWeights(skinningData);
-    XNode weightsDataNode = skinningData.getChild("vertex_weights");
+    const XNode& weightsDataNode = skinningData.getChild("vertex_weights");
     std::vector<int> effectorJointCounts = getEffectiveJointsCounts(weightsDataNode);
     std::vector<VertexSkinData*> vertexWeights = getSkinData(weightsDataNode, effectorJointCounts, weights);
 
@@ -136,14 +136,14 @@ bool DAELoader::LoadSkin(XNode root_s) {
     return true;
 }
 
-bool DAELoader::LoadSkeleton(XNode root_s) {
+bool DAELoader::LoadSkeleton(const XNode& root_s) {
 #ifdef __EMSCRIPTEN__
     if(!root_s.hasChild("visual_scene")) return false;
     if(!root_s.getChild("visual_scene").hasNodeByAttribute("node", "id", "Armature")) return false;
 #endif
     XNode armatureData = root_s.getChild("visual_scene").getNodeByAttribute("node", "id", "Armature");
 
-    XNode headNode = armatureData.getChild("node");
+    const XNode& headNode = armatureData.getChild("node");
     Joint* headJoint = loadJointData(headNode, true);
 
 
@@ -156,11 +156,11 @@ bool DAELoader::LoadSkeleton(XNode root_s) {
     return true;
 }
 
-bool DAELoader::LoadGeometry(XNode root_g, DAEMeshData* meshData) {
+bool DAELoader::LoadGeometry(const XNode& root_g, DAEMeshData* meshData) {
 #ifdef __EMSCRIPTEN__
     if(!root_g.hasChild("mesh")) return false;
 #endif
-    XNode root_m = root_g.getChild("mesh");
+    const XNode& root_m = root_g.getChild("mesh");
     std::vector<VertexSkinData*> vertexSkinData;
     if (m_isSkinning) {
         vertexSkinData =
@@ -171,28 +171,30 @@ bool DAELoader::LoadGeometry(XNode root_g, DAEMeshData* meshData) {
     ReadPositions(root_m, vertexSkinData, meshData);
 
 
-    std::string normalsId = "";
-    std::string texCoordsId = "";
+    std::string normalsId;
+    std::string texCoordsId;
 
     try {
 #ifdef __EMSCRIPTEN__
         if(!root_m.hasChild("polylist")) return false;
 #endif
-        XNode polylist = root_m.getChild("polylist");
+        const XNode& polylist = root_m.getChild("polylist");
 
         normalsId = polylist.getNodeByAttribute("input", "semantic", "NORMAL")
                 .getAttribute("source").value.substr(1);
-        XNode childWithAttribute = polylist.getNodeByAttribute("input", "semantic", "TEXCOORD");
+        const XNode& childWithAttribute = polylist.getNodeByAttribute("input", "semantic", "TEXCOORD");
         texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
+        m_polygonType = POLYGON_TYPE::POLYLIST;
     }
     catch (int error) {
         try {
-            XNode triangles = root_m.getChild("triangles");
+            const XNode& triangles = root_m.getChild("triangles");
 
-            XNode normals = triangles.getNodeByAttribute("input", "semantic", "NORMAL");
+            const XNode& normals = triangles.getNodeByAttribute("input", "semantic", "NORMAL");
             normalsId = normals.getAttribute("source").value.substr(1);
-            XNode childWithAttribute = triangles.getNodeByAttribute("input", "semantic", "TEXCOORD");
+            const XNode& childWithAttribute = triangles.getNodeByAttribute("input", "semantic", "TEXCOORD");
             texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
+            m_polygonType = POLYGON_TYPE::TRIANGLES;
         }
         catch (int error) {}
     }
@@ -213,7 +215,7 @@ bool DAELoader::LoadGeometry(XNode root_g, DAEMeshData* meshData) {
 // GeometryLoader Functions
 //===================================================================
 
-void DAELoader::ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWeight, DAEMeshData* meshData) {
+void DAELoader::ReadPositions(const XNode& data, std::vector<VertexSkinData*> vertexWeight, DAEMeshData* meshData) const {
     std::string positionID = data.getChild("vertices").getChild("input").getAttribute("source").value.substr(1);
     XNode positionData = data.getNodeByAttribute("source", "id", positionID.c_str()).getChild("float_array");
     int vertsSize = std::stoi(positionData.getAttribute("count").value);
@@ -233,7 +235,7 @@ void DAELoader::ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWei
 
 }
 
-void DAELoader::ReadNormals(XNode data, std::string normalsId, DAEMeshData* meshData) {
+void DAELoader::ReadNormals(const XNode& data, const std::string& normalsId, DAEMeshData* meshData) {
     XNode normalsData = data.getNodeByAttribute("source", "id", normalsId.c_str()).getChild("float_array");
     int normalsSize = std::stoi(normalsData.getAttribute("count").value);
     std::vector<float> normals = normalsData.value.toFloatVector();
@@ -247,7 +249,7 @@ void DAELoader::ReadNormals(XNode data, std::string normalsId, DAEMeshData* mesh
         mat4 transform = mat4::Translate(x, y, z) * CORRECTION;
         // std::cout << "{ " << x << ", " << y << ", " << z << " }, ";
         // Matrix4f.transform(CORRECTION, normal, normal);
-        meshData->normals.push_back(vec3{ transform.w.x, transform.w.y, transform.w.z });
+        meshData->normals.emplace_back( transform.w.x, transform.w.y, transform.w.z );
 
     }
 
@@ -255,7 +257,7 @@ void DAELoader::ReadNormals(XNode data, std::string normalsId, DAEMeshData* mesh
 
 }
 
-void DAELoader::ReadUVs(XNode data, std::string texCoordsId, DAEMeshData* meshData) {
+void DAELoader::ReadUVs(const XNode& data, const std::string& texCoordsId, DAEMeshData* meshData) {
     XNode texData = data.getNodeByAttribute("source", "id", texCoordsId.c_str()).getChild("float_array");
     int uvSize = std::stoi(texData.getAttribute("count").value);
     auto uvs = texData.value.toFloatVector();
@@ -264,7 +266,7 @@ void DAELoader::ReadUVs(XNode data, std::string texCoordsId, DAEMeshData* meshDa
         float s = uvs[i * 2];
         float t = uvs[i * 2 + 1];
 
-        meshData->texUVs.push_back(vec2{ s, t });
+        meshData->texUVs.emplace_back( s, t );
     }
 
 
@@ -273,11 +275,11 @@ void DAELoader::ReadUVs(XNode data, std::string texCoordsId, DAEMeshData* meshDa
 
 }
 
-void DAELoader::AssembleVertices(XNode data, DAEMeshData* meshData) {
-    XNode poly = data.getChild("polylist");
+void DAELoader::AssembleVertices(const XNode& data, DAEMeshData* meshData) {
+    XNode poly = data.getChild(m_polygonType == POLYLIST ? "polylist" : "triangles");
     int typeCount = 0;
 
-    for (auto child : poly.children) {
+    for (const auto& child : poly.children) {
         if (child.name == "input") {
             int offset = std::stoi(child.getAttribute("offset").value) + 1;
             if (offset > typeCount) {
@@ -289,13 +291,12 @@ void DAELoader::AssembleVertices(XNode data, DAEMeshData* meshData) {
     std::vector<int> indexData = poly.getChild("p").value.toIntegerVector();
     int texcoordOffset = -1;
     try {
-        XNode texSemantic = poly.getNodeByAttribute("input", "semantic", "TEXCOORD");
+        const XNode& texSemantic = poly.getNodeByAttribute("input", "semantic", "TEXCOORD");
         texcoordOffset = std::stoi(texSemantic.getAttribute("offset").value);
     }
     catch (int error) {
         texcoordOffset = -1;
     }
-
 
     // std::cout << "\n\ntypeCount : " << typeCount << '\n';
 
@@ -334,7 +335,7 @@ Vertex* DAELoader::dealWithAlreadyProcessedVertex(Vertex* previousVertex, int ne
         if (anotherVertex != nullptr) {
             return dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex, meshData);
         } else {
-            Vertex* duplicateVertex = new Vertex(meshData->vertices.size(),
+            auto* duplicateVertex = new Vertex(meshData->vertices.size(),
                                                  previousVertex->getPosition(), previousVertex->getWeightsData());
             duplicateVertex->setTextureIndex(newTextureIndex);
             duplicateVertex->setNormalIndex(newNormalIndex);
@@ -362,8 +363,8 @@ void DAELoader::removeUnusedVertices(DAEMeshData* meshData) {
 // SkinLoader Functions
 //===================================================================
 
-std::vector<std::string> DAELoader::loadJointsList(XNode skinningData) {
-    XNode inputNode = skinningData.getChild("vertex_weights");
+std::vector<std::string> DAELoader::loadJointsList(const XNode& skinningData) {
+    const XNode& inputNode = skinningData.getChild("vertex_weights");
     std::string jointDataId = inputNode.getNodeByAttribute("input", "semantic", "JOINT").getAttribute(
             "source").value.substr(1);
     XNode jointsNode = skinningData.getNodeByAttribute("source", "id", jointDataId.c_str()).getChild("Name_array");
@@ -373,8 +374,8 @@ std::vector<std::string> DAELoader::loadJointsList(XNode skinningData) {
     return jointsList;
 }
 
-std::vector<float> DAELoader::loadWeights(XNode skinningData) {
-    XNode inputNode = skinningData.getChild("vertex_weights");
+std::vector<float> DAELoader::loadWeights(const XNode& skinningData) {
+    const XNode& inputNode = skinningData.getChild("vertex_weights");
     std::string weightsDataId = inputNode.getNodeByAttribute("input", "semantic", "WEIGHT").getAttribute(
             "source").value.substr(1);
     XNode weightsNode = skinningData.getNodeByAttribute("source", "id", weightsDataId.c_str()).getChild("float_array");
@@ -383,18 +384,25 @@ std::vector<float> DAELoader::loadWeights(XNode skinningData) {
     return weights;
 }
 
-std::vector<int> DAELoader::getEffectiveJointsCounts(XNode node) {
-    return node.getChild("vcount").value.toIntegerVector();
+std::vector<int> DAELoader::getEffectiveJointsCounts(const XNode& node) {
+    if(m_polygonType == POLYLIST) {
+        return node.getChild("vcount").value.toIntegerVector();
+    }
+
+    // TODO: Triangle 형식일 때의 Joint 갯수를 작성해야 함
+    return {};
 }
 
 std::vector<VertexSkinData*>
-DAELoader::getSkinData(XNode weightsDataNode, std::vector<int> counts, std::vector<float> weights) {
+DAELoader::getSkinData(const XNode& weightsDataNode, const std::vector<int>& counts, std::vector<float> weights) const {
     auto rawData = weightsDataNode.getChild("v").value.toIntegerVector();
+    auto weightsCount = std::stoi(weightsDataNode.getAttribute("count").value);
     std::vector<VertexSkinData*> skinningData;
     int pointer = 0;
-    for (int count : counts) {
-        VertexSkinData* skinData = new VertexSkinData();
-        for (int i = 0; i < count; i++) {
+    for (int index = 0; index < weightsCount; ++index) {
+        auto* skinData = new VertexSkinData();
+        short count = (m_polygonType == POLYLIST) ? counts[index] : static_cast<short>(m_polygonType);
+        for (short i = 0; i < count; ++i) {
             int jointId = rawData[pointer++];
             int weightId = rawData[pointer++];
             skinData->addJointEffect(jointId, weights[weightId]);
@@ -405,12 +413,11 @@ DAELoader::getSkinData(XNode weightsDataNode, std::vector<int> counts, std::vect
     return skinningData;
 }
 
-
 //===================================================================
 // SkeletonLoader Functions
 //===================================================================
 
-Joint* DAELoader::extractMainJointData(XNode jointNode, bool isRoot) {
+Joint* DAELoader::extractMainJointData(const XNode& jointNode, bool isRoot) {
     std::string nameId = jointNode.getAttribute("id").value;
     int index = -1;
     auto jointOrders = m_skinningData->get_jointOrder();
@@ -435,12 +442,12 @@ Joint* DAELoader::extractMainJointData(XNode jointNode, bool isRoot) {
     return new Joint(index, nameId, matrix);
 }
 
-Joint* DAELoader::loadJointData(XNode jointNode, bool isRoot) {
+Joint* DAELoader::loadJointData(const XNode& jointNode, bool isRoot) {
     Joint* joint = extractMainJointData(jointNode, isRoot);
 
     try {
 
-        for (XNode childNode : jointNode.children) {
+        for (const XNode& childNode : jointNode.children) {
             if (childNode.name == "node") {
                 joint->addChild(loadJointData(childNode, false));
             }
@@ -451,7 +458,7 @@ Joint* DAELoader::loadJointData(XNode jointNode, bool isRoot) {
     return joint;
 }
 
-void DAELoader::LoadTexturePath(XNode imageNode) {
+void DAELoader::LoadTexturePath(const XNode& imageNode) {
 #ifdef __EMSCRIPTEN__
     if(!imageNode.hasChild("image")) return;
 #endif
@@ -463,7 +470,7 @@ void DAELoader::LoadTexturePath(XNode imageNode) {
     LoadTexture(asset);
 }
 
-void DAELoader::ConvertDataToVectors(DAEMeshData* meshData) {
+void DAELoader::ConvertDataToVectors(DAEMeshData* meshData) const {
     std::vector<float> vertices;
     std::vector<float> normals;
     std::vector<float> texUVs;
@@ -511,12 +518,10 @@ void DAELoader::ConvertDataToVectors(DAEMeshData* meshData) {
         weights[i * 3] = weightsData->getWeights()[0];
         weights[i * 3 + 1] = weightsData->getWeights()[1];
         weights[i * 3 + 2] = weightsData->getWeights()[2];
-
     }
     AttachDataToObjSurface(meshData->vertices.size(), vertices, normals, texUVs, meshData->indices, jointIDs, weights,
                            meshData);
 }
-
 
 void
 DAELoader::AttachDataToObjSurface(int vertices_size, std::vector<float> vertices, std::vector<float> normals,
@@ -530,10 +535,9 @@ DAELoader::AttachDataToObjSurface(int vertices_size, std::vector<float> vertices
 }
 
 SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
-
     if (prefab == nullptr)
         prefab = new SPrefab();
-    SGameObject* root = new SGameObject(m_name);
+    auto* root = new SGameObject(m_name);
     prefab->SetGameObject(root);
 
     SGameObject* joint_root = nullptr;
@@ -546,7 +550,7 @@ SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
 
     JointComponent* joint_root_component = m_isSkinning ? joint_root->GetChildren().front()->GetComponent<JointComponent>() : nullptr;
     for (const auto& mesh : m_meshList) {
-        SGameObject* mesh_root = new SGameObject(mesh->meshName);
+        auto* mesh_root = new SGameObject(mesh->meshName);
         root->AddChild(mesh_root);
         DrawableStaticMeshComponent* mesh_component = nullptr;
 
@@ -577,14 +581,12 @@ SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
                                                                            m_name, animation);
     }
 
-
     return prefab;
 }
 
 SPrefab* DAELoader::GeneratePrefab(const char* path, Skeleton* skeleton, MeshSurface* mesh, Animation* animation,
                                    SPrefab* prefab) {
-
-    DAELoader* loader = new DAELoader(path, AUTO, false);
+    auto* loader = new DAELoader(path, AUTO, false);
     auto asset = CORE->GetCore(ResMgr)->GetAssetReference(path);
     if (asset == nullptr) {
         SAFE_DELETE(loader);

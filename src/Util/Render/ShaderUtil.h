@@ -18,11 +18,12 @@ namespace CSE {
         static GLProgramHandle* CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragmentSource,
                                                     GLProgramHandle* handle = nullptr);
 
-        static GLuint createProgram(const GLchar* vertexSource, const GLchar* fragmentSource);
+        static GLuint
+        createProgram(const GLchar* vertexSource, const GLchar* fragmentSource, const GLProgramHandle& handle);
 
-        static GLuint createProgram(GLuint vertexShader, GLuint fragmentShader);
+        static GLuint createProgram(GLuint vertexShader, GLuint fragmentShader, const GLProgramHandle& handle);
 
-        static GLuint loadShader(GLenum shaderType, const char* pSource);
+        static GLuint loadShader(GLenum shaderType, const char *pSource, const GLProgramHandle& handle);
 
         static std::map<std::string, std::string> GetImportantVariables(const GLchar* source);
 
@@ -32,7 +33,7 @@ namespace CSE {
                                        const mat4& projection, const mat4& transform);
 
         static void BindAttributeToShader(const GLProgramHandle& handle, const GLMeshID& meshId);
-        static void BindAttributeToLightPass(const GLProgramHandle& handle);
+        static void BindAttributeToPlane();
 
         static void BindSkinningDataToShader(const GLProgramHandle& handle, const GLMeshID& meshId,
                                              const std::vector<mat4>& jointMatrix);

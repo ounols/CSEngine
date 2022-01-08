@@ -9,7 +9,7 @@ namespace CSE {
     public:
         DrawableStaticMeshComponent();
 
-        virtual ~DrawableStaticMeshComponent();
+        ~DrawableStaticMeshComponent() override;
 
         void Init() override;
 

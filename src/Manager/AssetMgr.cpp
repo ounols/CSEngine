@@ -6,15 +6,14 @@
 #include "../MacroDef.h"
 #include "../Util/AssetsDef.h"
 #include "../Util/MoreString.h"
+#include "../Util/SafeLog.h"
 #include "EngineCore.h"
 #include "ResMgr.h"
 #include <iostream>
 
 #ifdef __linux__
-
 #include <sys/types.h>
 #include <dirent.h>
-
 
 #elif WIN32
 #include <windows.h>
@@ -29,9 +28,7 @@
 #endif
 using namespace CSE;
 
-AssetMgr::AssetMgr() {
-
-}
+AssetMgr::AssetMgr() = default;
 
 AssetMgr::~AssetMgr() {
     Exterminate();
@@ -69,11 +66,12 @@ AssetMgr::AssetReference* AssetMgr::GetAsset(std::string name) const {
         if (make_lower_copy(asset->path) == name) return asset;
         if (make_lower_copy(asset->name_full) == name) return asset;
     }
-
+    auto errorLog = "[Assets Warning] " + name + " does not exist.";
+    SafeLog::Log(errorLog.c_str());
     return nullptr;
 }
 
-void AssetMgr::ReadDirectory(std::string path) {
+void AssetMgr::ReadDirectory(const std::string& path) {
 #ifdef __ANDROID__
     return;
     AAssetDir* assetDir = AAssetManager_openDir(m_assetManager, "");
@@ -135,7 +133,7 @@ void AssetMgr::ReadDirectory(std::string path) {
 #endif //================================================
 }
 
-void AssetMgr::ReadPackage(std::string path) {
+void AssetMgr::ReadPackage(const std::string& path) {
 #ifdef __ANDROID__
     if(m_zip == nullptr) {
         SafeLog::Log(path.c_str());
@@ -163,8 +161,8 @@ void AssetMgr::ReadPackage(std::string path) {
 
 }
 
-AssetMgr::AssetReference* AssetMgr::CreateAsset(std::string path, std::string name_full, std::string name) {
-    AssetReference* asset = new AssetReference();
+AssetMgr::AssetReference* AssetMgr::CreateAsset(const std::string& path, const std::string& name_full, std::string name) {
+    auto asset = new AssetReference();
     asset->path = path;
     asset->id = "File:" + path.substr(CSE::AssetsPath().size());
     asset->name_full = name_full;
@@ -186,8 +184,8 @@ AssetMgr::AssetReference* AssetMgr::CreateAsset(std::string path, std::string na
 
 void AssetMgr::SetType() {
 
-	for (int i = 0; i < m_assets.size(); i++) {
-		auto asset = m_assets[i];
+	for (int i = 0; i < m_assets.size(); ++i) {
+		const auto asset = m_assets[i];
         std::string type_str = asset->extension;
         make_lower(type_str);
 
@@ -206,9 +204,9 @@ void AssetMgr::SetType() {
             continue;
         }
 
-        //cube map texture data
+        // framebuffer data
         if (type_str == "framebuffer") {
-            asset->type = TEX_FRAMEBUFFER;
+            asset->type = FRAMEBUFFER;
             asset->name += ".frameBuffer";
             continue;
         }
@@ -289,7 +287,7 @@ void AssetMgr::SetType() {
 
 }
 
-AssetMgr::AssetReference* AssetMgr::AppendSubName(AssetMgr::AssetReference* asset, std::string sub_name) {
+AssetMgr::AssetReference* AssetMgr::AppendSubName(AssetMgr::AssetReference* asset, const std::string& sub_name) {
     std::string sub = '?' + sub_name;
     asset->id += sub;
     asset->name += sub;
@@ -308,7 +306,7 @@ std::vector<AssetMgr::AssetReference*> AssetMgr::GetAssets(AssetMgr::TYPE type) 
     return result;
 }
 
-std::string AssetMgr::LoadAssetFile(std::string path) {
+std::string AssetMgr::LoadAssetFile(const std::string& path) {
     if(ASSET_PACKED == false)
         return OpenNativeAssetsTxtFile(path);
 

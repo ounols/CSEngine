@@ -7,7 +7,7 @@ namespace CSE {
     class CameraMgr : public SContainer<CameraComponent*>, public CoreBase {
     public:
         explicit CameraMgr();
-        ~CameraMgr();
+        ~CameraMgr() override;
 
         void Init() override;
 
@@ -24,7 +24,7 @@ namespace CSE {
 
     private:
         CameraComponent* m_currentCamera = nullptr;
-        float m_projectionRatio;
+        float m_projectionRatio = 1.0f;
 
     };
 }

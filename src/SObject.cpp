@@ -16,8 +16,7 @@ SObject::SObject(bool isRegister) {
     if(isRegister) memoryMgr->Register(this);
 }
 
-SObject::~SObject() {
-}
+SObject::~SObject() = default;
 
 
 void SObject::SetUndestroyable(bool enable) {

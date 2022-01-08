@@ -8,12 +8,11 @@ namespace CSE {
 
     class VertexSkinData {
     public:
-        VertexSkinData() {}
+        VertexSkinData() = default;
 
-        ~VertexSkinData() {}
+        ~VertexSkinData() = default;
 
         void addJointEffect(int jointId, float weight) {
-            auto index = 0;
             auto jointID_it = m_jointIDs.begin();
             auto weight_it = m_weights.begin();
             for (const auto& weight_object : m_weights) {
@@ -68,7 +67,7 @@ namespace CSE {
             return total;
         }
 
-        void refillWeightList(std::vector<float> topWeights, float total) {
+        void refillWeightList(const std::vector<float>& topWeights, float total) {
             m_weights.clear();
             m_weights.reserve(topWeights.size());
             for (const auto& topWeight : topWeights) {

@@ -41,6 +41,9 @@ namespace CSE {
             std::vector<int> indices;
             std::string meshName;
         };
+        enum POLYGON_TYPE {
+            POLYLIST = -1, TRIANGLES = 3,
+        };
     public:
         DAELoader(const char* path, LOAD_TYPE type, bool isLoad);
 
@@ -60,56 +63,56 @@ namespace CSE {
                                        SPrefab* prefab = nullptr);
 
     private:
-        bool LoadSkin(XNode root_s);
+        bool LoadSkin(const XNode& root_s);
 
-        bool LoadSkeleton(XNode root_s);
+        bool LoadSkeleton(const XNode& root_s);
 
-        bool LoadGeometry(XNode root_g, DAEMeshData* meshData);
+        bool LoadGeometry(const XNode& root_g, DAEMeshData* meshData);
 
 //===================================================================
 // GeometryLoader Functions
 //===================================================================
-        void ReadPositions(XNode data, std::vector<VertexSkinData*> vertexWeight, DAEMeshData* meshData);
+        void ReadPositions(const XNode& data, std::vector<VertexSkinData*> vertexWeight, DAEMeshData* meshData) const;
 
-        void ReadNormals(XNode data, std::string normalsId, DAEMeshData* meshData);
+        static void ReadNormals(const XNode& data, const std::string& normalsId, DAEMeshData* meshData);
 
-        void ReadUVs(XNode data, std::string texCoordsId, DAEMeshData* meshData);
+        static void ReadUVs(const XNode& data, const std::string& texCoordsId, DAEMeshData* meshData);
 
-        void AssembleVertices(XNode data, DAEMeshData* meshData);
+        void AssembleVertices(const XNode& data, DAEMeshData* meshData);
 
         Vertex* processVertex(int posIndex, int normIndex, int texIndex, DAEMeshData* meshData);
 
         Vertex* dealWithAlreadyProcessedVertex(Vertex* previousVertex, int newTextureIndex, int newNormalIndex,
                                                DAEMeshData* meshData);
 
-        void removeUnusedVertices(DAEMeshData* meshData);
+        static void removeUnusedVertices(DAEMeshData* meshData);
 
-        void ConvertDataToVectors(DAEMeshData* meshData);
+        void ConvertDataToVectors(DAEMeshData* meshData) const;
 
 //===================================================================
 // SkinLoader Functions
 //===================================================================
-        std::vector<std::string> loadJointsList(XNode skinningData);
+        static std::vector<std::string> loadJointsList(const XNode& skinningData);
 
-        std::vector<float> loadWeights(XNode skinningData);
+        static std::vector<float> loadWeights(const XNode& skinningData);
 
-        std::vector<int> getEffectiveJointsCounts(XNode node);
+        std::vector<int> getEffectiveJointsCounts(const XNode& node);
 
         std::vector<VertexSkinData*>
-        getSkinData(XNode weightsDataNode, std::vector<int> counts, std::vector<float> weights);
+        getSkinData(const XNode& weightsDataNode, const std::vector<int>& counts, std::vector<float> weights) const;
 
 //===================================================================
 // SkeletonLoader Functions
 //===================================================================
 
-        Joint* loadJointData(XNode jointNode, bool isRoot);
+        Joint* loadJointData(const XNode& jointNode, bool isRoot);
 
-        Joint* extractMainJointData(XNode jointNode, bool isRoot);
+        Joint* extractMainJointData(const XNode& jointNode, bool isRoot);
 
-        void LoadTexturePath(XNode imageNode);
+        void LoadTexturePath(const XNode& imageNode);
 
 
-        void AttachDataToObjSurface(int vertices_size, std::vector<float> vertices, std::vector<float> normals,
+        static void AttachDataToObjSurface(int vertices_size, std::vector<float> vertices, std::vector<float> normals,
                                     std::vector<float> texUVs, std::vector<int> indices, std::vector<short> jointIDs,
                                     std::vector<float> weights, DAEMeshData* meshData);
 
@@ -130,6 +133,7 @@ namespace CSE {
         int m_jointSize = 0;
 
         bool m_isSkinning = false;
+        POLYGON_TYPE m_polygonType = POLYGON_TYPE::POLYLIST;
 
         std::string m_name;
         std::string m_texture_name;

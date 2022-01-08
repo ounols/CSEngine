@@ -14,9 +14,9 @@ namespace CSE {
     class SComponent;
 
     class SGameObject : public SObject {
-    private:
+    public:
         enum STATUS {
-            IDLE, INIT, DESTROY, UNKOWN
+            IDLE = 0, INIT = 1, DESTROY = -1, UNKOWN = -2
         };
     public:
         SGameObject();
@@ -66,7 +66,7 @@ namespace CSE {
         template <class T>
         T* GetComponentByID(std::string id) const;
 
-        SComponent* GetSComponentByID(std::string id) const;
+        SComponent* GetSComponentByID(const std::string& id) const;
 
         const std::list<SComponent*>& GetComponents() const;
 
@@ -98,6 +98,9 @@ namespace CSE {
             return m_transform;
         }
 
+        STATUS GetStatus() const {
+            return m_status;
+        }
 
         bool GetIsEnable() const;
 
@@ -125,13 +128,13 @@ namespace CSE {
 
         std::string GetResourceID() const;
 
-        void SetResourceID(std::string resID, bool setChildren = false);
+        void SetResourceID(const std::string& resID, bool setChildren = false);
     };
 
 
     template <class T>
     T* SGameObject::GetComponent() {
-        for (const auto component : m_components) {
+        for (const auto& component : m_components) {
             if (component == nullptr) continue;
             if (dynamic_cast<T*>(component)) {
                 return static_cast<T*>(component);
@@ -143,7 +146,6 @@ namespace CSE {
 
     template <class T>
     T* SGameObject::GetComponentByID(std::string id) const {
-
         return static_cast<T*>(GetSComponentByID(id));
     }
 
@@ -151,7 +153,6 @@ namespace CSE {
 
     template <class T>
     T* SGameObject::CreateComponent() {
-
         T* component = new T();
         AddComponent(component);
         if (m_status == IDLE)

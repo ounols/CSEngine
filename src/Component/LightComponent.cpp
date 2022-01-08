@@ -4,6 +4,7 @@
 #include "TransformComponent.h"
 #include "../Manager/EngineCore.h"
 #include "../Util/Render/SFrameBuffer.h"
+#include "../Util/GLProgramHandle.h"
 
 using namespace CSE;
 
@@ -18,7 +19,7 @@ COMPONENT_CONSTRUCTOR(LightComponent) {
 }
 
 
-LightComponent::~LightComponent() {}
+LightComponent::~LightComponent() = default;
 
 
 void LightComponent::Exterminate() {
@@ -73,7 +74,7 @@ void LightComponent::SetLightType(LIGHT type) {
 }
 
 
-void LightComponent::SetDirection(vec4 direction) const {
+void LightComponent::SetDirection(const vec4& direction) const {
 
     switch (m_type) {
 
@@ -90,7 +91,7 @@ void LightComponent::SetDirection(vec4 direction) const {
 }
 
 
-void LightComponent::SetColor(vec3 color) const {
+void LightComponent::SetColor(const vec3& color) const {
     m_light->color = color;
 
 }
@@ -100,7 +101,7 @@ void LightComponent::SetLightRadius(float radius) const {
 }
 
 
-void LightComponent::SetAttenuationFactor(vec3 att) const {
+void LightComponent::SetAttenuationFactor(const vec3& att) const {
     m_light->att = att;
 }
 
@@ -119,7 +120,7 @@ void LightComponent::SetDepthMap() {
     auto lightMgr = CORE->GetCore(LightMgr);
     m_frameBuffer = new SFrameBuffer();
     // 1. Generate a framebuffer.
-    // 큐브 텍스쳐도 호환되도록 수정이 필요함 (for point shadow)
+    // todo: 큐브 텍스쳐도 호환되도록 수정이 필요함 (for point shadow)
     m_frameBuffer->GenerateFramebuffer(SFrameBuffer::PLANE);
     // 2. Generate a depth texture.
     m_depthTexture = m_frameBuffer->GenerateTexturebuffer(SFrameBuffer::DEPTH,
@@ -144,7 +145,7 @@ LightComponent::LIGHT LightComponent::GetType() const {
     return m_type;
 }
 
-vec4 LightComponent::GetDirection(vec4 direction) const {
+vec4 LightComponent::GetDirection(const vec4& direction) const {
     return m_light->direction;
 }
 
@@ -161,28 +162,36 @@ SComponent* LightComponent::Clone(SGameObject* object) {
 	INIT_COMPONENT_CLONE(LightComponent, clone);
 
 	clone->m_type = m_type;
-	clone->DisableAmbient = DisableAmbient;
-	clone->DisableDiffuse = DisableDiffuse;
-	clone->DisableSpecular = DisableSpecular;
 	clone->m_disableShadow = m_disableShadow;
 
 	clone->m_near = m_near;
 	clone->m_far = m_far;
+    clone->SetLightType(clone->m_type);
 
 	return clone;
 }
 
 void LightComponent::SetValue(std::string name_str, Arguments value) {
+    if (name_str == "m_type") {
+        m_type = static_cast<LIGHT>(std::stoi(value[0]));
+    } else if (name_str == "m_disableShadow") {
+        m_disableShadow = std::stoi(value[0]) == 1;
+    } else if (name_str == "m_near") {
+        m_near = std::stof(value[0]);
+    } else if (name_str == "m_far") {
+        m_far = std::stof(value[0]);
+    }
+
+    SetLightType(m_type);
 }
 
 std::string LightComponent::PrintValue() const {
 	PRINT_START("component");
 
 	PRINT_VALUE(m_type, static_cast<int>(m_type));
-	//PRINT_VALUE(DisableAmbient, m_startTime);
-	//PRINT_VALUE(m_currentAnimation, ConvertSpaceStr(m_currentAnimation->GetID()));
-	//PRINT_VALUE(m_entity, ConvertSpaceStr(m_entity->GetGameObject()->GetID(m_entity)));
-
+	PRINT_VALUE(m_disableShadow, m_disableShadow ? 1 : 0);
+    PRINT_VALUE(m_near, m_near);
+    PRINT_VALUE(m_far, m_far);
 
 	PRINT_END("component");
 }
@@ -205,9 +214,13 @@ void LightComponent::BindShadow(const GLProgramHandle& handle, int handleIndex, 
 
 CameraMatrixStruct LightComponent::GetCameraMatrixStruct() const {
     const auto& position = gameObject->GetTransform();
-    return CameraMatrixStruct(m_lightViewMatrix, m_lightProjectionMatrix, position->m_position);
+    return { m_lightViewMatrix, m_lightProjectionMatrix, position->m_position };
 }
 
 SFrameBuffer* LightComponent::GetFrameBuffer() const {
     return m_frameBuffer;
+}
+
+bool LightComponent::IsShadow() const {
+    return !m_disableShadow;
 }

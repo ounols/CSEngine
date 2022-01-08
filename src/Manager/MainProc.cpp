@@ -3,8 +3,7 @@
 
 using namespace CSE;
 
-MainProc::MainProc() {
-}
+MainProc::MainProc() = default;
 
 
 MainProc::~MainProc() {
@@ -20,6 +19,7 @@ void MainProc::Init(GLuint width, GLuint height) {
 
 void MainProc::Update(float elapsedTime) {
     CORE->Update(elapsedTime);
+    CORE->LateUpdate(elapsedTime);
 }
 
 

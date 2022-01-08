@@ -6,7 +6,6 @@
 
 namespace CSE {
 
-    class SEnvironmentMgr;
     class CameraBase;
     class SGBuffer;
 
@@ -17,27 +16,23 @@ namespace CSE {
 
     public:
         void Init() override;
-
         void SetViewport();
-
         void Render() const override;
 
-
+    protected:
+        void Exterminate() override;
 
     private:
-        void RenderGbuffer(const CameraBase& camera) const;
-        void RenderInstance(const CameraBase& camera, const GLProgramHandle* custom_handler = nullptr) const;
+        void ResetBuffer(const CameraBase& camera) const;
+        void RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer) const;
+        void RenderGbuffers(const CameraBase& camera) const;
+        void RenderInstances(const CameraBase& camera, const GLProgramHandle* custom_handler = nullptr) const;
         void RenderShadowInstance(const CameraBase& camera, const GLProgramHandle& custom_handler,
                                   const std::list<SIRender*>& render_objects = std::list<SIRender*>()) const;
 
-        void Exterminate();
-
     private:
-        mat4 m_NoneCamera;
-        unsigned int* m_width = nullptr;
-        unsigned int* m_height = nullptr;
-
-        SEnvironmentMgr* m_environmentMgr = nullptr;
-        SGBuffer* m_gbufferObject = nullptr;
+        SFrameBuffer* m_mainBuffer = nullptr;
+        GLProgramHandle* m_mainProgramHandle = nullptr;
+        GLProgramHandle* m_geometryHandle = nullptr;
     };
 }

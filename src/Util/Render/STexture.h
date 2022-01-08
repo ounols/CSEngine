@@ -18,15 +18,13 @@ namespace CSE {
         };
     public:
         STexture();
-        STexture(Type type);
+        explicit STexture(Type type);
 
-        virtual ~STexture();
+        ~STexture() override;
 
         bool LoadFile(const char* path);
 
         virtual bool Load(unsigned char* data);
-
-        bool LoadEmpty();
 
         bool ReloadFile(const char* path);
 
@@ -36,10 +34,10 @@ namespace CSE {
             return m_texId;
         }
 
-        virtual bool InitTexture(int width, int height, int channel = GL_RGB, int internalFormat = GL_RGB,
+        virtual bool InitTexture(int width, int height, int channel = GL_RGB, int internalFormat = GL_RGB8,
                                  int glType = GL_UNSIGNED_BYTE);
 
-        bool InitTextureMipmap(int width, int height, int channel = GL_RGB, int internalFormat = GL_RGB,
+        bool InitTextureMipmap(int width, int height, int channel = GL_RGB, int internalFormat = GL_RGB8,
                                  int glType = GL_UNSIGNED_BYTE);
 
         virtual void SetParameteri(int targetName, int value) const;
@@ -53,14 +51,25 @@ namespace CSE {
 
         virtual void Bind(GLint location, int layout);
 
-        void GenerateMipmap();
+        static void BindEmpty(GLint location, int layout, STexture::Type type = TEX_2D);
+
+        void GenerateMipmap() const;
 
         Type GetType() const;
 
         void SetType(Type type);
 
+        int getMWidth() const;
+
+        int getMHeight() const;
+
     protected:
-        virtual void Init(const AssetMgr::AssetReference* asset) override;
+        void Init(const AssetMgr::AssetReference* asset) override;
+
+    private:
+        static void LoadEmpty();
+
+        static int GetTypeToTargetGL(STexture::Type type);
 
     protected:
         Type m_type = TEX_2D;
@@ -72,6 +81,9 @@ namespace CSE {
         int m_glType = GL_UNSIGNED_BYTE;
 
         unsigned int m_texId = 0;
+
+    private:
+        static unsigned int m_emptyTextureId;
     };
 
 }

@@ -12,7 +12,7 @@ namespace CSE {
 
     class SkinningData {
     public:
-        SkinningData() {}
+        SkinningData() = default;
 
         ~SkinningData() {
             for (auto skin : m_verticesSkinData) {

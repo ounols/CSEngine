@@ -1,5 +1,6 @@
 #include "CustomComponent.h"
-#include "../Util/AssetsDef.h"
+
+#include <utility>
 #include "../Manager/ScriptMgr.h"
 #include "../MacroDef.h"
 #include "../Object/SScriptObject.h"
@@ -13,9 +14,7 @@ COMPONENT_CONSTRUCTOR(CustomComponent) {
 }
 
 
-CustomComponent::~CustomComponent() {
-
-}
+CustomComponent::~CustomComponent() = default;
 
 
 void CustomComponent::Exterminate() {
@@ -94,7 +93,7 @@ void CustomComponent::RegisterScript() {
 
 
 void CustomComponent::SetClassName(std::string name) {
-    SScriptObject* asset = SResource::Get<SScriptObject>(name);
+    auto asset = SResource::Get<SScriptObject>(std::move(name));
     if (asset == nullptr) return;
 
     m_classID = asset->GetID();
@@ -107,9 +106,7 @@ void CustomComponent::SetClassName(std::string name) {
 
 
 std::string CustomComponent::SGetClassName() const {
-
     return m_className;
-
 }
 
 
@@ -172,7 +169,7 @@ std::string CustomComponent::PrintValue() const {
     PRINT_END("component");
 }
 
-void CustomComponent::CreateClassInstance(std::vector<std::string> variables) {
+void CustomComponent::CreateClassInstance(const std::vector<std::string>& variables) {
     if (m_specialization == nullptr) return;
     if (m_classInstance != nullptr) {
         SAFE_DELETE(m_classInstance);
@@ -243,7 +240,7 @@ void CustomComponent::BindValue(CustomComponent::VARIABLE* variable, const char*
         MoreComponentFunc::BindComponentToSQInstance(comp, variable->name, m_classInstance);
     }
     else if(type == "gobj") {
-        SGameObject* obj = gameObject->FindByID(value_str);
+        SGameObject* obj = SGameObject::FindByID(value_str);
         m_classInstance->set(variable->name.c_str(), obj);
     }
     else if(type == "nut") {

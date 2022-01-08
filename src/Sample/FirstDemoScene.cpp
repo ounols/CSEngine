@@ -1,5 +1,3 @@
-#include <iostream>
-#include <sstream>
 #include "../Util/Render/SEnvironmentMgr.h"
 #include "FirstDemoScene.h"
 #include "../Component/LightComponent.h"
@@ -15,17 +13,14 @@
 #include "../Manager/SCloneFactory.h"
 #include "../Util/Loader/SCENE/SSceneLoader.h"
 #include "../Util/Render/SFrameBuffer.h"
+#include "../Util/Render/SMaterial.h"
 
 using namespace CSE;
 
-FirstDemoScene::FirstDemoScene() {
-
-}
+FirstDemoScene::FirstDemoScene() = default;
 
 
-FirstDemoScene::~FirstDemoScene() {
-
-}
+FirstDemoScene::~FirstDemoScene() = default;
 
 
 void FirstDemoScene::Init() {
@@ -177,11 +172,10 @@ void FirstDemoScene::Init() {
     direction->CreateComponent<LightComponent>();
 //	direction->GetComponent<LightComponent>()->SetColorAmbient(vec4{ 0.07f, 0.07f, 0.07f, 1 });
 //	direction->GetComponent<LightComponent>()->SetColorDiffuse(vec4{ 0.3f, 0.5f, 0.5f, 1 });
-    direction->GetComponent<LightComponent>()->DisableSpecular = false;
     direction->GetComponent<LightComponent>()->SetSunrising(true);
     direction->GetComponent<LightComponent>()->SetLightType(LightComponent::DIRECTIONAL);
     direction->GetComponent<LightComponent>()->SetDirection(vec4{ 0.0f, 1.0f, 1, 0 });
-    direction->GetComponent<LightComponent>()->m_disableShadow = false;
+    direction->GetComponent<LightComponent>()->SetShadow(true);
 
     direction->CreateComponent<CustomComponent>();
     direction->GetComponent<CustomComponent>()->SetClassName("directionalLight.script");
@@ -200,7 +194,7 @@ void FirstDemoScene::Init() {
     d->GetComponent<LightComponent>()->SetColor(vec3{ 10, 10, 10 });
     d->GetComponent<LightComponent>()->SetLightType(LightComponent::POINT);
     d->GetComponent<LightComponent>()->SetLightRadius(1);
-    d->GetComponent<LightComponent>()->m_disableShadow = true;
+    d->GetComponent<LightComponent>()->SetShadow(false);
     d->CreateComponent<DrawableStaticMeshComponent>();
     d->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
 //    d->CreateComponent<MaterialComponent>();
@@ -225,7 +219,7 @@ void FirstDemoScene::Init() {
 
     c4->CreateComponent<CameraComponent>();
     c4->GetComponent<CameraComponent>()->SetTarget(d);
-    c4->GetComponent<CameraComponent>()->SetFrameBuffer(buffer);
+    c4->GetComponent<CameraComponent>()->SetFrameBuffer(SResource::Create<SFrameBuffer>("File:Texture/TestFrameBuffer.framebuffer"));
     //===============
 
     SSceneLoader::SavePrefab(root, CSE::NativeAssetsPath() + "Scene/test_scene.scene");
@@ -248,7 +242,7 @@ void FirstDemoScene::Tick(float elapsedTime) {
 
     if (elapsedTime - startTIme > 3000) {
         startTIme = elapsedTime;
-        isUnvisible = !isUnvisible;
+        isInvisible = !isInvisible;
 //		switchingObject();
     }
 }
@@ -260,9 +254,9 @@ void FirstDemoScene::Destroy() {
 
 void FirstDemoScene::switchingObject() {
 
-    c3->SetIsEnable(!isUnvisible);
+    c3->SetIsEnable(!isInvisible);
 
-    if (isUnvisible) {
+    if (isInvisible) {
         c2->Destroy();
 //        d->GetComponent<LightComponent>()->SetLightType(LightComponent::POINT);
 

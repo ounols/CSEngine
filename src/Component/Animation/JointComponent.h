@@ -11,7 +11,7 @@ namespace CSE {
 
         JointComponent(const JointComponent& src);
 
-        ~JointComponent();
+        ~JointComponent() override;
 
         void Exterminate() override;
 
@@ -51,9 +51,9 @@ namespace CSE {
             return m_inverseTransformMatrix;
         }
 
-        void calcInverseBindTransform(mat4 parentTransform);
+        void calcInverseBindTransform(const mat4& parentTransform);
 
-        void SetBindLocalMatrix(mat4 mat);
+        void SetBindLocalMatrix(const mat4& mat);
 
     private:
         int m_id;

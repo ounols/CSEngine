@@ -15,7 +15,6 @@ namespace CSE {
     class SMaterial : public SResource {
     public:
         enum SMaterialMode { NORMAL = 0, DEFERRED = 1 };
-        enum SMaterialPass { NONE = 0, GEOMETRY_PASS = 1, LIGHT_PASS = 0 };
     private:
         struct Element {
             int id = HANDLE_NULL;
@@ -38,19 +37,19 @@ namespace CSE {
 
         void SetHandle(GLProgramHandle* handle);
 
-        void AttachElement(SMaterialPass renderPassType = SMaterialPass::NONE) const;
+        void AttachElement() const;
 
 		void InitElements(const ElementsMap& elements, GLProgramHandle* handle);
 
 		void SetAttribute(const GLMeshID& meshId) const;
 
-		void SetInt(std::string name, int value);
+		void SetInt(const std::string& name, int value);
 
-		void SetFloat(std::string name, float value);
+		void SetFloat(const std::string& name, float value);
 
-		void SetVec3(std::string name, vec3 value);
+		void SetVec3(const std::string& name, const vec3& value);
 
-		void SetTexture(std::string name, SResource* texture);
+		void SetTexture(const std::string& name, SResource* texture);
 
         short GetOrderLayer() const;
 
@@ -62,13 +61,17 @@ namespace CSE {
 
         GLProgramHandle* GetHandle() const;
 
+        GLProgramHandle* GetLightPassHandle() const;
+
+        static SMaterial* GenerateMaterial(GLProgramHandle* handle);
+
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 
     private:
         void ReleaseElements();
 
-		void SetBindFuncByType(Element* element, bool isUniform);
+		void SetBindFuncByType(Element* element);
 
         static void SetIntFunc(Element* element, int value);
         static void SetFloatFunc(Element* element, float value);
@@ -85,11 +88,10 @@ namespace CSE {
 
     private:
         GLProgramHandle* m_handle = nullptr;
-        GLProgramHandle* m_geometryPassHandle = nullptr;
+        GLProgramHandle* m_lightPassHandle = nullptr;
         short m_orderLayer = 5000;
         //std::vector<Element*> m_elements;
 		ElementsMap m_elements;
-		ElementsMap m_geometryElements;
 		mutable int m_textureLayout = 0;
         SMaterialMode m_mode = NORMAL;
 

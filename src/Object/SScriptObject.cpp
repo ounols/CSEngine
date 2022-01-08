@@ -14,13 +14,9 @@
 using namespace CSE;
 using namespace Sqrat;
 
-SScriptObject::SScriptObject() {
+SScriptObject::SScriptObject() = default;
 
-}
-
-SScriptObject::~SScriptObject() {
-
-}
+SScriptObject::~SScriptObject() = default;
 
 void SScriptObject::Exterminate() {
 
@@ -30,13 +26,13 @@ void SScriptObject::Init(const AssetMgr::AssetReference* asset) {
     RemakeScript(asset->path);
 }
 
-void SScriptObject::RegisterScript(std::string script) {
+void SScriptObject::RegisterScript(const std::string& script) {
     HSQUIRRELVM vm = DefaultVM::Get();
 
     //register script
     if (!script.empty()) {
         Script compiledScript;
-        compiledScript.CompileString(script.c_str());
+        compiledScript.CompileString(script);
         if (Sqrat::Error::Occurred(vm)) {
 #ifdef __ANDROID__
 //            LOGE("Compile Failed : %s", Error::Message(vm).c_str());
@@ -58,7 +54,7 @@ void SScriptObject::RegisterScript(std::string script) {
     }
 }
 
-void SScriptObject::RemakeScript(std::string path) {
+void SScriptObject::RemakeScript(const std::string& path) {
     std::string script_str = AssetMgr::LoadAssetFile(path);
 
     GetVariables(script_str);
@@ -72,7 +68,7 @@ void SScriptObject::RemakeScript(std::string path) {
     RegisterScript(script_str);
 }
 
-void SScriptObject::GetVariables(std::string str) {
+void SScriptObject::GetVariables(const std::string& str) {
 
     auto split_line = split(str, '\n');
     int level = -1;
@@ -98,7 +94,7 @@ void SScriptObject::GetVariables(std::string str) {
         auto split_bs = split(line, '{');
 
 
-        for(auto bs : split_bs) {
+        for(const auto& bs : split_bs) {
 
             if(level == 0 && m_className.empty()) {
                 if(line.find("class") != std::string::npos) {
@@ -113,7 +109,7 @@ void SScriptObject::GetVariables(std::string str) {
             bool isBraceEnd = line.find('}') != std::string::npos;
             auto split_be = split(bs, '}');
 
-            for(auto be : split_be) {
+            for(const auto& be : split_be) {
 
                 if(level == 1) {
                     //split semicolon

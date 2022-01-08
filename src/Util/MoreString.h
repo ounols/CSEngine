@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <utility>
 #include <vector>
 
 
@@ -69,7 +70,7 @@ namespace CSE {
     }
 
     static std::string make_lower_copy(std::string _str) {
-        std::string str(_str);
+        std::string str(std::move(_str));
         std::transform(str.begin(), str.end(), str.begin(), tolower);
         return str;
     }

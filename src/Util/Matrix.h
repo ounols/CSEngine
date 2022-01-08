@@ -7,7 +7,6 @@ namespace CSE {
 
     template <typename T>
     class Matrix2 {
-
     public:
         //    T m_mat[4] = {};
         vec2 x;
@@ -20,14 +19,14 @@ namespace CSE {
             MAT2_YY = 1;
         }
 
-        Matrix2(const T* m) {
+        explicit Matrix2(const T* m) {
             MAT2_XX = m[0];
             MAT2_XY = m[1];
             MAT2_YX = m[2];
             MAT2_YY = m[3];
         }
 
-        ~Matrix2() {}
+        ~Matrix2() = default;
         const T* Pointer() const {
             return &MAT2_XX;
         }
@@ -54,7 +53,7 @@ namespace CSE {
             MAT3_ZZ = 1;
         }
 
-        Matrix3(const T* m) {
+        explicit Matrix3(const T* m) {
             MAT3_XX = m[0];
             MAT3_XY = m[1];
             MAT3_XZ = m[2];
@@ -66,7 +65,7 @@ namespace CSE {
             MAT3_ZZ = m[8];
         }
 
-        ~Matrix3() {}
+        ~Matrix3() = default;
 
         Matrix3 Transposed() const {
             Matrix3 m;
@@ -124,7 +123,7 @@ namespace CSE {
             MAT4_WW = 1;
         }
 
-        Matrix4(const Matrix3<T>& m) {
+        explicit Matrix4(const Matrix3<T>& m) {
             MAT4_XX = m.MAT4_XX;
             MAT4_XY = m.MAT4_XY;
             MAT4_XZ = m.MAT4_XZ;
@@ -143,7 +142,7 @@ namespace CSE {
             MAT4_WW = 1;
         }
 
-        Matrix4(const T* m) {
+        explicit Matrix4(const T* m) {
             MAT4_XX = m[0];
             MAT4_XY = m[1];
             MAT4_XZ = m[2];
@@ -162,7 +161,7 @@ namespace CSE {
             MAT4_WW = m[15];
         }
 
-        ~Matrix4() {}
+        ~Matrix4() = default;
 
         Matrix4 operator*(const Matrix4& b) const {
 
@@ -635,8 +634,6 @@ namespace CSE {
             Vector4<T> eyePrime = m * Vector4<T>(-eye, 1);
             m = m.Transposed();
             m.w = eyePrime;
-            //        m.MAT4_WX = eyePrime.x; m.MAT4_WY = eyePrime.y; m.MAT4_WZ = eyePrime.z; m.MAT4_WW = eyePrime.w;
-
             return m;
         }
 

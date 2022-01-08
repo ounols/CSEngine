@@ -11,7 +11,7 @@ namespace CSE {
     public:
         TransformComponent();
 
-        ~TransformComponent();
+        ~TransformComponent() override;
 
         void Init() override;
 
@@ -29,7 +29,7 @@ namespace CSE {
 
         Quaternion GetRotation() const;
 
-        void SetMatrix(mat4 matrix);
+        void SetMatrix(const mat4& matrix);
 
         void SetValue(std::string name_str, Arguments value) override;
 

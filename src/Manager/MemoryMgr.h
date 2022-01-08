@@ -8,7 +8,7 @@ namespace CSE {
     class MemoryMgr : public MemoryContainer, public CoreBase {
     public:
         explicit MemoryMgr();
-        ~MemoryMgr();
+        ~MemoryMgr() override;
 
     public:
         void ExterminateObjects(bool killAll = false);

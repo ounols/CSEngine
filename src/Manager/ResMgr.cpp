@@ -4,10 +4,13 @@
 #include "EngineCore.h"
 #include "../Util/AssetsDef.h"
 
+#ifdef __ANDROID__
+#include <Util/SafeLog.h>
+#endif
+
 using namespace CSE;
 
-ResMgr::ResMgr() {
-}
+ResMgr::ResMgr() = default;
 
 ResMgr::~ResMgr() {
     Exterminate();
@@ -40,6 +43,7 @@ void ResMgr::Register(SResource* m_object) {
 }
 
 void ResMgr::Remove(SResource* m_object) {
+    if(m_object == nullptr) return;
     auto iObj = std::find(m_resources.begin(), m_resources.end(), m_object);
 
     if (iObj != m_resources.end()) {
@@ -57,7 +61,7 @@ bool ResMgr::IsEmpty() const {
     return m_resources.empty();
 }
 
-int ResMgr::GetStringHash(std::string str) {
+int ResMgr::GetStringHash(const std::string& str) {
 	auto result = std::find(m_stringIds.begin(), m_stringIds.end(), str);
 	if (result != m_stringIds.end()) 
 		return result - m_stringIds.begin();
@@ -83,8 +87,6 @@ std::string ResMgr::RemoveDuplicatingName(std::string name) const {
 }
 
 AssetMgr::AssetReference* ResMgr::GetAssetReference(std::string name) const {
-    make_lower(name);
-
     return m_assetManager->GetAsset(name);
 }
 

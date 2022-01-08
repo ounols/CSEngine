@@ -12,8 +12,9 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class GLRenderer implements GLSurfaceView.Renderer {
 
-    long StartTime;
-    AssetManager assets;
+    private long StartTime;
+    private AssetManager assets;
+    private boolean isInit = false;
 
 
     @Override
@@ -22,7 +23,6 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         StartTime = System.currentTimeMillis();
 
         SCEngineBinder.SetAssetManager(assets);
-        SCEngineBinder.Init(0, 0);
 
 
     }
@@ -30,7 +30,13 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         //surface가 변경될 때 호출되는 콜백함수 입니다.
-        SCEngineBinder.ResizeWindow(width, height);
+        if(!isInit) {
+            SCEngineBinder.Init(width, height);
+            isInit = true;
+        }
+        else {
+            SCEngineBinder.ResizeWindow(width, height);
+        }
     }
 
 

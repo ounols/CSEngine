@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CSEMAT version="1.0.0">
 <shader id="File:Shader/PBR/PBR.shader">
-<var name="TEX2D_ALBEDO" type="tex" count="1">framebuffer_test</var>
-<var name="TEXCUBE_IRRADIANCE" type="tex" count="1">irradiance.textureCubeMap</var>
-<var name="TEXCUBE_PREFILTER" type="tex" count="1">prefilter.textureCubeMap</var>
-<var name="TEX2D_BRDFLUT" type="tex" count="1">brdfLUT.texture</var>
-<var name="FLOAT_ALBEDO" type="vec3" count="1">1 1 1</var>
+<var name="texture.albedo" type="tex" count="1">File:Texture/TestFrameBuffer.framebuffer?Texture0</var>
+<var name="light.irradiance" type="tex" count="1">irradiance.textureCubeMap</var>
+<var name="light.prefilter" type="tex" count="1">prefilter.textureCubeMap</var>
+<var name="light.brdf" type="tex" count="1">brdfLUT.texture</var>
+<var name="vec3.albedo" type="vec3" count="1">1 1 1</var>
 </shader>
 </CSEMAT>

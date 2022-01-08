@@ -4,7 +4,7 @@
 # CSEngine - Cross Platform C++ Game Engine
 
 ![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)</br>
-![platform](https://img.shields.io/badge/platform-windows_%7C_linux_%7C_android-00B274?style=flat-square) ![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) </br>
+![platform](https://img.shields.io/badge/platform-windows_%7C_linux_%7C_android-00B274?style=flat-square) ![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) [![CodeFactor](https://www.codefactor.io/repository/github/ounols/csengine/badge/master)](https://www.codefactor.io/repository/github/ounols/csengine/overview/master) </br>
 CSEngine is a cross-platform 3D game engine.
 
 `💡 As it is under development, it is not yet suitable for practical use.`
@@ -17,7 +17,7 @@ CSEngine is a cross-platform 3D game engine.
 * C++14 compatible compiler
 * GLEW 2.1.0 or higher
 * GLFW 3.3 or higher
-* OpenGL
+* OpenGL 4.3 or higher
 
 ### Android
 
@@ -68,15 +68,16 @@ Build through the created make files.
 
 ## Stability
 
-Currently, only Linux build tests are available. In the future, various stabilization tests such as build tests for various platforms and several unit tests will be added.
+Various stabilization tests such as build tests for various platforms and several unit tests will be added.
 |Branch|Build status|
 |--|--|
-|master|![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) |
+|master|[<img src='https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
+|build_testing|[<img src='https://img.shields.io/travis/com/ounols/CSEngine/build_testing?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
 
 ## See more
 
 Review the following documentation:
-* [`wiki`](https://github.com/ounols/CSEngine/wiki): Documentation that details of the structure and function of CSEngine.
+* [`documentation`](https://ounols.github.io/CSEngine-doc): Documentation that details of the structure and function of CSEngine.
 * [`to-do list`](https://www.notion.so/CSEngine-Todo-List-7ee24caed138466e83d81d2867b1f109): Documentation that contains the to-do list of the project and notes during development.
 
 
@@ -86,6 +87,6 @@ Review the following documentation:
 - GLAD : The MIT License (MIT)
 - GLFW : zlib License
 - IMGUI : The MIT License (MIT)
-- lodepng : zlib License
+- stb : The MIT License (MIT)
 - Squirrel Script : The MIT License (MIT)
 - kuba--/zip : The Unlicense

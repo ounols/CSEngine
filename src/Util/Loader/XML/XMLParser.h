@@ -7,12 +7,15 @@
 #include <string>
 
 #include "../../../Component/SComponent.h"
-#include "../../Render/SMaterial.h"
-#include "../../Render/STexture.h"
 #include "../../STypeDef.h"
 #include "../../../Manager/EngineCore.h"
+#include "../../../Manager/ResMgr.h"
 
 namespace CSE {
+
+    class STexture;
+    class SFrameBuffer;
+    class SMaterial;
 
 	class XMLParser {
 	public:
@@ -35,6 +38,7 @@ namespace CSE {
 		template <class TYPE>
 		static TYPE* parseResources(const char* value);
 		static STexture* parseTexture(const char* value);
+        static SFrameBuffer* parseFrameBuffer(const char* value);
 		static SMaterial* parseMaterial(const char* value);
 
 		//Engine Objects
@@ -42,6 +46,7 @@ namespace CSE {
 		static SGameObject* parseGameObject(const char* value);
 
 		static SType GetType(std::string type);
+		static SType GetType(unsigned int type);
 	};
 
 	template <class TYPE>

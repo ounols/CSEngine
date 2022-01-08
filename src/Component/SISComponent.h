@@ -5,11 +5,11 @@ namespace CSE {
     class SISComponent {
     public:
 
-        SISComponent() {}
+        SISComponent() = default;
 
-        SISComponent(const SISComponent& src) {}
+        SISComponent(const SISComponent& src) = default;
 
-        virtual ~SISComponent() {}
+        virtual ~SISComponent() = default;
 
         virtual void Start() = 0;
 

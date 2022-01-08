@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <utility>
 #include "SResource.h"
 #include "../Manager/ResMgr.h"
 #include "../Manager/EngineCore.h"
@@ -28,22 +29,20 @@ SResource::SResource(const SResource* resource, bool isRegister) : SObject(isReg
     m_name = resource->m_name + " (instance)";
 }
 
-SResource::~SResource() {
-
-}
+SResource::~SResource() = default;
 
 void SResource::SetName(std::string name) {
-    m_name = CORE->GetCore(ResMgr)->RemoveDuplicatingName(name);
+    m_name = CORE->GetCore(ResMgr)->RemoveDuplicatingName(std::move(name));
 }
 
 void SResource::SetID(std::string id) {
-    m_id = id;
+    m_id = std::move(id);
 }
 
 void SResource::SetResource(std::string name, bool isInit) {
     if (m_isInited) return;
 
-    auto asset = CORE->GetCore(ResMgr)->GetAssetReference(name);
+    auto asset = CORE->GetCore(ResMgr)->GetAssetReference(std::move(name));
 
     SetResource(asset, isInit);
 }
@@ -61,5 +60,5 @@ void SResource::SetResource(const AssetMgr::AssetReference* asset, bool isInit) 
 }
 
 SResource* SResource::GetResource(std::string name) {
-    return CORE->GetCore(ResMgr)->GetSResource(name);
+    return CORE->GetCore(ResMgr)->GetSResource(std::move(name));
 }

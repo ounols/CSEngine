@@ -5,7 +5,7 @@
 #include "sqrat/sqratVM.h"
 
 #include "../Util/AssetsDef.h"
-#include "../Util/MoreString.h"
+#include "../Util/Render/SMaterial.h"
 #include "../Component/LightComponent.h"
 #include "../Object/SScriptObject.h"
 #include "../Component/RenderComponent.h"
@@ -60,7 +60,7 @@ CSEngine.Log(log);							  \n\
 #define COMPONENT_DEF(CLASSNAME) SQRComponentDef<CLASSNAME>(_SC(#CLASSNAME))
 #define COMPONENT_DEF_WITH_SQNAME(CLASSNAME, SQNAME) SQRComponentDef<CLASSNAME>(_SC(#SQNAME))
 
-ScriptMgr::ScriptMgr() {}
+ScriptMgr::ScriptMgr() = default;
 
 
 ScriptMgr::~ScriptMgr() {
@@ -84,14 +84,14 @@ void ScriptMgr::Init() {
 }
 
 
-void ScriptMgr::RegisterScript(std::string script) {
+void ScriptMgr::RegisterScript(const std::string& script) {
 
     HSQUIRRELVM vm = DefaultVM::Get();
 
     //register script
     if (!script.empty()) {
         Script compiledScript;
-        compiledScript.CompileString(script.c_str());
+        compiledScript.CompileString(script);
         if (Sqrat::Error::Occurred(vm)) {
 #ifdef WIN32
             OutputDebugString(_SC("Compile Failed: "));
@@ -191,6 +191,14 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
             .Func(_SC("SetDirection"), &LightComponent::SetDirection)
             .Func(_SC("GetDirection"), &LightComponent::GetDirection);
 
+    COMPONENT_DEF(CameraComponent)
+            .Func(_SC("SetTarget"), &CameraComponent::SetTarget)
+            .Func(_SC("SetTargetVector"), &CameraComponent::SetTargetVector)
+            .Func(_SC("SetUp"), &CameraComponent::SetUp)
+            .Func(_SC("SetOrtho"), &CameraComponent::SetOrtho)
+            .Func(_SC("SetZDepthRange"), &CameraComponent::SetZDepthRange)
+            .Func(_SC("SetPerspective"), &CameraComponent::SetPerspective);
+
 
     //Util
 
@@ -203,6 +211,8 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
             .Var(_SC("x"), &vec3::x)
             .Var(_SC("y"), &vec3::y)
             .Var(_SC("z"), &vec3::z)
+            .Func(_SC("Cross"), &vec3::Cross)
+            .Func(_SC("Dot"), &vec3::Dot)
             .Func(_SC("Set"), &vec3::Set);
 
     SQRClassDef<vec4>(_SC("vec4"))
@@ -239,7 +249,7 @@ void ScriptMgr::ReleaseSqratObject() {
 }
 
 
-void ScriptMgr::ReadScriptList() const {
+void ScriptMgr::ReadScriptList() {
     auto assets = CORE->GetCore(ResMgr)->GetAssetReferences(AssetMgr::TYPE::SCRIPT);
 
     //compile base script class

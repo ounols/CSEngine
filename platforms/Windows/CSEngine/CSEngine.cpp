@@ -125,11 +125,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		else {
 			//GL20Lib::renderFrame(static_cast<float>(timeGetTime() - dwStartTime));
-			float deltaTime = static_cast<float>(timeGetTime() - dwStartTime);
+			auto deltaTime = static_cast<float>(timeGetTime() - dwStartTime);
 			mainProc->Update(deltaTime);
 			mainProc->Render(0);
-			glEnd();
-			glFinish();
+            glFinish();
 
 			Sleep(1);
 		}

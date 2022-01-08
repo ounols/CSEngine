@@ -31,11 +31,10 @@ void WebDemoScene::Init() {
     direction->SetName("directional");
     direction->GetTransform()->m_position = vec3{ 0.f, 0.5f, 0.f };
     direction->CreateComponent<LightComponent>();
-    direction->GetComponent<LightComponent>()->DisableSpecular = false;
     direction->GetComponent<LightComponent>()->SetSunrising(true);
     direction->GetComponent<LightComponent>()->SetLightType(LightComponent::DIRECTIONAL);
     direction->GetComponent<LightComponent>()->SetDirection(vec4{ 0.0f, 1.0f, 1, 0 });
-    direction->GetComponent<LightComponent>()->m_disableShadow = false;
+    direction->GetComponent<LightComponent>()->SetShadow(true);
 
 
 //    auto a_cam = camera->GetComponent<CameraComponent>();
