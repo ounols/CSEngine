@@ -46,11 +46,10 @@ bool STexture::Load(unsigned char* data) {
     glGenTextures(1, &m_texId);
     glBindTexture(m_targetGL, m_texId);
 
-    m_channels = GL_RGB;
-    if (m_channels == 4) m_channels = GL_RGBA;
+    m_internalFormat = GL_RGB;
+    if (m_channels == 4) m_internalFormat = GL_RGBA;
 
-    m_internalFormat = m_channels;
-    glTexImage2D(m_targetGL, 0, m_channels, m_width, m_height, 0, m_internalFormat, m_glType, data);
+    glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_internalFormat, m_glType, data);
 
     glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_T, GL_REPEAT);

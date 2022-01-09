@@ -13,11 +13,14 @@
 using namespace CSE;
 
 void WebDemoScene::Init() {
-    SPrefab* stormtrooper = SResource::Create<SPrefab>("stormtrooper.prefab");
+//    SPrefab* stormtrooper = SResource::Create<SPrefab>("stormtrooper.prefab");
+    SPrefab* stormtrooper = SResource::Create<SPrefab>("model.prefab");
 
     auto root = new SGameObject("root");
     auto ab = stormtrooper->Clone(vec3{ 0, -0.3f, 0 }, root);
-    ab->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
+//    ab->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
+    ab->GetTransform()->m_scale = vec3{ 0.08f, 0.08f, 0.08f };
+    ab->GetTransform()->m_rotation = Quaternion::AngleAxis(vec3{1, 0, 0}, Pi/2.f);
     ab->CreateComponent<CustomComponent>();
     ab->GetComponent<CustomComponent>()->SetClassName("Stormtrooper.script");
 

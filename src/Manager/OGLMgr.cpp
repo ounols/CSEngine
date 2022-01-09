@@ -14,7 +14,6 @@
 using namespace CSE;
 
 OGLMgr::OGLMgr() : m_projectionRatio(-1) {
-
 }
 
 void OGLMgr::Init() {
@@ -25,11 +24,7 @@ OGLMgr::~OGLMgr() {
 	releaseBuffers();
 }
 
-void OGLMgr::setShaderProgram() {
-}
-
 void OGLMgr::setBuffers() {
-
 	//렌더버퍼 생성
 	glGenRenderbuffers(1, &m_colorRenderbuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_colorRenderbuffer);
@@ -64,9 +59,7 @@ void OGLMgr::setBuffers() {
 }
 
 void OGLMgr::setupEGLGraphics() {
-
 	setBuffers();
-	setShaderProgram();
 	setProjectionRatio(0, 0);
 
 	glEnable(GL_DEPTH_TEST);
@@ -81,13 +74,10 @@ void OGLMgr::setupEGLGraphics() {
 
 void OGLMgr::setProjectionRatio(int width, int height) {
 	m_projectionRatio = static_cast<GLfloat>(width) / static_cast<GLfloat>(height);
-
 	CORE->GetCore(CameraMgr)->SetProjectionRatio(m_projectionRatio);
-
 }
 
 void OGLMgr::Render() const {
-
 	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -95,12 +85,11 @@ void OGLMgr::Render() const {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	glEnable(GL_TEXTURE_2D);
-
+    // 유효하지 않은 값이라서 주석처리함.
+//	glEnable(GL_TEXTURE_2D);
 }
 
 void OGLMgr::ResizeWindow(GLuint width, GLuint height) {
-
 	if (m_depthRenderbuffer) {
 		glDeleteRenderbuffers(1, &m_depthRenderbuffer);
 		m_depthRenderbuffer = 0;
@@ -123,11 +112,9 @@ void OGLMgr::ResizeWindow(GLuint width, GLuint height) {
 	SEnvironmentMgr::SetHeight(height);
 
 	setProjectionRatio(width, height);
-
 }
 
 void OGLMgr::releaseBuffers() {
-
 	glDeleteRenderbuffers(1, &m_colorRenderbuffer);
 	m_colorRenderbuffer = 0;
 
@@ -138,5 +125,4 @@ void OGLMgr::releaseBuffers() {
 
 	glDeleteFramebuffers(1, &m_framebuffer);
 	m_framebuffer = 0;
-
 }
