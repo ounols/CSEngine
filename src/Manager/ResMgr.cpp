@@ -29,7 +29,7 @@ void ResMgr::InitResource() {
 
 
     //Load Assets
-    m_assetManager->LoadAssets(ASSET_PACKED);
+    m_assetManager->LoadAssets(Settings::IsAssetsPacked());
 
 }
 

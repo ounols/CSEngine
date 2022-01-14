@@ -307,7 +307,7 @@ std::vector<AssetMgr::AssetReference*> AssetMgr::GetAssets(AssetMgr::TYPE type) 
 }
 
 std::string AssetMgr::LoadAssetFile(const std::string& path) {
-    if(ASSET_PACKED == false)
+    if(Settings::IsAssetsPacked() == false)
         return OpenNativeAssetsTxtFile(path);
 
     std::string result;

@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 #include <fstream>
+
+#include "Settings.h"
+
 #ifdef __ANDROID__
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
@@ -13,10 +16,7 @@
 #endif
 
 namespace CSE {
-    static constexpr bool ASSET_PACKED = true;
-
 	static std::string NativeAssetsPath() {
-
 		std::string path;
 #if defined(MSVC_CMAKE)
         path.append("../../../../Assets/");
@@ -32,7 +32,7 @@ namespace CSE {
 	static std::string AssetsPath() {
         std::string path;
 
-        if(ASSET_PACKED == false)
+        if(Settings::IsAssetsPacked() == false)
             path = NativeAssetsPath();
 
         return path;

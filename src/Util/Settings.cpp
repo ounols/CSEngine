@@ -12,6 +12,8 @@ const char* Settings::m_defaultDeferredMaterialID = "File:Material/Default.mat";
 const char* Settings::m_defaultDeferredProxyMaterialID = "File:Material/DefaultPBR.mat";
 const char* Settings::m_defaultMainBufferShaderID = "File:Shader/Main-Buffer.shader";
 
+const bool Settings::m_assetsPacked = true;
+
 Settings::Settings() = default;
 
 Settings::~Settings() = default;
