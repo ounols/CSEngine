@@ -36,6 +36,11 @@ bool STexture::LoadFile(const char* path) {
     return Load(data);
 }
 
+bool STexture::LoadFromMemory(const unsigned char* rawData, int length) {
+    auto data = stbi_load_from_memory(rawData, length, &m_width, &m_height, &m_channels, 0);
+    return Load(data);
+}
+
 bool STexture::Load(unsigned char* data) {
 
     if (m_texId != 0) {
@@ -158,10 +163,7 @@ void STexture::SetParameterfv(int targetName, float* value) const {
 void STexture::Init(const AssetMgr::AssetReference* asset) {
 	const std::string img_str = CSE::AssetMgr::LoadAssetFile(asset->path);
 
-    auto data = stbi_load_from_memory(reinterpret_cast<const unsigned char*>(img_str.c_str()), img_str.length(),
-                                      &m_width, &m_height, &m_channels, 0);
-    Load(data);
-
+    LoadFromMemory(reinterpret_cast<const unsigned char*>(img_str.c_str()), img_str.length());
 }
 
 void STexture::GenerateMipmap() const {

@@ -24,6 +24,8 @@ namespace CSE {
 
         bool LoadFile(const char* path);
 
+        bool LoadFromMemory(const unsigned char* rawData, int length);
+
         virtual bool Load(unsigned char* data);
 
         bool ReloadFile(const char* path);
