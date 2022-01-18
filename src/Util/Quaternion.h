@@ -4,7 +4,6 @@
 #include "MoreMath.h"
 
 namespace CSE {
-
     template <typename T>
     struct QuaternionT {
         T x;
@@ -184,7 +183,6 @@ namespace CSE {
         return res;
     }
 
-
     template <typename T>
     inline QuaternionT<T> QuaternionT<T>::Scaled(T s) const {
         return QuaternionT<T>(x * s, y * s, z * s, w * s);
@@ -311,7 +309,6 @@ namespace CSE {
         bank = atan2(2 * x * w - 2 * y * z, -sqx + sqy - sqz + sqw);
 
         return Vector3<T>(bank, heading, attitude);
-
     }
 
     template <typename T>
@@ -424,5 +421,4 @@ namespace CSE {
     }
 
     typedef QuaternionT<float> Quaternion;
-
 }

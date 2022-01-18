@@ -1,6 +1,4 @@
 #include "WebDemoScene.h"
-#include <iostream>
-#include <sstream>
 #include "../Util/Render/SEnvironmentMgr.h"
 #include "../Component/LightComponent.h"
 #include "../Component/CameraComponent.h"
@@ -24,7 +22,6 @@ void WebDemoScene::Init() {
     ab->CreateComponent<CustomComponent>();
     ab->GetComponent<CustomComponent>()->SetClassName("Stormtrooper.script");
 
-
     auto camera = new SGameObject("camera");
     camera->CreateComponent<CameraComponent>();
     camera->GetTransform()->m_position = vec3{0, 0, 1.2f };
@@ -39,10 +36,8 @@ void WebDemoScene::Init() {
     direction->GetComponent<LightComponent>()->SetDirection(vec4{ 0.0f, 1.0f, 1, 0 });
     direction->GetComponent<LightComponent>()->SetShadow(true);
 
-
 //    auto a_cam = camera->GetComponent<CameraComponent>();
 //    a_cam->SetTarget(ab);
-
 }
 
 void WebDemoScene::Tick(float elapsedTime) {
