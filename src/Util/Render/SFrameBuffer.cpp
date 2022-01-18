@@ -9,12 +9,12 @@
 #include "../Loader/XML/XML.h"
 #include "../../PlatformDef.h"
 
-#ifdef __CSE_DESKTOP__
+#if defined(__CSE_DESKTOP__)
 #define CSE_GL_DEPTH_COMPONENT GL_DEPTH_COMPONENT32F
 #define CSE_GL_RG GL_RG16F
 #define CSE_GL_RGB GL_RGB16F
 #define CSE_GL_RGBA GL_RGBA16F
-#elif __CSE_ES__
+#elif defined(__CSE_ES__)
 #define CSE_GL_DEPTH_COMPONENT GL_DEPTH_COMPONENT16
 #define CSE_GL_RG GL_RG8
 #define CSE_GL_RGB GL_RGB8
@@ -256,15 +256,15 @@ int SFrameBuffer::GenerateInternalFormat(int channel) const {
 int SFrameBuffer::GenerateInternalType(int channel) const {
     switch (channel) {
         case GL_DEPTH_COMPONENT:
-#ifdef __CSE_DESKTOP__
+#if defined(__CSE_DESKTOP__)
             return GL_FLOAT;
-#elif __CSE_ES__
+#elif defined(__CSE_ES__)
             return GL_UNSIGNED_INT;
 #endif
         default:
-#ifdef __CSE_DESKTOP__
+#if defined(__CSE_DESKTOP__)
             return GL_FLOAT;
-#elif __CSE_ES__
+#elif defined(__CSE_ES__)
             return GL_UNSIGNED_BYTE;
 #endif
     }

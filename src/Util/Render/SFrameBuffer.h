@@ -2,7 +2,6 @@
 
 #include "../../Object/SResource.h"
 #include "../../OGLDef.h"
-#include "STexture.h"
 
 namespace CSE {
 

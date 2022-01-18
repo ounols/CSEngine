@@ -10,9 +10,9 @@
 
 using namespace CSE;
 
-#ifdef __CSE_DESKTOP__
+#if defined(__CSE_DESKTOP__)
 std::string ShaderUtil::m_defineVersion = "#version 330 core\n";
-#elif __CSE_ES__
+#elif defined(__CSE_ES__)
 std::string ShaderUtil::m_defineVersion = "#version 300 es\n";
 #endif
 
