@@ -5,12 +5,16 @@
 #include "ShaderUtil.h"
 #include "../MoreString.h"
 #include "SEnvironmentMgr.h"
-
-#ifdef WIN32
-#include <Windows.h>
-#endif
+#include "../Settings.h"
+#include "../../PlatformDef.h"
 
 using namespace CSE;
+
+#ifdef __CSE_DESKTOP__
+std::string ShaderUtil::m_defineVersion = "#version 330 core\n";
+#elif __CSE_ES__
+std::string ShaderUtil::m_defineVersion = "#version 300 es\n";
+#endif
 
 ShaderUtil::ShaderUtil() = default;
 
@@ -63,7 +67,6 @@ GLuint ShaderUtil::createProgram(GLuint vertexShader, GLuint fragmentShader, con
 	GLuint program = glCreateProgram();
 
 	if (program) {
-
 		//쉐이더를 attach 합니다.
 		glAttachShader(program, vertexShader);
 		glAttachShader(program, fragmentShader);
@@ -72,16 +75,13 @@ GLuint ShaderUtil::createProgram(GLuint vertexShader, GLuint fragmentShader, con
 		GLint linkStatus = GL_FALSE;
 		glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
 		if (linkStatus != GL_TRUE) {
-
 			GLint bufLength = 0;
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufLength);
 
 			if (bufLength) {
-
 				auto buf = static_cast<char*>(malloc(bufLength));
 
 				if (buf) {
-
 					glGetProgramInfoLog(program, bufLength, nullptr, buf);
                     auto errorLog = std::string("[") + handle.GetName() + "] Could not link program:" + buf;
                     SafeLog::Log(errorLog.c_str());
@@ -89,40 +89,39 @@ GLuint ShaderUtil::createProgram(GLuint vertexShader, GLuint fragmentShader, con
 
 				}
 			}
-
 			glDeleteProgram(program);
 			program = 0;
 
 		}
-
 		glDetachShader(program, vertexShader);
 		glDetachShader(program, fragmentShader);
 
 	}
-
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
 	return program;
 }
 
-GLuint ShaderUtil::loadShader(GLenum shaderType, const char *pSource, const GLProgramHandle& handle) {
+GLuint ShaderUtil::loadShader(GLenum shaderType, const char* pSource, const GLProgramHandle& handle) {
 	GLuint shader = glCreateShader(shaderType);
+    std::string srcString = m_defineVersion
+            + "#define MAX_JOINTS " + std::to_string(Settings::GetMaxJoints()) + '\n'
+            + "#define MAX_LIGHTS " + std::to_string(Settings::GetMaxLights()) + '\n'
+            + pSource;
+    const char* src = srcString.c_str();
 
 	if (shader) {
-
-		glShaderSource(shader, 1, &pSource, nullptr);
+		glShaderSource(shader, 1, &src, nullptr);
 		glCompileShader(shader);
 		GLint compiled = 0;
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 
 		if (!compiled) {
-
 			GLint infoLen = 0;
 			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
 
 			if (infoLen) {
-
 				auto buf = static_cast<char*>(malloc(infoLen));
 
 				if (buf) {
@@ -132,21 +131,17 @@ GLuint ShaderUtil::loadShader(GLenum shaderType, const char *pSource, const GLPr
                     SafeLog::Log(errorLog.c_str());
 					free(buf);
 				}
-
 				glDeleteShader(shader);
 				shader = 0;
 			}
 		}
 	}
-
 	return shader;
 }
 
 std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLchar* source) {
 	std::map<std::string, std::string> variables;
-
 	std::vector<std::string> str_line = split(source, ';');
-
 	std::string type_str;
 
 	for (auto line : str_line) {
@@ -176,12 +171,10 @@ std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLcha
 		}
 
 	}
-
 	return variables;
 }
 
 void ShaderUtil::BindVariables(GLProgramHandle* handle) {
-
 	if (handle == nullptr) return;
 
 	//Attributes
@@ -322,6 +315,6 @@ void ShaderUtil::BindSkinningDataToShader(const GLProgramHandle& handle, const G
 		}
 	}
 
-	glUniformMatrix4fv(handle.Uniforms.JointMatrix, MAX_JOINTS, GL_FALSE, &result[0]);
+	glUniformMatrix4fv(handle.Uniforms.JointMatrix, Settings::GetMaxJoints(), GL_FALSE, &result[0]);
 	glUniform1i(handle.Uniforms.SkinningMode, 1);
 }

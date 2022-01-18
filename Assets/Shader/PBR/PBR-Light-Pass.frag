@@ -1,6 +1,3 @@
-#version 330 core
-#define MAX_LIGHTS 8
-
 precision highp float;
 precision highp int;
 

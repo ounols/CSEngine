@@ -37,6 +37,9 @@ namespace CSE {
 
         static void BindSkinningDataToShader(const GLProgramHandle& handle, const GLMeshID& meshId,
                                              const std::vector<mat4>& jointMatrix);
+
+    private:
+        static std::string m_defineVersion;
     };
 
 }

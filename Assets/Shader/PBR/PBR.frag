@@ -1,7 +1,3 @@
-#version 300 es
-//#version 100
-#define MAX_LIGHTS 5
-
 precision highp float;
 precision highp int;
 

@@ -7,6 +7,19 @@
 #include "../../Manager/EngineCore.h"
 #include "../../Manager/ResMgr.h"
 #include "../Loader/XML/XML.h"
+#include "../../PlatformDef.h"
+
+#ifdef __CSE_DESKTOP__
+#define CSE_GL_DEPTH_COMPONENT GL_DEPTH_COMPONENT32F
+#define CSE_GL_RG GL_RG16F
+#define CSE_GL_RGB GL_RGB16F
+#define CSE_GL_RGBA GL_RGBA16F
+#elif __CSE_ES__
+#define CSE_GL_DEPTH_COMPONENT GL_DEPTH_COMPONENT16
+#define CSE_GL_RG GL_RG8
+#define CSE_GL_RGB GL_RGB8
+#define CSE_GL_RGBA GL_RGBA8
+#endif
 
 using namespace CSE;
 
@@ -229,23 +242,31 @@ int SFrameBuffer::GenerateAttachmentType(SFrameBuffer::BufferType type, bool isI
 int SFrameBuffer::GenerateInternalFormat(int channel) const {
     switch (channel) {
         case GL_RG:
-            return GL_RG8;
+            return CSE_GL_RG;
         case GL_DEPTH_COMPONENT:
-            return GL_DEPTH_COMPONENT16;
+            return CSE_GL_DEPTH_COMPONENT;
         case GL_RGBA:
-            return GL_RGBA8;
+            return CSE_GL_RGBA;
         case GL_RGB:
         default:
-            return GL_RGB8;
+            return CSE_GL_RGB;
     }
 }
 
 int SFrameBuffer::GenerateInternalType(int channel) const {
     switch (channel) {
         case GL_DEPTH_COMPONENT:
+#ifdef __CSE_DESKTOP__
+            return GL_FLOAT;
+#elif __CSE_ES__
             return GL_UNSIGNED_INT;
+#endif
         default:
+#ifdef __CSE_DESKTOP__
+            return GL_FLOAT;
+#elif __CSE_ES__
             return GL_UNSIGNED_BYTE;
+#endif
     }
 }
 

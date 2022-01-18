@@ -11,8 +11,11 @@ const char* Settings::m_defaultForwardMaterialID = "File:Material/DefaultPBR.mat
 const char* Settings::m_defaultDeferredMaterialID = "File:Material/Default.mat";
 const char* Settings::m_defaultDeferredProxyMaterialID = "File:Material/DefaultPBR.mat";
 const char* Settings::m_defaultMainBufferShaderID = "File:Shader/Main-Buffer.shader";
+const int Settings::m_maxLights = 8;
 
 const bool Settings::m_assetsPacked = true;
+
+const int Settings::m_maxJoints = 60;
 
 Settings::Settings() = default;
 
@@ -36,4 +39,12 @@ const char* Settings::GetDefaultDeferredMaterialId() {
 
 const char* Settings::GetDefaultMainBufferShaderID() {
     return m_defaultMainBufferShaderID;
+}
+
+int Settings::GetMaxLights() {
+    return m_maxLights;
+}
+
+int Settings::GetMaxJoints() {
+    return m_maxJoints;
 }

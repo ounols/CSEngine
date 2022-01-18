@@ -1,6 +1,3 @@
-#version 400
-
-
 //[PROJECTION_MATRIX]//
 uniform mat4 u_projectionMatrix;
 //[MODELVIEW_MATRIX]//

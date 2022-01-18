@@ -1,9 +1,4 @@
-#version 300 es
-
 #define MAX_WEIGHTS 3
-#define MAX_JOINTS 60
-
-
 
 // Attributes
 //[att.position]//
