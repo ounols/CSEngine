@@ -6,6 +6,7 @@
 namespace CSE {
 
     class STexture;
+    class GLProgramHandle;
 
     /**
      * @see To use the SFrameBuffer class, you need to follow the steps below:
@@ -43,6 +44,13 @@ namespace CSE {
             int format = 0;
             short level = 0;
         };
+        struct BlitObject {
+            GLProgramHandle* handle = nullptr;
+            int aColor = -1;
+            int bColor = -1;
+            int aDepth = -1;
+            int bDepth = -1;
+        };
     public:
         SFrameBuffer();
         ~SFrameBuffer() override;
@@ -51,28 +59,25 @@ namespace CSE {
          * This is the first function called when creating a framebuffer.
          * You specify the dimensions of the framebuffer through that function.
          * @param dimension Sets the dimensions of the framebuffer. The default is SFrameBuffer::PLANE.
+         * @param width Write the width of the render buffer.
+         * @param height Writes the height of the render buffer.
          */
-        void GenerateFramebuffer(BufferDimension dimension);
+        void GenerateFramebuffer(BufferDimension dimension, int width, int height);
         /**
          * Creates a render buffer in a non-texture format.
          * @param type Specifies the type of buffer to create. The default is RENDER.
-         * @param width Write the width of the render buffer. The width is fixed at that value first written.
-         * @param height Writes the height of the render buffer. The height is fixed at that value first created.
          * @param internalFormat Sets the internal format for the render buffer. Format details can be found at <a href="https://www.khronos.org/registry/OpenGL-Refpages/es3.0/html/glTexImage2D.xhtml">this link</a>.
          * @return Returns the ID value of the created render buffer. If creation fails, 0 is returned.
          */
-        unsigned int GenerateRenderbuffer(BufferType type, int width, int height, int internalFormat);
+        unsigned int GenerateRenderbuffer(BufferType type, int internalFormat);
         /**
          * Creates a render buffer in texture format.
          * @param type Specifies the type of buffer to create. The default is RENDER.
-         * @param width Write the width of the render buffer. The width is fixed at that value first written.
-         * @param height Writes the height of the render buffer. The height is fixed at that value first created.
          * @param channel Sets the channel format for the render buffer. Format details can be found at <a href="https://www.khronos.org/registry/OpenGL-Refpages/es3.0/html/glTexImage2D.xhtml">this link</a>.
          * @param level Sets the texture mipmap level. Default is 0.
          * @return Returns the STexture of the created render texture buffer. If creation fails, nullptr is returned.
          */
-        STexture* GenerateTexturebuffer(BufferType type, int width, int height, int channel,
-                                        int level = 0);
+        STexture* GenerateTexturebuffer(BufferType type, int channel, int level = 0);
         /**
          * Create all the render buffers to allocate to the framebuffer and proceed with rasterization.
          * You can use the framebuffer after calling the function.
@@ -83,6 +88,15 @@ namespace CSE {
         void DetachFrameBuffer() const;
         void ResizeFrameBuffer(int width, int height);
         void Exterminate() override;
+        /**
+         * Safely blit the framebuffer.
+         * Each framebuffer must be in BufferType::MULTI state, and all buffers must be in the form of STexture.
+         * For blit techniques that are not suitable for that condition, it is faster to use glBlitFramebuffer.
+         * @details The format of the framebuffer should be organized in the following order: @li [0] = Color Buffer @li [1] = Depth Buffer
+         * @param src The framebuffer to merge.
+         * @param dst The framebuffer to merge.
+         */
+        void BlitFrameBuffer(const SFrameBuffer& dst);
 
         int GetWidth() const;
         int GetHeight() const;
@@ -107,6 +121,24 @@ namespace CSE {
          */
         unsigned int GetRenderbufferID(int index) const;
 
+        /**
+         * Get the texture assigned to the framebuffer as GL_COLOR_ATTACHMENT0.
+         * @return if the corresponding index is an invalid texture type, nullptr is returned.
+         */
+        STexture* GetMainColorTexture() const {
+            if(m_mainColorBuffer == nullptr) return nullptr;
+            return m_mainColorBuffer->texture;
+        }
+
+        /**
+         * Get the texture assigned to the framebuffer as depth.
+         * @return if the corresponding index is an invalid texture type, nullptr is returned.
+         */
+        STexture* GetDepthTexture() const {
+            if(m_depthBuffer == nullptr) return nullptr;
+            return m_depthBuffer->texture;
+        }
+
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 
@@ -123,8 +155,15 @@ namespace CSE {
 
         unsigned int m_fbo = 0;
         std::vector<BufferObject*> m_buffers;
+        BufferObject* m_mainColorBuffer = nullptr;
+        BufferObject* m_depthBuffer = nullptr;
 
         mutable BufferStatus m_bufferStatus = BufferStatus::NONE;
         mutable unsigned short m_colorAttachmentSize = 0;
+
+        /**
+         * 안전한 Blit을 구현하기 위한 구조체
+         */
+        static BlitObject m_blitObject;
     };
 }

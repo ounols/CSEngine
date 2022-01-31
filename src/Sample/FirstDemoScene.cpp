@@ -73,8 +73,8 @@ void FirstDemoScene::Init() {
     cube = new MeshSurface(CH02::teapot_smoothNumVerts, CH02::teapot_smoothVerts, CH02::teapot_smoothNormals);
     cube->SetUndestroyable(false);
     SFrameBuffer* buffer = new SFrameBuffer();
-    buffer->GenerateFramebuffer(SFrameBuffer::PLANE);
-    const auto& buf_tex = buffer->GenerateTexturebuffer(SFrameBuffer::RENDER, 512, 512, GL_RGB);
+    buffer->GenerateFramebuffer(SFrameBuffer::PLANE, 512, 512);
+    const auto& buf_tex = buffer->GenerateTexturebuffer(SFrameBuffer::RENDER, GL_RGB);
     buf_tex->SetName("framebuffer_test");
     buf_tex->SetID("framebuffer_test");
     buffer->RasterizeFramebuffer();

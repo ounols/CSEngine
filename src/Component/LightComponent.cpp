@@ -121,10 +121,9 @@ void LightComponent::SetDepthMap() {
     m_frameBuffer = new SFrameBuffer();
     // 1. Generate a framebuffer.
     // todo: 큐브 텍스쳐도 호환되도록 수정이 필요함 (for point shadow)
-    m_frameBuffer->GenerateFramebuffer(SFrameBuffer::PLANE);
+    m_frameBuffer->GenerateFramebuffer(SFrameBuffer::PLANE, lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT);
     // 2. Generate a depth texture.
     m_depthTexture = m_frameBuffer->GenerateTexturebuffer(SFrameBuffer::DEPTH,
-                                                          lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT,
                                                           GL_DEPTH_COMPONENT);
     m_depthTexture->SetParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     m_depthTexture->SetParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);

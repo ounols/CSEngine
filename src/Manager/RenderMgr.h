@@ -34,5 +34,7 @@ namespace CSE {
         SFrameBuffer* m_mainBuffer = nullptr;
         GLProgramHandle* m_mainProgramHandle = nullptr;
         GLProgramHandle* m_geometryHandle = nullptr;
+
+        SFrameBuffer* m_deferredBuffer = nullptr;
     };
 }

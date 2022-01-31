@@ -37,12 +37,19 @@ void RenderMgr::Init() {
     m_geometryHandle = SResource::Create<GLProgramHandle>(Settings::GetDeferredGeometryPassShaderID());
 
     m_mainBuffer = new SFrameBuffer();
-    m_mainBuffer->GenerateFramebuffer(SFrameBuffer::PLANE);
-    m_mainBuffer->GenerateRenderbuffer(SFrameBuffer::RENDER, (int)*m_width, (int)*m_height, GL_RGB);
+    m_mainBuffer->GenerateFramebuffer(SFrameBuffer::PLANE, (int)*m_width, (int)*m_height);
+    m_mainBuffer->GenerateTexturebuffer(SFrameBuffer::RENDER, GL_RGB);
     m_mainBuffer->RasterizeFramebuffer();
 
     m_mainProgramHandle = SResource::Create<GLProgramHandle>(Settings::GetDefaultMainBufferShaderID());
     mainTextureId = m_mainProgramHandle->UniformLocation("main.albedo")->id;
+
+    m_deferredBuffer = new SFrameBuffer();
+    m_deferredBuffer->SetName("__Deferred Framebuffer__");
+    m_deferredBuffer->GenerateFramebuffer(SFrameBuffer::PLANE, (int)*m_width, (int)*m_height);
+    m_deferredBuffer->GenerateTexturebuffer(SFrameBuffer::RENDER, GL_RGB);
+    m_deferredBuffer->GenerateTexturebuffer(SFrameBuffer::DEPTH, GL_DEPTH_COMPONENT);
+    m_deferredBuffer->RasterizeFramebuffer();
 }
 
 void RenderMgr::SetViewport() {
@@ -53,6 +60,7 @@ void RenderMgr::SetViewport() {
 
     m_mainBuffer->ResizeFrameBuffer((int)*m_width, (int)*m_height);
     mainTexture = m_mainBuffer->GetTexture(0);
+    m_deferredBuffer->ResizeFrameBuffer((int)*m_width, (int)*m_height);
 }
 
 void RenderMgr::Render() const {
@@ -84,7 +92,6 @@ void RenderMgr::Render() const {
     ResetBuffer(*mainCamera);
     RenderGbuffers(*mainCamera); // Deferred Render
     RenderInstances(*mainCamera); // Forward Render
-
 
     /**
      * @Todo 포스트 프로세싱을 적용하기 위한 코드
@@ -120,7 +127,7 @@ void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer)
     glUseProgram(m_geometryHandle->Program);
     const auto& renderLayer = gbuffer.GetRendersLayer();
 
-    for (const auto& render : renderLayer) {
+    for (const auto& render: renderLayer) {
         if (render == nullptr) continue;
         if (!render->isRenderActive) continue;
 
@@ -133,12 +140,13 @@ void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer)
     /** ======================
      *  2. Light Pass
      */
-    if(frameBuffer == nullptr) {
-        m_mainBuffer->AttachFrameBuffer();
-    }
-    else {
-        frameBuffer->AttachFrameBuffer();
-    }
+//    if(frameBuffer == nullptr) {
+//        m_mainBuffer->AttachFrameBuffer();
+//    }
+//    else {
+//        frameBuffer->AttachFrameBuffer();
+//    }
+    m_deferredBuffer->AttachFrameBuffer();
     // TODO: Background 설정 따로 적용하도록 수정
     // TODO: 뒷배경 색상 적용 안됨
     glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
@@ -155,15 +163,20 @@ void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer)
     /** ======================
      *  3. Blit the depth buffer
      */
-    gbuffer.AttachGeometryFrameBuffer(GL_READ_FRAMEBUFFER);
-    if(frameBuffer == nullptr) {
-        m_mainBuffer->AttachFrameBuffer(GL_DRAW_FRAMEBUFFER);
+    if (frameBuffer == nullptr) {
+        m_mainBuffer->BlitFrameBuffer(*m_deferredBuffer);
+    } else {
+        frameBuffer->BlitFrameBuffer(*m_deferredBuffer);
     }
-    else {
-        frameBuffer->AttachFrameBuffer(GL_DRAW_FRAMEBUFFER);
-    }
-
-    glBlitFramebuffer(0, 0, *m_width, *m_height, 0, 0, bufferWidth, bufferHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+//    gbuffer.AttachGeometryFrameBuffer(GL_READ_FRAMEBUFFER);
+//    if(frameBuffer == nullptr) {
+//        m_mainBuffer->AttachFrameBuffer(GL_DRAW_FRAMEBUFFER);
+//    }
+//    else {
+//        frameBuffer->AttachFrameBuffer(GL_DRAW_FRAMEBUFFER);
+//    }
+//
+//    glBlitFramebuffer(0, 0, *m_width, *m_height, 0, 0, bufferWidth, bufferHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 }
 
 void RenderMgr::RenderGbuffers(const CameraBase& camera) const {

@@ -11,6 +11,8 @@ uniform sampler2D u_sampler_normal;
 uniform sampler2D u_sampler_albedo;
 //[geo.material]//
 uniform sampler2D u_sampler_material;
+//[geo.depth]//
+uniform sampler2D u_sampler_depth;
 
 //IBL
 //[light.irradiance]//
@@ -167,7 +169,7 @@ void main(void) {
 	color = pow(color, vec3(1.0/2.2));
 
 	FragColor = vec4(color, 1.0);
-
+	gl_FragDepth = texture(u_sampler_depth, v_textureCoordOut).r;
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
@@ -268,7 +270,7 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 
 	// keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
 	if(projCoords.z > 1.0)
-	shadow = 0.0;
+		shadow = 0.0;
 
 	return shadow;
 }
