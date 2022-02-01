@@ -57,16 +57,16 @@ void RenderMgr::Render() const {
     // 2. Render active sub cameras.
     for (const auto& camera : cameraObjects) {
         if(!camera->GetIsEnable() || camera == mainCamera || camera->GetFrameBuffer() == nullptr) continue;
+        ResetBuffer(*camera);
         RenderGbuffers(*camera); // Deferred Render
         RenderInstances(*camera); // Forward Render
-        RenderBuffer(*camera); // Blit
     }
     if(mainCamera == nullptr) return;
 
     // 3. Main Render Buffer
+    ResetBuffer(*mainCamera);
     RenderGbuffers(*mainCamera); // Deferred Render
     RenderInstances(*mainCamera); // Forward Render
-    RenderBuffer(*mainCamera); // Blit
 
     /**
      * @Todo 포스트 프로세싱을 적용하기 위한 코드
@@ -119,7 +119,8 @@ void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer)
 //    else {
 //        frameBuffer->AttachFrameBuffer();
 //    }
-    GetDeferredBuffer()->AttachFrameBuffer();
+    const auto& deferredBuffer = GetDeferredBuffer();
+    deferredBuffer->AttachFrameBuffer();
     // TODO: Background 설정 따로 적용하도록 수정
     // TODO: 뒷배경 색상 적용 안됨
     glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
@@ -134,9 +135,12 @@ void RenderMgr::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer)
 
     /** ======================
      *  3. Blit the depth buffer
-     *  여러 환경에서 불안정하므로 주석처리 됨.
-     *  Commented out as it is unstable in many environments.
      */
+    if (frameBuffer == nullptr) {
+        GetMainBuffer()->BlitFrameBuffer(*deferredBuffer);
+    } else {
+        frameBuffer->BlitFrameBuffer(*deferredBuffer);
+    }
 //    gbuffer.AttachGeometryFrameBuffer(GL_READ_FRAMEBUFFER);
 //    if(frameBuffer == nullptr) {
 //        GetMainBuffer()->AttachFrameBuffer(GL_DRAW_FRAMEBUFFER);
@@ -158,10 +162,19 @@ void RenderMgr::RenderGbuffers(const CameraBase& camera) const {
 
 void RenderMgr::RenderInstances(const CameraBase& camera, const GLProgramHandle* custom_handler) const {
     const auto cameraMatrix = camera.GetCameraMatrixStruct();
+    const auto& frameBuffer = camera.GetFrameBuffer();
     int customHandlerID = custom_handler != nullptr ? (int)custom_handler->Program : -1;
     OrderRenderLayer orderRenderLayer(m_rendersLayer.begin(), m_rendersLayer.end());
-    GetForwardBuffer()->AttachFrameBuffer();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if(frameBuffer == nullptr) {
+        GetMainBuffer()->AttachFrameBuffer();
+    }
+    else {
+        // If the framebuffer is a depth buffer
+        if(frameBuffer->GetBufferStatus() == SFrameBuffer::DEPTH_ONLY) {
+            customHandlerID = (int)lightMgr->GetShadowHandle()->Program;
+        }
+        frameBuffer->AttachFrameBuffer();
+    }
 
     for (const auto& orderLayerPair : orderRenderLayer) {
         const auto& orderLayer = orderLayerPair.second;
@@ -231,12 +244,11 @@ void RenderMgr::Exterminate() {
     RenderContainer::Exterminate();
 }
 
-void RenderMgr::RenderBuffer(const CameraBase& camera) const {
+void RenderMgr::ResetBuffer(const CameraBase& camera) const {
     auto frameBuffer = camera.GetFrameBuffer();
     if(frameBuffer == nullptr) {
         frameBuffer = GetMainBuffer();
     }
     frameBuffer->AttachFrameBuffer();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    frameBuffer->BlitFrameBuffer(*GetForwardBuffer(), *GetDeferredBuffer());
 }

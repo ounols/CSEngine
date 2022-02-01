@@ -232,8 +232,8 @@ void SFrameBuffer::ResizeFrameBuffer(int width, int height) {
     RasterizeFramebuffer();
 }
 
-void SFrameBuffer::BlitFrameBuffer(const SFrameBuffer& src, const SFrameBuffer& dst) {
-    if(m_mainColorBuffer == nullptr || m_depthBuffer == nullptr) {
+void SFrameBuffer::BlitFrameBuffer(const SFrameBuffer& dst, BlitType type) {
+    if (m_mainColorBuffer == nullptr || m_depthBuffer == nullptr) {
         Exterminate();
         GenerateFramebuffer(PLANE, m_width, m_height);
         GenerateTexturebuffer(RENDER, GL_RGB);
@@ -241,12 +241,22 @@ void SFrameBuffer::BlitFrameBuffer(const SFrameBuffer& src, const SFrameBuffer& 
         RasterizeFramebuffer();
     }
 
-    const auto& aColorTexture = src.GetMainColorTexture();
-    const auto& bColorTexture = dst.GetMainColorTexture();
-    const auto& aDepthTexture = src.GetDepthTexture();
-    const auto& bDepthTexture = dst.GetDepthTexture();
+    const SFrameBuffer* a;
+    const SFrameBuffer* b;
+    if (type == REVERSE) {
+        a = this;
+        b = &dst;
+    }
+    else {
+        a = &dst;
+        b = this;
+    }
+    const auto& aColorTexture = a->m_mainColorBuffer->texture;
+    const auto& bColorTexture = b->m_mainColorBuffer->texture;
+    const auto& aDepthTexture = a->m_depthBuffer->texture;
+    const auto& bDepthTexture = b->m_depthBuffer->texture;
 
-    if(m_blitObject.handle == nullptr) {
+    if (m_blitObject.handle == nullptr) {
         m_blitObject.handle = SResource::Create<GLProgramHandle>(Settings::GetDefaultBlitBufferShaderID());
         m_blitObject.aColor = m_blitObject.handle->UniformLocation("a.color")->id;
         m_blitObject.bColor = m_blitObject.handle->UniformLocation("b.color")->id;

@@ -36,6 +36,9 @@ namespace CSE {
         enum BufferStatus {
             NONE = 0, COLOR_ONLY = 1, DEPTH_ONLY = 2, MULTI = 3,
         };
+        enum BlitType {
+            IN_ORDER = 0, REVERSE = 1,
+        };
     private:
         struct BufferObject {
             BufferType type = RENDER;
@@ -96,10 +99,10 @@ namespace CSE {
          *        - [0] = Color Buffer
          *        - [1] = Depth Buffer
          *
-         * @param src The framebuffer to merge.
          * @param dst The framebuffer to merge.
+         * @param type Determine the order in which they will be merged. Default is IN_ORDER.
          */
-        void BlitFrameBuffer(const SFrameBuffer& src, const SFrameBuffer& dst);
+        void BlitFrameBuffer(const SFrameBuffer& dst, BlitType type = IN_ORDER);
 
         int GetWidth() const;
         int GetHeight() const;

@@ -33,6 +33,11 @@ namespace CSE {
 
     private:
         /**
+         * Combine forward and deferred buffers and render to the desired camera.
+         * @param camera Structure containing information values of the camera to be drawn.
+         */
+        void ResetBuffer(const CameraBase& camera) const;
+        /**
          * Deferred rendering for each G-Buffer object.
          * @param camera Structure containing information values of the camera to be drawn.
          * @param gbuffer G-Buffer object to be drawn.
@@ -57,11 +62,6 @@ namespace CSE {
          */
         void RenderShadowInstance(const CameraBase& camera, const GLProgramHandle& custom_handler,
                                   const std::list<SIRender*>& render_objects = std::list<SIRender*>()) const;
-        /**
-         * Combine forward and deferred buffers and render to the desired camera.
-         * @param camera Structure containing information values of the camera to be drawn.
-         */
-        void RenderBuffer(const CameraBase& camera) const;
 
     private:
         GLProgramHandle* m_mainProgramHandle = nullptr;

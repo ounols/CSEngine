@@ -34,6 +34,8 @@ uniform vec3 u_irradiance;
 
 //[light.type]//
 uniform int u_lightType[MAX_LIGHTS];
+//[light.matrix]//
+uniform mat4 u_lightMatrix[MAX_LIGHTS];
 //[light.radius]//
 uniform float u_lightRadius[MAX_LIGHTS];
 //[light.color]//
@@ -48,7 +50,7 @@ uniform int u_lightSize;
 //Varying
 in mediump vec3 v_eyespaceNormal;//EyespaceNormal;
 in lowp vec3 v_lightPosition[MAX_LIGHTS];
-in lowp vec4 v_fragPosLightSpace[MAX_LIGHTS];
+//in lowp vec4 v_fragPosLightSpace[MAX_LIGHTS];
 in mediump vec2 v_textureCoordOut;
 in lowp float v_distance[MAX_LIGHTS];
 in mediump vec3 v_worldPosition;
@@ -111,7 +113,8 @@ void main(void) {
 		float attenuation = 1.0 / (distance * distance);
 		float shadow = 0.0;
 		if(u_shadowMode[i] == 1) {
-			shadow = ShadowCalculation(index_shadow, v_fragPosLightSpace[i], N, L);
+			lowp vec4 fragPosLightSpace = u_lightMatrix[i] * vec4(v_worldPosition, c_one);
+			shadow = ShadowCalculation(index_shadow, fragPosLightSpace, N, L);
 			++index_shadow;
 		}
 		vec3 radiance = (u_lightColor[i] * attenuation) * (1.0 - shadow);

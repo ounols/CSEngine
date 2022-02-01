@@ -12,9 +12,6 @@ namespace CSE {
         SFrameBuffer* GetMainBuffer() const {
             return m_mainBuffer;
         }
-        SFrameBuffer* GetForwardBuffer() const {
-            return m_forwardBuffer;
-        }
         SFrameBuffer* GetDeferredBuffer() const {
             return m_deferredBuffer;
         }
@@ -25,7 +22,6 @@ namespace CSE {
 
     private:
         SFrameBuffer* m_mainBuffer = nullptr;
-        SFrameBuffer* m_forwardBuffer = nullptr;
         SFrameBuffer* m_deferredBuffer = nullptr;
     };
 
