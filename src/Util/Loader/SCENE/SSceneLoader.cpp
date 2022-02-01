@@ -25,7 +25,6 @@
 using namespace CSE;
 
 void Exploring(SGameObject* obj, int level = 0) {
-
 	std::string str;
 
 	for (int i = 0; i < level; i++) {
@@ -38,7 +37,6 @@ void Exploring(SGameObject* obj, int level = 0) {
 	for (auto child : obj->GetChildren()) {
 		Exploring(child, level + 1);
 	}
-
 }
 
 SSceneLoader::SSceneLoader() = default;
@@ -59,24 +57,18 @@ bool SSceneLoader::SaveScene(SScene* scene, std::string path) {
 }
 
 std::string SSceneLoader::GetGameObjectValue(SGameObject* obj, bool ignorePrefab) {
-
 	std::string values;
 
 	if (obj->GetName() != "__ROOT_OF_SCENE__") {
-
 		std::string resID = obj->GetResourceID();
 		if (!ignorePrefab && !resID.empty()) {
-
 			if (resID.find('*') == std::string::npos) {
-
 				values += ComparePrefab(obj);
-
 				return values;
 			}
 			//루트가 아닌 오브젝트
 			//차후 추가바람
 			return values;
-
 		}
 
 		values += PrintGameObject(obj);
@@ -157,11 +149,9 @@ SScene* SSceneLoader::LoadScene(const std::string& path) {
 	SAFE_DELETE(m_root);
 
 	return scene;
-
 }
 
 void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps) {
-
 	std::string name = ConvertSpaceStr(node.getAttribute("name").value);
 	auto node_components = node.children;
 	std::string id = ConvertSpaceStr(node.getAttribute("id").value);
@@ -191,15 +181,12 @@ void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs
 	key->obj = obj_new;
 
 	objs.push_back(key);
-
 }
 
 void SSceneLoader::LinkingID(std::vector<NodeKey*>& objs, SGameObject* root) {
-
 	std::vector<NodeKey*> remain;
 
 	for (auto node_obj : objs) {
-
 		auto obj = node_obj->obj;
 		std::string parent_id = ConvertSpaceStr(node_obj->node.getChild("parent").value);
 		obj->RemoveParent();
@@ -234,7 +221,6 @@ void SSceneLoader::LinkingID(std::vector<NodeKey*>& objs, SGameObject* root) {
 		//        }
 
 		obj->SetParent(target);
-
 	}
 
 	for (auto node_obj : remain) {
@@ -244,13 +230,10 @@ void SSceneLoader::LinkingID(std::vector<NodeKey*>& objs, SGameObject* root) {
 
 		auto parent = SGameObject::FindByID(parent_id);
 		obj->SetParent(parent);
-
 	}
-
 }
 
 void SSceneLoader::LinkingReference(std::vector<ComponentValue*>& comps) {
-
 	for (auto comp : comps) {
 		auto node = comp->node;
 		for (const auto& value : node.children) {
@@ -266,7 +249,6 @@ void SSceneLoader::LinkingReference(std::vector<ComponentValue*>& comps) {
 			comp->comp->SetValue(v_name, v_values);
 		}
 	}
-
 }
 
 void SSceneLoader::ExploringPrefab(const XNode& node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps,
@@ -296,16 +278,13 @@ void SSceneLoader::ExploringPrefab(const XNode& node, std::vector<NodeKey*>& obj
 	//    key->obj = root;
 	//
 	//    objs.push_back(key);
-
 }
 
 void SSceneLoader::LinkingResourceID(const XNode& node, SGameObject* root, std::vector<NodeKey*>& objs,
                                      std::vector<ComponentValue*>& comps) {
-
 	std::string obj_fileid = ConvertSpaceStr(node.getAttribute("fileid").value, true);
 
 	if (root->GetResourceID() == obj_fileid) {
-
 		std::string obj_id = ConvertSpaceStr(node.getAttribute("id").value, true);
 		std::string obj_name = ConvertSpaceStr(node.getAttribute("name").value, true);
 
@@ -348,7 +327,6 @@ void SSceneLoader::LinkingResourceID(const XNode& node, SGameObject* root, std::
 }
 
 std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
-
 	auto prefab = SResource::Get<SPrefab>(obj->GetResourceID());
 	if (prefab == nullptr) return "";
 
@@ -405,7 +383,6 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 		isChanged = isChanged || compare_o != compare_p;
 
 		if (!isChanged) {
-
 			std::string o_parent_resID;
 			std::string p_parent_resID;
 			std::string parent_o = object_node.getChild("parent").value;
@@ -428,7 +405,6 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 			if (o_parent_resID.empty()) isChanged = true;
 
 			isChanged = isChanged || p_parent_resID != o_parent_resID;
-
 		}
 
 		if (isChanged) {
@@ -436,7 +412,6 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 			std::string str = PrintGameObject(SGameObject::FindByID(id));
 			result += std::string("<change") + str.substr(1, str.size() - 14) + "</changegameobject>";
 		}
-
 	}
 
 	//    result += addedObject_str;
@@ -448,7 +423,6 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 }
 
 std::string SSceneLoader::PrintGameObject(SGameObject* obj) {
-
 	std::string values;
 
 	std::string res_id = obj->GetResourceID();

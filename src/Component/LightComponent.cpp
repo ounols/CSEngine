@@ -9,7 +9,6 @@
 using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(LightComponent) {
-
     auto lightMgr = CORE->GetCore(LightMgr);
     lightMgr->Register(this);
 
@@ -18,27 +17,21 @@ COMPONENT_CONSTRUCTOR(LightComponent) {
     SetLightType(DIRECTIONAL);
 }
 
-
 LightComponent::~LightComponent() = default;
 
-
 void LightComponent::Exterminate() {
-
     CORE->GetCore(LightMgr)->Remove(this);
     SAFE_DELETE(m_light);
     auto resMgr = CORE->GetCore(ResMgr);
     if(m_frameBuffer != nullptr) resMgr->Remove(m_frameBuffer);
 }
 
-
 void LightComponent::Init() {
     if(m_disableShadow) return;
     SetDepthMap();
 }
 
-
 void LightComponent::Tick(float elapsedTime) {
-
     auto eye = static_cast<TransformComponent*>(gameObject->GetTransform())->GetPosition();
     auto target = *eye + vec3(-m_light->direction.x, -m_light->direction.y, -m_light->direction.z);
     m_lightViewMatrix = mat4::LookAt(*eye, target, vec3{ 0, 1, 0 });
@@ -58,11 +51,8 @@ void LightComponent::Tick(float elapsedTime) {
     }
 }
 
-
 void LightComponent::SetLightType(LIGHT type) {
-
     m_type = type;
-
 
     if (m_type == POINT || m_type == SPOT) {
         SetLightPosition();
@@ -70,14 +60,10 @@ void LightComponent::SetLightType(LIGHT type) {
     else {
         m_lightProjectionMatrix = mat4::Ortho(-3.f, 3.f, -3.f, 3.f, m_near, m_far);
     }
-
 }
 
-
 void LightComponent::SetDirection(const vec4& direction) const {
-
     switch (m_type) {
-
         case DIRECTIONAL:
         case SPOT:
 
@@ -87,24 +73,19 @@ void LightComponent::SetDirection(const vec4& direction) const {
         default:
             return;
     }
-
 }
-
 
 void LightComponent::SetColor(const vec3& color) const {
     m_light->color = color;
-
 }
 
 void LightComponent::SetLightRadius(float radius) const {
     m_light->radius = radius;
 }
 
-
 void LightComponent::SetAttenuationFactor(const vec3& att) const {
     m_light->att = att;
 }
-
 
 void LightComponent::SetAttenuationFactor(float Kc, float Kl, float Kq) const {
     SetAttenuationFactor(vec3{ Kc, Kl, Kq });
@@ -154,7 +135,6 @@ vec3 LightComponent::GetColor() const {
 
 void LightComponent::SetSunrising(bool active) {
     m_isSunRising = active;
-
 }
 
 SComponent* LightComponent::Clone(SGameObject* object) {

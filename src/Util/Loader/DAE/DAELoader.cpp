@@ -15,8 +15,7 @@ const mat4 CORRECTION = /*mat4::RotateX(90)*/ mat4::Identity();
 DAELoader::DAELoader(const char* path, LOAD_TYPE type, bool isLoad) {
     if (type == NOTHING) return;
 
-    if (isLoad)
-        Load(path, type);
+    if (isLoad) Load(path, type);
 }
 
 DAELoader::~DAELoader() {
@@ -33,7 +32,6 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
         std::size_t name_index = path_str.rfind('.');
 
         m_name = path_str.substr(index + 1, name_index - index - 1);
-
     }
 
     m_root = XFILE(path).getRoot();
@@ -58,7 +56,6 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
 
 
         try {
-            //
             const auto& geometryData = collada.getChild("library_geometries").children;
             m_meshList.reserve(geometryData.size());
 
@@ -71,11 +68,9 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
         } catch (int error) {
             std::cout << "passing geometry...\n";
         }
-
     }
     //
     if (type == ANIMATION || type == ALL || type == AUTO) {
-
         try {
             bool safe_exception;
             m_animationLoader = new DAEAnimationLoader();
@@ -89,9 +84,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
             SAFE_DELETE(m_animationLoader);
             std::cout << "passing Animation...\n";
         }
-
     }
-
 //    LoadTexture(texture_path);
 }
 
@@ -121,14 +114,12 @@ bool DAELoader::LoadSkin(const XNode& root_s) {
 #endif
     XNode skinningData = root_s.getChild("controller").getChild("skin");
 
-
     std::vector<std::string> jointsList = loadJointsList(skinningData);
     std::vector<float> weights = loadWeights(skinningData);
     const XNode& weightsDataNode = skinningData.getChild("vertex_weights");
     std::vector<int> effectorJointCounts = getEffectiveJointsCounts(weightsDataNode);
     std::vector<VertexSkinData*> vertexWeights = getSkinData(weightsDataNode, effectorJointCounts, weights);
 
-    //
     SAFE_DELETE(m_skinningData);
     m_skinningData = new SkinningData();
     m_skinningData->set_jointOrder(jointsList);
@@ -201,11 +192,8 @@ bool DAELoader::LoadGeometry(const XNode& root_g, DAEMeshData* meshData) {
 
     ReadNormals(root_m, normalsId, meshData);
     ReadUVs(root_m, texCoordsId, meshData);
-
     AssembleVertices(root_m, meshData);
-
     removeUnusedVertices(meshData);
-
     ConvertDataToVectors(meshData);
 
     return true;
@@ -232,7 +220,6 @@ void DAELoader::ReadPositions(const XNode& data, std::vector<VertexSkinData*> ve
                 new Vertex(meshData->vertices.size(), vec3{ transform.w.x, transform.w.y, transform.w.z },
                            m_isSkinning ? vertexWeight.at(meshData->vertices.size()) : nullptr));
     }
-
 }
 
 void DAELoader::ReadNormals(const XNode& data, const std::string& normalsId, DAEMeshData* meshData) {
@@ -250,11 +237,8 @@ void DAELoader::ReadNormals(const XNode& data, const std::string& normalsId, DAE
         // std::cout << "{ " << x << ", " << y << ", " << z << " }, ";
         // Matrix4f.transform(CORRECTION, normal, normal);
         meshData->normals.emplace_back( transform.w.x, transform.w.y, transform.w.z );
-
     }
-
     // std::cout << "normal size : " << normalsSize << "\nnormal real size : " << m_normals.size() << '\n';
-
 }
 
 void DAELoader::ReadUVs(const XNode& data, const std::string& texCoordsId, DAEMeshData* meshData) {
@@ -268,11 +252,7 @@ void DAELoader::ReadUVs(const XNode& data, const std::string& texCoordsId, DAEMe
 
         meshData->texUVs.emplace_back( s, t );
     }
-
-
-
     // std::cout << "normal size : " << normalsSize << "\nnormal real size : " << m_normals.size() << '\n';
-
 }
 
 void DAELoader::AssembleVertices(const XNode& data, DAEMeshData* meshData) {
@@ -345,7 +325,6 @@ Vertex* DAELoader::dealWithAlreadyProcessedVertex(Vertex* previousVertex, int ne
             // std::cout << "index = " << m_indices[m_indices.size() - 1] << " (else)\n";
             return duplicateVertex;
         }
-
     }
 }
 
@@ -446,14 +425,12 @@ Joint* DAELoader::loadJointData(const XNode& jointNode, bool isRoot) {
     Joint* joint = extractMainJointData(jointNode, isRoot);
 
     try {
-
         for (const XNode& childNode : jointNode.children) {
             if (childNode.name == "node") {
                 joint->addChild(loadJointData(childNode, false));
             }
         }
     } catch (int error) {}
-
 
     return joint;
 }
@@ -486,7 +463,6 @@ void DAELoader::ConvertDataToVectors(DAEMeshData* meshData) const {
             jointIDs.resize(size * 3);
             weights.resize(size * 3);
         }
-
     }
 
     float furthestPoint = 0;
@@ -609,7 +585,6 @@ SPrefab* DAELoader::GeneratePrefab(const char* path, Skeleton* skeleton, MeshSur
 
     loader->Load(path, AUTO);
     prefab = loader->GeneratePrefab(animation, prefab);
-
 
     SAFE_DELETE(loader);
     return prefab;

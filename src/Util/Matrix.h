@@ -34,7 +34,6 @@ namespace CSE {
 
     template <typename T>
     class Matrix3 {
-
     public:
         //    T m_mat[9] = {};
         vec3 x;
@@ -96,7 +95,6 @@ namespace CSE {
 
     template <typename T>
     class Matrix4 {
-
     public:
         //    T m_mat[16] = {};
         vec4 x;
@@ -164,7 +162,6 @@ namespace CSE {
         ~Matrix4() = default;
 
         Matrix4 operator*(const Matrix4& b) const {
-
             Matrix4 m;
             m.MAT4_XX = MAT4_XX * b.MAT4_XX + MAT4_XY * b.MAT4_YX + MAT4_XZ * b.MAT4_ZX + MAT4_XW * b.MAT4_WX;
             m.MAT4_XY = MAT4_XX * b.MAT4_XY + MAT4_XY * b.MAT4_YY + MAT4_XZ * b.MAT4_ZY + MAT4_XW * b.MAT4_WY;
@@ -183,7 +180,6 @@ namespace CSE {
             m.MAT4_WZ = MAT4_WX * b.MAT4_XZ + MAT4_WY * b.MAT4_YZ + MAT4_WZ * b.MAT4_ZZ + MAT4_WW * b.MAT4_WZ;
             m.MAT4_WW = MAT4_WX * b.MAT4_XW + MAT4_WY * b.MAT4_YW + MAT4_WZ * b.MAT4_ZW + MAT4_WW * b.MAT4_WW;
             return m;
-
         }
 
         Vector4<T> operator*(const Vector4<T>& b) const {
@@ -196,7 +192,6 @@ namespace CSE {
         }
 
         Matrix4& operator*=(const Matrix4& b) {
-
             Matrix4 m = *this * b;
             return (*this = m);
         }
@@ -287,7 +282,6 @@ namespace CSE {
         }
 
         static Matrix4<T> Scale(T x, T y, T z) {
-
             Matrix4 m;
             m.MAT4_XX = x;
             m.MAT4_XY = 0;
@@ -606,7 +600,6 @@ namespace CSE {
         static Matrix4<T> LookAt(const Vector3<T>& eye,
                                  const Vector3<T>& target,
                                  const Vector3<T>& up) {
-
             Vector3<T> z = (eye - target).Normalized();
             Vector3<T> x = up.Cross(z).Normalized();
             Vector3<T> y = z.Cross(x).Normalized();
@@ -630,13 +623,11 @@ namespace CSE {
             m.MAT4_WZ = 0;
             m.MAT4_WW = 1;
 
-
             Vector4<T> eyePrime = m * Vector4<T>(-eye, 1);
             m = m.Transposed();
             m.w = eyePrime;
             return m;
         }
-
     };
 
     typedef Matrix2<float> mat2;
