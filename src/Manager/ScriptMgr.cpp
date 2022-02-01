@@ -191,6 +191,14 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
             .Func(_SC("SetDirection"), &LightComponent::SetDirection)
             .Func(_SC("GetDirection"), &LightComponent::GetDirection);
 
+    COMPONENT_DEF(CameraComponent)
+            .Func(_SC("SetTarget"), &CameraComponent::SetTarget)
+            .Func(_SC("SetTargetVector"), &CameraComponent::SetTargetVector)
+            .Func(_SC("SetUp"), &CameraComponent::SetUp)
+            .Func(_SC("SetOrtho"), &CameraComponent::SetOrtho)
+            .Func(_SC("SetZDepthRange"), &CameraComponent::SetZDepthRange)
+            .Func(_SC("SetPerspective"), &CameraComponent::SetPerspective);
+
 
     //Util
 
@@ -219,8 +227,11 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
             .Var(_SC("y"), &Quaternion::y)
             .Var(_SC("z"), &Quaternion::z)
             .Var(_SC("w"), &Quaternion::w)
+            .Func(_SC("Set"), &Quaternion::Set)
+            .Func(_SC("Clone"), &Quaternion::Clone)
             .StaticFunc(_SC("AngleAxis"), &Quaternion::AngleAxis)
             .Func(_SC("Rotate"), &Quaternion::Rotate)
+            .Func(_SC("Slerp"), &Quaternion::Slerp)
             .Func(_SC("ToEulerAngle"), &Quaternion::ToEulerAngle);
 
     SQRClassDef<SMaterial>(_SC("Material"))

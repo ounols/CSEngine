@@ -15,4 +15,9 @@ static int sign(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
+template <typename T>
+static constexpr T ValueSelect(T comparand, T valueGEZero, T valueLTZero) {
+    return comparand >= 0.f ? valueGEZero : valueLTZero;
+}
+
 #endif //CSENGINE_APP_MOREMATH_H

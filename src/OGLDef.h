@@ -23,6 +23,10 @@
 //#include <GLES3/gl3.h>
 #include <iostream>
 
+#elif __EMSCRIPTEN__
+#include <GLES3/gl3.h>
+#include <GLFW/glfw3.h>
+#include <iostream>
 #endif
 #include "Util/SafeLog.h"
 #include <string>

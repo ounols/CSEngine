@@ -32,15 +32,24 @@ DAEAnimationLoader::~DAEAnimationLoader() {
     SAFE_DELETE(m_animationData);
 }
 
-void DAEAnimationLoader::Load(const char* path, std::string name) {
+bool DAEAnimationLoader::Load(const char* path, std::string name) {
     m_name = std::move(name);
 
     m_root = XFILE(path).getRoot();
     XNode collada = m_root->getChild("COLLADA");
 
+#ifdef __EMSCRIPTEN__
+    if(!collada.hasChild("library_animations")) return false;
+    if(!collada.hasChild("library_visual_scenes")) return false;
+#endif
     m_animation = collada.getChild("library_animations");
     m_joint = collada.getChild("library_visual_scenes");
+#ifdef __EMSCRIPTEN__
+    if(!m_animation.getChild("animation").hasChild("source")) return false;
+    if(!m_joint.getChild("visual_scene").hasChild("node")) return false;
+#endif
     LoadAnimation();
+    return true;
 }
 
 void DAEAnimationLoader::LoadAnimation() {
@@ -67,17 +76,17 @@ std::vector<float> DAEAnimationLoader::getKeyTimes() {
     return timeData.value.toFloatVector();
 }
 
-std::vector<KeyFrameData*> DAEAnimationLoader::initKeyFrames(std::vector<float> times) {
+std::vector<KeyFrameData*> DAEAnimationLoader::initKeyFrames(const std::vector<float>& times) {
     std::vector<KeyFrameData*> frames;
     frames.reserve(times.size());
-    for (int i = 0; i < times.size(); ++i) {
-        frames.push_back(new KeyFrameData(times[i]));
+    for (float time : times) {
+        frames.push_back(new KeyFrameData(time));
     }
     return frames;
 }
 
 void
-DAEAnimationLoader::loadJointTransforms(std::vector<KeyFrameData*> frames, const XNode& jointData, std::string rootNodeId) {
+DAEAnimationLoader::loadJointTransforms(std::vector<KeyFrameData*> frames, const XNode& jointData, const std::string& rootNodeId) {
     std::string jointNameId = getJointName(jointData);
     std::string dataId = getDataId(jointData);
     const XNode& transformData = jointData.getNodeByAttribute("source", "id", dataId.c_str());

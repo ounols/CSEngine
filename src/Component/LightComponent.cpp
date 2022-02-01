@@ -120,15 +120,14 @@ void LightComponent::SetDepthMap() {
     auto lightMgr = CORE->GetCore(LightMgr);
     m_frameBuffer = new SFrameBuffer();
     // 1. Generate a framebuffer.
-    // 큐브 텍스쳐도 호환되도록 수정이 필요함 (for point shadow)
-    m_frameBuffer->GenerateFramebuffer(SFrameBuffer::PLANE);
+    // todo: 큐브 텍스쳐도 호환되도록 수정이 필요함 (for point shadow)
+    m_frameBuffer->GenerateFramebuffer(SFrameBuffer::PLANE, lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT);
     // 2. Generate a depth texture.
     m_depthTexture = m_frameBuffer->GenerateTexturebuffer(SFrameBuffer::DEPTH,
-                                                          lightMgr->SHADOW_WIDTH, lightMgr->SHADOW_HEIGHT,
                                                           GL_DEPTH_COMPONENT);
     m_depthTexture->SetParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     m_depthTexture->SetParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-#ifdef ANDROID
+#if defined(ANDROID) || defined(__EMSCRIPTEN__)
     m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #else
@@ -162,28 +161,36 @@ SComponent* LightComponent::Clone(SGameObject* object) {
 	INIT_COMPONENT_CLONE(LightComponent, clone);
 
 	clone->m_type = m_type;
-	clone->DisableAmbient = DisableAmbient;
-	clone->DisableDiffuse = DisableDiffuse;
-	clone->DisableSpecular = DisableSpecular;
 	clone->m_disableShadow = m_disableShadow;
 
 	clone->m_near = m_near;
 	clone->m_far = m_far;
+    clone->SetLightType(clone->m_type);
 
 	return clone;
 }
 
 void LightComponent::SetValue(std::string name_str, Arguments value) {
+    if (name_str == "m_type") {
+        m_type = static_cast<LIGHT>(std::stoi(value[0]));
+    } else if (name_str == "m_disableShadow") {
+        m_disableShadow = std::stoi(value[0]) == 1;
+    } else if (name_str == "m_near") {
+        m_near = std::stof(value[0]);
+    } else if (name_str == "m_far") {
+        m_far = std::stof(value[0]);
+    }
+
+    SetLightType(m_type);
 }
 
 std::string LightComponent::PrintValue() const {
 	PRINT_START("component");
 
 	PRINT_VALUE(m_type, static_cast<int>(m_type));
-	//PRINT_VALUE(DisableAmbient, m_startTime);
-	//PRINT_VALUE(m_currentAnimation, ConvertSpaceStr(m_currentAnimation->GetID()));
-	//PRINT_VALUE(m_entity, ConvertSpaceStr(m_entity->GetGameObject()->GetID(m_entity)));
-
+	PRINT_VALUE(m_disableShadow, m_disableShadow ? 1 : 0);
+    PRINT_VALUE(m_near, m_near);
+    PRINT_VALUE(m_far, m_far);
 
 	PRINT_END("component");
 }
@@ -211,4 +218,8 @@ CameraMatrixStruct LightComponent::GetCameraMatrixStruct() const {
 
 SFrameBuffer* LightComponent::GetFrameBuffer() const {
     return m_frameBuffer;
+}
+
+bool LightComponent::IsShadow() const {
+    return !m_disableShadow;
 }

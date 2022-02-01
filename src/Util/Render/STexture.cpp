@@ -5,16 +5,18 @@
 
 #include "../../OGLDef.h"
 #include "STexture.h"
-#include "../GLProgramHandle.h"
 
 #include "../Loader/STB/stb_image.h"
-#include "../../Manager/ResMgr.h"
-#include "../AssetsDef.h"
 
 using namespace CSE;
 
+unsigned int STexture::m_emptyTextureId = 0;
+
 STexture::STexture() {
     SetUndestroyable(true);
+    if(m_emptyTextureId == 0) {
+        LoadEmpty();
+    }
 }
 
 STexture::STexture(STexture::Type type) {
@@ -34,6 +36,11 @@ bool STexture::LoadFile(const char* path) {
     return Load(data);
 }
 
+bool STexture::LoadFromMemory(const unsigned char* rawData, int length) {
+    auto data = stbi_load_from_memory(rawData, length, &m_width, &m_height, &m_channels, 0);
+    return Load(data);
+}
+
 bool STexture::Load(unsigned char* data) {
 
     if (m_texId != 0) {
@@ -44,11 +51,10 @@ bool STexture::Load(unsigned char* data) {
     glGenTextures(1, &m_texId);
     glBindTexture(m_targetGL, m_texId);
 
-    m_channels = GL_RGB;
-    if (m_channels == 4) m_channels = GL_RGBA;
+    m_internalFormat = GL_RGB;
+    if (m_channels == 4) m_internalFormat = GL_RGBA;
 
-    m_internalFormat = m_channels;
-    glTexImage2D(m_targetGL, 0, m_channels, m_width, m_height, 0, m_internalFormat, m_glType, data);
+    glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_internalFormat, m_glType, data);
 
     glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -59,25 +65,16 @@ bool STexture::Load(unsigned char* data) {
     return true;
 }
 
-bool STexture::LoadEmpty() {
-    if (m_texId != 0) return false;
+void STexture::LoadEmpty() {
+    if (m_emptyTextureId != 0) return;
 
-    m_width = 1;
-    m_height = 1;
-    m_channels = GL_RGBA;
-    m_internalFormat = GL_RGBA;
-    m_glType = GL_UNSIGNED_BYTE;
+    glGenTextures(1, &m_emptyTextureId);
+    glBindTexture(GL_TEXTURE_2D, m_emptyTextureId);
 
-    glGenTextures(1, &m_texId);
-    glBindTexture(m_targetGL, m_texId);
+    GLubyte data[] = { 255, 0, 255 };
 
-    GLubyte data[] = { 255, 255, 255, 255 };
-
-    glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_channels, m_glType, data);
-
-    return true;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 }
-
 
 bool STexture::ReloadFile(const char* path) {
     Release();
@@ -98,12 +95,12 @@ void STexture::Release() {
 
 void STexture::Exterminate() {
     Release();
-//    ResMgr::getInstance()->Remove<TextureContainer, STexture>(this);
 }
 
 void STexture::Bind(GLint location, int layout) {
     if (m_texId == 0) {
-        LoadEmpty();
+        BindEmpty(location, layout, m_type);
+        return;
     }
     glUniform1i(location, layout);
 
@@ -166,10 +163,7 @@ void STexture::SetParameterfv(int targetName, float* value) const {
 void STexture::Init(const AssetMgr::AssetReference* asset) {
 	const std::string img_str = CSE::AssetMgr::LoadAssetFile(asset->path);
 
-    auto data = stbi_load_from_memory(reinterpret_cast<const unsigned char*>(img_str.c_str()), img_str.length(),
-                                      &m_width, &m_height, &m_channels, 0);
-    Load(data);
-
+    LoadFromMemory(reinterpret_cast<const unsigned char*>(img_str.c_str()), img_str.length());
 }
 
 void STexture::GenerateMipmap() const {
@@ -183,11 +177,24 @@ STexture::Type STexture::GetType() const {
 
 void STexture::SetType(STexture::Type type) {
     m_type = type;
-    switch (m_type) {
+    m_targetGL = GetTypeToTargetGL(type);
+}
+
+void STexture::BindEmpty(GLint location, int layout, STexture::Type type) {
+    glUniform1i(location, layout);
+
+    glActiveTexture(GL_TEXTURE0 + layout);
+    glBindTexture(GetTypeToTargetGL(type), m_emptyTextureId);
+}
+
+int STexture::GetTypeToTargetGL(STexture::Type type) {
+    switch (type) {
         case TEX_2D:
-            m_targetGL = GL_TEXTURE_2D; break;
+            return GL_TEXTURE_2D;
         case TEX_CUBE:
-            m_targetGL = GL_TEXTURE_CUBE_MAP; break;
+            return GL_TEXTURE_CUBE_MAP;
+        default:
+            return GL_TEXTURE_2D;
     }
 }
 

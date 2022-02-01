@@ -1,11 +1,4 @@
-#version 330 core
-
-
-#define MAX_LIGHTS 8
 #define MAX_WEIGHTS 3
-#define MAX_JOINTS 60
-
-
 
 // Attributes
 //[att.position]//
@@ -46,7 +39,7 @@ uniform lowp int u_isSkinning;
 // Varying
 out mediump vec3 v_eyespaceNormal;//EyespaceNormal
 out lowp vec3 v_lightPosition[MAX_LIGHTS];
-out lowp vec4 v_fragPosLightSpace[MAX_LIGHTS];
+//out lowp vec4 v_fragPosLightSpace[MAX_LIGHTS];
 out mediump vec2 v_textureCoordOut;
 out lowp float v_distance[MAX_LIGHTS];
 out mediump vec3 v_worldPosition;
@@ -102,11 +95,11 @@ void main(void) {
         v_lightPosition[i] = normalize(aux);
         v_distance[i] = length(aux);
         // Varying Shadow
-        if (u_shadowMode[i] == 1) {
-            v_fragPosLightSpace[i] = u_lightMatrix[i] * lightPurePosition;
-        } else {
-            v_fragPosLightSpace[i] = vec4(c_zero, c_zero, c_zero, c_one);
-        }
+//        if (u_shadowMode[i] == 1) {
+//            v_fragPosLightSpace[i] = u_lightMatrix[i] * lightPurePosition;
+//        } else {
+//            v_fragPosLightSpace[i] = vec4(c_zero, c_zero, c_zero, c_one);
+//        }
     }
 
 	//vec4 vertPosition = u_modelViewMatrix * a_position;

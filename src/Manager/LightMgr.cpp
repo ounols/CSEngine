@@ -71,9 +71,10 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
         if (handle->Uniforms.LightRadius >= 0)
             glUniform1f(handle->Uniforms.LightRadius + index, lightObject->radius);
         // Shadow
-        glUniform1i(handle->Uniforms.LightShadowMode + index, !light->m_disableShadow);
+        auto isShadow = light->IsShadow();
+        glUniform1i(handle->Uniforms.LightShadowMode + index, isShadow ? 1 : 0);
         light->BindShadow(*handle, index, shadow_index);
-        if (!light->m_disableShadow) ++shadow_index;
+        if (isShadow) ++shadow_index;
         ++index;
     }
 
@@ -111,7 +112,6 @@ void LightMgr::RefreshShadowCount(int shadowCount) const {
     if(shadowCount < 0) {
         int tempCount = 0;
         for (const auto& light : m_objects) {
-            if(light->m_disableShadow) continue;
             ++tempCount;
         }
         m_shadowCount = tempCount;

@@ -8,11 +8,8 @@
 #include <map>
 
 #define HANDLE_NULL -1
-#define MAX_LIGHTS 12
-#define MAX_JOINTS 60
 
 namespace CSE {
-
     struct GLUniformHandles {
         GLint ModelView = HANDLE_NULL;
         GLint ModelNoCameraMatrix = HANDLE_NULL;
@@ -56,9 +53,7 @@ namespace CSE {
     public:
         GLProgramHandle();
 
-
         ~GLProgramHandle() override;
-
 
         void Exterminate() override;
 
@@ -88,7 +83,6 @@ namespace CSE {
 
         void SetUniformMat3(const std::string& location, mat3& value);
 
-
         void SetAttributesList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag);
 
         void SetUniformsList(std::map<std::string, std::string>& vert, std::map<std::string, std::string>& frag);
@@ -104,7 +98,6 @@ namespace CSE {
 
     private:
         static std::string getImplementName(std::map<std::string, std::string>& list, const std::string& name);
-
 
     public:
         GLuint Program;

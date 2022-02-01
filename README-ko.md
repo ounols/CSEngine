@@ -5,7 +5,7 @@
 # CSEngine - Cross Platform C++ Game Engine
 
 ![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)</br>
-![platform](https://img.shields.io/badge/platform-windows_%7C_linux_%7C_android-00B274?style=flat-square) ![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) [![CodeFactor](https://www.codefactor.io/repository/github/ounols/csengine/badge/master)](https://www.codefactor.io/repository/github/ounols/csengine/overview/master) </br>
+![platform](https://img.shields.io/badge/platform-windows_%7C_linux_%7C_android_%7C_web-00B274?style=flat-square) ![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) [![CodeFactor](https://www.codefactor.io/repository/github/ounols/csengine/badge/master)](https://www.codefactor.io/repository/github/ounols/csengine/overview/master) </br>
 CSEngine은 크로스 플랫폼 기반 3D 게임 엔진입니다.
 
 `💡 아직 개발 중이기 때문에 실사용으로 적합하지 않은 단계입니다.`
@@ -24,6 +24,10 @@ CSEngine은 크로스 플랫폼 기반 3D 게임 엔진입니다.
 
 * Gradle 4.1.3 or higher
 * NDK 21.2.6472646 or higher
+
+### Web
+
+* emsdk 3.0.0 or higher
 
 ## 빌드
 
@@ -78,6 +82,7 @@ make 파일들을 생성합니다.
 ## 더보기
 
 아래의 문서들을 통해 자세한 내용을 확인하실 수 있습니다.
+* [`web demo`](https://ounols.github.io/CSEngine-Demo/): WebGL 2.0으로 포팅된 간단한 웹 데모 입니다.
 * [`documentation`](https://ounols.github.io/CSEngine-doc): CSEngine의 구조와 기능을 자세히 설명하는 위키입니다.
 * [`to-do list`](https://www.notion.so/CSEngine-Todo-List-7ee24caed138466e83d81d2867b1f109): CSEngine의 할일 리스트이자 개발 진행하며 메모한 내용을 정리하였습니다.
 

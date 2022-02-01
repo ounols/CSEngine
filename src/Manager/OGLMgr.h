@@ -5,7 +5,6 @@
 #include <string>
 
 namespace CSE {
-
     class OGLMgr : public CoreBase, public RenderCoreBase {
     public:
         OGLMgr();
@@ -13,7 +12,6 @@ namespace CSE {
 
         void Init() override;
 
-        void setShaderProgram();
         void setBuffers();
         void setupEGLGraphics();
 
@@ -27,7 +25,6 @@ namespace CSE {
 
     private:
         GLfloat m_projectionRatio;
-
         GLuint m_depthRenderbuffer = 0;
         GLuint m_colorRenderbuffer = 0;
         GLuint m_framebuffer = 0;

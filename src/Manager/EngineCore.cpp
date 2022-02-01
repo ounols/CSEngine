@@ -13,6 +13,12 @@
 #include "SceneMgr.h"
 #include "MemoryMgr.h"
 #include "../Sample/FirstDemoScene.h"
+#include "../Util/Loader/SCENE/SSceneLoader.h"
+#include "../Util/AssetsDef.h"
+
+#ifdef __EMSCRIPTEN__
+#include "../Sample/WebDemoScene.h"
+#endif
 
 using namespace CSE;
 IMPLEMENT_SINGLETON(EngineCore);
@@ -36,15 +42,24 @@ void EngineCore::Init(unsigned int width, unsigned int height) {
     m_oglMgr->ResizeWindow(width, height);
     static_cast<RenderMgr*>(m_renderMgr)->SetViewport();
 
-    //    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/test_scene.scene");
-//    SceneMgr::getInstance()->SetScene(scene);
+
+#ifdef __EMSCRIPTEN__
+    static_cast<SceneMgr*>(m_sceneMgr)->SetScene(new WebDemoScene());
+#else
     static_cast<SceneMgr*>(m_sceneMgr)->SetScene(new FirstDemoScene());
+//    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/test_scene.scene");
+//    SceneMgr::getInstance()->SetScene(scene);
+#endif
 }
 
 void EngineCore::Update(float elapsedTime) {
     for (const auto& core : m_updateCores) {
         core->Update(elapsedTime);
     }
+}
+
+void EngineCore::LateUpdate(float elapsedTime) {
+    m_gameObjectMgr->DestroyQueuedObject();
 }
 
 void EngineCore::Render() const {

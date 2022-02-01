@@ -5,12 +5,16 @@
 #include "ShaderUtil.h"
 #include "../MoreString.h"
 #include "SEnvironmentMgr.h"
-
-#ifdef WIN32
-#include <Windows.h>
-#endif
+#include "../Settings.h"
+#include "../../PlatformDef.h"
 
 using namespace CSE;
+
+#if defined(__CSE_DESKTOP__)
+std::string ShaderUtil::m_defineVersion = "#version 330 core\n";
+#elif defined(__CSE_ES__)
+std::string ShaderUtil::m_defineVersion = "#version 300 es\n";
+#endif
 
 ShaderUtil::ShaderUtil() = default;
 
@@ -21,9 +25,8 @@ ShaderUtil::CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragme
 	if (vertexSource == nullptr || fragmentSource == nullptr) return nullptr;
 	if (handle != nullptr && handle->Program != HANDLE_NULL) return nullptr;
 
-	GLProgramHandle* gProgramhandle = handle;
-
-	auto program = createProgram(vertexSource, fragmentSource);
+    GLProgramHandle* newHandle = handle;
+	auto program = createProgram(vertexSource, fragmentSource, *newHandle);
 	if (!program) {
 		return nullptr;
 	}
@@ -32,38 +35,38 @@ ShaderUtil::CreateProgramHandle(const GLchar* vertexSource, const GLchar* fragme
 	auto variables_vert = GetImportantVariables(vertexSource);
 	auto variables_frag = GetImportantVariables(fragmentSource);
 
-	if (gProgramhandle == nullptr)
-		gProgramhandle = new GLProgramHandle();
-	gProgramhandle->SetProgram(program);
+    if (newHandle == nullptr)
+        newHandle = new GLProgramHandle();
+    newHandle->SetProgram(program);
 	//Get all variables from shader.
-	gProgramhandle->SetAttributesList(variables_vert, variables_frag);
-	gProgramhandle->SetUniformsList(variables_vert, variables_frag);
+    newHandle->SetAttributesList(variables_vert, variables_frag);
+    newHandle->SetUniformsList(variables_vert, variables_frag);
 
 	//Binding important variables to engine.
-	BindVariables(gProgramhandle);
+	BindVariables(newHandle);
 
-	return gProgramhandle;
+	return newHandle;
 }
 
-GLuint ShaderUtil::createProgram(const GLchar* vertexSource, const GLchar* fragmentSource) {
-	GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vertexSource);
+GLuint
+ShaderUtil::createProgram(const GLchar* vertexSource, const GLchar* fragmentSource, const GLProgramHandle& handle) {
+	GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vertexSource, handle);
 	if (!vertexShader) {
 		return 0;
 	}
 
-	GLuint fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentSource);
+	GLuint fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentSource, handle);
 	if (!fragmentShader) {
 		return 0;
 	}
 
-	return createProgram(vertexShader, fragmentShader);
+	return createProgram(vertexShader, fragmentShader, handle);
 }
 
-GLuint ShaderUtil::createProgram(GLuint vertexShader, GLuint fragmentShader) {
+GLuint ShaderUtil::createProgram(GLuint vertexShader, GLuint fragmentShader, const GLProgramHandle& handle) {
 	GLuint program = glCreateProgram();
 
 	if (program) {
-
 		//쉐이더를 attach 합니다.
 		glAttachShader(program, vertexShader);
 		glAttachShader(program, fragmentShader);
@@ -72,91 +75,73 @@ GLuint ShaderUtil::createProgram(GLuint vertexShader, GLuint fragmentShader) {
 		GLint linkStatus = GL_FALSE;
 		glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
 		if (linkStatus != GL_TRUE) {
-
 			GLint bufLength = 0;
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufLength);
 
 			if (bufLength) {
-
 				auto buf = static_cast<char*>(malloc(bufLength));
 
 				if (buf) {
-
 					glGetProgramInfoLog(program, bufLength, nullptr, buf);
-#ifdef __ANDROID__
-                    SafeLog::Log(buf);
-#else
-					std::cout << "Could not link program:\n" << buf << '\n';
-#endif
-					//LOGE("Could not link program:\n%s\n", buf);
+                    auto errorLog = std::string("[") + handle.GetName() + "] Could not link program:" + buf;
+                    SafeLog::Log(errorLog.c_str());
 					free(buf);
 
 				}
 			}
-
 			glDeleteProgram(program);
 			program = 0;
 
 		}
-
 		glDetachShader(program, vertexShader);
 		glDetachShader(program, fragmentShader);
 
 	}
-
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
 	return program;
 }
 
-GLuint ShaderUtil::loadShader(GLenum shaderType, const char* pSource) {
+GLuint ShaderUtil::loadShader(GLenum shaderType, const char* pSource, const GLProgramHandle& handle) {
 	GLuint shader = glCreateShader(shaderType);
+    std::string srcString = m_defineVersion
+            + "#define MAX_JOINTS " + std::to_string(Settings::GetMaxJoints()) + '\n'
+            + "#define MAX_LIGHTS " + std::to_string(Settings::GetMaxLights()) + '\n'
+            + pSource;
+    const char* src = srcString.c_str();
 
 	if (shader) {
-
-		glShaderSource(shader, 1, &pSource, nullptr);
+		glShaderSource(shader, 1, &src, nullptr);
 		glCompileShader(shader);
 		GLint compiled = 0;
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 
 		if (!compiled) {
-
 			GLint infoLen = 0;
 			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
 
 			if (infoLen) {
-
 				auto buf = static_cast<char*>(malloc(infoLen));
 
 				if (buf) {
 					glGetShaderInfoLog(shader, infoLen, nullptr, buf);
 					//LOGE("Could not compile shader %d:\n%s\n", shaderType, buf);
-#ifdef __ANDROID__
-                    SafeLog::Log(buf);
-#else
-					std::cout << "Could not compile shader:\n" << buf << '\n';
-#endif
-#ifdef WIN32
-					OutputDebugStringA(buf);
-#endif
+                    auto errorLog = std::string("[") + handle.GetName() + "] Could not compile shader:" + buf;
+                    SafeLog::Log(errorLog.c_str());
 					free(buf);
 				}
-
 				glDeleteShader(shader);
 				shader = 0;
 			}
 		}
 	}
-
 	return shader;
 }
 
 std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLchar* source) {
 	std::map<std::string, std::string> variables;
-
 	std::vector<std::string> str_line = split(source, ';');
-
 	std::string type_str;
 
 	for (auto line : str_line) {
@@ -186,12 +171,10 @@ std::map<std::string, std::string> ShaderUtil::GetImportantVariables(const GLcha
 		}
 
 	}
-
 	return variables;
 }
 
 void ShaderUtil::BindVariables(GLProgramHandle* handle) {
-
 	if (handle == nullptr) return;
 
 	//Attributes
@@ -270,35 +253,46 @@ void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMe
 	GLint weight = handle.Attributes.Weight;
 	GLint jointId = handle.Attributes.JointId;
 
-	if (meshId.m_indexSize < 0) {
-		glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
-		glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
-		glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, offset);
+    if(position < 0) return;
 
-		offset = (GLvoid*)(sizeof(vec3) * 2);
-		glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, stride, offset);
+    glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
+    glEnableVertexAttribArray(position);
+    glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
+    if(normal >= 0) {
+        glEnableVertexAttribArray(normal);
+        glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, offset);
+    }
 
-		offset = (GLvoid*)(sizeof(vec3) * 2 + sizeof(vec2));
-		glVertexAttribPointer(weight, 3, GL_FLOAT, GL_FALSE, stride, offset);
-		offset = (GLvoid*)(sizeof(vec3) * 3 + sizeof(vec2));
-		glVertexAttribPointer(jointId, 3, GL_FLOAT, GL_FALSE, stride, offset);
+    offset = (GLvoid*)(sizeof(vec3) * 2);
+    if(tex >= 0) {
+        glEnableVertexAttribArray(tex);
+        glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, stride, offset);
+    }
+
+    offset = (GLvoid*)(sizeof(vec3) * 2 + sizeof(vec2));
+    if(weight >= 0) {
+        glEnableVertexAttribArray(weight);
+        glVertexAttribPointer(weight, 3, GL_FLOAT, GL_FALSE, stride, offset);
+    }
+    offset = (GLvoid*)(sizeof(vec3) * 3 + sizeof(vec2));
+    if(jointId >= 0) {
+        glEnableVertexAttribArray(jointId);
+        glVertexAttribPointer(jointId, 3, GL_FLOAT, GL_FALSE, stride, offset);
+    }
+
+    if (meshId.m_indexSize < 0) {
 		glDrawArrays(GL_TRIANGLES, 0, meshId.m_vertexSize);
 	}
 	else {
-		glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
-		glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
-		glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, offset);
-
-		offset = (GLvoid*)(sizeof(vec3) * 2);
-		glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, stride, offset);
-
-		offset = (GLvoid*)(sizeof(vec3) * 2 + sizeof(vec2));
-		glVertexAttribPointer(weight, 3, GL_FLOAT, GL_FALSE, stride, offset);
-		offset = (GLvoid*)(sizeof(vec3) * 3 + sizeof(vec2));
-		glVertexAttribPointer(jointId, 3, GL_FLOAT, GL_FALSE, stride, offset);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshId.m_indexBuffer);
 		glDrawElements(GL_TRIANGLES, meshId.m_indexSize * 3, GL_UNSIGNED_SHORT, nullptr);
 	}
+
+    glDisableVertexAttribArray(position);
+    if(normal >= 0)     glDisableVertexAttribArray(normal);
+    if(tex >= 0)        glDisableVertexAttribArray(tex);
+    if(weight >= 0)     glDisableVertexAttribArray(weight);
+    if(jointId >= 0)    glDisableVertexAttribArray(jointId);
 }
 
 void ShaderUtil::BindAttributeToPlane() {
@@ -321,6 +315,6 @@ void ShaderUtil::BindSkinningDataToShader(const GLProgramHandle& handle, const G
 		}
 	}
 
-	glUniformMatrix4fv(handle.Uniforms.JointMatrix, MAX_JOINTS, GL_FALSE, &result[0]);
+	glUniformMatrix4fv(handle.Uniforms.JointMatrix, Settings::GetMaxJoints(), GL_FALSE, &result[0]);
 	glUniform1i(handle.Uniforms.SkinningMode, 1);
 }

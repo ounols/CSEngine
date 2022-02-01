@@ -134,7 +134,7 @@ namespace CSE {
 
     template <class T>
     T* SGameObject::GetComponent() {
-        for (const auto component : m_components) {
+        for (const auto& component : m_components) {
             if (component == nullptr) continue;
             if (dynamic_cast<T*>(component)) {
                 return static_cast<T*>(component);
@@ -146,7 +146,6 @@ namespace CSE {
 
     template <class T>
     T* SGameObject::GetComponentByID(std::string id) const {
-
         return static_cast<T*>(GetSComponentByID(id));
     }
 
@@ -154,7 +153,6 @@ namespace CSE {
 
     template <class T>
     T* SGameObject::CreateComponent() {
-
         T* component = new T();
         AddComponent(component);
         if (m_status == IDLE)

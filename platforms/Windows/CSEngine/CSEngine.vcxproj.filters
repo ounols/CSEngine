@@ -156,6 +156,9 @@
     <ClCompile Include="..\..\..\src\Util\Settings.cpp">
       <Filter>src\Util</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\Manager\CoreBufferContainer.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Sample\FirstDemoScene.h" />
@@ -414,6 +417,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\Util\STypeDef.h">
       <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Manager\CoreBufferContainer.h">
+      <Filter>src\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

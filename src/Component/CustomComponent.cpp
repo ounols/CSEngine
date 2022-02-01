@@ -89,11 +89,6 @@ void CustomComponent::RegisterScript() {
     }
     catch (Sqrat::Exception e) { m_funcExterminate = -1; }
 
-	try {
-		m_specialization->bind(9, "GetCount");
-	}
-	catch (Sqrat::Exception e) { }
-
 }
 
 
@@ -111,9 +106,7 @@ void CustomComponent::SetClassName(std::string name) {
 
 
 std::string CustomComponent::SGetClassName() const {
-
     return m_className;
-
 }
 
 

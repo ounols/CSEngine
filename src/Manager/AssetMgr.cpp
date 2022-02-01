@@ -6,15 +6,14 @@
 #include "../MacroDef.h"
 #include "../Util/AssetsDef.h"
 #include "../Util/MoreString.h"
+#include "../Util/SafeLog.h"
 #include "EngineCore.h"
 #include "ResMgr.h"
 #include <iostream>
 
 #ifdef __linux__
-
 #include <sys/types.h>
 #include <dirent.h>
-
 
 #elif WIN32
 #include <windows.h>
@@ -67,7 +66,8 @@ AssetMgr::AssetReference* AssetMgr::GetAsset(std::string name) const {
         if (make_lower_copy(asset->path) == name) return asset;
         if (make_lower_copy(asset->name_full) == name) return asset;
     }
-
+    auto errorLog = "[Assets Warning] " + name + " does not exist.";
+    SafeLog::Log(errorLog.c_str());
     return nullptr;
 }
 
@@ -204,9 +204,9 @@ void AssetMgr::SetType() {
             continue;
         }
 
-        //cube map texture data
+        // framebuffer data
         if (type_str == "framebuffer") {
-            asset->type = TEX_FRAMEBUFFER;
+            asset->type = FRAMEBUFFER;
             asset->name += ".frameBuffer";
             continue;
         }
@@ -307,7 +307,7 @@ std::vector<AssetMgr::AssetReference*> AssetMgr::GetAssets(AssetMgr::TYPE type) 
 }
 
 std::string AssetMgr::LoadAssetFile(const std::string& path) {
-    if(ASSET_PACKED == false)
+    if(Settings::IsAssetsPacked() == false)
         return OpenNativeAssetsTxtFile(path);
 
     std::string result;

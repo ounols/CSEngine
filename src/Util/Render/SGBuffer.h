@@ -39,7 +39,7 @@ namespace CSE {
         STexture* m_normalTexture = nullptr;
         STexture* m_albedoTexture = nullptr;
         STexture* m_materialTexture = nullptr;
-        unsigned int m_depthRbo = 0;
+        STexture* m_depthTexture = nullptr;
 
         GLProgramHandle* m_lightPassHandle = nullptr;
 
@@ -47,6 +47,7 @@ namespace CSE {
         int m_normalTextureId = -1;
         int m_albedoTextureId = -1;
         int m_materialTextureId = -1;
+        int m_depthTextureId = -1;
 
         int m_width = -1;
         int m_height = -1;

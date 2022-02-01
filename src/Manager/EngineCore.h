@@ -4,7 +4,6 @@
 #pragma once
 
 #include <vector>
-#include <queue>
 #include <list>
 #include "../MacroDef.h"
 #include "Base/CoreBase.h"
@@ -48,6 +47,7 @@ namespace CSE {
 
         void Init(unsigned int width, unsigned int height);
         void Update(float elapsedTime);
+        void LateUpdate(float elapsedTime);
         void Render() const;
         void Exterminate();
         void ResizeWindow(unsigned int width, unsigned int height);

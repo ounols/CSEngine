@@ -19,6 +19,7 @@ void MainProc::Init(GLuint width, GLuint height) {
 
 void MainProc::Update(float elapsedTime) {
     CORE->Update(elapsedTime);
+    CORE->LateUpdate(elapsedTime);
 }
 
 

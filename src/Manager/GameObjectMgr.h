@@ -1,4 +1,6 @@
 #pragma once
+
+#include <queue>
 #include "../MacroDef.h"
 #include "GameObjectContainer.h"
 #include "Base/CoreBase.h"
@@ -17,13 +19,18 @@ namespace CSE {
 
         void Update(float elapsedTime) override;
 
-        void DeleteGameObject(SGameObject* object);
+        void DestroyQueuedObject();
+
+        void AddDestroyObject(SGameObject* object);
 
         SGameObject* Find(const std::string& name) const;
 
         SGameObject* FindByID(const std::string& id) const;
 
         SComponent* FindComponentByID(const std::string& id) const;
+
+    private:
+        std::queue<SGameObject*> m_destroyObjectsQueue;
 
     };
 }

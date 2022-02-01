@@ -48,7 +48,7 @@ namespace CSE {
 
 		~DAEAnimationLoader();
 
-		void Load(const char* path, std::string name);
+		bool Load(const char* path, std::string name);
 
 		AnimationData* GetAnimation() const {
 			return m_animationData;
@@ -61,10 +61,10 @@ namespace CSE {
 
 		std::vector<float> getKeyTimes();
 
-		static std::vector<KeyFrameData*> initKeyFrames(std::vector<float> times);
+		static std::vector<KeyFrameData*> initKeyFrames(const std::vector<float>& times);
 
 		static void loadJointTransforms(std::vector<KeyFrameData*> frames, const XNode& jointData,
-		                         std::string rootNodeId);
+		                         const std::string& rootNodeId);
 
 		static std::string getJointName(const XNode& jointData);
 

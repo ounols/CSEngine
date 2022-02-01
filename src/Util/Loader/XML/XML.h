@@ -64,9 +64,14 @@ public:
 
     const XNode& getChild(const char* name) const;
 
+    bool hasChild(const char* name) const;
+
     const XAttrib& getAttribute(const char* name) const;
 
+    bool hasAttribute(const char* name) const;
+
     const XNode& getNodeByAttribute(const char* node_name, const char* attrib_name, const char* attrib_value) const;
+    bool hasNodeByAttribute(const char* node_name, const char* attrib_name, const char* attrib_value) const;
 };
 
 class XFILE {

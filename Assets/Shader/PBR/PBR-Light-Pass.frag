@@ -1,6 +1,3 @@
-#version 330 core
-#define MAX_LIGHTS 8
-
 precision highp float;
 precision highp int;
 
@@ -14,6 +11,8 @@ uniform sampler2D u_sampler_normal;
 uniform sampler2D u_sampler_albedo;
 //[geo.material]//
 uniform sampler2D u_sampler_material;
+//[geo.depth]//
+uniform sampler2D u_sampler_depth;
 
 //IBL
 //[light.irradiance]//
@@ -51,11 +50,8 @@ const lowp float c_zero = 0.0;
 const lowp float c_one = 1.0;
 const float PI = 3.14159265359;
 
-#if __VERSION__ == 300 // For ES
-/** for android **/
 const lowp float c_shadow_width = 1024.f;
 const lowp float c_shadow_height = 1024.f;
-#endif
 
 //Functions
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -67,7 +63,7 @@ float GeometrySmith_Fast(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 fresnelSchlick(float cosTheta, vec3 F0);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D);
-vec4 GetShadowTextureInArray(int index, vec2 uv);
+vec3 GetShadowTextureInArray(int index, vec2 uv);
 
 //Macro Functions
 float ClampedPow(float X, float Y) {
@@ -78,7 +74,8 @@ float ClampedPow(float X, float Y) {
 void main(void) {
 	// retrieve data from gbuffer
 	lowp vec3  fragPos	 = texture(u_sampler_position, v_textureCoordOut).rgb;
-	lowp vec3  normal	 = texture(u_sampler_normal, v_textureCoordOut).rgb;
+	lowp vec2 normal_raw = texture(u_sampler_normal, v_textureCoordOut).rg;
+	lowp vec3  normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1.f - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0.f));
 
 	lowp vec3  albedo    = texture(u_sampler_albedo, v_textureCoordOut).rgb;
 	lowp float metallic  = texture(u_sampler_material, v_textureCoordOut).r;
@@ -172,7 +169,7 @@ void main(void) {
 	color = pow(color, vec3(1.0/2.2));
 
 	FragColor = vec4(color, 1.0);
-
+	gl_FragDepth = texture(u_sampler_depth, v_textureCoordOut).r;
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
@@ -259,11 +256,7 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	// float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
 	// PCF
 	float shadow = 0.0;
-	#if __VERSION__ == 300 // For ES
 	vec2 texelSize = 1.0 / vec2(c_shadow_width, c_shadow_height);
-	#else
-	vec2 texelSize = 1.0 / textureSize(u_shadowMap[index], 0);
-	#endif
 	for(int x = -1; x <= 1; ++x)
 	{
 		for(int y = -1; y <= 1; ++y)
@@ -277,21 +270,21 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 
 	// keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
 	if(projCoords.z > 1.0)
-	shadow = 0.0;
+		shadow = 0.0;
 
 	return shadow;
 }
 
-vec4 GetShadowTextureInArray(int index, vec2 uv) {
-	if(index >= MAX_LIGHTS) return vec4(0.0f);
-	if(index == 0) return texture(u_shadowMap[0], uv);
-	if(index == 1) return texture(u_shadowMap[1], uv);
-	if(index == 2) return texture(u_shadowMap[2], uv);
-	if(index == 3) return texture(u_shadowMap[3], uv);
-	if(index == 4) return texture(u_shadowMap[4], uv);
-	if(index == 5) return texture(u_shadowMap[5], uv);
-	if(index == 6) return texture(u_shadowMap[6], uv);
-	if(index == 7) return texture(u_shadowMap[7], uv);
+vec3 GetShadowTextureInArray(int index, vec2 uv) {
+	if(index >= MAX_LIGHTS) return vec3(0.0f);
+	if(index == 0) return texture(u_shadowMap[0], uv).rgb;
+	if(index == 1) return texture(u_shadowMap[1], uv).rgb;
+	if(index == 2) return texture(u_shadowMap[2], uv).rgb;
+	if(index == 3) return texture(u_shadowMap[3], uv).rgb;
+	if(index == 4) return texture(u_shadowMap[4], uv).rgb;
+	if(index == 5) return texture(u_shadowMap[5], uv).rgb;
+	if(index == 6) return texture(u_shadowMap[6], uv).rgb;
+	if(index == 7) return texture(u_shadowMap[7], uv).rgb;
 
-	return texture(u_shadowMap[0], uv);
+	return texture(u_shadowMap[0], uv).rgb;
 }

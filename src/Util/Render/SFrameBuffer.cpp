@@ -6,8 +6,27 @@
 #include "STexture.h"
 #include "../../Manager/EngineCore.h"
 #include "../../Manager/ResMgr.h"
+#include "../Loader/XML/XML.h"
+#include "../../PlatformDef.h"
+#include "../Settings.h"
+#include "../GLProgramHandle.h"
+#include "ShaderUtil.h"
+
+#if defined(__CSE_DESKTOP__)
+#define CSE_GL_DEPTH_COMPONENT GL_DEPTH_COMPONENT32F
+#define CSE_GL_RG GL_RG16F
+#define CSE_GL_RGB GL_RGB16F
+#define CSE_GL_RGBA GL_RGBA16F
+#elif defined(__CSE_ES__)
+#define CSE_GL_DEPTH_COMPONENT GL_DEPTH_COMPONENT16
+#define CSE_GL_RG GL_RG8
+#define CSE_GL_RGB GL_RGB8
+#define CSE_GL_RGBA GL_RGBA8
+#endif
 
 using namespace CSE;
+
+SFrameBuffer::BlitObject SFrameBuffer::m_blitObject = SFrameBuffer::BlitObject();
 
 SFrameBuffer::SFrameBuffer() {
     SetUndestroyable(true);
@@ -21,48 +40,108 @@ void SFrameBuffer::Exterminate() {
     for(const auto& buffer : m_buffers) {
         ReleaseBufferObject(buffer);
     }
+    m_buffers.clear();
+    m_depthBuffer = m_mainColorBuffer = nullptr;
 }
 
 // Init function for asset binding
 void SFrameBuffer::Init(const AssetMgr::AssetReference* asset) {
+    const XNode* root = nullptr;
+
+    try {
+        root = XFILE(asset->path.c_str()).getRoot();
+    }
+    catch (int e) {
+        SAFE_DELETE(root);
+        return;
+    }
+
+    try {
+        const XNode& cse_framebuffer = root->getChild("CSEFRAMEBUFFER");
+        const XNode& info = cse_framebuffer.getChild("info");
+
+        auto width_str = info.getAttribute("width").value;
+        auto height_str = info.getAttribute("height").value;
+        auto dimension_str = info.getAttribute("dimension").value;
+
+        m_width = std::stoi(width_str);
+        m_height = std::stoi(height_str);
+        auto dimension = static_cast<BufferDimension>(std::stoi(dimension_str));
+        GenerateFramebuffer(dimension, m_width, m_height);
+
+        const XNode& buffers = cse_framebuffer.getChild("buffers");
+        int index = 0;
+        for (const auto& buffer_node : buffers.children) {
+            auto type_str = buffer_node.getAttribute("type").value;
+            auto format_str = buffer_node.getAttribute("format").value;
+            auto isTexture_str = buffer_node.getAttribute("isTexture").value;
+
+            auto type = static_cast<BufferType>(std::stoi(type_str));
+            auto format = std::stoi(format_str);
+            auto isTexture = std::stoi(isTexture_str) == 1;
+
+            if(isTexture) {
+                const auto& texture = GenerateTexturebuffer(type, format);
+                const auto& textureName = "?Texture" + std::to_string(index);
+                texture->SetName(GetName() + textureName);
+                texture->SetID(GetID() + textureName);
+            }
+            else {
+                GenerateRenderbuffer(type, format);
+            }
+            ++index;
+        }
+        RasterizeFramebuffer();
+    }
+    catch (int e) {
+        SAFE_DELETE(root);
+        auto resMgr = CORE->GetCore(ResMgr);
+        resMgr->Remove(this);
+    }
+    SAFE_DELETE(root);
 }
 
-void SFrameBuffer::GenerateFramebuffer(SFrameBuffer::BufferDimension dimension) {
+void SFrameBuffer::GenerateFramebuffer(BufferDimension dimension, int width, int height) {
     m_dimension = dimension;
+    m_width = width;
+    m_height = height;
 
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 }
 
-unsigned int SFrameBuffer::GenerateRenderbuffer(BufferType type, int width, int height, int internalFormat) {
+unsigned int SFrameBuffer::GenerateRenderbuffer(BufferType type, int internalFormat) {
     if(m_dimension == CUBE) return 0;
 
     auto buffer = new BufferObject();
     buffer->type = type;
     buffer->format = internalFormat;
-    m_width = width;
-    m_height = height;
 
     glGenRenderbuffers(1, &buffer->renderbufferId);
     glBindRenderbuffer(GL_RENDERBUFFER, buffer->renderbufferId);
-    glRenderbufferStorage(GL_RENDERBUFFER, GenerateInternalFormatType(internalFormat), width, height);
+    glRenderbufferStorage(GL_RENDERBUFFER, GenerateInternalFormat(internalFormat), m_width, m_height);
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GenerateAttachmentType(type, false), GL_RENDERBUFFER, buffer->renderbufferId);
 
+    if(type == RENDER) {
+        if(m_mainColorBuffer == nullptr)
+            m_mainColorBuffer = buffer;
+    }
+    else if(m_depthBuffer == nullptr) {
+        m_depthBuffer = buffer;
+    }
     m_buffers.push_back(buffer);
     return buffer->renderbufferId;
 }
 
-STexture* SFrameBuffer::GenerateTexturebuffer(BufferType type, int width, int height, int channel, int level) {
+STexture* SFrameBuffer::GenerateTexturebuffer(BufferType type, int channel, int level) {
     auto buffer = new BufferObject();
     buffer->type = type;
     buffer->format = channel;
     buffer->level = (short)level;
-    m_width = width;
-    m_height = height;
     buffer->texture = new STexture(static_cast<STexture::Type>(m_dimension));
-    buffer->texture->InitTexture(width, height, channel, GenerateInternalFormatType(channel), GL_FLOAT);
+    buffer->texture->InitTexture(m_width, m_height, channel, GenerateInternalFormat(channel), GenerateInternalType(channel));
     unsigned int texId = buffer->texture->GetTextureID();
 //    if(level > 0)
 
@@ -76,6 +155,13 @@ STexture* SFrameBuffer::GenerateTexturebuffer(BufferType type, int width, int he
         GenerateAttachmentType(buffer->type, false);
     }
 
+    if(type == RENDER) {
+        if(m_mainColorBuffer == nullptr)
+            m_mainColorBuffer = buffer;
+    }
+    else if(m_depthBuffer == nullptr) {
+        m_depthBuffer = buffer;
+    }
     m_buffers.push_back(buffer);
     return buffer->texture;
 }
@@ -95,7 +181,7 @@ void SFrameBuffer::RasterizeFramebuffer() {
     }
 
     if(m_bufferStatus == COLOR_ONLY) {
-        GenerateRenderbuffer(SFrameBuffer::DEPTH, m_width, m_height, GL_DEPTH_COMPONENT);
+        GenerateTexturebuffer(SFrameBuffer::DEPTH, GL_DEPTH_COMPONENT);
         m_bufferStatus = MULTI;
     }
 }
@@ -127,7 +213,8 @@ void SFrameBuffer::ResizeFrameBuffer(int width, int height) {
     m_buffers.reserve(origBufferVector.size());
     m_colorAttachmentSize = 0;
     glDeleteFramebuffers(1, &m_fbo);
-    GenerateFramebuffer(m_dimension);
+    GenerateFramebuffer(m_dimension, width, height);
+    m_depthBuffer = m_mainColorBuffer = nullptr;
 
     for (const auto& buffer : origBufferVector) {
         auto type = buffer->type;
@@ -138,11 +225,54 @@ void SFrameBuffer::ResizeFrameBuffer(int width, int height) {
         ReleaseBufferObject(buffer);
 
         if(isTexture)
-            GenerateTexturebuffer(type, width, height, format, level);
+            GenerateTexturebuffer(type, format, level);
         else
-            GenerateRenderbuffer(type, width, height, format);
+            GenerateRenderbuffer(type, format);
     }
     RasterizeFramebuffer();
+}
+
+void SFrameBuffer::BlitFrameBuffer(const SFrameBuffer& dst, BlitType type) {
+    if (m_mainColorBuffer == nullptr || m_depthBuffer == nullptr) {
+        Exterminate();
+        GenerateFramebuffer(PLANE, m_width, m_height);
+        GenerateTexturebuffer(RENDER, GL_RGB);
+        GenerateTexturebuffer(DEPTH, GL_DEPTH_COMPONENT);
+        RasterizeFramebuffer();
+    }
+
+    const SFrameBuffer* a;
+    const SFrameBuffer* b;
+    if (type == REVERSE) {
+        a = this;
+        b = &dst;
+    }
+    else {
+        a = &dst;
+        b = this;
+    }
+    const auto& aColorTexture = a->m_mainColorBuffer->texture;
+    const auto& bColorTexture = b->m_mainColorBuffer->texture;
+    const auto& aDepthTexture = a->m_depthBuffer->texture;
+    const auto& bDepthTexture = b->m_depthBuffer->texture;
+
+    if (m_blitObject.handle == nullptr) {
+        m_blitObject.handle = SResource::Create<GLProgramHandle>(Settings::GetDefaultBlitBufferShaderID());
+        m_blitObject.aColor = m_blitObject.handle->UniformLocation("a.color")->id;
+        m_blitObject.bColor = m_blitObject.handle->UniformLocation("b.color")->id;
+        m_blitObject.aDepth = m_blitObject.handle->UniformLocation("a.depth")->id;
+        m_blitObject.bDepth = m_blitObject.handle->UniformLocation("b.depth")->id;
+    }
+
+    AttachFrameBuffer();
+    glViewport(0, 0, m_width, m_height);
+    glUseProgram(m_blitObject.handle->Program);
+    aColorTexture->Bind(m_blitObject.aColor, 0);
+    bColorTexture->Bind(m_blitObject.bColor, 1);
+    aDepthTexture->Bind(m_blitObject.aDepth, 2);
+    bDepthTexture->Bind(m_blitObject.bDepth, 3);
+
+    ShaderUtil::BindAttributeToPlane();
 }
 
 int SFrameBuffer::GetWidth() const {
@@ -172,17 +302,34 @@ int SFrameBuffer::GenerateAttachmentType(SFrameBuffer::BufferType type, bool isI
     }
 }
 
-int SFrameBuffer::GenerateInternalFormatType(int channel) const {
+int SFrameBuffer::GenerateInternalFormat(int channel) const {
     switch (channel) {
         case GL_RG:
-            return GL_RG16F;
+            return CSE_GL_RG;
         case GL_DEPTH_COMPONENT:
-            return GL_DEPTH_COMPONENT32F;
+            return CSE_GL_DEPTH_COMPONENT;
         case GL_RGBA:
-            return GL_RGBA16F;
+            return CSE_GL_RGBA;
         case GL_RGB:
         default:
-            return GL_RGB16F;
+            return CSE_GL_RGB;
+    }
+}
+
+int SFrameBuffer::GenerateInternalType(int channel) const {
+    switch (channel) {
+        case GL_DEPTH_COMPONENT:
+#if defined(__CSE_DESKTOP__)
+            return GL_FLOAT;
+#elif defined(__CSE_ES__)
+            return GL_UNSIGNED_INT;
+#endif
+        default:
+#if defined(__CSE_DESKTOP__)
+            return GL_FLOAT;
+#elif defined(__CSE_ES__)
+            return GL_UNSIGNED_BYTE;
+#endif
     }
 }
 
@@ -204,6 +351,17 @@ STexture* SFrameBuffer::GetTexture(int index) const {
 
     auto texture = m_buffers[index]->texture;
     return texture;
+}
+
+STexture* SFrameBuffer::GetTexture(const char* id) const {
+    for (const auto& buffer : m_buffers) {
+        const auto& texture = buffer->texture;
+        if(texture == nullptr) continue;
+
+        std::string bufferId = texture->GetID();
+        if(bufferId == id) return texture;
+    }
+    return nullptr;
 }
 
 unsigned int SFrameBuffer::GetRenderbufferID(int index) const {

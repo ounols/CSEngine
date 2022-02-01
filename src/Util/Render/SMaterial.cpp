@@ -2,7 +2,6 @@
 
 #include "../Loader/XML/XML.h"
 #include "../Loader/XML/XMLParser.h"
-#include "../../Component/TransformComponent.h"
 #include "ShaderUtil.h"
 #include "../../Manager/LightMgr.h"
 #include "../Settings.h"
@@ -73,7 +72,6 @@ void SMaterial::InitElements(const ElementsMap& elements, GLProgramHandle* handl
 		const auto& element = element_pair.second;
 		if (element->attachFunc != nullptr) continue;
 
-		bool isUniform = true;
 		const auto& handleElement = handle->UniformLocation(element_name);
 		if (handleElement == nullptr) continue;
 
@@ -112,30 +110,29 @@ void SMaterial::SetTexture(const std::string& name, SResource* texture) {
 }
 
 void SMaterial::Init(const AssetMgr::AssetReference* asset) {
-	const XNode* m_root;
+	const XNode* root;
 
 	try {
-		m_root = XFILE(asset->path.c_str()).getRoot();
+        root = XFILE(asset->path.c_str()).getRoot();
 	}
 	catch (int e) {
 		return;
 	}
 
-	XNode cse_mat = m_root->getChild("CSEMAT");
+	XNode cse_mat = root->getChild("CSEMAT");
 	XNode shader_node = cse_mat.getChild("shader");
 
 	auto var_nodes = shader_node.children;
 	auto shader_file_id = shader_node.getAttribute("id").value;
 	auto shaderHandle = Create<GLProgramHandle>(shader_file_id);
+    if (shaderHandle == nullptr) return;
 
-	try {
-		auto get_deferred = std::stoi(shader_node.getAttribute("deferred").value);
-		if (get_deferred == 1) {
-			m_mode = DEFERRED;
-		}
-	}
-	catch (int error) {
-	}
+    if(shader_node.hasAttribute("deferred")) {
+        auto get_deferred = std::stoi(shader_node.getAttribute("deferred").value);
+        if (get_deferred == 1) {
+            m_mode = DEFERRED;
+        }
+    }
 
 	if (m_mode == DEFERRED) {
 		auto geometryShaderHandle = Create<GLProgramHandle>(Settings::GetDeferredGeometryPassShaderID());
@@ -145,8 +142,6 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
 	else {
 		m_handle = shaderHandle;
 	}
-
-	if (shaderHandle == nullptr) return;
 
 	for (const auto& node : var_nodes) {
 
@@ -162,7 +157,7 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
 		element->value_str = element_value;
 		m_elements.insert(std::pair<std::string, Element*>(element_name, element));
 	}
-	SAFE_DELETE(m_root);
+	SAFE_DELETE(root);
 }
 
 void SMaterial::SetBindFuncByType(Element* element) {
