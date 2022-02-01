@@ -92,11 +92,14 @@ namespace CSE {
          * Safely blit the framebuffer.
          * Each framebuffer must be in BufferType::MULTI state, and all buffers must be in the form of STexture.
          * For blit techniques that are not suitable for that condition, it is faster to use glBlitFramebuffer.
-         * @details The format of the framebuffer should be organized in the following order: @li [0] = Color Buffer @li [1] = Depth Buffer
+         * @note The format of the framebuffer should be organized in the following order:
+         *        - [0] = Color Buffer
+         *        - [1] = Depth Buffer
+         *
          * @param src The framebuffer to merge.
          * @param dst The framebuffer to merge.
          */
-        void BlitFrameBuffer(const SFrameBuffer& dst);
+        void BlitFrameBuffer(const SFrameBuffer& src, const SFrameBuffer& dst);
 
         int GetWidth() const;
         int GetHeight() const;

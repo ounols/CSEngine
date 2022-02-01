@@ -232,7 +232,7 @@ void SFrameBuffer::ResizeFrameBuffer(int width, int height) {
     RasterizeFramebuffer();
 }
 
-void SFrameBuffer::BlitFrameBuffer(const SFrameBuffer& dst) {
+void SFrameBuffer::BlitFrameBuffer(const SFrameBuffer& src, const SFrameBuffer& dst) {
     if(m_mainColorBuffer == nullptr || m_depthBuffer == nullptr) {
         Exterminate();
         GenerateFramebuffer(PLANE, m_width, m_height);
@@ -241,9 +241,9 @@ void SFrameBuffer::BlitFrameBuffer(const SFrameBuffer& dst) {
         RasterizeFramebuffer();
     }
 
-    const auto& aColorTexture = m_mainColorBuffer->texture;
+    const auto& aColorTexture = src.GetMainColorTexture();
     const auto& bColorTexture = dst.GetMainColorTexture();
-    const auto& aDepthTexture = m_depthBuffer->texture;
+    const auto& aDepthTexture = src.GetDepthTexture();
     const auto& bDepthTexture = dst.GetDepthTexture();
 
     if(m_blitObject.handle == nullptr) {

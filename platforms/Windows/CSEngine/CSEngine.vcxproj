@@ -165,6 +165,7 @@
     <ClInclude Include="..\..\..\src\Manager\Base\Scene.h" />
     <ClInclude Include="..\..\..\src\Manager\Base\SContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\CameraMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\CoreBufferContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\EngineCore.h" />
     <ClInclude Include="..\..\..\src\Manager\GameObjectContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\GameObjectMgr.h" />
@@ -248,6 +249,7 @@
     <ClCompile Include="..\..\..\src\Manager\AssetMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Base\Scene.cpp" />
     <ClCompile Include="..\..\..\src\Manager\CameraMgr.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\CoreBufferContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\EngineCore.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectMgr.cpp" />

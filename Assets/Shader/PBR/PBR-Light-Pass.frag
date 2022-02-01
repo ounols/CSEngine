@@ -74,8 +74,8 @@ float ClampedPow(float X, float Y) {
 void main(void) {
 	// retrieve data from gbuffer
 	lowp vec3  fragPos	 = texture(u_sampler_position, v_textureCoordOut).rgb;
-	vec2 normal_raw = texture(u_sampler_normal, v_textureCoordOut).rg;
-	lowp vec3  normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1 - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0));
+	lowp vec2 normal_raw = texture(u_sampler_normal, v_textureCoordOut).rg;
+	lowp vec3  normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1.f - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0.f));
 
 	lowp vec3  albedo    = texture(u_sampler_albedo, v_textureCoordOut).rgb;
 	lowp float metallic  = texture(u_sampler_material, v_textureCoordOut).r;
