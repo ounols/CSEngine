@@ -4,7 +4,7 @@
 # CSEngine - Cross Platform C++ Game Engine
 
 ![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)</br>
-![platform](https://img.shields.io/badge/platform-windows_%7C_linux_%7C_android-00B274?style=flat-square) ![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) [![CodeFactor](https://www.codefactor.io/repository/github/ounols/csengine/badge/master)](https://www.codefactor.io/repository/github/ounols/csengine/overview/master) </br>
+![platform](https://img.shields.io/badge/platform-windows_%7C_linux_%7C_android_%7C_web-00B274?style=flat-square) ![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) [![CodeFactor](https://www.codefactor.io/repository/github/ounols/csengine/badge/master)](https://www.codefactor.io/repository/github/ounols/csengine/overview/master) </br>
 CSEngine is a cross-platform 3D game engine.
 
 `💡 As it is under development, it is not yet suitable for practical use.`
@@ -23,6 +23,10 @@ CSEngine is a cross-platform 3D game engine.
 
 * Gradle 4.1.3 or higher
 * NDK 21.2.6472646 or higher
+
+### Web
+
+* emsdk 3.0.0 or higher
 
 ## Building
 
@@ -77,6 +81,7 @@ Various stabilization tests such as build tests for various platforms and severa
 ## See more
 
 Review the following documentation:
+* [`web demo`](https://ounols.github.io/CSEngine-Demo/): This site is a simple web demo of the engine ported to WebGL 2.0.
 * [`documentation`](https://ounols.github.io/CSEngine-doc): Documentation that details of the structure and function of CSEngine.
 * [`to-do list`](https://www.notion.so/CSEngine-Todo-List-7ee24caed138466e83d81d2867b1f109): Documentation that contains the to-do list of the project and notes during development.
 
