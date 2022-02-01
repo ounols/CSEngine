@@ -11,6 +11,8 @@ uniform sampler2D u_sampler_normal;
 uniform sampler2D u_sampler_albedo;
 //[geo.material]//
 uniform sampler2D u_sampler_material;
+//[geo.depth]//
+uniform sampler2D u_sampler_depth;
 
 //IBL
 //[light.irradiance]//
@@ -72,8 +74,8 @@ float ClampedPow(float X, float Y) {
 void main(void) {
 	// retrieve data from gbuffer
 	lowp vec3  fragPos	 = texture(u_sampler_position, v_textureCoordOut).rgb;
-	vec2 normal_raw = texture(u_sampler_normal, v_textureCoordOut).rg;
-	lowp vec3  normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1 - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0));
+	lowp vec2 normal_raw = texture(u_sampler_normal, v_textureCoordOut).rg;
+	lowp vec3  normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1.f - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0.f));
 
 	lowp vec3  albedo    = texture(u_sampler_albedo, v_textureCoordOut).rgb;
 	lowp float metallic  = texture(u_sampler_material, v_textureCoordOut).r;
@@ -167,7 +169,7 @@ void main(void) {
 	color = pow(color, vec3(1.0/2.2));
 
 	FragColor = vec4(color, 1.0);
-
+	gl_FragDepth = texture(u_sampler_depth, v_textureCoordOut).r;
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
@@ -268,7 +270,7 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 
 	// keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
 	if(projCoords.z > 1.0)
-	shadow = 0.0;
+		shadow = 0.0;
 
 	return shadow;
 }

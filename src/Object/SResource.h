@@ -23,12 +23,12 @@ namespace CSE {
 
         void SetID(std::string id);
 
-        const char* GetName() const {
-            return m_name.c_str();
+        std::string GetName() const {
+            return m_name;
         }
 
-        const char* GetID() const {
-            return m_id.c_str();
+        std::string GetID() const {
+            return m_id;
         }
 
         void LinkResource(AssetMgr::AssetReference* asset) {

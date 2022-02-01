@@ -11,6 +11,7 @@ namespace CSE {
         static const char* GetDefaultForwardMaterialId();
         static const char* GetDefaultDeferredMaterialId();
         static const char* GetDefaultMainBufferShaderID();
+        static const char* GetDefaultBlitBufferShaderID();
         static int GetMaxLights();
 
         // Assets
@@ -28,6 +29,7 @@ namespace CSE {
         static const char* m_defaultDeferredMaterialID;
         static const char* m_defaultDeferredProxyMaterialID;
         static const char* m_defaultMainBufferShaderID;
+        static const char* m_defaultBlitBufferShaderID;
         static const int m_maxLights;
 
         // Assets
