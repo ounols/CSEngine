@@ -22,7 +22,6 @@ SGameObject::SGameObject(const SGameObject& src) : SObject() {
 	m_transform = CreateComponent<TransformComponent>();
 
 	SGameObject::Init();
-
 }
 
 SGameObject::SGameObject(std::string name) {
@@ -36,21 +35,18 @@ SGameObject::SGameObject(std::string name) {
 SGameObject::~SGameObject() = default;
 
 void SGameObject::Init() {
-
 	//    for (auto component : m_components) {
 	//        if (component == nullptr) continue;
 	//
 	//        component->Init();
 	//
 	//    }
-
 }
 
 void SGameObject::Tick(float elapsedTime) {
 	if (!isEnable) return;
 	if (isPrefab()) return;
 	UpdateComponent(elapsedTime);
-
 }
 
 void SGameObject::Exterminate() {
@@ -58,7 +54,6 @@ void SGameObject::Exterminate() {
 }
 
 void SGameObject::Destroy() {
-
     {
         auto iter = m_components.begin();
         while(iter != m_components.end()) {
@@ -127,11 +122,9 @@ const std::list<SGameObject*>& SGameObject::GetChildren() const {
 }
 
 void SGameObject::AddComponent(SComponent* component) {
-
 	auto str_class = component->GetClassType();
 	component->SetGameObject(this);
 	m_components.push_back(component);
-
 }
 
 const std::list<SComponent*>& SGameObject::GetComponents() const {
@@ -139,14 +132,11 @@ const std::list<SComponent*>& SGameObject::GetComponents() const {
 }
 
 HSQOBJECT SGameObject::GetCustomComponent(const char* className) {
-
 	for (const auto& component : m_components) {
 		if (component == nullptr) continue;
 		if (dynamic_cast<CustomComponent*>(component)) {
 			auto customComponent = static_cast<CustomComponent*>(component);
-
 			if (customComponent->SGetClassName() != className) continue;
-
 			return customComponent->GetClassInstance().GetObject();
 		}
 	}
@@ -161,7 +151,6 @@ void SGameObject::DeleteComponent(SComponent* component) {
 }
 
 std::string SGameObject::GetID() const {
-
 	std::string id;
 	for (const SGameObject* node = const_cast<SGameObject*>(this);; node = node->GetParent()) {
 		if (node == nullptr) break;
@@ -221,13 +210,10 @@ void SGameObject::UpdateComponent(float elapsedTime) {
 			component->Tick(elapsedTime);
 	}
 
-	if (m_status == INIT)
-		m_status = IDLE;
-
+	if (m_status == INIT) m_status = IDLE;
 }
 
 void SGameObject::SetUndestroyable(bool enable) {
-
 	SObject::SetUndestroyable(enable);
 
 	for (const auto& component : m_components) {
@@ -240,7 +226,6 @@ void SGameObject::SetUndestroyable(bool enable) {
 }
 
 bool SGameObject::isPrefab(bool OnlyThisObject) const {
-
 	if (m_isPrefab || m_parent == nullptr || OnlyThisObject) return m_isPrefab;
 
 	return m_parent->isPrefab();
