@@ -17,19 +17,22 @@
 #include "../../../src/Manager/MainProc.h"
 #include "../../../src/MacroDef.h"
 
-#if defined(_WIN32) && !defined(MSVC_CMAKE)
-#pragma comment(lib, "../../../External/glew/lib/Release/Win32/glew32.lib")
+#if !defined(_WIN64) && !defined(MSVC_CMAKE)
+#pragma comment(lib, "../../../External/glew/lib/Win32/glew32.lib")
 #elif defined(_WIN64) && !defined(MSVC_CMAKE)
-#pragma comment(lib, "../../../External/glew/lib/Release/x64/glew32.lib")
+#pragma comment(lib, "../../../External/glew/lib/Win64/glew32.lib")
 #endif
 #pragma comment(lib, "opengl32.lib")
 //#pragma comment(lib, "glut32.lib")
 //#pragma comment(lib, "glu32.lib")
 #pragma comment(lib, "winmm.lib")
 
-#if defined(_DEBUG) && !defined(MSVC_CMAKE)
-#pragma comment(lib, "../../../External/Squirrel/lib/Windows/squirrelD.lib")
-#pragma comment(lib, "../../../External/Squirrel/lib/Windows/sqstdlibD.lib")
+#if defined(_DEBUG) && !defined(MSVC_CMAKE) && !defined(_WIN64)
+#pragma comment(lib, "../../../External/Squirrel/lib/Windows/Win32/squirrelD.lib")
+#pragma comment(lib, "../../../External/Squirrel/lib/Windows/Win32/sqstdlibD.lib")
+#elif defined(_DEBUG) && !defined(MSVC_CMAKE) && defined(_WIN64)
+#pragma comment(lib, "../../../External/Squirrel/lib/Windows/Win64/squirrelD.lib")
+#pragma comment(lib, "../../../External/Squirrel/lib/Windows/Win64/sqstdlibD.lib")
 #elif !defined(_DEBUG) && !defined(MSVC_CMAKE) // Release
 #pragma comment(lib, "../../../External/Squirrel/lib/Windows/squirrel.lib")
 #pragma comment(lib, "../../../External/Squirrel/lib/Windows/sqstdlib.lib")

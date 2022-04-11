@@ -207,7 +207,7 @@ public:
             classType = getStaticClassData().Lock().Get();
 
 #if !defined (SCRAT_NO_ERROR_CHECKING)
-            if (SQ_FAILED(sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, classType))) {
+            if (SQ_FAILED(sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, classType, SQTrue))) {
                 SQTHROW(vm, FormatTypeError(vm, idx, ClassName()));
                 return NULL;
             }

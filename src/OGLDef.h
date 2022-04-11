@@ -1,5 +1,5 @@
 #pragma once
-#ifdef WIN32
+#ifdef _WIN32
 //windows include
 
 #include <gl/glew.h>
