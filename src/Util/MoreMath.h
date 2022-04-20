@@ -5,7 +5,7 @@
 #ifndef CSENGINE_APP_MOREMATH_H
 #define CSENGINE_APP_MOREMATH_H
 
-#ifdef WIN32
+#ifdef _WIN32
 #define M_PI 3.14159265358979323846
 #endif
 

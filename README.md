@@ -4,7 +4,7 @@
 # CSEngine - Cross Platform C++ Game Engine
 
 ![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)</br>
-![platform](https://img.shields.io/badge/platform-windows_%7C_linux_%7C_android_%7C_web-00B274?style=flat-square) ![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) [![CodeFactor](https://www.codefactor.io/repository/github/ounols/csengine/badge/master)](https://www.codefactor.io/repository/github/ounols/csengine/overview/master) </br>
+[![Linux](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml) [![Windows](https://github.com/ounols/CSEngine/actions/workflows/build-windows.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-windows.yml) [![Android](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml) [![Web](https://github.com/ounols/CSEngine/actions/workflows/build-web.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-web.yml) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) [![CodeFactor](https://www.codefactor.io/repository/github/ounols/csengine/badge/master)](https://www.codefactor.io/repository/github/ounols/csengine/overview/master) </br>
 CSEngine is a cross-platform 3D game engine.
 
 `💡 As it is under development, it is not yet suitable for practical use.`
@@ -73,10 +73,10 @@ Build through the created make files.
 ## Stability
 
 Various stabilization tests such as build tests for various platforms and several unit tests will be added.
-|Branch|Build status|
-|--|--|
-|master|[<img src='https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
-|build_testing|[<img src='https://img.shields.io/travis/com/ounols/CSEngine/build_testing?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
+|Branch|Linux|Windows|Android|Web|Architecture|
+|--|--|--|--|--|--|
+|master|[![Linux](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml)|[![Windows](https://github.com/ounols/CSEngine/actions/workflows/build-windows.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-windows.yml)|[![Android](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml)|[![Web](https://github.com/ounols/CSEngine/actions/workflows/build-web.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-web.yml)|[<img src='https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
+|build_testing||||||[<img src='https://img.shields.io/travis/com/ounols/CSEngine/build_testing?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
 
 ## See more
 

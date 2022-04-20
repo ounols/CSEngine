@@ -14,8 +14,13 @@ file(GLOB CSENGINE_SRC
 #        "../../../src/*/*/*/*/*/*/*.*"
         )
 
-link_directories(${PROJECT_NAME} "../../../External/glew/lib/Release/Win32")
-link_directories(${PROJECT_NAME} "../../../External/Squirrel/lib/Windows")
+if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+    link_directories(${PROJECT_NAME} "../../../External/glew/lib/Win32")
+    link_directories(${PROJECT_NAME} "../../../External/Squirrel/lib/Windows/Win32")
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+    link_directories(${PROJECT_NAME} "../../../External/glew/lib/Win64")
+    link_directories(${PROJECT_NAME} "../../../External/Squirrel/lib/Windows/Win64")
+endif()
 
 ################################################################################
 # Target
@@ -48,6 +53,13 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         >
         $<$<NOT:$<OR:$<CONFIG:Debug>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
     )
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+    string(CONCAT "MSVC_RUNTIME_LIBRARY_STR"
+        $<$<CONFIG:Debug>:
+        MultiThreadedDebug
+        >
+        $<$<NOT:$<OR:$<CONFIG:Debug>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
+    )
 endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
 
@@ -65,6 +77,17 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
             "${CMAKE_CURRENT_SOURCE_DIR}/../../../External/glew/include"
             ">"
             )
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+    target_include_directories(${PROJECT_NAME} PUBLIC
+            "$<$<CONFIG:Debug>:"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../../External/Squirrel/include"
+            ">"
+            )
+    target_include_directories(${PROJECT_NAME} PUBLIC
+            "$<$<CONFIG:Debug>:"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../../External/glew/include"
+            ">"
+            )
 endif()
 
 ################################################################################
@@ -72,16 +95,18 @@ endif()
 ################################################################################
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     target_compile_definitions(${PROJECT_NAME} PRIVATE
-        "$<$<CONFIG:Debug>:"
-            "_DEBUG"
-        ">"
-        "$<$<CONFIG:Release>:"
-            "NDEBUG;"
-            "UNICODE;"
-            "_UNICODE"
-        ">"
-        "_WINDOWS"
-    )
+            "$<$<CONFIG:Debug>:"
+                "_DEBUG;"
+                "_CRT_SECURE_NO_WARNINGS;"
+                "_MBCS"
+            ">"
+            "$<$<CONFIG:Release>:"
+                "NDEBUG;"
+                "UNICODE;"
+                "_UNICODE"
+            ">"
+            "_WINDOWS"
+            )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         "$<$<CONFIG:Debug>:"
@@ -174,18 +199,6 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
             "glew32;"
             "squirrelD;"
             "sqstdlibD;"
-            "kernel32;"
-            "user32;"
-            "gdi32;"
-            "winspool;"
-            "comdlg32;"
-            "advapi32;"
-            "shell32;"
-            "ole32;"
-            "oleaut32;"
-            "uuid;"
-            "odbc32;"
-            "odbccp32"
         ">"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")

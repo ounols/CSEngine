@@ -5,7 +5,7 @@
 # CSEngine - Cross Platform C++ Game Engine
 
 ![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)</br>
-![platform](https://img.shields.io/badge/platform-windows_%7C_linux_%7C_android_%7C_web-00B274?style=flat-square) ![Travis (.com)](https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) [![CodeFactor](https://www.codefactor.io/repository/github/ounols/csengine/badge/master)](https://www.codefactor.io/repository/github/ounols/csengine/overview/master) </br>
+[![Linux](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml) [![Windows](https://github.com/ounols/CSEngine/actions/workflows/build-windows.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-windows.yml) [![Android](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml) [![Web](https://github.com/ounols/CSEngine/actions/workflows/build-web.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-web.yml) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) [![CodeFactor](https://www.codefactor.io/repository/github/ounols/csengine/badge/master)](https://www.codefactor.io/repository/github/ounols/csengine/overview/master) </br>
 CSEngine은 크로스 플랫폼 기반 3D 게임 엔진입니다.
 
 `💡 아직 개발 중이기 때문에 실사용으로 적합하지 않은 단계입니다.`
@@ -74,10 +74,10 @@ make 파일들을 생성합니다.
 ## 테스트
 
 다양한 플랫폼에 대한 빌드 및 단위 테스트와 같은 다양한 안정화 테스트가 추가 될 예정입니다.
-|Branch|Build status|
-|--|--|
-|master|[<img src='https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
-|build_testing|[<img src='https://img.shields.io/travis/com/ounols/CSEngine/build_testing?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
+|Branch|Linux|Windows|Android|Web|Architecture|
+|--|--|--|--|--|--|
+|master|[![Linux](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml)|[![Windows](https://github.com/ounols/CSEngine/actions/workflows/build-windows.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-windows.yml)|[![Android](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml)|[![Web](https://github.com/ounols/CSEngine/actions/workflows/build-web.yml/badge.svg)](https://github.com/ounols/CSEngine/actions/workflows/build-web.yml)|[<img src='https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
+|build_testing||||||[<img src='https://img.shields.io/travis/com/ounols/CSEngine/build_testing?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
 
 ## 더보기
 
