@@ -59,7 +59,7 @@ namespace CSE {
 		AAsset_close(asset);
 		buf = std::string(strbuf, fileSize);
 		delete[] strbuf;
-#elif defined (WIN32) || defined(__linux__) || defined(__EMSCRIPTEN__)
+#elif defined (_WIN32) || defined(__linux__) || defined(__EMSCRIPTEN__)
 		std::ifstream fin(path, std::ios::binary);
 		if (!fin.is_open()) return "";
 
