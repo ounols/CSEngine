@@ -15,7 +15,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-#elif WIN32
+#elif _WIN32
 #include <windows.h>
 #endif
 #ifdef __ANDROID__
@@ -110,7 +110,7 @@ void AssetMgr::ReadDirectory(const std::string& path) {
     return;
 
 #endif //================================================
-#ifdef WIN32 //==========================================
+#ifdef _WIN32 //==========================================
     WIN32_FIND_DATA data;
     HANDLE hFind = FindFirstFile(std::string(path + '*').c_str(), &data);
     if (hFind != INVALID_HANDLE_VALUE) {
