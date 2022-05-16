@@ -130,7 +130,7 @@ bool STexture::InitTexture(int width, int height, int channel, int internalForma
             }
             break;
 
-        default:
+        case TEX_2D:
             glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_channels, m_glType, nullptr);
     }
 
