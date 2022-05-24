@@ -9,6 +9,8 @@ namespace CSE {
     public:
         LightProbeContainer();
         ~LightProbeContainer() override;
+
+        void RenderAll() const;
     };
 
 }

@@ -52,7 +52,17 @@ bool STexture::Load(unsigned char* data) {
     glBindTexture(m_targetGL, m_texId);
 
     m_internalFormat = GL_RGB;
-    if (m_channels == 4) m_internalFormat = GL_RGBA;
+    switch (m_channels) {
+        case 1:
+            m_internalFormat = GL_R;
+            break;
+        case 2:
+            m_internalFormat = GL_RG;
+            break;
+        case 4:
+            m_internalFormat = GL_RGBA;
+            break;
+    }
 
     glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_internalFormat, m_glType, data);
 
