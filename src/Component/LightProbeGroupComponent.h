@@ -17,11 +17,17 @@ namespace CSE {
         LightProbeGroupComponent();
         ~LightProbeGroupComponent() override;
 
+        void InitProbeTexture(Vector3<unsigned short> m_size);
         void Render(unsigned int framebufferId) const;
-        LightProbeResultData GetLightProbe(const vec3& position) const;
 
     private:
-        std::list<LightProbeData*> m_nodes;
+        const unsigned short PER_WIDTH = 3;
+        //std::list<LightProbeData*> m_nodes;
+        Vector3<unsigned short> m_size;
+        unsigned int m_texId;
 
+        vec3* m_pivot = nullptr;
+        vec3* m_scale = nullptr;
+        vec3 m_nodeOffset;
     };
 }

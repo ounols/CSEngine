@@ -30,6 +30,7 @@ void FirstDemoScene::Init() {
 //    SPrefab* stormtrooper = MeshLoader::LoadModel("stormtrooper.model");
     SPrefab* stormtrooper = SResource::Create<SPrefab>("stormtrooper.prefab");
     SPrefab* plane = SResource::Create<SPrefab>("plane_circle.prefab");
+    SPrefab* roomPrefab = SResource::Create<SPrefab>("room.prefab");
 
 //	daeLoader->GeneratePrefab();
 
@@ -59,6 +60,17 @@ void FirstDemoScene::Init() {
 
 
     SGameObject* root = new SGameObject("__ROOT_OF_SCENE__AHA___");
+
+    auto room = roomPrefab->Clone(vec3{0, 0.2f, 0}, root);
+    room->GetTransform()->m_scale = vec3{ 4.f, 4.f, 4.f };
+    room->GetTransform()->m_rotation.Rotate(Quaternion::AngleAxis(vec3{0, 1, 0}, 3.14f / 2));
+
+    const auto& room_children = room->GetChildren();
+    for (const auto& gameObject : room_children) {
+        const auto& component = gameObject->GetComponent<RenderComponent>();
+        if(component == nullptr) continue;
+        component->SetMaterial(SResource::Create<SMaterial>("File:Material/Room.mat"));
+    }
 
     //Managing Memory Test
     SGameObject* a = new SGameObject("camera");
@@ -210,7 +222,7 @@ void FirstDemoScene::Init() {
     a->CreateComponent<CameraComponent>();
 //    a->GetComponent<CameraComponent>()->SetOrtho(-3.f, 3.f, -3.f, 3.f);
 //    a->GetComponent<CameraComponent>()->SetCameraType(CSE::CameraComponent::ORTHO);
-    a->GetTransform()->m_position = vec3{ 0, 0, 3.f };
+    a->GetTransform()->m_position = vec3{ 0, 0.2f, 3.f };
 //    a->GetTransform()->m_position = vec3{ 0.f, 2.f, 4.f };
 //    a->GetTransform()->m_scale = vec3{ 2.f, 2.f, 2.f };
 //    a->GetComponent<CameraComponent>()->SetTarget(vec3{ 0.0f, -1.0f, -1.f });
