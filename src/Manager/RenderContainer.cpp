@@ -12,7 +12,7 @@ RenderContainer::~RenderContainer() {}
 
 
 void RenderContainer::Register(SIRender* object) {
-    SMaterial* material = object->material;
+    const auto& material = object->GetMaterial();
     if(material == nullptr) return;
     if(material->GetMode() == SMaterial::DEFERRED)
         return RegisterDeferred(object, material);
@@ -30,7 +30,7 @@ void RenderContainer::RegisterDeferred(SIRender* object, const SMaterial* materi
     if(lightPassHandle == nullptr) return;
 
     const auto& key = m_gbufferLayer.find(lightPassHandle);
-    SGBuffer* gbuffer;
+    SGBuffer* gbuffer = nullptr;
     if(key == m_gbufferLayer.end()) {
         gbuffer = new SGBuffer();
         gbuffer->GenerateGBuffer(*m_width, *m_height);
@@ -44,7 +44,7 @@ void RenderContainer::RegisterDeferred(SIRender* object, const SMaterial* materi
 }
 
 void RenderContainer::Remove(SIRender* object) {
-    SMaterial* material = object->material;
+    const auto& material = object->GetMaterial();
     if(material == nullptr) return;
     if(material->GetMode() == SMaterial::DEFERRED)
         return RemoveDeferred(object, material);

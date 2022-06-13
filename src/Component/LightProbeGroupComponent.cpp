@@ -2,6 +2,8 @@
 #include "../Util/Render/LightProbe/LightProbeData.h"
 #include "../Util/Render/LightProbe/SProbeTexture.h"
 #include "../OGLDef.h"
+#include "../Util/Render/MeshSurface.h"
+#include "../Util/Render/SMaterial.h"
 
 
 using namespace CSE;
@@ -10,7 +12,9 @@ COMPONENT_CONSTRUCTOR(LightProbeGroupComponent) {
 
 }
 
-LightProbeGroupComponent::~LightProbeGroupComponent() = default;
+LightProbeGroupComponent::~LightProbeGroupComponent() {
+    SAFE_DELETE(m_cameraMatrixStruct);
+}
 
 void LightProbeGroupComponent::InitProbeTexture(Vector3<unsigned short> m_size) {
 
@@ -31,9 +35,10 @@ void LightProbeGroupComponent::InitProbeTexture(Vector3<unsigned short> m_size) 
     m_nodeOffset = vec3{ m_scale->x / m_size.x, m_scale->y / m_size.y, m_scale->z / m_size.z };
 }
 
-void LightProbeGroupComponent::Render(unsigned int framebufferId) const {
+void LightProbeGroupComponent::Render(unsigned int framebufferId, std::list<SIRender*>& renderList) const {
 
     // TODO: 각 라이트 프로브의 노드들을 렌더링하기 시작함.
+    glBindFramebuffer(GL_FRAMEBUFFER, framebufferId);
 
     for(unsigned short x = 0; x < m_size.x; ++x) {
         const unsigned short u_offset = x * PER_WIDTH * 2;
@@ -46,6 +51,7 @@ void LightProbeGroupComponent::Render(unsigned int framebufferId) const {
                 const float z_offset = z * m_nodeOffset.z;
 
                 glViewport(u_offset, v_offset, PER_WIDTH, PER_WIDTH);
+                RenderInstances(renderList);
             }
         }
     }
@@ -60,4 +66,16 @@ void LightProbeGroupComponent::Render(unsigned int framebufferId) const {
 //            // TODO: RenderCubeVAO();
 //        }
 //    }
+}
+
+void LightProbeGroupComponent::RenderInstances(std::list<SIRender*>& renderList) const {
+
+    for (const auto& render : renderList) {
+        // 길이 측정을 넣고싶다...
+        const auto& handle = render->GetMaterial()->GetHandle();
+        glUseProgram(handle->Program);
+        render->SetMatrix(*m_cameraMatrixStruct);
+        render->Render();
+    }
+
 }

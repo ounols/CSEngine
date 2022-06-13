@@ -66,8 +66,11 @@ void RenderComponent::Render(const GLProgramHandle* handle) const {
 
     if (m_mesh == nullptr || m_material_clone == nullptr) return;
 
-    const auto& current_handle = handle == nullptr ? m_material_clone->GetHandle() : handle;
-    if(handle == nullptr) m_material_clone->AttachElement();
+    auto& current_handle = handle;
+    if(handle == nullptr) {
+        m_material_clone->AttachElement();
+        current_handle = m_material_clone->GetHandle();
+    }
     SetJointMatrix(current_handle);
     ShaderUtil::BindAttributeToShader(*current_handle, m_mesh->GetMeshID());
 }

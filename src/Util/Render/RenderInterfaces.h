@@ -45,15 +45,13 @@ namespace CSE {
                   const GLProgramHandle* handle = nullptr) = 0;
 
         virtual void Render(const GLProgramHandle* handle = nullptr) const = 0;
+        SMaterial* GetMaterial() const {
+            return material;
+        }
 
     protected:
         SMaterial* material = nullptr;
     public:
         bool isRenderActive = false;
-
-    public:
-        friend class RenderContainer;
-        friend class RenderMgr;
-        friend class SGBuffer;
     };
 }
