@@ -6,6 +6,7 @@
 #include "../../Assets/teapot_smooth.h"
 #include "../Component/RenderComponent.h"
 #include "../Component/CustomComponent.h"
+#include "../Component/LightProbeGroupComponent.h"
 #include "../Manager/GameObjectMgr.h"
 
 #include "../Util/Loader/DAE/DAELoader.h"
@@ -108,7 +109,24 @@ void FirstDemoScene::Init() {
     SGameObject* testing = new SGameObject("root of mesh");
     root->AddChild(testing);
 
+    auto* lightProbeObj = new SGameObject("light probe");
+    lightProbeObj->SetParent(testing);
+    lightProbeObj->GetTransform()->m_scale = vec3{ 2.f, 2.f, 2.f };
+    lightProbeObj->GetTransform()->m_position = vec3{ 0, -0.4f, 0 };
+    auto lightProbeComp = lightProbeObj->CreateComponent<LightProbeGroupComponent>();
+    lightProbeComp->InitProbeTexture(Vector3<unsigned short>{ 7, 7, 7 });
+
     SGameObject* ab = stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
+    stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
+    stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
+    stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
+    stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
+    stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
+    stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
+    stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
+    stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
+    stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
+    stormtrooper->Clone(vec3{ 0, -0.4f, 0 }, testing);
     SGameObject* ab2 = plane->Clone(vec3{ 0.5f, 0, 0 }, testing);
     ab->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
     ab2->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };

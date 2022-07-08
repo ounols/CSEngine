@@ -99,6 +99,14 @@ void LightMgr::RemoveShadowObject(SIRender* object) {
     m_shadowObject.remove(object);
 }
 
+void LightMgr::RegisterLightProbeGroup(SIRenderGroup* renderGroup) {
+    m_lightProbeGroup.push_back(renderGroup);
+}
+
+void LightMgr::RemoveLightProbeGroup(SIRenderGroup* renderGroup) {
+    m_lightProbeGroup.remove(renderGroup);
+}
+
 const std::list<SIRender*>& LightMgr::GetShadowObject() const {
     return m_shadowObject;
 }
@@ -117,4 +125,10 @@ void LightMgr::RefreshShadowCount(int shadowCount) const {
 
 GLProgramHandle* LightMgr::GetShadowHandle() const {
     return m_shadowHandle;
+}
+
+void LightMgr::Render() const {
+    for (const auto& group : m_lightProbeGroup) {
+        group->RenderAll(0, m_shadowObject);
+    }
 }

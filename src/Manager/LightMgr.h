@@ -28,6 +28,9 @@ namespace CSE {
         void RegisterShadowObject(SIRender* object);
         void RemoveShadowObject(SIRender* object);
 
+        void RegisterLightProbeGroup(SIRenderGroup* renderGroup);
+        void RemoveLightProbeGroup(SIRenderGroup* renderGroup);
+
         int GetShadowCount() const {
             return m_shadowCount;
         }
@@ -40,6 +43,8 @@ namespace CSE {
         const std::list<SIRender*>& GetShadowObject() const;
         GLProgramHandle* GetShadowHandle() const;
 
+        void Render() const;
+
     private:
         std::list<SIRender*> m_shadowObject;
         mutable int m_shadowCount = 0;
@@ -48,6 +53,8 @@ namespace CSE {
         /*mutable*/ int m_lightMapCount = 3;
 
         SEnvironmentMgr* m_environmentMgr = nullptr;
+
+        std::list<SIRenderGroup*> m_lightProbeGroup;
     };
 
 }
