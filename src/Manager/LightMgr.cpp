@@ -5,12 +5,7 @@
 
 using namespace CSE;
 
-enum LIGHTMODE {
-    None, Amb, Dif, Spec, AMbDif = 12, AmbSpec = 13, DifSpec = 23, AmbDifSpec = 123
-};
-
 LightMgr::LightMgr() = default;
-
 
 LightMgr::~LightMgr() {
     SAFE_DELETE(m_environmentMgr);

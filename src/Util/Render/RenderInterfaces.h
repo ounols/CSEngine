@@ -45,6 +45,7 @@ namespace CSE {
                   const GLProgramHandle* handle = nullptr) = 0;
 
         virtual void Render(const GLProgramHandle* handle = nullptr) const = 0;
+
         SMaterial* GetMaterial() const {
             return material;
         }
@@ -53,5 +54,13 @@ namespace CSE {
         SMaterial* material = nullptr;
     public:
         bool isRenderActive = false;
+    };
+
+    class SIRenderGroup {
+    public:
+        SIRenderGroup() = default;
+        virtual ~SIRenderGroup() = default;
+
+        virtual void RenderAll(unsigned int framebufferId, const std::list<SIRender*>& renderList) const = 0;
     };
 }
