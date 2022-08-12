@@ -1,6 +1,6 @@
 #include "SafeLog.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <Windows.h>
 #include <cstdio>
 
@@ -16,7 +16,7 @@
 
 void SafeLog::Log(const char* log) {
 
-#ifdef WIN32
+#ifdef _WIN32
 	OutputDebugStringA(log);
     puts(log);
 #elif __ANDROID__
