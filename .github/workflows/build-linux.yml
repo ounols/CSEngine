@@ -10,7 +10,7 @@ jobs:
   Linux:
     strategy:
       matrix:
-          linux-version: [ubuntu-latest, ubuntu-18.04]
+          linux-version: [ubuntu-22.04, ubuntu-20.04, ubuntu-18.04]
           compiler: [gcc, clang]
           include:
             - compiler: gcc
