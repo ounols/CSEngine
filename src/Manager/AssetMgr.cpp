@@ -11,7 +11,7 @@
 #include "ResMgr.h"
 #include <iostream>
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE_CC__)
 #include <sys/types.h>
 #include <dirent.h>
 
@@ -87,7 +87,7 @@ void AssetMgr::ReadDirectory(const std::string& path) {
         AAsset_close(asset);
     }
     AAssetDir_close(assetDir);
-#elif __linux__ //======================================
+#elif defined(__linux__) || defined(__APPLE_CC__) //======================================
 
     DIR* dirp = opendir(path.c_str());
     struct dirent* dp;

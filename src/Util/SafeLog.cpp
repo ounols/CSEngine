@@ -10,7 +10,7 @@
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #include <android/log.h>
 #endif
-#if defined(__linux__) || defined(__EMSCRIPTEN__)
+#if defined(__linux__) || defined(__EMSCRIPTEN__) || defined(__APPLE_CC__)
 #include <cstdio>
 #endif
 
@@ -24,6 +24,8 @@ void SafeLog::Log(const char* log) {
 #elif __linux__
 	puts(log);
 #elif __EMSCRIPTEN__
+    puts(log);
+#elif __APPLE_CC__
     puts(log);
 #endif
 	
