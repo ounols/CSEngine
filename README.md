@@ -4,7 +4,7 @@
 # CSEngine - Cross Platform C++ Game Engine
 
 ![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)</br>
-[![Linux](https://img.shields.io/github/workflow/status/ounols/CSEngine/Linux%20Build/master?logo=ubuntu&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml) [![Windows](https://img.shields.io/github/workflow/status/ounols/CSEngine/Windows%20Build/master?logo=windows&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-windows.yml) [![Android](https://img.shields.io/github/workflow/status/ounols/CSEngine/Android%20Build/master?logo=android&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml) [![Web](https://img.shields.io/github/workflow/status/ounols/CSEngine/Web%20Build/master?logo=firefox&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-web.yml) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) [![CodeFactor](https://www.codefactor.io/repository/github/ounols/csengine/badge/master)](https://www.codefactor.io/repository/github/ounols/csengine/overview/master) </br>
+[![Linux](https://img.shields.io/github/workflow/status/ounols/CSEngine/Linux%20Build/master?logo=ubuntu&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml) [![Windows](https://img.shields.io/github/workflow/status/ounols/CSEngine/Windows%20Build/master?logo=windows&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-windows.yml) [![Android](https://img.shields.io/github/workflow/status/ounols/CSEngine/Android%20Build/master?logo=android&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml) [![Web](https://img.shields.io/github/workflow/status/ounols/CSEngine/Web%20Build/master?logo=firefox&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-web.yml) [![MacOS](https://img.shields.io/github/workflow/status/ounols/CSEngine/MacOS%20Build/master?logo=apple&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-macos.yml) ![last-commit](https://img.shields.io/github/last-commit/ounols/CSEngine?style=flat-square) ![GitHub](https://img.shields.io/github/license/ounols/CSEngine?style=flat-square) [![CodeFactor](https://www.codefactor.io/repository/github/ounols/csengine/badge/master)](https://www.codefactor.io/repository/github/ounols/csengine/overview/master) </br>
 CSEngine is a cross-platform 3D game engine.
 
 `💡 As it is under development, it is not yet suitable for practical use.`
@@ -35,10 +35,12 @@ CSEngine is built using CMake. In the case of Windows, it is possible to build w
 ### Windows
 
 Put the GLEW library folder in the `External/glew` folder within the project.
+<br><br>
 
 #### Visual Studio IDE
 
 Open the project via `platforms/Windows/CSEngine.sln`
+<br><br>
 
 #### CMake (MSVC)
 
@@ -51,6 +53,7 @@ Create make files.
 
 	cmake --build [Directory containing make files]
 Build through the created make files.
+<br><br>
 
 ### Linux
 
@@ -69,13 +72,29 @@ Create make files.
 
 	cmake --build [Directory containing make files]
 Build through the created make files.
+<br><br>
+
+### macOS
+
+    brew install cmake ninja glfw
+Install external libraries required at build.
+
+    cd [Project Path]/CSEngine/platforms/MacOS
+	mkdir build
+	cd build
+	cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug ../
+Create make files.
+
+    cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug ../
+Build through the created make files.
+
 
 ## Stability
 
 Various stabilization tests such as build tests for various platforms and several unit tests will be added.
-|Branch|Linux|Windows|Android|Web|Architecture|
-|--|--|--|--|--|--|
-|master|[![Linux](https://img.shields.io/github/workflow/status/ounols/CSEngine/Linux%20Build/master?logo=ubuntu&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml)|[![Windows](https://img.shields.io/github/workflow/status/ounols/CSEngine/Windows%20Build/master?logo=windows&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-windows.yml)|[![Android](https://img.shields.io/github/workflow/status/ounols/CSEngine/Android%20Build/master?logo=android&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml)|[![Web](https://img.shields.io/github/workflow/status/ounols/CSEngine/Web%20Build/master?logo=firefox&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-web.yml)|[<img src='https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
+|Branch|Linux|Windows|MacOS|Android|Web|Architecture|
+|--|--|--|--|--|--|--|
+|master|[![Linux](https://img.shields.io/github/workflow/status/ounols/CSEngine/Linux%20Build/master?logo=ubuntu&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml)|[![Windows](https://img.shields.io/github/workflow/status/ounols/CSEngine/Windows%20Build/master?logo=windows&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-windows.yml)|[![MacOS](https://img.shields.io/github/workflow/status/ounols/CSEngine/MacOS%20Build/master?logo=apple&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-macos.yml)|[![Android](https://img.shields.io/github/workflow/status/ounols/CSEngine/Android%20Build/master?logo=android&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml)|[![Web](https://img.shields.io/github/workflow/status/ounols/CSEngine/Web%20Build/master?logo=firefox&logoColor=FFFFFF&style=flat-square)](https://github.com/ounols/CSEngine/actions/workflows/build-web.yml)|[<img src='https://img.shields.io/travis/com/ounols/CSEngine?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
 |build_testing||||||[<img src='https://img.shields.io/travis/com/ounols/CSEngine/build_testing?style=flat-square'/>](https://app.travis-ci.com/github/ounols/CSEngine/branches) |
 
 ## See more
