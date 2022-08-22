@@ -11,7 +11,7 @@ jobs:
   MacOS:
     strategy:
       matrix:
-          macos-version: [ macos-latest ]
+          macos-version: [ macos-12, macos-11 ]
           compiler: [ clang ]
           include:
             - compiler: clang
