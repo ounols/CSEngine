@@ -255,6 +255,7 @@ void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMe
 
     if(position < 0) return;
 
+    glBindVertexArray(meshId.m_vertexArray);
     glBindBuffer(GL_ARRAY_BUFFER, meshId.m_vertexBuffer);
     glEnableVertexAttribArray(position);
     glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
@@ -293,6 +294,7 @@ void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMe
     if(tex >= 0)        glDisableVertexAttribArray(tex);
     if(weight >= 0)     glDisableVertexAttribArray(weight);
     if(jointId >= 0)    glDisableVertexAttribArray(jointId);
+    glBindVertexArray(0);
 }
 
 void ShaderUtil::BindAttributeToPlane() {

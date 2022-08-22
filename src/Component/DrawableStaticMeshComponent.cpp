@@ -48,6 +48,10 @@ bool DrawableStaticMeshComponent::SetMesh(const SISurface& meshSurface) {
 
 
 void DrawableStaticMeshComponent::CreateMeshBuffers(const SISurface& surface) {
+    // Create the VAO for the VBO
+    GLuint vertexArray;
+    glGenVertexArrays(1, &vertexArray);
+    glBindVertexArray(vertexArray);
 
     // Create the VBO for the vertices.
     std::vector<float> vertices;
@@ -89,12 +93,13 @@ void DrawableStaticMeshComponent::CreateMeshBuffers(const SISurface& surface) {
     surface.m_meshId.m_vertexSize = vertexCount;
     surface.m_meshId.m_indexBuffer = indexBuffer;
     surface.m_meshId.m_indexSize = indexCount;
+    surface.m_meshId.m_vertexArray = vertexArray;
 
     m_meshId = surface.m_meshId;
 
     //Unbinding
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+    glBindVertexArray(0);
 }
 
 SComponent* DrawableStaticMeshComponent::Clone(SGameObject* object) {

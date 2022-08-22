@@ -20,7 +20,7 @@ namespace CSE {
 		std::string path;
 #if defined(MSVC_CMAKE)
         path.append("../../../../Assets/");
-#elif defined(_WIN32) || defined(__linux__)
+#elif defined(_WIN32) || defined(__linux__) || defined(__APPLE_CC__)
 		path.append("../../../Assets/");
 #endif
 #ifdef __ANDROID__
@@ -59,7 +59,7 @@ namespace CSE {
 		AAsset_close(asset);
 		buf = std::string(strbuf, fileSize);
 		delete[] strbuf;
-#elif defined (_WIN32) || defined(__linux__) || defined(__EMSCRIPTEN__)
+#elif defined (_WIN32) || defined(__linux__) || defined(__EMSCRIPTEN__) || defined(__APPLE_CC__)
 		std::ifstream fin(path, std::ios::binary);
 		if (!fin.is_open()) return "";
 

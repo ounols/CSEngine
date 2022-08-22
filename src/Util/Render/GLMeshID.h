@@ -9,6 +9,7 @@ namespace CSE {
         int m_indexBuffer = -1;
         int m_vertexSize = -1;
         int m_indexSize = -1;
+        int m_vertexArray = -1;
 
         bool m_hasJoint = false;
     };
