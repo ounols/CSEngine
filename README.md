@@ -101,7 +101,7 @@ Various stabilization tests such as build tests for various platforms and severa
 
 Review the following documentation:
 * [`web demo`](https://ounols.github.io/CSEngine-Demo/): This site is a simple web demo of the engine ported to WebGL 2.0.
-* [`documentation`](https://ounols.github.io/CSEngine-doc): Documentation that details of the structure and function of CSEngine.
+* [`documentation`](https://doc-engine.ounols.kr): Documentation that details of the structure and function of CSEngine.
 * [`to-do list`](https://www.notion.so/CSEngine-Todo-List-7ee24caed138466e83d81d2867b1f109): Documentation that contains the to-do list of the project and notes during development.
 
 
