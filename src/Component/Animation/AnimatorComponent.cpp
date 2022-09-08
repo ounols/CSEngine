@@ -1,7 +1,5 @@
 #include "AnimatorComponent.h"
 
-#include <thread>
-
 using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(AnimatorComponent) {
@@ -107,28 +105,18 @@ float AnimatorComponent::CalculateProgression(KeyFrame* previous, KeyFrame* next
 }
 
 std::vector<mat4> AnimatorComponent::InterpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float t) {
-	const auto& jointKeyFrames_prev = previousFrame->GetJointKeyFrames();
+    const auto& jointKeyFrames_prev = previousFrame->GetJointKeyFrames();
 	const auto& jointKeyFrames_next = nextFrame->GetJointKeyFrames();
     const auto jointSize = jointKeyFrames_prev.size();
     std::vector<mat4> currentPose;
     currentPose.resize(jointSize);
-    std::vector<std::thread> threads;
-    threads.reserve(jointSize);
 
-    for (const auto& frame : jointKeyFrames_prev) {
-        threads.emplace_back(std::thread([frame, jointKeyFrames_next, &currentPose, t]() {
-            const auto jointId = frame.first;
-            const auto& previousTransform = frame.second;
-            const auto& nextTransform = jointKeyFrames_next.at(jointId);
-            JointTransform&& currentTransform = JointTransform::Interpolate(t, *previousTransform, *nextTransform);
-            currentPose[jointId] = std::move(currentTransform).GetLocalMatrix();
-        }));
+    for (unsigned short i = 0; i < jointSize; ++i) {
+        const auto& prevTransform = jointKeyFrames_prev[i];
+        const auto& nextTransform = jointKeyFrames_next[i];
+        JointTransform&& currentTransform = JointTransform::Interpolate(t, *prevTransform, *nextTransform);
+        currentPose[i] = std::move(currentTransform).GetLocalMatrix();
     }
-
-    for(auto& thread : threads) {
-        thread.join();
-    }
-
     return currentPose;
 }
 
