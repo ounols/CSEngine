@@ -22,13 +22,6 @@ namespace CSE {
         enum CAMERATYPE {
             PERSPECTIVE, ORTHO
         };
-    private:
-        struct BackgroundMapStruct {
-            STexture* map = nullptr;
-            unsigned short mapId = 0;
-            unsigned short viewId = 0;
-            unsigned short projectionId = 0;
-        };
     public:
         CameraComponent();
 
@@ -93,6 +86,14 @@ namespace CSE {
         void SetBackgroundColor(vec3&& color);
 
         void SetBackgroundType(BackgroundType type);
+
+    private:
+        struct BackgroundMapStruct {
+            STexture* map = nullptr;
+            unsigned short mapId = 0;
+            unsigned short viewId = 0;
+            unsigned short projectionId = 0;
+        };
 
     private:
         void SetCameraMatrix();
