@@ -301,6 +301,10 @@ void ShaderUtil::BindAttributeToPlane() {
 	SEnvironmentMgr::RenderPlaneVAO();
 }
 
+void ShaderUtil::BindAttributeToCubeMap() {
+    SEnvironmentMgr::RenderCubeVAO();
+}
+
 void ShaderUtil::BindSkinningDataToShader(const GLProgramHandle& handle, const GLMeshID& meshId,
                                           const std::vector<mat4>& jointMatrix) {
 	if (!meshId.m_hasJoint || jointMatrix.empty()) {
