@@ -75,6 +75,8 @@ namespace CSE {
 
         void BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const;
 
+        void RenderBackground() const override {};
+
     private:
         void SetLightPosition() const;
         void SetDepthMap();

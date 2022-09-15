@@ -1,5 +1,9 @@
 #include "CameraMgr.h"
 
+#include "../Util/GLProgramHandle.h"
+#include "../Util/Render/ShaderUtil.h"
+#include "../Util/AssetsDef.h"
+
 using namespace CSE;
 
 CameraMgr::CameraMgr() = default;
@@ -9,6 +13,10 @@ CameraMgr::~CameraMgr() = default;
 
 
 void CameraMgr::Init() {
+    std::string cubemap_vert = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/cubemap.vert");
+    std::string cubemap_frag = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/cubemap.frag");
+
+    m_skyboxProgram = ShaderUtil::CreateProgramHandle(cubemap_vert.c_str(), cubemap_frag.c_str());
 }
 
 void CameraMgr::DeleteCameraComponent(CameraComponent* object) {
@@ -55,4 +63,8 @@ void CameraMgr::ChangeCurrentCamera(CameraComponent* camera) {
 
     m_currentCamera = camera;
 
+}
+
+GLProgramHandle* CameraMgr::GetSkyboxProgram() const {
+    return m_skyboxProgram;
 }
