@@ -555,24 +555,20 @@ namespace CSE {
 
         static Matrix4<T> Perspective(T fovy, T aspect, T tNear, T tFar) {
             Matrix4 m;
-            T sine, cosine, cotangent, deltaZ;
-            T radians = (T) (fovy / 2.0f * Pi / 180.0f);
+            // radians = (fovy / 2 * Pi / 180)
+            T radians = (T) (fovy * 0.008726644f);
+            T deltaZ = (T) (tFar - tNear);
+            // ref : https://twitter.com/SebAaltonen/status/1571792776802570240?s=20&t=XOYhRlj4BYe_1j8YP3LJJQ
+            T h = 1.0f / tan(radians);
+            T w = h / aspect;
+            T a = -tNear / deltaZ;
+            T b = (tNear * tFar) / deltaZ;
 
-            deltaZ = (T) (tFar - tNear);
-            sine = (T) sin(radians);
-            cosine = (T) cos(radians);
-
-            if ((deltaZ == 0.0f) || (sine == 0.0f) || (aspect == 0.0f)) {
-                return m;
-            }
-
-            cotangent = (T) (cosine / sine);
-
-            m.MAT4_XX = cotangent / aspect;
-            m.MAT4_YY = cotangent;
-            m.MAT4_ZZ = -(tFar + tNear) / deltaZ;
+            m.MAT4_XX = w;
+            m.MAT4_YY = h;
+            m.MAT4_ZZ = -a;
             m.MAT4_ZW = -1.0f;
-            m.MAT4_WZ = -2.0f * tNear * tFar / deltaZ;
+            m.MAT4_WZ = -b;
             m.MAT4_WW = 0.0f;
 
             return m;
