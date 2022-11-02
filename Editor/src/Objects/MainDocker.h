@@ -14,6 +14,9 @@ namespace CSEditor {
         ~MainDocker();
 
         void SetUI() override;
+
+    private:
+        ImGuiWindowFlags m_windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
     };
 
 }

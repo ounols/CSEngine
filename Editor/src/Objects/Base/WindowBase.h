@@ -11,18 +11,17 @@ namespace CSEditor {
     class WindowBase {
     public:
         WindowBase() {
-
+            m_mainViewport = ImGui::GetMainViewport();
         }
 
-        virtual ~WindowBase() {
-
-        }
+        virtual ~WindowBase() = default;
 
         virtual void SetUI() = 0;
 
 
     protected:
-        bool isClosed = true;
+        bool m_isClosed = true;
+        ImGuiViewport* m_mainViewport = nullptr;
     };
 
 
