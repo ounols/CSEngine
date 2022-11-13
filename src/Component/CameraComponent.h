@@ -3,7 +3,6 @@
 #include "SComponent.h"
 #include "../Util/Vector.h"
 #include "../Util/Render/CameraBase.h"
-#include "DrawableStaticMeshComponent.h"
 
 namespace CSE {
     struct CameraMatrixStruct {
@@ -26,6 +25,7 @@ namespace CSE {
     };
 
     class SFrameBuffer;
+    class STexture;
 
     class CameraComponent : public SComponent, public CameraBase {
     public:
@@ -89,6 +89,24 @@ namespace CSE {
 
         void SetFrameBuffer(SFrameBuffer* frameBuffer);
 
+        BackgroundType GetBackgroundType() override;
+
+        void RenderBackground() const override;
+
+        void SetBackgroundSkybox(STexture* skyboxTexture = nullptr);
+
+        void SetBackgroundColor(vec3&& color);
+
+        void SetBackgroundType(BackgroundType type);
+
+    private:
+        struct BackgroundMapStruct {
+            STexture* map = nullptr;
+            unsigned short mapId = 0;
+            unsigned short viewId = 0;
+            unsigned short projectionId = 0;
+        };
+
     private:
         void SetCameraMatrix();
 
@@ -98,7 +116,7 @@ namespace CSE {
         vec3 m_up = vec3(0, 1, 0);
         SGameObject* m_targetObject;
 
-        mat4 m_cameraMatrix;
+        mutable mat4 m_cameraMatrix;
         mutable mat4 m_projectionMatrix;
         vec3 m_resultTarget;
         SFrameBuffer* m_frameBuffer = nullptr;
@@ -118,5 +136,10 @@ namespace CSE {
 
         float m_Near = 0.1f;
         float m_Far = 100.f;
+
+        //Background
+        BackgroundType m_backgroundType = SOLID;
+        vec3 m_backgroundColor = vec3(0.4f, 0.4f, 0.4f);
+        BackgroundMapStruct* m_backgroundMap = nullptr;
     };
 }

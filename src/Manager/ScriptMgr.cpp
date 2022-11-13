@@ -11,18 +11,6 @@
 #include "../Component/RenderComponent.h"
 #include "EngineCore.h"
 
-#ifdef WIN32
-#include <windows.h>
-#endif
-#ifdef __ANDROID__
-#include <android/log.h>
-#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,"ScriptManager",__VA_ARGS__)
-#elif __linux__
-
-#include <iostream>
-
-#endif
-
 using namespace Sqrat;
 using namespace CSE;
 
@@ -93,26 +81,12 @@ void ScriptMgr::RegisterScript(const std::string& script) {
         Script compiledScript;
         compiledScript.CompileString(script);
         if (Sqrat::Error::Occurred(vm)) {
-#ifdef WIN32
-            OutputDebugString(_SC("Compile Failed: "));
-            OutputDebugString(Error::Message(vm).c_str());
-#elif __ANDROID__
-            LOGE("Compile Failed : %s", Error::Message(vm).c_str());
-#elif __linux__
-            std::cout << "Compile Failed : " << Error::Message(vm) << '\n';
-#endif
+            SafeLog::Log((_SC("Compile Failed: ") + Error::Message(vm)).c_str());
         }
 
         compiledScript.Run();
         if (Sqrat::Error::Occurred(vm)) {
-#ifdef WIN32
-            OutputDebugString(_SC("Run Failed: "));
-            OutputDebugString(Error::Message(vm).c_str());
-#elif __ANDROID__
-            LOGE("Run Failed : %s", Error::Message(vm).c_str());
-#elif __linux__
-            std::cout << "Run Failed : " << Error::Message(vm) << '\n';
-#endif
+            SafeLog::Log((_SC("Run Failed: ") + Error::Message(vm)).c_str());
         }
 
         compiledScript.Release();

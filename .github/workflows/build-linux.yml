@@ -10,7 +10,7 @@ jobs:
   Linux:
     strategy:
       matrix:
-          linux-version: [ubuntu-latest, ubuntu-18.04]
+          linux-version: [ubuntu-22.04, ubuntu-20.04, ubuntu-18.04]
           compiler: [gcc, clang]
           include:
             - compiler: gcc
@@ -26,6 +26,7 @@ jobs:
           
       - name: Install packages
         run: |
+          sudo apt-get update -y
           sudo apt-get -y install cmake build-essential mesa-common-dev libglfw3 libglfw3-dev libglew-dev
           
       - name: Ready for build

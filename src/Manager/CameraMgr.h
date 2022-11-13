@@ -1,8 +1,12 @@
 #pragma once
+
+#include "Base/SContainer.h"
+#include "Base/CoreBase.h"
 #include "../Component/CameraComponent.h"
 
-
 namespace CSE {
+
+    class GLProgramHandle;
 
     class CameraMgr : public SContainer<CameraComponent*>, public CoreBase {
     public:
@@ -22,9 +26,13 @@ namespace CSE {
 
         void ChangeCurrentCamera(CameraComponent* camera);
 
+        GLProgramHandle* GetSkyboxProgram() const;
+
     private:
         CameraComponent* m_currentCamera = nullptr;
         float m_projectionRatio = 1.0f;
 
+        // Skybox Raw Material
+        GLProgramHandle* m_skyboxProgram = nullptr;
     };
 }

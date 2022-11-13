@@ -35,12 +35,11 @@ namespace CSE {
         static void SetHeight(unsigned int height);
 
         static void RenderPlaneVAO();
+        static void RenderCubeVAO();
 
 
     private:
         void LoadCubeVAO();
-
-        void RenderCubeVAO();
 
         void LoadPlaneVAO();
 
@@ -64,7 +63,7 @@ namespace CSE {
         STexture* m_brdfMap;
 
         unsigned int m_cubeVBO;
-        unsigned int m_cubeVAO;
+        static unsigned int m_cubeVAO;
         unsigned int m_planeVBO;
         static unsigned int m_planeVAO;
     };

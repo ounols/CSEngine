@@ -20,6 +20,7 @@ using namespace CSE;
 unsigned int SEnvironmentMgr::m_width = 0;
 unsigned int SEnvironmentMgr::m_height = 0;
 unsigned int SEnvironmentMgr::m_planeVAO = 0;
+unsigned int SEnvironmentMgr::m_cubeVAO = 0;
 
 SEnvironmentMgr::SEnvironmentMgr() {
 

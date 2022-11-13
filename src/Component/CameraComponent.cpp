@@ -3,20 +3,26 @@
 #include "../Manager/CameraMgr.h"
 #include "../Manager/EngineCore.h"
 #include "../Util/Render/SFrameBuffer.h"
+#include "../Util/Render/STexture.h"
+#include "../Util/Render/ShaderUtil.h"
 
 #include <mutex>
 
 using namespace CSE;
 
+GLProgramHandle* globalSkyboxHandle = nullptr;
+
 COMPONENT_CONSTRUCTOR(CameraComponent), m_eye(nullptr), m_targetObject(nullptr) {
     auto cameraMgr = CORE->GetCore(CameraMgr);
     cameraMgr->Register(this);
     m_pRatio = const_cast<float*>(cameraMgr->GetProjectionRatio());
+    globalSkyboxHandle = cameraMgr->GetSkyboxProgram();
 }
 
 CameraComponent::~CameraComponent() = default;
 
 void CameraComponent::Exterminate() {
+    SAFE_DELETE(m_backgroundMap);
     CORE->GetCore(CameraMgr)->Remove(this);
 }
 
@@ -65,6 +71,15 @@ SComponent* CameraComponent::Clone(SGameObject* object) {
 
     comp->m_Near = m_Near;
     comp->m_Far = m_Far;
+
+    //Background
+    comp->m_backgroundType = m_backgroundType;
+    comp->m_backgroundColor = m_backgroundColor;
+    if(comp->m_backgroundMap == nullptr) comp->m_backgroundMap = new BackgroundMapStruct();
+    comp->m_backgroundMap->map = m_backgroundMap->map;
+    comp->m_backgroundMap->mapId = m_backgroundMap->mapId;
+    comp->m_backgroundMap->viewId = m_backgroundMap->viewId;
+    comp->m_backgroundMap->projectionId = m_backgroundMap->projectionId;
 
     return comp;
 }
@@ -160,7 +175,9 @@ void CameraComponent::SetProjectionMatrix() const {
 
 void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
     if (name_str == "m_eye") {
-        m_eye = static_cast<TransformComponent*>(SGameObject::FindByID(value[0])->GetTransform())->GetPosition();
+        m_eye = static_cast<TransformComponent*>(
+                SGameObject::FindByID(value[0])->GetTransform()
+                )->GetPosition();
     } else if (name_str == "m_target") {
         SET_VEC3(m_target);
     } else if (name_str == "m_up") {
@@ -186,6 +203,12 @@ void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments v
         m_Far = std::stof(value[1]);
     } else if (name_str == "m_frameBuffer") {
         m_frameBuffer = SResource::Create<SFrameBuffer>(value[0]);
+    } else if (name_str == "m_backgroundType") {
+        m_backgroundType = static_cast<BackgroundType>(std::stoi(value[0]));
+    } else if (name_str == "m_backgroundColor") {
+        SET_VEC3(m_backgroundColor);
+    } else if (name_str == "m_backgroundMap.map") {
+        SetBackgroundSkybox(SResource::Create<STexture>(value[0]));
     }
 
 }
@@ -203,7 +226,12 @@ std::string CameraComponent::PrintValue() const {
     PRINT_VALUE(m_pFov, m_pFov);
     PRINT_VALUE(m_orthoValue, m_oLeft, ' ', m_oRight, ' ', m_oBottom, ' ', m_oTop);
     PRINT_VALUE(m_distance, m_Near, ' ', m_Far);
-    if(m_frameBuffer != nullptr) PRINT_VALUE(m_frameBuffer, ConvertSpaceStr(m_frameBuffer->GetID()));
+    if (m_frameBuffer != nullptr) PRINT_VALUE(m_frameBuffer, ConvertSpaceStr(m_frameBuffer->GetID()));
+
+    PRINT_VALUE(m_backgroundType, static_cast<int>(m_backgroundType));
+    PRINT_VALUE_VEC3(m_backgroundColor);
+    if (m_backgroundMap != nullptr && m_backgroundMap->map != nullptr)
+        PRINT_VALUE(m_backgroundMap.map, ConvertSpaceStr(m_backgroundMap->map->GetID()));
 
     PRINT_END("component");
 }
@@ -218,4 +246,58 @@ SFrameBuffer* CameraComponent::GetFrameBuffer() const {
 
 void CameraComponent::SetFrameBuffer(SFrameBuffer* frameBuffer) {
     m_frameBuffer = frameBuffer;
+}
+
+CameraBase::BackgroundType CameraComponent::GetBackgroundType() {
+    return m_backgroundType;
+}
+
+void CameraComponent::RenderBackground() const {
+    switch (m_backgroundType) {
+        case NONE:
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            return;
+        case SOLID:
+            glClearColor(m_backgroundColor.x, m_backgroundColor.y, m_backgroundColor.z, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            return;
+        case SKYBOX:
+            const auto& mapStruct = m_backgroundMap;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            if (mapStruct->map == nullptr) return;
+
+            glUseProgram(globalSkyboxHandle->Program);
+            globalSkyboxHandle->SetUniformMat4("PROJECTION_MATRIX", m_projectionMatrix);
+            auto viewMatrix = mat4(m_cameraMatrix.ToMat3());
+            globalSkyboxHandle->SetUniformMat4("VIEW_MATRIX", viewMatrix);
+            mapStruct->map->Bind(mapStruct->mapId, 0);
+
+            glDisable(GL_CULL_FACE);
+            glDisable(GL_DEPTH_TEST);
+            ShaderUtil::BindAttributeToCubeMap();
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_CULL_FACE);
+            return;
+    }
+}
+
+void CameraComponent::SetBackgroundSkybox(STexture* skyboxTexture) {
+    if (skyboxTexture == nullptr) {
+        skyboxTexture = SResource::Get<STexture>("envCubemap.textureCubeMap");
+    }
+    if (m_backgroundMap == nullptr) m_backgroundMap = new BackgroundMapStruct();
+
+    m_backgroundMap->map = skyboxTexture;
+    m_backgroundMap->mapId = static_cast<unsigned short>(globalSkyboxHandle->UniformLocation("ENV_MAP")->id);
+    m_backgroundMap->viewId = static_cast<unsigned short>(globalSkyboxHandle->UniformLocation("VIEW_MATRIX")->id);
+    m_backgroundMap->projectionId = static_cast<unsigned short>(globalSkyboxHandle->UniformLocation(
+            "PROJECTION_MATRIX")->id);
+}
+
+void CameraComponent::SetBackgroundColor(vec3&& color) {
+    m_backgroundColor = color;
+}
+
+void CameraComponent::SetBackgroundType(CameraBase::BackgroundType type) {
+    m_backgroundType = type;
 }

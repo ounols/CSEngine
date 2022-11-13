@@ -63,12 +63,15 @@ SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, JointCo
 }
 
 KeyFrame* DAEConvertSGameObject::CreateKeyFrame(KeyFrameData* data) {
-    std::map<int, JointTransform*> map;
-    for (const auto& jointData : data->jointTransforms) {
+    std::vector<JointTransform*> resultData;
+    const auto& jointTransforms = data->jointTransforms;
+    resultData.reserve(jointTransforms.size());
+
+    for (const auto& jointData : jointTransforms) {
         JointTransform* jointTransform = CreateTransform(jointData);
-        map[jointData->jointId] = jointTransform;
+        resultData.push_back(jointTransform);
     }
-    return new KeyFrame(data->time, map);
+    return new KeyFrame(data->time, std::move(resultData));
 }
 
 JointTransform* DAEConvertSGameObject::CreateTransform(JointTransformData* data) {

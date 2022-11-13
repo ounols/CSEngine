@@ -120,7 +120,7 @@ void FirstDemoScene::Init() {
     const auto& ab2_children = ab2->GetChildren();
     for (const auto& gameObject : ab2_children) {
         const auto& component = gameObject->GetComponent<RenderComponent>();
-        if(component == nullptr) continue;
+        if (component == nullptr) continue;
         component->SetMaterial(SResource::Create<SMaterial>("File:Material/ForFramebufferTest.mat"));
     }
 
@@ -175,8 +175,6 @@ void FirstDemoScene::Init() {
     c4->DeleteComponent(c4->GetComponent<CustomComponent>());
 
 
-
-
     SGameObject* direction = new SGameObject();
     direction->SetParent(root);
     direction->SetName("directional");
@@ -228,10 +226,15 @@ void FirstDemoScene::Init() {
 //    a->GetComponent<CameraComponent>()->SetTarget(vec3{ 0.0f, -1.0f, -1.f });
     auto a_cam = a->GetComponent<CameraComponent>();
     a_cam->SetTarget(d);
+    a_cam->SetBackgroundSkybox();
+    a_cam->SetBackgroundType(CameraBase::SKYBOX);
 
     c4->CreateComponent<CameraComponent>();
     c4->GetComponent<CameraComponent>()->SetTarget(d);
-    c4->GetComponent<CameraComponent>()->SetFrameBuffer(SResource::Create<SFrameBuffer>("File:Texture/TestFrameBuffer.framebuffer"));
+    c4->GetComponent<CameraComponent>()->SetBackgroundSkybox();
+    c4->GetComponent<CameraComponent>()->SetBackgroundType(CameraBase::SKYBOX);
+    c4->GetComponent<CameraComponent>()->SetFrameBuffer(
+            SResource::Create<SFrameBuffer>("File:Texture/TestFrameBuffer.framebuffer"));
     //===============
 
     SSceneLoader::SavePrefab(root, CSE::NativeAssetsPath() + "Scene/test_scene.scene");
