@@ -1,13 +1,13 @@
 #include "RenderMgr.h"
-#include "LightMgr.h"
-#include "EngineCore.h"
-#include "../Util/Render/SFrameBuffer.h"
-#include "../Util/Render/SEnvironmentMgr.h"
-#include "../Util/Render/SGBuffer.h"
-#include "CameraMgr.h"
-#include "../Component/RenderComponent.h"
-#include "../Util/Settings.h"
-#include "../Util/GLProgramHandle.h"
+#include "../LightMgr.h"
+#include "../EngineCore.h"
+#include "../../Util/Render/SFrameBuffer.h"
+#include "../../Util/Render/SEnvironmentMgr.h"
+#include "../../Util/Render/SGBuffer.h"
+#include "../CameraMgr.h"
+#include "../../Component/RenderComponent.h"
+#include "../../Util/Settings.h"
+#include "../../Util/GLProgramHandle.h"
 
 using namespace CSE;
 

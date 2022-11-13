@@ -1,8 +1,8 @@
 #pragma once
-#include "../MacroDef.h"
+#include "../../MacroDef.h"
 #include "RenderContainer.h"
-#include "CoreBufferContainer.h"
-#include "Base/RenderCoreBase.h"
+#include "../CoreBufferContainer.h"
+#include "../Base/RenderCoreBase.h"
 
 
 namespace CSE {

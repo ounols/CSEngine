@@ -9,7 +9,7 @@
 #include "ScriptMgr.h"
 #include "CameraMgr.h"
 #include "LightMgr.h"
-#include "RenderMgr.h"
+#include "Render/RenderMgr.h"
 #include "SceneMgr.h"
 #include "MemoryMgr.h"
 #include "../Sample/FirstDemoScene.h"

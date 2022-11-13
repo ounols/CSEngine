@@ -1,5 +1,5 @@
 #include "RenderComponent.h"
-#include "../Manager/RenderMgr.h"
+#include "../Manager/Render/RenderMgr.h"
 #include "../Manager/LightMgr.h"
 #include "../Manager/EngineCore.h"
 #include "../Util/Render/ShaderUtil.h"
