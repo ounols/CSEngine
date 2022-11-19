@@ -8,6 +8,8 @@
 namespace CSE {
     struct CameraMatrixStruct;
     class SMaterial;
+    class CameraBase;
+    class RenderMgr;
 
     class SISurface : public SResource {
     public:
@@ -58,9 +60,18 @@ namespace CSE {
 
     class SIRenderGroup {
     public:
-        SIRenderGroup() = default;
+        SIRenderGroup(const RenderMgr& renderMgr) : m_renderMgr(&renderMgr) {}
         virtual ~SIRenderGroup() = default;
 
-        virtual void RenderAll(unsigned int framebufferId, const std::list<SIRender*>& renderList) const = 0;
+        virtual void RegisterObject(SIRender* object) = 0;
+
+        virtual void RemoveObjects(SIRender* object) = 0;
+
+        virtual void RenderAll(const CameraBase& camera) const = 0;
+
+        virtual void Exterminate() = 0;
+
+    protected:
+        const RenderMgr* m_renderMgr;
     };
 }
