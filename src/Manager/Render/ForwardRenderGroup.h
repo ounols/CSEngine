@@ -5,6 +5,8 @@
 
 namespace CSE {
 
+    class LightMgr;
+
     class ForwardRenderGroup : public SIRenderGroup {
     private:
         typedef std::vector<SIRender*> RenderInterfaces;
@@ -25,6 +27,7 @@ namespace CSE {
 
     private:
         OrderRenderLayer m_rendersLayer;
+        LightMgr* m_lightMgr = nullptr;
     };
 
 }

@@ -28,6 +28,14 @@ namespace CSE {
          */
         void Render() const override;
 
+        unsigned int* GetWidth() const {
+            return m_width;
+        }
+
+        unsigned int* GetHeight() const {
+            return m_height;
+        }
+
     protected:
         void Exterminate() override;
 

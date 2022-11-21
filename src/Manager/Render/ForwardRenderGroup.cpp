@@ -9,10 +9,9 @@
 
 using namespace CSE;
 
-LightMgr* lightMgr = nullptr;
 
 ForwardRenderGroup::ForwardRenderGroup(const RenderMgr& renderMgr) : SIRenderGroup(renderMgr) {
-    lightMgr = CORE->GetCore(LightMgr);
+    m_lightMgr = CORE->GetCore(LightMgr);
 
 }
 
@@ -84,7 +83,7 @@ void ForwardRenderGroup::RenderAll(const CameraBase& camera) const {
 
             glUseProgram(handler.Program);
             //Attach Light
-            lightMgr->AttachLightToShader(&handler);
+            m_lightMgr->AttachLightToShader(&handler);
 
             for (const auto& render : renderComp) {
                 if (render == nullptr) continue;
