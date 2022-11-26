@@ -18,10 +18,11 @@ namespace CSE {
             DEFERRED = 1,
             DEPTH_ONLY = 2,
         };
+
     public:
         RenderContainer();
-
         ~RenderContainer();
+
     public:
         void Register(SIRender* object, RenderGroupMode groupMode);
         void Remove(SIRender* object, RenderGroupMode groupFlag);

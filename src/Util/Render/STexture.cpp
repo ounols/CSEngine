@@ -54,7 +54,7 @@ bool STexture::Load(unsigned char* data) {
     m_internalFormat = GL_RGB;
     switch (m_channels) {
         case 1:
-            m_internalFormat = GL_R;
+            m_internalFormat = GL_R8;
             break;
         case 2:
             m_internalFormat = GL_RG;

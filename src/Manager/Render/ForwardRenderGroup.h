@@ -12,6 +12,7 @@ namespace CSE {
         typedef std::vector<SIRender*> RenderInterfaces;
         typedef std::unordered_map<GLProgramHandle*, RenderInterfaces> ProgramRenderLayer;
         typedef std::unordered_map<short, ProgramRenderLayer> OrderRenderLayer;
+
     public:
         explicit ForwardRenderGroup(const RenderMgr& renderMgr);
 

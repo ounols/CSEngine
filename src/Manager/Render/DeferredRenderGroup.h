@@ -11,6 +11,7 @@ namespace CSE {
     class DeferredRenderGroup  : public SRenderGroup {
     private:
         typedef std::unordered_map<GLProgramHandle*, SGBuffer*> GBufferLayer;
+
     public:
         explicit DeferredRenderGroup(const RenderMgr& renderMgr);
 

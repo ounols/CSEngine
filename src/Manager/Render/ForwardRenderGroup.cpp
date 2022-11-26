@@ -12,11 +12,9 @@ using namespace CSE;
 
 ForwardRenderGroup::ForwardRenderGroup(const RenderMgr& renderMgr) : SRenderGroup(renderMgr) {
     m_lightMgr = CORE->GetCore(LightMgr);
-
 }
 
 ForwardRenderGroup::~ForwardRenderGroup() = default;
-
 
 void ForwardRenderGroup::RegisterObject(SIRender* object) {
     const auto& material = object->GetMaterial();

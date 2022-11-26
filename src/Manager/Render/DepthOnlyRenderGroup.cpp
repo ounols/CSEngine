@@ -55,5 +55,5 @@ void DepthOnlyRenderGroup::RenderAll(const CameraBase& camera) const {
 }
 
 void DepthOnlyRenderGroup::Exterminate() {
-
+    m_depthObjects.clear();
 }
