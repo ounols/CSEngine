@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../Util/Render/RenderInterfaces.h"
+#include "../../Util/Render/SRenderGroup.h"
 #include <list>
 
 namespace CSE {
 
-    class DepthOnlyRenderGroup : public SIRenderGroup {
+    class DepthOnlyRenderGroup : public SRenderGroup {
     public:
         explicit DepthOnlyRenderGroup(const RenderMgr& renderMgr);
 
@@ -13,6 +13,10 @@ namespace CSE {
 
         void RemoveObjects(SIRender* object) override;
 
+        /**
+         * Rendering for a depth buffer to use for shadows. The render target depends on the shadow settings.
+         * @param camera The light(camera) you want to render.
+         */
         void RenderAll(const CameraBase& camera) const override;
 
         void Exterminate() override;

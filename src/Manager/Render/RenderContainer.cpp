@@ -10,84 +10,39 @@ RenderContainer::RenderContainer() {}
 
 RenderContainer::~RenderContainer() {}
 
-
-void RenderContainer::Register(SIRender* object) {
-    const auto& material = object->GetMaterial();
-    if(material == nullptr) return;
-    if(material->GetMode() == SMaterial::DEFERRED)
-        return RegisterDeferred(object, material);
-
-    short orderLayer = material->GetOrderLayer();
-    GLProgramHandle* handler = material->GetHandle();
-
-    auto& layer = m_rendersLayer[orderLayer][handler];
-    layer.push_back(object);
-
-}
-
-void RenderContainer::RegisterDeferred(SIRender* object, const SMaterial* material) {
-    const auto& lightPassHandle = material->GetLightPassHandle();
-    if(lightPassHandle == nullptr) return;
-
-    const auto& key = m_gbufferLayer.find(lightPassHandle);
-    SGBuffer* gbuffer = nullptr;
-    if(key == m_gbufferLayer.end()) {
-        gbuffer = new SGBuffer();
-        gbuffer->GenerateGBuffer(*m_width, *m_height);
-        m_gbufferLayer[lightPassHandle] = gbuffer;
-    }
-    else {
-        gbuffer = key->second;
-    }
-    gbuffer->PushBackToLayer(object);
-    gbuffer->BindLightPass(lightPassHandle);
-}
-
-void RenderContainer::Remove(SIRender* object) {
-    const auto& material = object->GetMaterial();
-    if(material == nullptr) return;
-    if(material->GetMode() == SMaterial::DEFERRED)
-        return RemoveDeferred(object, material);
-
-    short orderLayer = material->GetOrderLayer();
-    GLProgramHandle* handler = material->GetHandle();
-
-    //1. Order Render Layer Level
-    auto orderLayerIter = m_rendersLayer.find(orderLayer);
-    if (orderLayerIter != m_rendersLayer.end()) {
-        {
-            //2. Program Render Layer Level
-            ProgramRenderLayer& programLayer = orderLayerIter->second;
-            auto handlerPair = programLayer.find(handler);
-            if (handlerPair != programLayer.end()) {
-                auto& layerVector = handlerPair->second;
-                handlerPair->second.erase(std::remove(layerVector.begin(), layerVector.end(), object), layerVector.end());
-                //빈공간은 제거
-                if (layerVector.empty()) {
-                    programLayer.erase(handlerPair);
-                }
-            }
-        }
-        //빈공간은 제거
-        if (orderLayerIter->second.empty()) {
-            m_rendersLayer.erase(orderLayer);
-        }
+void RenderContainer::Register(SIRender* object, RenderGroupMode groupMode) {
+    switch (groupMode) {
+        case FORWARD:
+            m_forwardRenderGroup->RegisterObject(object);
+            break;
+        case DEFERRED:
+            m_deferredRenderGroup->RegisterObject(object);
+            break;
+        case DEPTH_ONLY:
+            m_depthOnlyRenderGroup->RegisterObject(object);
+            break;
     }
 }
 
-void RenderContainer::RemoveDeferred(SIRender* object, const SMaterial* material) {
-    const auto& programLayer = m_gbufferLayer;
-    auto handlerPair = programLayer.find(material->GetLightPassHandle());
-    if (handlerPair != programLayer.end()) {
-        auto& layerVector = handlerPair->second;
-        handlerPair->second->RemoveToLayer(object);
+void RenderContainer::Remove(SIRender* object, RenderContainer::RenderGroupMode groupFlag) {
+    switch (groupFlag) {
+        case FORWARD:
+            m_forwardRenderGroup->RemoveObjects(object);
+            break;
+        case DEFERRED:
+            m_depthOnlyRenderGroup->RemoveObjects(object);
+            break;
+        case DEPTH_ONLY:
+            m_depthOnlyRenderGroup->RegisterObject(object);
+            break;
     }
 }
 
 void RenderContainer::Exterminate() {
-    m_rendersLayer.clear();
-    for (auto gbuffer_pair : m_gbufferLayer) {
-        auto gbuffer = gbuffer_pair.second;
-        SAFE_DELETE(gbuffer);
-    }
+    m_forwardRenderGroup->Exterminate();
+    SAFE_DELETE(m_forwardRenderGroup);
+    m_deferredRenderGroup->Exterminate();
+    SAFE_DELETE(m_deferredRenderGroup);
+    m_depthOnlyRenderGroup->Exterminate();
+    SAFE_DELETE(m_depthOnlyRenderGroup);
 }

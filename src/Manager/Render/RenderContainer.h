@@ -2,39 +2,37 @@
 #include <vector>
 #include <list>
 #include <unordered_map>
-#include "../../Util/Render/RenderInterfaces.h"
+#include "../../Util/Render/SRenderGroup.h"
 
 
 namespace CSE {
 
     class SFrameBuffer;
     class SGBuffer;
+    class SRenderGroup;
 
     class RenderContainer {
+    public:
+        enum RenderGroupMode {
+            FORWARD = 0,
+            DEFERRED = 1,
+            DEPTH_ONLY = 2,
+        };
     public:
         RenderContainer();
 
         ~RenderContainer();
-
-    protected:
-        typedef std::vector<SIRender*> RenderInterfaces;
-        typedef std::unordered_map<GLProgramHandle*, SGBuffer*> GBufferLayer;
-        typedef std::unordered_map<GLProgramHandle*, RenderInterfaces> ProgramRenderLayer;
-        typedef std::unordered_map<short, ProgramRenderLayer> OrderRenderLayer;
-
     public:
-        void Register(SIRender* object);
-        void RegisterDeferred(SIRender* object, const SMaterial* material);
-
-        void Remove(SIRender* object);
-        void RemoveDeferred(SIRender* object, const SMaterial* material);
+        void Register(SIRender* object, RenderGroupMode groupMode);
+        void Remove(SIRender* object, RenderGroupMode groupFlag);
 
     protected:
         virtual void Exterminate();
 
     protected:
-        OrderRenderLayer m_rendersLayer;
-        GBufferLayer m_gbufferLayer;
+        SRenderGroup* m_forwardRenderGroup = nullptr;
+        SRenderGroup* m_deferredRenderGroup = nullptr;
+        SRenderGroup* m_depthOnlyRenderGroup = nullptr;
 
         unsigned int* m_width = nullptr;
         unsigned int* m_height = nullptr;

@@ -25,9 +25,6 @@ namespace CSE {
 
         void Init() override;
 
-        void RegisterShadowObject(SIRender* object);
-        void RemoveShadowObject(SIRender* object);
-
         int GetShadowCount() const {
             return m_shadowCount;
         }
@@ -37,13 +34,10 @@ namespace CSE {
         }
 
         void RefreshShadowCount(int shadowCount = -1) const;
-        const std::list<SIRender*>& GetShadowObject() const;
-        GLProgramHandle* GetShadowHandle() const;
 
     private:
         std::list<SIRender*> m_shadowObject;
         mutable int m_shadowCount = 0;
-        GLProgramHandle* m_shadowHandle = nullptr;
 
         /*mutable*/ int m_lightMapCount = 3;
 

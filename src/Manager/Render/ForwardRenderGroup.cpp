@@ -10,7 +10,7 @@
 using namespace CSE;
 
 
-ForwardRenderGroup::ForwardRenderGroup(const RenderMgr& renderMgr) : SIRenderGroup(renderMgr) {
+ForwardRenderGroup::ForwardRenderGroup(const RenderMgr& renderMgr) : SRenderGroup(renderMgr) {
     m_lightMgr = CORE->GetCore(LightMgr);
 
 }
@@ -62,13 +62,11 @@ void ForwardRenderGroup::RemoveObjects(SIRender* object) {
 
 void ForwardRenderGroup::RenderAll(const CameraBase& camera) const {
     const auto cameraMatrix = camera.GetCameraMatrixStruct();
-    const auto& frameBuffer = camera.GetFrameBuffer();
+    const auto& cameraBuffer = camera.GetFrameBuffer();
+    const auto& frameBuffer = cameraBuffer == nullptr
+            ? m_renderMgr->GetMainBuffer() : cameraBuffer;
     OrderRenderLayer orderRenderLayer(m_rendersLayer.begin(), m_rendersLayer.end());
-    if (frameBuffer == nullptr) {
-        m_renderMgr->GetMainBuffer()->AttachFrameBuffer();
-    } else {
-        frameBuffer->AttachFrameBuffer();
-    }
+    frameBuffer->AttachFrameBuffer();
 
     for (const auto& orderLayerPair : orderRenderLayer) {
         const auto& orderLayer = orderLayerPair.second;
@@ -90,6 +88,7 @@ void ForwardRenderGroup::RenderAll(const CameraBase& camera) const {
                 if (!render->isRenderActive) continue;
 
                 render->SetMatrix(cameraMatrix);
+                BindSourceBuffer(*frameBuffer, handler.Uniforms.SourceBuffer, 0);
                 render->Render();
             }
         }

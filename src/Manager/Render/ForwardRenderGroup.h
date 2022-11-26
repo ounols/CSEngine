@@ -1,13 +1,13 @@
 #pragma once
 
 #include <unordered_map>
-#include "../../Util/Render/RenderInterfaces.h"
+#include "../../Util/Render/SRenderGroup.h"
 
 namespace CSE {
 
     class LightMgr;
 
-    class ForwardRenderGroup : public SIRenderGroup {
+    class ForwardRenderGroup : public SRenderGroup {
     private:
         typedef std::vector<SIRender*> RenderInterfaces;
         typedef std::unordered_map<GLProgramHandle*, RenderInterfaces> ProgramRenderLayer;
@@ -21,6 +21,10 @@ namespace CSE {
 
         void RemoveObjects(SIRender* object) override;
 
+        /**
+         * Render the objects to be forward-rendered.
+         * @param camera Structure containing information values of the camera to be drawn.
+         */
         void RenderAll(const CameraBase& camera) const override;
 
         void Exterminate() override;

@@ -30,6 +30,8 @@ namespace CSE {
         // Skinning
         GLint JointMatrix = HANDLE_NULL;
         GLint SkinningMode = HANDLE_NULL;
+        // Buffers
+        GLint SourceBuffer = HANDLE_NULL;
     };
 
     struct GLAttributeHandles {

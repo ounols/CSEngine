@@ -72,6 +72,12 @@ float ClampedPow(float X, float Y) {
 
 
 void main(void) {
+
+	lowp float depth     = texture(u_sampler_depth, v_textureCoordOut).r;
+	if(depth >= 1) {
+		discard;
+	}
+
 	// retrieve data from gbuffer
 	lowp vec3  fragPos	 = texture(u_sampler_position, v_textureCoordOut).rgb;
 	lowp vec2 normal_raw = texture(u_sampler_normal, v_textureCoordOut).rg;
@@ -169,7 +175,7 @@ void main(void) {
 	color = pow(color, vec3(1.0/2.2));
 
 	FragColor = vec4(color, 1.0);
-	gl_FragDepth = texture(u_sampler_depth, v_textureCoordOut).r;
+	gl_FragDepth = depth;
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {

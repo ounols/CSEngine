@@ -45,34 +45,5 @@ namespace CSE {
          * @param camera Structure containing information values of the camera to be drawn.
          */
         void ResetBuffer(const CameraBase& camera) const;
-        /**
-         * Deferred rendering for each G-Buffer object.
-         * @param camera Structure containing information values of the camera to be drawn.
-         * @param gbuffer G-Buffer object to be drawn.
-         */
-        void RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer) const;
-        /**
-         * Deferred render all G-Buffers.
-         * @param camera Structure containing information values of the camera to be drawn.
-         */
-        void RenderGbuffers(const CameraBase& camera) const;
-        /**
-         * Render the objects to be forward-rendered.
-         * @param camera Structure containing information values of the camera to be drawn.
-         * @param custom_handler Custom handler you want to draw. Applied as nullptr, except in special cases.
-         */
-        void RenderInstances(const CameraBase& camera, const GLProgramHandle* custom_handler = nullptr) const;
-        /**
-         * Rendering for a depth buffer to use for shadows. The render target depends on the shadow settings.
-         * @param camera The light(camera) you want to render.
-         * @param custom_handler Custom handler you want to draw. Applied shadow-related handlers mainly included in lighting.
-         * @param render_objects List of objects to render
-         */
-        void RenderShadowInstance(const CameraBase& camera, const GLProgramHandle& custom_handler,
-                                  const std::list<SIRender*>& render_objects = std::list<SIRender*>()) const;
-
-    private:
-        GLProgramHandle* m_mainProgramHandle = nullptr;
-        GLProgramHandle* m_geometryHandle = nullptr;
     };
 }

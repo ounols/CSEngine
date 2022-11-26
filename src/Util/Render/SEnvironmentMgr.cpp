@@ -232,15 +232,6 @@ void SEnvironmentMgr::RenderPBREnvironment() {
     glEnable(GL_CULL_FACE);
 }
 
-
-void SEnvironmentMgr::InitShadowEnvironment() {
-    std::string vert_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/Shadow/default_shadow.vert");
-    std::string frag_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/Shadow/default_shadow.frag");
-
-    m_shadowDepthMapShader = ShaderUtil::CreateProgramHandle(vert_str.c_str(), frag_str.c_str());
-}
-
-
 void SEnvironmentMgr::LoadCubeVAO() {
     float vertices[] = {
             // back face

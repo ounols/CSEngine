@@ -11,7 +11,7 @@
 
 using namespace CSE;
 
-DeferredRenderGroup::DeferredRenderGroup(const RenderMgr& renderMgr) : SIRenderGroup(renderMgr) {
+DeferredRenderGroup::DeferredRenderGroup(const RenderMgr& renderMgr) : SRenderGroup(renderMgr) {
     m_width = renderMgr.GetWidth();
     m_height = renderMgr.GetHeight();
 
@@ -19,7 +19,6 @@ DeferredRenderGroup::DeferredRenderGroup(const RenderMgr& renderMgr) : SIRenderG
 
     m_geometryHandle = SResource::Create<GLProgramHandle>(Settings::GetDeferredGeometryPassShaderID());
 }
-
 
 DeferredRenderGroup::~DeferredRenderGroup() = default;
 
@@ -52,7 +51,11 @@ void DeferredRenderGroup::RemoveObjects(SIRender* object) {
 }
 
 void DeferredRenderGroup::RenderAll(const CameraBase& camera) const {
-
+    for (const auto& gbuffer_pair : m_gbufferLayer) {
+        const auto& light_handle = gbuffer_pair.first;
+        const auto& gbuffer = gbuffer_pair.second;
+        RenderGbuffer(camera, *gbuffer);
+    }
 }
 
 void DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer) const {
@@ -94,15 +97,13 @@ void DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer
     const auto& deferredBuffer =
             frameBuffer == nullptr ? m_renderMgr->GetMainBuffer() : frameBuffer;
     deferredBuffer->AttachFrameBuffer();
-    // TODO: Background 설정 따로 적용하도록 수정
-    // TODO: 뒷배경 색상 적용 안됨
-    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     gbuffer.AttachLightPass();
     //Attach Light
     m_lightMgr->AttachLightToShader(lightPassHandle);
     m_lightMgr->AttachLightMapToShader(lightPassHandle, m_lightMgr->GetShadowCount());
-    gbuffer.AttachLightPassTexture(m_lightMgr->GetShadowCount() + m_lightMgr->GetLightMapCount());
+    const auto layoutBegin = m_lightMgr->GetShadowCount() + m_lightMgr->GetLightMapCount();
+    gbuffer.AttachLightPassTexture(layoutBegin);
+    BindSourceBuffer(*deferredBuffer, lightPassHandle->Uniforms.SourceBuffer, layoutBegin + 5);
 
     gbuffer.RenderLightPass();
 
@@ -123,6 +124,13 @@ void DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer
 //    }
 //
 //    glBlitFramebuffer(0, 0, *m_width, *m_height, 0, 0, bufferWidth, bufferHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+}
+
+void DeferredRenderGroup::SetViewport() {
+    for (const auto& gbufferPair : m_gbufferLayer) {
+        const auto& gbuffer = gbufferPair.second;
+        gbuffer->ResizeGBuffer((int) *m_width, (int) *m_height);
+    }
 }
 
 void DeferredRenderGroup::Exterminate() {

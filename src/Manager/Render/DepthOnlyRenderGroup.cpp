@@ -11,7 +11,7 @@
 
 using namespace CSE;
 
-DepthOnlyRenderGroup::DepthOnlyRenderGroup(const RenderMgr& renderMgr) : SIRenderGroup(renderMgr) {
+DepthOnlyRenderGroup::DepthOnlyRenderGroup(const RenderMgr& renderMgr) : SRenderGroup(renderMgr) {
     std::string vert_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/Shadow/default_shadow.vert");
     std::string frag_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/Shadow/default_shadow.frag");
 

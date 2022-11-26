@@ -57,21 +57,4 @@ namespace CSE {
     public:
         bool isRenderActive = false;
     };
-
-    class SIRenderGroup {
-    public:
-        SIRenderGroup(const RenderMgr& renderMgr) : m_renderMgr(&renderMgr) {}
-        virtual ~SIRenderGroup() = default;
-
-        virtual void RegisterObject(SIRender* object) = 0;
-
-        virtual void RemoveObjects(SIRender* object) = 0;
-
-        virtual void RenderAll(const CameraBase& camera) const = 0;
-
-        virtual void Exterminate() = 0;
-
-    protected:
-        const RenderMgr* m_renderMgr;
-    };
 }
