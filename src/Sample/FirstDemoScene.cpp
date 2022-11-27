@@ -60,6 +60,7 @@ void FirstDemoScene::Init() {
 
 
     SGameObject* root = new SGameObject("__ROOT_OF_SCENE__AHA___");
+    root->GetTransform()->m_position = vec3{0, -1, 0};
 
     auto room = roomPrefab->Clone(vec3{0, 0.2f, 0}, root);
     room->GetTransform()->m_scale = vec3{ 4.f, 4.f, 4.f };
@@ -116,6 +117,12 @@ void FirstDemoScene::Init() {
     ab->CreateComponent<CustomComponent>();
     ab->GetComponent<CustomComponent>()->SetClassName("testScript.script");
 //    auto ab_m = ab->GetComponent<RenderComponent>()->GetMaterial();
+    const auto& ab_children = ab->GetChildren();
+    for (const auto& gameObject : ab_children) {
+        const auto& component = gameObject->GetComponent<RenderComponent>();
+        if (component == nullptr) continue;
+        component->SetMaterial(SResource::Create<SMaterial>("File:Material/SSS_PBR.mat"));
+    }
 
     const auto& ab2_children = ab2->GetChildren();
     for (const auto& gameObject : ab2_children) {
@@ -197,11 +204,11 @@ void FirstDemoScene::Init() {
 
     d->SetName("light");
     d->CreateComponent<LightComponent>();
-    d->GetTransform()->m_position = vec3{ 2.f, 2.f, -2.f };
+    d->GetTransform()->m_position = vec3{ 1.f, 2.f, -1.f };
     d->GetTransform()->m_scale = vec3{ 2.f, 2.f, 2.f };
     ab->AddChild(d);
     d->GetComponent<LightComponent>()->SetDirection(vec4{ 1.f, 0.5f, 1.f, 1.0f });
-    d->GetComponent<LightComponent>()->SetColor(vec3{ 10, 10, 10 });
+    d->GetComponent<LightComponent>()->SetColor(vec3{ 5, 5, 5 });
     d->GetComponent<LightComponent>()->SetLightType(LightComponent::POINT);
     d->GetComponent<LightComponent>()->SetLightRadius(1);
     d->GetComponent<LightComponent>()->SetShadow(false);
@@ -220,7 +227,7 @@ void FirstDemoScene::Init() {
     a->CreateComponent<CameraComponent>();
 //    a->GetComponent<CameraComponent>()->SetOrtho(-3.f, 3.f, -3.f, 3.f);
 //    a->GetComponent<CameraComponent>()->SetCameraType(CSE::CameraComponent::ORTHO);
-    a->GetTransform()->m_position = vec3{ 0, 0.2f, 3.f };
+    a->GetTransform()->m_position = vec3{ 0, 0.2f, 1.f };
 //    a->GetTransform()->m_position = vec3{ 0.f, 2.f, 4.f };
 //    a->GetTransform()->m_scale = vec3{ 2.f, 2.f, 2.f };
 //    a->GetComponent<CameraComponent>()->SetTarget(vec3{ 0.0f, -1.0f, -1.f });
@@ -228,6 +235,8 @@ void FirstDemoScene::Init() {
     a_cam->SetTarget(d);
     a_cam->SetBackgroundSkybox();
     a_cam->SetBackgroundType(CameraBase::SKYBOX);
+//    a->CreateComponent<CustomComponent>();
+//    a->GetComponent<CustomComponent>()->SetClassName("testcamerar.script");
 
     c4->CreateComponent<CameraComponent>();
     c4->GetComponent<CameraComponent>()->SetTarget(d);
