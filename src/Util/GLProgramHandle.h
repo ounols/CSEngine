@@ -32,6 +32,7 @@ namespace CSE {
         GLint SkinningMode = HANDLE_NULL;
         // Buffers
         GLint SourceBuffer = HANDLE_NULL;
+        GLint SourceBufferSize = HANDLE_NULL;
     };
 
     struct GLAttributeHandles {

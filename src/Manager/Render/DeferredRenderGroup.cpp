@@ -103,7 +103,7 @@ void DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer
     m_lightMgr->AttachLightMapToShader(lightPassHandle, m_lightMgr->GetShadowCount());
     const auto layoutBegin = m_lightMgr->GetShadowCount() + m_lightMgr->GetLightMapCount();
     gbuffer.AttachLightPassTexture(layoutBegin);
-    BindSourceBuffer(*deferredBuffer, lightPassHandle->Uniforms.SourceBuffer, layoutBegin + 5);
+    BindSourceBuffer(*deferredBuffer, *lightPassHandle, layoutBegin + 5);
 
     gbuffer.RenderLightPass();
 

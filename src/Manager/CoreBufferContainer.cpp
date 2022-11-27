@@ -1,5 +1,6 @@
 #include "CoreBufferContainer.h"
 #include "../Util/Render/SFrameBuffer.h"
+#include "../Util/Render/STexture.h"
 
 using namespace CSE;
 

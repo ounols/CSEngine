@@ -2,10 +2,12 @@
 
 #include "../../Object/SResource.h"
 #include "../../OGLDef.h"
+#include "../Vector.h"
 
 namespace CSE {
 
     class STexture;
+
     class GLProgramHandle;
 
     /**
@@ -39,6 +41,7 @@ namespace CSE {
         enum BlitType {
             IN_ORDER = 0, REVERSE = 1,
         };
+
     private:
         struct BufferObject {
             BufferType type = RENDER;
@@ -54,8 +57,10 @@ namespace CSE {
             int aDepth = -1;
             int bDepth = -1;
         };
+
     public:
         SFrameBuffer();
+
         ~SFrameBuffer() override;
 
         /**
@@ -66,6 +71,7 @@ namespace CSE {
          * @param height Writes the height of the render buffer.
          */
         void GenerateFramebuffer(BufferDimension dimension, int width, int height);
+
         /**
          * Creates a render buffer in a non-texture format.
          * @param type Specifies the type of buffer to create. The default is RENDER.
@@ -73,6 +79,7 @@ namespace CSE {
          * @return Returns the ID value of the created render buffer. If creation fails, 0 is returned.
          */
         unsigned int GenerateRenderbuffer(BufferType type, int internalFormat);
+
         /**
          * Creates a render buffer in texture format.
          * @param type Specifies the type of buffer to create. The default is RENDER.
@@ -81,16 +88,23 @@ namespace CSE {
          * @return Returns the STexture of the created render texture buffer. If creation fails, nullptr is returned.
          */
         STexture* GenerateTexturebuffer(BufferType type, int channel, int level = 0);
+
         /**
          * Create all the render buffers to allocate to the framebuffer and proceed with rasterization.
          * You can use the framebuffer after calling the function.
          */
         void RasterizeFramebuffer();
+
         void AttachCubeBuffer(int index, int level = 0) const;
+
         void AttachFrameBuffer(int target = GL_FRAMEBUFFER) const;
+
         void DetachFrameBuffer() const;
+
         void ResizeFrameBuffer(int width, int height);
+
         void Exterminate() override;
+
         /**
          * Safely blit the framebuffer.
          * Each framebuffer must be in BufferType::MULTI state, and all buffers must be in the form of STexture.
@@ -105,21 +119,29 @@ namespace CSE {
         void BlitFrameBuffer(const SFrameBuffer& dst, BlitType type = IN_ORDER);
 
         int GetWidth() const;
+
         int GetHeight() const;
 
+        const ivec2& GetSize() const {
+            return *m_size;
+        }
+
         BufferStatus GetBufferStatus() const;
+
         /**
          * Get textures that exist in the framebuffer.
          * @param index buffer index in framebuffer
          * @return if the corresponding index is an invalid texture type, nullptr is returned.
          */
         STexture* GetTexture(int index) const;
+
         /**
          * Get textures that exist in the framebuffer.
          * @param id texture id in framebuffer
          * @return if the corresponding index is an invalid texture type, nullptr is returned.
          */
         STexture* GetTexture(const char* id) const;
+
         /**
          * Get renderbuffer ID that exist in the framebuffer.
          * @param index buffer index in framebuffer
@@ -132,7 +154,7 @@ namespace CSE {
          * @return if the corresponding index is an invalid texture type, nullptr is returned.
          */
         STexture* GetMainColorTexture() const {
-            if(m_mainColorBuffer == nullptr) return nullptr;
+            if (m_mainColorBuffer == nullptr) return nullptr;
             return m_mainColorBuffer->texture;
         }
 
@@ -141,7 +163,7 @@ namespace CSE {
          * @return if the corresponding index is an invalid texture type, nullptr is returned.
          */
         STexture* GetDepthTexture() const {
-            if(m_depthBuffer == nullptr) return nullptr;
+            if (m_depthBuffer == nullptr) return nullptr;
             return m_depthBuffer->texture;
         }
 
@@ -150,13 +172,15 @@ namespace CSE {
 
     private:
         int GenerateAttachmentType(SFrameBuffer::BufferType type, bool isIncreaseAttachment = true) const;
+
         int GenerateInternalFormat(int channel) const;
+
         int GenerateInternalType(int channel) const;
+
         void ReleaseBufferObject(const SFrameBuffer::BufferObject* bufferObject);
 
     private:
-        int m_width = 512;
-        int m_height = 512;
+        ivec2* m_size = new ivec2(512, 512);
         BufferDimension m_dimension = PLANE;
 
         unsigned int m_fbo = 0;

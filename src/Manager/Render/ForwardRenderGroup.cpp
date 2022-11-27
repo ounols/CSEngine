@@ -86,7 +86,7 @@ void ForwardRenderGroup::RenderAll(const CameraBase& camera) const {
                 if (!render->isRenderActive) continue;
 
                 render->SetMatrix(cameraMatrix);
-                BindSourceBuffer(*frameBuffer, handler.Uniforms.SourceBuffer, 0);
+                BindSourceBuffer(*frameBuffer, handler, 0);
                 render->Render();
             }
         }

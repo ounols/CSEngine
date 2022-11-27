@@ -203,6 +203,7 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
 	auto lightPrefilter = handle->UniformLocation("light.prefilter");
 	auto lightBrdf = handle->UniformLocation("light.brdf");
 	auto srcBuffer = handle->UniformLocation("buffer.source");
+	auto srcBufferSize = handle->UniformLocation("buffer.source.size");
 
 	handle->Attributes.Position = position != nullptr ? position->id : HANDLE_NULL;
 	handle->Attributes.Normal = normal != nullptr ? normal->id : HANDLE_NULL;
@@ -229,6 +230,7 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
 	handle->Uniforms.LightPrefilter = lightPrefilter != nullptr ? lightPrefilter->id : HANDLE_NULL;
 	handle->Uniforms.LightBrdfLut = lightBrdf != nullptr ? lightBrdf->id : HANDLE_NULL;
 	handle->Uniforms.SourceBuffer = srcBuffer != nullptr ? srcBuffer->id : HANDLE_NULL;
+	handle->Uniforms.SourceBufferSize = srcBufferSize != nullptr ? srcBufferSize->id : HANDLE_NULL;
 }
 
 void ShaderUtil::BindCameraToShader(const GLProgramHandle& handle, const mat4& view, const vec3& cameraPosition,
