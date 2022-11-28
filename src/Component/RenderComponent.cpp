@@ -68,7 +68,7 @@ RenderComponent::SetMatrix(const CameraMatrixStruct& cameraMatrixStruct, const G
 
 void RenderComponent::Render(const GLProgramHandle* handle) const {
 
-    if (m_mesh == nullptr || m_material_clone == nullptr) return;
+    if (m_mesh == nullptr || m_material_clone == nullptr || gameObject->isPrefab()) return;
 
     auto& current_handle = handle;
     if(handle == nullptr) {

@@ -7,7 +7,7 @@ namespace CSE {
 
     class JointComponent : public SComponent {
     public:
-        JointComponent();
+        COMPONENT_DEFINE_CONSTRUCTOR(JointComponent);
 
         JointComponent(const JointComponent& src);
 

@@ -7,7 +7,7 @@ namespace CSE {
 
     class DrawableSkinnedMeshComponent : public DrawableStaticMeshComponent {
     public:
-        DrawableSkinnedMeshComponent();
+        COMPONENT_DEFINE_CONSTRUCTOR(DrawableSkinnedMeshComponent);
 
         ~DrawableSkinnedMeshComponent() override;
 

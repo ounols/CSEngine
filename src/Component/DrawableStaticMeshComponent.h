@@ -7,7 +7,7 @@ namespace CSE {
 
     class DrawableStaticMeshComponent : public SComponent {
     public:
-        DrawableStaticMeshComponent();
+        COMPONENT_DEFINE_CONSTRUCTOR(DrawableStaticMeshComponent);
 
         ~DrawableStaticMeshComponent() override;
 

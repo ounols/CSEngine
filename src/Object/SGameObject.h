@@ -153,7 +153,7 @@ namespace CSE {
 
     template <class T>
     T* SGameObject::CreateComponent() {
-        T* component = new T();
+        T* component = new T(this);
         AddComponent(component);
         if (m_status == IDLE)
             component->Init();

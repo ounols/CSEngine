@@ -33,7 +33,7 @@ namespace CSE {
             PERSPECTIVE = 1, ORTHO = 2, CUBE = 3
         };
     public:
-        CameraComponent();
+        COMPONENT_DEFINE_CONSTRUCTOR(CameraComponent);
 
         ~CameraComponent() override;
 

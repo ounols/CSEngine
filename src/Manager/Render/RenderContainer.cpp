@@ -30,7 +30,7 @@ void RenderContainer::Remove(SIRender* object, RenderContainer::RenderGroupMode 
             m_forwardRenderGroup->RemoveObjects(object);
             break;
         case DEFERRED:
-            m_depthOnlyRenderGroup->RemoveObjects(object);
+            m_deferredRenderGroup->RemoveObjects(object);
             break;
         case DEPTH_ONLY:
             m_depthOnlyRenderGroup->RegisterObject(object);

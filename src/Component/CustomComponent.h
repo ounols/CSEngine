@@ -24,7 +24,7 @@ namespace CSE {
             std::string value;
         };
     public:
-        CustomComponent();
+        COMPONENT_DEFINE_CONSTRUCTOR(CustomComponent);
 
         ~CustomComponent() override;
 
