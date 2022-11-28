@@ -175,8 +175,11 @@
     <ClInclude Include="..\..\..\src\Manager\MemoryContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\MemoryMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\OGLMgr.h" />
-    <ClInclude Include="..\..\..\src\Manager\RenderContainer.h" />
-    <ClInclude Include="..\..\..\src\Manager\RenderMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\Render\DeferredRenderGroup.h" />
+    <ClInclude Include="..\..\..\src\Manager\Render\DepthOnlyRenderGroup.h" />
+    <ClInclude Include="..\..\..\src\Manager\Render\ForwardRenderGroup.h" />
+    <ClInclude Include="..\..\..\src\Manager\Render\RenderContainer.h" />
+    <ClInclude Include="..\..\..\src\Manager\Render\RenderMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\ResMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\SceneMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\SCloneFactory.h" />
@@ -228,6 +231,7 @@
     <ClInclude Include="..\..\..\src\Util\Render\ShaderUtil.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SkyboxUtil.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SMaterial.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\SRenderGroup.h" />
     <ClInclude Include="..\..\..\src\Util\Render\STexture.h" />
     <ClInclude Include="..\..\..\src\Util\SafeLog.h" />
     <ClInclude Include="..\..\..\src\Util\ScriptDef.h" />
@@ -259,8 +263,11 @@
     <ClCompile Include="..\..\..\src\Manager\MemoryContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MemoryMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\OGLMgr.cpp" />
-    <ClCompile Include="..\..\..\src\Manager\RenderContainer.cpp" />
-    <ClCompile Include="..\..\..\src\Manager\RenderMgr.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\Render\DeferredRenderGroup.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\Render\DepthOnlyRenderGroup.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\Render\ForwardRenderGroup.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\Render\RenderContainer.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\Render\RenderMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\ResMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\SceneMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\SCloneFactory.cpp" />
@@ -288,6 +295,7 @@
     <ClCompile Include="..\..\..\src\Util\Render\SGBuffer.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\ShaderUtil.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\SMaterial.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Render\SRenderGroup.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\STexture.cpp" />
     <ClCompile Include="..\..\..\src\Util\SafeLog.cpp" />
     <ClCompile Include="..\..\..\src\Util\Settings.cpp" />

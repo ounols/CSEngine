@@ -14,7 +14,7 @@ namespace CSE {
 
     class RenderComponent : public SComponent, public SIRender {
     public:
-        RenderComponent();
+        COMPONENT_DEFINE_CONSTRUCTOR(RenderComponent);
 
         ~RenderComponent() override;
 
@@ -54,5 +54,6 @@ namespace CSE {
         SMaterial* m_material_clone = nullptr;
         // SMaterial* material (Override)
         bool m_disableShadow = false;
+        bool m_isPrefab = false;
     };
 }

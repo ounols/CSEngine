@@ -1,10 +1,8 @@
 #pragma once
 
 namespace CSE {
-
     class SISComponent {
     public:
-
         SISComponent() = default;
 
         SISComponent(const SISComponent& src) = default;
@@ -16,7 +14,5 @@ namespace CSE {
         virtual void Init() = 0;
 
         virtual void Tick(float elapsedTime) = 0;
-
     };
-
 }
