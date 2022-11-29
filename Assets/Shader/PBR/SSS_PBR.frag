@@ -95,7 +95,7 @@ float ClampedPow(float X, float Y) {
 void main(void) {
 
 	lowp float metallic  = 0.7f;
-	lowp float roughness = 1.f - texture(u_sampler_roughness, v_textureCoordOut).r;
+	lowp float roughness = 0.18f;
 	lowp float ao        = 1.f;
 
 	vec3 N = normalize(v_eyespaceNormal);
@@ -107,7 +107,7 @@ void main(void) {
 	float step_de = (1 - de) * 0.2;
 	highp vec3 src        = FastBlur(u_sampler_src, gl_FragCoord.xy / u_src_size + de * 0.01).rgb;
 	highp vec3 albedo     = pow(mix(texture(u_sampler_albedo, v_textureCoordOut).rgb, src, 0.6),
-								vec3(3.2 * de + 1.0)) * (u_albedo + vec3(step_de, 0, step_de));
+								vec3(3.2 * de)) * (u_albedo + vec3(step_de, 0, step_de));
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
