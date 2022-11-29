@@ -14,13 +14,13 @@ in vec2 a_textureCoordIn;
 
 // Uniforms
 //[matrix.projection]//
-uniform mat4 u_projectionMatrix;//Projection;
-//[matrix.modelview]//
-uniform mat4 u_modelViewMatrix;//Modelview;
-//[matrix.modelview_nc]//
-uniform mat4 u_modelViewNoCameraMatrix;//Modelview - no camera matrix;
+uniform mat4 u_projectionMatrix;
+//[matrix.view]//
+uniform mat4 u_viewMatrix;
+//[matrix.model]//
+uniform mat4 u_modelMatrix;
 //[light.position]//
-uniform vec4 u_lightPosition[MAX_LIGHTS];//LightPosition;
+uniform vec4 u_lightPosition[MAX_LIGHTS];
 //[light.matrix]//
 uniform mat4 u_lightMatrix[MAX_LIGHTS];
 //[light.shadow_mode]//
@@ -73,13 +73,13 @@ void main(void) {
     }
 
 
-	v_eyespaceNormal = mat3(u_modelViewNoCameraMatrix) * normal_final.xyz;
+	v_eyespaceNormal = mat3(u_modelMatrix) * normal_final.xyz;
 	v_textureCoordOut = a_textureCoordIn;
-    v_worldPosition = vec3(u_modelViewNoCameraMatrix * position_final);
+    v_worldPosition = vec3(u_modelMatrix * position_final);
 
 
     for(int i = 0; i < u_lightSize; ++i) {
-        lowp vec4 lightPurePosition = u_modelViewNoCameraMatrix * position_final;
+        lowp vec4 lightPurePosition = u_modelMatrix * position_final;
         lowp vec4 positionLight = lightPurePosition;
         vec4 directionLight = u_lightPosition[i];
 
@@ -107,6 +107,6 @@ void main(void) {
 
 
     //vertex position
-    gl_Position = u_projectionMatrix * u_modelViewMatrix * position_final;
+    gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * position_final;
 
 }

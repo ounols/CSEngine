@@ -97,6 +97,7 @@ void GLProgramHandle::SetAttributesList(std::map<std::string, std::string>& vert
     GLenum type;
 
     glGetProgramiv(Program, GL_ACTIVE_ATTRIBUTES, &count);
+    AttributesList.clear();
 
     for (int i = 0; i < count; i++) {
         GLchar name[32];
@@ -131,6 +132,7 @@ GLProgramHandle::SetUniformsList(std::map<std::string, std::string>& vert, std::
     GLenum type;
 
     glGetProgramiv(Program, GL_ACTIVE_UNIFORMS, &count);
+    UniformsList.clear();
 
     for (int i = 0; i < count; i++) {
         GLchar name[64];

@@ -185,10 +185,12 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
 	auto textureCoord = handle->AttributeLocation("att.tex_uv");
 	auto color = handle->AttributeLocation("att.color");
 	//Uniforms
-	auto modelView = handle->UniformLocation("matrix.modelview");
-	auto modelViewNoCamera = handle->UniformLocation("matrix.modelview_nc");
-	auto cameraPosition = handle->UniformLocation("CAMERA_POSITION");
+	auto view = handle->UniformLocation("matrix.view");
+	auto model = handle->UniformLocation("matrix.model");
+	auto cameraPosition = handle->UniformLocation("vec3.camera");
 	auto projection = handle->UniformLocation("matrix.projection");
+	auto projectionInv = handle->UniformLocation("matrix.projection.inv");
+	auto viewInv = handle->UniformLocation("matrix.view.inv");
 	auto skinningMode = handle->UniformLocation("matrix.skinning_mode");
 	auto jointMatrix = handle->UniformLocation("matrix.joint");
 	auto lightPosition = handle->UniformLocation("light.position");
@@ -212,10 +214,12 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
 	handle->Attributes.TextureCoord = textureCoord != nullptr ? textureCoord->id : HANDLE_NULL;
 	handle->Attributes.Color = color != nullptr ? color->id : HANDLE_NULL;
 
-	handle->Uniforms.ModelView = modelView != nullptr ? modelView->id : HANDLE_NULL;
-	handle->Uniforms.ModelNoCameraMatrix = modelViewNoCamera != nullptr ? modelViewNoCamera->id : HANDLE_NULL;
+	handle->Uniforms.ViewMatrix = view != nullptr ? view->id : HANDLE_NULL;
+	handle->Uniforms.ModelMatrix = model != nullptr ? model->id : HANDLE_NULL;
 	handle->Uniforms.CameraPosition = cameraPosition != nullptr ? cameraPosition->id : HANDLE_NULL;
-	handle->Uniforms.Projection = projection != nullptr ? projection->id : HANDLE_NULL;
+	handle->Uniforms.ProjectionMatrix = projection != nullptr ? projection->id : HANDLE_NULL;
+	handle->Uniforms.ProjectionInvMatrix = projectionInv != nullptr ? projectionInv->id : HANDLE_NULL;
+	handle->Uniforms.ViewInvMatrix = viewInv != nullptr ? viewInv->id : HANDLE_NULL;
 	handle->Uniforms.SkinningMode = skinningMode != nullptr ? skinningMode->id : HANDLE_NULL;
 	handle->Uniforms.JointMatrix = jointMatrix != nullptr ? jointMatrix->id : HANDLE_NULL;
 	handle->Uniforms.LightPosition = lightPosition != nullptr ? lightPosition->id : HANDLE_NULL;
@@ -235,16 +239,12 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
 
 void ShaderUtil::BindCameraToShader(const GLProgramHandle& handle, const mat4& view, const vec3& cameraPosition,
                                     const mat4& projection, const mat4& transform) {
-	mat4 modelView = transform * view;
-	glUniformMatrix4fv(handle.Uniforms.ModelView, 1, 0, modelView.Pointer());
-	glUniformMatrix4fv(handle.Uniforms.ModelNoCameraMatrix, 1, 0, transform.Pointer());
-	glUniform3fv(handle.Uniforms.CameraPosition, 1, cameraPosition.Pointer());
-
-	//normal matrix
-	//    glUniformMatrix3fv(handler->Uniforms.NormalMatrix, 1, 0, modelView.ToMat3().Pointer());
-
-	//projection transform
-	glUniformMatrix4fv(handle.Uniforms.Projection, 1, 0, projection.Pointer());
+	glUniformMatrix4fv(handle.Uniforms.ViewMatrix, 1, 0, view.Pointer());
+	glUniformMatrix4fv(handle.Uniforms.ModelMatrix, 1, 0, transform.Pointer());
+    glUniformMatrix4fv(handle.Uniforms.ProjectionMatrix, 1, 0, projection.Pointer());
+    glUniformMatrix4fv(handle.Uniforms.ProjectionInvMatrix, 1, 0, mat4::Invert(projection).Pointer());
+    glUniformMatrix4fv(handle.Uniforms.ViewInvMatrix, 1, 0, mat4::Invert(view).Pointer());
+    glUniform3fv(handle.Uniforms.CameraPosition, 1, cameraPosition.Pointer());
 }
 
 // position(x y z) + normal(x y z) + tex(u v) + weight(x y z) + jointID(id1, id2, id3)

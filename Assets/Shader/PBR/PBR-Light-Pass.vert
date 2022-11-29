@@ -5,10 +5,7 @@ layout (location = 1) in vec2 a_textureCoordIn;
 // Varying
 out vec2 v_textureCoordOut;
 
-
 // Uniform
-//[matrix.modelview_nc]//
-uniform mat4 u_modelViewNoCameraMatrix;//Modelview - no camera matrix;
 //[light.position]//
 uniform vec4 u_lightPosition[MAX_LIGHTS];//LightPosition;
 //[light.matrix]//
