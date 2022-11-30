@@ -3,14 +3,6 @@ precision highp int;
 
 
 //Uniforms
-//[texture.albedo]//
-uniform sampler2D u_sampler_albedo;
-//[texture.metallic]//
-uniform sampler2D u_sampler_metallic;
-//[texture.roughness]//
-uniform sampler2D u_sampler_roughness;
-//[texture.ao]//
-uniform sampler2D u_sampler_ao;
 //[buffer.source]//
 uniform sampler2D u_sampler_src;
 //[buffer.source.size]//
@@ -32,8 +24,10 @@ uniform float u_metallic;
 uniform float u_roughness;
 //[float.ao]//
 uniform float u_ao;
-//[FLOAT_IRRADIANCE]//
-uniform vec3 u_irradiance;
+//[float.blur]//
+uniform float u_blur;
+//[vec3.camera]//
+uniform vec3 u_cameraPosition;
 
 
 //[light.type]//
@@ -94,20 +88,20 @@ float ClampedPow(float X, float Y) {
 
 void main(void) {
 
-	lowp float metallic  = 0.7f;
-	lowp float roughness = 0.18f;
-	lowp float ao        = 1.f;
+	lowp float metallic  = u_metallic;
+	lowp float roughness = u_roughness;
+	lowp float ao        = u_ao;
 
 	vec3 N = normalize(v_eyespaceNormal);
-	vec3 V0 = normalize(N - v_worldPosition);
+	vec3 V0 = normalize(N + u_cameraPosition);
+	vec3 V1 = normalize(u_cameraPosition - N);
 	vec3 R = reflect(-V0, N);
 
 
-	float de = sin((1 - abs(dot(N, vec3(1, 0, 0)))) * PI / 2);
-	float step_de = (1 - de) * 0.2;
-	highp vec3 src        = FastBlur(u_sampler_src, gl_FragCoord.xy / u_src_size + de * 0.01).rgb;
-	highp vec3 albedo     = pow(mix(texture(u_sampler_albedo, v_textureCoordOut).rgb, src, 0.6),
-								vec3(3.2 * de)) * (u_albedo + vec3(step_de, 0, step_de));
+	float de = sin((1 - abs(dot(N, V1))) * PI / 2);
+	float step_de = (1.0 - de) * 0.1;
+	highp vec3 src        = FastBlur(u_sampler_src, gl_FragCoord.xy / u_src_size).rgb;
+	highp vec3 albedo     = pow(src, vec3(2.2 * de)) * (u_albedo - vec3(step_de));
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
@@ -307,6 +301,6 @@ vec4 GetTextureInArray(sampler2D src[MAX_LIGHTS], int index, vec2 uv) {
 
 vec4 FastBlur(sampler2D src, vec2 uv_src)
 {
-	float strangth = 0.01;
+	float strangth = u_blur;
 	return texture(src, uv_src + strangth * (rand(uv_src)-0.5));
 }

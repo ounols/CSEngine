@@ -2,11 +2,11 @@
 <CSEMAT version="1.0.0">
 <shader id="File:Shader/Custom/SSS_PBR.shader">
 
-<var name="vec3.albedo" type="vec3" count="1">0.2 1 0.5</var>
+<var name="vec3.albedo" type="vec3" count="1">0.905 0.38 0.152</var>
 <var name="float.metallic" type="float" count="1">0.9</var>
-<var name="float.roughness" type="float" count="1">0.3</var>
+<var name="float.roughness" type="float" count="1">0.01</var>
 <var name="float.ao" type="float" count="1">1</var>
-<var name="float.blur" type="float" count="1">0.005</var>
+<var name="float.blur" type="float" count="1">0.01</var>
 
 <var name="light.irradiance" type="tex" count="1">irradiance.textureCubeMap</var>
 <var name="light.prefilter" type="tex" count="1">prefilter.textureCubeMap</var>

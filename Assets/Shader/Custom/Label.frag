@@ -3,18 +3,17 @@ precision highp int;
 
 
 //Uniforms
-//[geo.position]//
-uniform sampler2D u_sampler_position;
-//[geo.normal]//
-uniform sampler2D u_sampler_normal;
-//[geo.albedo]//
+//[texture.albedo]//
 uniform sampler2D u_sampler_albedo;
-//[geo.material]//
-uniform sampler2D u_sampler_material;
-//[geo.depth]//
-uniform sampler2D u_sampler_depth;
-//[vec3.camera]//
-uniform vec3 u_cameraPosition;
+//[texture.metallic]//
+uniform sampler2D u_sampler_metallic;
+//[texture.roughness]//
+uniform sampler2D u_sampler_roughness;
+//[texture.ao]//
+uniform sampler2D u_sampler_ao;
+//[texture.cutoff]//
+uniform sampler2D u_sampler_cutoff;
+
 
 //IBL
 //[light.irradiance]//
@@ -24,11 +23,24 @@ uniform samplerCube u_prefilterMap;
 //[light.brdf]//
 uniform sampler2D u_brdfLUT;
 
+//[vec3.albedo]//
+uniform vec3 u_albedo;
+//[float.metallic]//
+uniform float u_metallic;
+//[float.roughness]//
+uniform float u_roughness;
+//[float.ao]//
+uniform float u_ao;
+//[FLOAT_IRRADIANCE]//
+uniform vec3 u_irradiance;
+//[vec3.camera]//
+uniform vec3 u_cameraPosition;
+
 
 //[light.type]//
 uniform int u_lightType[MAX_LIGHTS];
-//[light.position]//
-uniform vec4 u_lightPosition[MAX_LIGHTS];
+//[light.matrix]//
+uniform mat4 u_lightMatrix[MAX_LIGHTS];
 //[light.radius]//
 uniform float u_lightRadius[MAX_LIGHTS];
 //[light.color]//
@@ -39,11 +51,14 @@ uniform sampler2D u_shadowMap[MAX_LIGHTS];
 uniform lowp int u_shadowMode[MAX_LIGHTS];
 //[light.size]//
 uniform int u_lightSize;
-//[light.matrix]//
-uniform mat4 u_lightMatrix[MAX_LIGHTS];
 
 //Varying
+in mediump vec3 v_eyespaceNormal;//EyespaceNormal;
+in lowp vec3 v_lightPosition[MAX_LIGHTS];
+//in lowp vec4 v_fragPosLightSpace[MAX_LIGHTS];
 in mediump vec2 v_textureCoordOut;
+in lowp float v_distance[MAX_LIGHTS];
+in mediump vec3 v_worldPosition;
 
 out vec4 FragColor;
 
@@ -65,7 +80,7 @@ float GeometrySmith_Fast(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 fresnelSchlick(float cosTheta, vec3 F0);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D);
-vec3 GetShadowTextureInArray(int index, vec2 uv);
+vec4 GetTextureInArray(sampler2D src[MAX_LIGHTS], int index, vec2 uv);
 
 //Macro Functions
 float ClampedPow(float X, float Y) {
@@ -75,24 +90,18 @@ float ClampedPow(float X, float Y) {
 
 void main(void) {
 
-	lowp float depth     = texture(u_sampler_depth, v_textureCoordOut).r;
-	if(depth >= 1) {
-		discard;
-	}
+	lowp float cutoff	 = texture(u_sampler_cutoff, v_textureCoordOut).g;
+//	if(cutoff < 0.5) discard;
 
-	// retrieve data from gbuffer
-	lowp vec3  fragPos	 = texture(u_sampler_position, v_textureCoordOut).rgb;
-	lowp vec2 normal_raw = texture(u_sampler_normal, v_textureCoordOut).rg;
-	lowp vec3  normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1.f - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0.f));
-
-	lowp vec3  albedo    = texture(u_sampler_albedo, v_textureCoordOut).rgb;
-	lowp float metallic  = texture(u_sampler_material, v_textureCoordOut).r;
-	lowp float roughness = texture(u_sampler_material, v_textureCoordOut).g;
-	lowp float ao        = texture(u_sampler_material, v_textureCoordOut).b;
-
-	vec3 N = normalize(normal);
+	vec3 N = normalize(v_eyespaceNormal);
 	vec3 V0 = normalize(N + u_cameraPosition);
 	vec3 R = reflect(-V0, N);
+	float de = sin((1 - abs(dot(N, vec3(1, 0, 0)))) * PI / 2);
+
+	lowp vec3 albedo     = pow(texture(u_sampler_albedo, v_textureCoordOut).rrr, vec3(2.2)) * u_albedo + (1 - de) * 0.05;
+	lowp float metallic  = 0.8;
+	lowp float roughness = 0.7;
+	lowp float ao        = 1.f;
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
@@ -105,19 +114,15 @@ void main(void) {
 	lowp int index_shadow = 0;
 	for(int i = 0; i < u_lightSize; ++i) {
 
-		// direction light : position light
-		lowp vec4 lightFragPosition = (u_lightType[i] == 1) ? vec4(c_zero, c_zero, c_zero, c_one) : vec4(fragPos, c_one);
-		vec3 aux = vec3(u_lightPosition[i] - lightFragPosition);
-
 		// calculate per-light radiance
 		vec3 V = (u_lightType[i] > 1) ? V0 : N;
-		vec3 L = normalize(aux);
+		vec3 L = v_lightPosition[i];
 		vec3 H = normalize(V + L);
-		float distance = length(aux);
+		float distance = v_distance[i];
 		float attenuation = 1.0 / (distance * distance);
 		float shadow = 0.0;
 		if(u_shadowMode[i] == 1) {
-			lowp vec4 fragPosLightSpace = u_lightMatrix[i] * vec4(fragPos, c_one);
+			lowp vec4 fragPosLightSpace = u_lightMatrix[i] * vec4(v_worldPosition, c_one);
 			shadow = ShadowCalculation(index_shadow, fragPosLightSpace, N, L);
 			++index_shadow;
 		}
@@ -141,7 +146,7 @@ void main(void) {
 		// multiply kD by the inverse metalness such that only non-metals
 		// have diffuse lighting, or a linear blend if partly metal (pure metals
 		// have no diffuse light).
-		kD *= 1.0 - metallic;
+		kD *= 1.0f - metallic;
 
 		// scale light by NdotL
 		float NdotL = max(dot(N, L), 0.0);
@@ -166,8 +171,8 @@ void main(void) {
 
 	vec3 ambient = (kD * diffuse + specular) * ao;
 
-	//	vec3 irradiance = u_irradiance.r < 0.00 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
-	//	vec3 ambient = irradiance * albedo * ao;
+//	vec3 irradiance = u_irradiance.r < 0.00 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
+//	vec3 ambient = irradiance * albedo * ao;
 
 	vec3 color = ambient + Lo;
 
@@ -177,7 +182,7 @@ void main(void) {
 	color = pow(color, vec3(1.0/2.2));
 
 	FragColor = vec4(color, 1.0);
-	gl_FragDepth = depth;
+
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
@@ -191,7 +196,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness) {
 float DistributionGGXMobile(vec3 N, vec3 H, float roughness) {
 	// Walter et al. 2007, "Microfacet Models for Refraction through Rough Surfaces"
 
-	vec3 NxH = cross(N, H);
+	vec3 NxH = cross(v_eyespaceNormal, H);
 	float NoH = max(dot(N, H), 0.0);
 	float oneMinusNoHSquared = dot(NxH, NxH);
 
@@ -254,8 +259,8 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	// transform to [0,1] range
 	projCoords = projCoords * 0.5 + 0.5;
 	// get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-	float closestDepth = GetShadowTextureInArray(index, projCoords.xy).r;
-	//	float closestDepth = texture(u_shadowMap[index], projCoords.xy).r;
+	float closestDepth = GetTextureInArray(u_shadowMap, index, projCoords.xy).r;
+//	float closestDepth = texture(u_shadowMap[index], projCoords.xy).r;
 	// get depth of current fragment from light's perspective
 	float currentDepth = projCoords.z;
 	// calculate bias (based on depth map resolution and slope)
@@ -269,9 +274,9 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	{
 		for(int y = -1; y <= 1; ++y)
 		{
-			float pcfDepth = GetShadowTextureInArray(index, projCoords.xy + vec2(x, y) * texelSize).r;
-			//			float pcfDepth = texture(u_shadowMap[index], projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
+			float pcfDepth = GetTextureInArray(u_shadowMap, index, projCoords.xy + vec2(x, y) * texelSize).r;
+//			float pcfDepth = texture(u_shadowMap[index], projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
 		}
 	}
 	shadow /= 9.0;
@@ -283,16 +288,13 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 	return shadow;
 }
 
-vec3 GetShadowTextureInArray(int index, vec2 uv) {
-	if(index >= MAX_LIGHTS) return vec3(0.0f);
-	if(index == 0) return texture(u_shadowMap[0], uv).rgb;
-	if(index == 1) return texture(u_shadowMap[1], uv).rgb;
-	if(index == 2) return texture(u_shadowMap[2], uv).rgb;
-	if(index == 3) return texture(u_shadowMap[3], uv).rgb;
-	if(index == 4) return texture(u_shadowMap[4], uv).rgb;
-//	if(index == 5) return texture(u_shadowMap[5], uv).rgb;
-//	if(index == 6) return texture(u_shadowMap[6], uv).rgb;
-//	if(index == 7) return texture(u_shadowMap[7], uv).rgb;
+vec4 GetTextureInArray(sampler2D src[MAX_LIGHTS], int index, vec2 uv) {
+	if(index >= MAX_LIGHTS) return vec4(0.0f);
+	if(index == 0) return texture(src[0], uv);
+	if(index == 1) return texture(src[1], uv);
+	if(index == 2) return texture(src[2], uv);
+	if(index == 3) return texture(src[3], uv);
+	if(index == 4) return texture(src[4], uv);
 
-	return texture(u_shadowMap[0], uv).rgb;
+	return texture(src[0], uv);
 }
