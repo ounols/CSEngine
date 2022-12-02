@@ -23,7 +23,7 @@ DeferredRenderGroup::DeferredRenderGroup(const RenderMgr& renderMgr) : SRenderGr
 DeferredRenderGroup::~DeferredRenderGroup() = default;
 
 void DeferredRenderGroup::RegisterObject(SIRender* object) {
-    const auto& material = object->GetMaterial();
+    const auto& material = object->GetMaterialReference();
     const auto& lightPassHandle = material->GetLightPassHandle();
     if (lightPassHandle == nullptr) return;
 
@@ -41,7 +41,7 @@ void DeferredRenderGroup::RegisterObject(SIRender* object) {
 }
 
 void DeferredRenderGroup::RemoveObjects(SIRender* object) {
-    const auto& material = object->GetMaterial();
+    const auto& material = object->GetMaterialReference();
     const auto& programLayer = m_gbufferLayer;
     auto handlerPair = programLayer.find(material->GetLightPassHandle());
     if (handlerPair != programLayer.end()) {

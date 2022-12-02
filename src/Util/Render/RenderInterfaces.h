@@ -48,7 +48,9 @@ namespace CSE {
 
         virtual void Render(const GLProgramHandle* handle = nullptr) const = 0;
 
-        SMaterial* GetMaterial() const {
+        virtual SMaterial* GetMaterial() const = 0;
+
+        SMaterial* GetMaterialReference() const {
             return material;
         }
 

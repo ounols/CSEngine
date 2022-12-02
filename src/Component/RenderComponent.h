@@ -35,7 +35,7 @@ namespace CSE {
 
         void SetIsEnable(bool is_enable) override;
 
-        SMaterial* GetMaterial() const;
+        SMaterial* GetMaterial() const override;
 
         void SetMaterial(SMaterial* material);
 

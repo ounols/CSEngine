@@ -257,6 +257,7 @@ void SMaterial::SetTextureFunc(Element* element, SResource* texture) {
 	auto value = static_cast<STexture*>(texture);
 	//    element->count = m_textureLayout++;
 	auto* texture_layout = &m_textureLayout;
+    ++m_textureCount;
 	element->attachFunc = [element, value, texture_layout]() {
 		value->Bind(element->id, *texture_layout);
 		++(*texture_layout);
@@ -285,6 +286,10 @@ SMaterial::SMaterialMode SMaterial::GetMode() const {
 
 void SMaterial::SetMode(SMaterialMode mode) {
 	m_mode = mode;
+}
+
+int SMaterial::GetTextureCount() const {
+    return m_textureLayout;
 }
 
 SMaterial* SMaterial::GenerateMaterial(GLProgramHandle* handle) {

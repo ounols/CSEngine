@@ -52,8 +52,8 @@ const lowp float c_zero = 0.0;
 const lowp float c_one = 1.0;
 const float PI = 3.14159265359;
 
-const lowp float c_shadow_width = 1024.f;
-const lowp float c_shadow_height = 1024.f;
+const lowp float c_shadow_width = 1024.0;
+const lowp float c_shadow_height = 1024.0;
 
 //Functions
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -83,7 +83,7 @@ void main(void) {
 	// retrieve data from gbuffer
 	lowp vec3  fragPos	 = texture(u_sampler_position, v_textureCoordOut).rgb;
 	lowp vec2 normal_raw = texture(u_sampler_normal, v_textureCoordOut).rg;
-	lowp vec3  normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1.f - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0.f));
+	lowp vec3  normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1.0 - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0.0));
 
 	lowp vec3  albedo    = texture(u_sampler_albedo, v_textureCoordOut).rgb;
 	lowp float metallic  = texture(u_sampler_material, v_textureCoordOut).r;
