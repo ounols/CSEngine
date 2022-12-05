@@ -14,6 +14,8 @@ void SRenderGroup::BindSourceBuffer(const SFrameBuffer& buffer, const GLProgramH
     const float sizeRaw[2] = { static_cast<float>(size.x), static_cast<float>(size.y) };
     if(srcBufferTexture == nullptr) return;
 
-    srcBufferTexture->Bind(uniforms.SourceBuffer, layout);
-    glUniform2fv(uniforms.SourceBufferSize, 1, sizeRaw);
+    if(uniforms.SourceBuffer >= 0)
+        srcBufferTexture->Bind(uniforms.SourceBuffer, layout);
+    if(uniforms.SourceBufferSize >= 0)
+        glUniform2fv(uniforms.SourceBufferSize, 1, sizeRaw);
 }
