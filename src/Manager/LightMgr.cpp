@@ -5,12 +5,7 @@
 
 using namespace CSE;
 
-enum LIGHTMODE {
-    None, Amb, Dif, Spec, AMbDif = 12, AmbSpec = 13, DifSpec = 23, AmbDifSpec = 123
-};
-
 LightMgr::LightMgr() = default;
-
 
 LightMgr::~LightMgr() {
     SAFE_DELETE(m_environmentMgr);
@@ -91,21 +86,6 @@ void LightMgr::Init() {
     // Setting PBS Environment
     m_environmentMgr = new SEnvironmentMgr();
     m_environmentMgr->RenderPBREnvironment();
-    // Setting Shadow Environment
-    m_environmentMgr->InitShadowEnvironment();
-    m_shadowHandle = m_environmentMgr->GetShadowEnvironment();
-}
-
-void LightMgr::RegisterShadowObject(SIRender* object) {
-    m_shadowObject.push_back(object);
-}
-
-void LightMgr::RemoveShadowObject(SIRender* object) {
-    m_shadowObject.remove(object);
-}
-
-const std::list<SIRender*>& LightMgr::GetShadowObject() const {
-    return m_shadowObject;
 }
 
 void LightMgr::RefreshShadowCount(int shadowCount) const {
@@ -118,8 +98,4 @@ void LightMgr::RefreshShadowCount(int shadowCount) const {
         return;
     }
     m_shadowCount = shadowCount;
-}
-
-GLProgramHandle* LightMgr::GetShadowHandle() const {
-    return m_shadowHandle;
 }

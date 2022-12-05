@@ -9,7 +9,7 @@ namespace CSE {
 
     class AnimatorComponent : public SComponent {
     public:
-        AnimatorComponent();
+        COMPONENT_DEFINE_CONSTRUCTOR(AnimatorComponent);
 
         ~AnimatorComponent() override;
 

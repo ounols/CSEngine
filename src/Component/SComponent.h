@@ -3,6 +3,7 @@
 #include "../SObject.h"
 #include <string>
 #include <map>
+#include <utility>
 #include "../Object/SGameObject.h"
 #include "SISComponent.h"
 #include "../Util/ComponentDef.h"
@@ -16,8 +17,8 @@ namespace CSE {
     class SComponent : public SObject, public virtual SISComponent, public VariableBinder {
     public:
 
-        explicit SComponent(std::string classType) : m_classType(classType) {
-
+        explicit SComponent(std::string classType, SGameObject* gameObject) : m_classType(std::move(classType)),
+                                                                              gameObject(gameObject) {
         }
 
         SComponent(const SComponent& src) : SISComponent(src) {
@@ -27,30 +28,24 @@ namespace CSE {
         }
 
 
-        virtual ~SComponent() {
+        ~SComponent() override = default;
 
-        }
-
-        virtual void Start() override {
-            return;
-        }
+        void Start() override {}
 
         virtual SComponent* Clone(SGameObject* object) {
             return nullptr;
         }
 
         virtual void CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
-                                   std::map<SComponent*, SComponent*> lists_comp) {
-            return;
-        }
+                                   std::map<SComponent*, SComponent*> lists_comp) {}
 
         virtual auto GetComponent() -> SObject* {
             return this;
         }
 
-        virtual void SetValue(std::string name_str, Arguments value) override {}
+        void SetValue(std::string name_str, Arguments value) override {}
 
-        std::string PrintValue() const override { return std::string(); }
+        std::string PrintValue() const override { return {}; }
 
         void SetGameObject(SGameObject* object) {
             gameObject = object;
@@ -75,7 +70,7 @@ namespace CSE {
         }
 
         void SetClassType(std::string type) {
-            m_classType = type;
+            m_classType = std::move(type);
         }
 
     protected:

@@ -14,11 +14,11 @@ in vec2 a_textureCoordIn;
 
 // Uniforms
 //[matrix.projection]//
-uniform mat4 u_projectionMatrix;//Projection;
-//[matrix.modelview]//
-uniform mat4 u_modelViewMatrix;//Modelview;
-//[matrix.modelview_nc]//
-uniform mat4 u_modelViewNoCameraMatrix;//Modelview - no camera matrix;
+uniform mat4 u_projectionMatrix;
+//[matrix.view]//
+uniform mat4 u_viewMatrix;
+//[matrix.model]//
+uniform mat4 u_modelMatrix;
 //[matrix.joint]//
 uniform mat4 u_jointMatrix[MAX_JOINTS];
 
@@ -59,11 +59,11 @@ void main(void) {
     }
 
 
-	v_eyespaceNormal = mat3(u_modelViewNoCameraMatrix) * normal_final.xyz;
+	v_eyespaceNormal = mat3(u_modelMatrix) * normal_final.xyz;
 	v_textureCoordOut = a_textureCoordIn;
-    v_worldPosition = vec3(u_modelViewNoCameraMatrix * position_final);
+    v_worldPosition = vec3(u_modelMatrix * position_final);
 
     //vertex position
-    gl_Position = u_projectionMatrix * u_modelViewMatrix * position_final;
+    gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * position_final;
 
 }

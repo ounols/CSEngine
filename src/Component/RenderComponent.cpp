@@ -1,5 +1,5 @@
 #include "RenderComponent.h"
-#include "../Manager/RenderMgr.h"
+#include "../Manager/Render/RenderMgr.h"
 #include "../Manager/LightMgr.h"
 #include "../Manager/EngineCore.h"
 #include "../Util/Render/ShaderUtil.h"
@@ -12,15 +12,19 @@ using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(RenderComponent) {
     m_renderMgr = CORE->GetCore(RenderMgr);
-    m_renderMgr->Register(this);
     SetMaterial(nullptr);
 }
 
 RenderComponent::~RenderComponent() = default;
 
 void RenderComponent::Exterminate() {
-    if(m_renderMgr != nullptr) m_renderMgr->Remove(this);
-    if(m_lightMgr != nullptr) m_lightMgr->RemoveShadowObject(this);
+    if(material != nullptr) {
+        const auto& mode = material->GetMode();
+        if (m_renderMgr != nullptr) {
+            m_renderMgr->Remove(this, (RenderContainer::RenderGroupMode) mode);
+            m_renderMgr->Remove(this, RenderContainer::DEPTH_ONLY);
+        }
+    }
     SAFE_DELETE(m_material_clone);
     material = nullptr;
 }
@@ -29,7 +33,7 @@ void RenderComponent::Init() {
 
     if(!m_disableShadow) {
         m_lightMgr = CORE->GetCore(LightMgr);
-        m_lightMgr->RegisterShadowObject(this);
+        m_renderMgr->Register(this, RenderContainer::DEPTH_ONLY);
     }
 
     m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
@@ -64,10 +68,13 @@ RenderComponent::SetMatrix(const CameraMatrixStruct& cameraMatrixStruct, const G
 
 void RenderComponent::Render(const GLProgramHandle* handle) const {
 
-    if (m_mesh == nullptr || m_material_clone == nullptr) return;
+    if (m_mesh == nullptr || m_material_clone == nullptr || gameObject->isPrefab()) return;
 
-    const auto& current_handle = handle == nullptr ? m_material_clone->GetHandle() : handle;
-    if(handle == nullptr) m_material_clone->AttachElement();
+    auto& current_handle = handle;
+    if(handle == nullptr) {
+        m_material_clone->AttachElement();
+        current_handle = m_material_clone->GetHandle();
+    }
     SetJointMatrix(current_handle);
     ShaderUtil::BindAttributeToShader(*current_handle, m_mesh->GetMeshID());
 }
@@ -99,12 +106,16 @@ SMaterial* RenderComponent::GetMaterial() const {
 
 void RenderComponent::SetMaterial(SMaterial* material) {
     auto renderMgr = CORE->GetCore(RenderMgr);
-    renderMgr->Remove(this);
     if(this->material == nullptr)
         this->material = SResource::Create<SMaterial>(Settings::GetDefaultDeferredMaterialId());
-    else
+    else {
+        const auto& mode = this->material->GetMode();
+        renderMgr->Remove(this, (RenderContainer::RenderGroupMode) mode);
         this->material = material;
-    renderMgr->Register(this);
+    }
+
+    const auto& mode = this->material->GetMode();
+    renderMgr->Register(this, (RenderContainer::RenderGroupMode) mode);
 
     SAFE_DELETE(m_material_clone)
     m_material_clone = new SMaterial(this->material);

@@ -1,4 +1,4 @@
-﻿#include "DAELoader.h"
+#include "DAELoader.h"
 #include "../../MoreString.h"
 #include "DAEUtil/DAEConvertSGameObject.h"
 #include <iostream>
@@ -40,8 +40,12 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
     if (type == LOAD_TYPE::MESH || type == LOAD_TYPE::ALL || type == LOAD_TYPE::AUTO) {
         try {
             bool safe_result;
-            safe_result = LoadSkin(collada.getChild("library_controllers"));
-            safe_result &= LoadSkeleton(collada.getChild("library_visual_scenes"));
+            if(collada.hasChild("library_controllers") && collada.hasChild("library_visual_scenes")) {
+                safe_result = LoadSkin(collada.getChild("library_controllers"));
+                safe_result &= LoadSkeleton(collada.getChild("library_visual_scenes"));
+            }
+            else
+                safe_result = false;
             m_isSkinning = safe_result;
         } catch (int error) {
             std::cout << "passing skinning...\n";
@@ -49,11 +53,13 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
         }
 
         try {
-            LoadTexturePath(collada.getChild("library_images"));
+            if(collada.hasChild("library_images"))
+                LoadTexturePath(collada.getChild("library_images"));
+            else
+                std::cout << "passing texture...\n";
         } catch (int error) {
             std::cout << "passing texture...\n";
         }
-
 
         try {
             const auto& geometryData = collada.getChild("library_geometries").children;
@@ -61,7 +67,7 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
 
             for (const auto& geometry : geometryData) {
                 auto meshData = new DAEMeshData();
-                meshData->meshName = geometry.getAttribute("id").toString();
+                meshData->meshName = geometry.getAttribute("id").value;
                 LoadGeometry(geometry, meshData);
                 m_meshList.push_back(meshData);
             }
@@ -69,7 +75,6 @@ void DAELoader::Load(const char* path, LOAD_TYPE type) {
             std::cout << "passing geometry...\n";
         }
     }
-    //
     if (type == ANIMATION || type == ALL || type == AUTO) {
         try {
             bool safe_exception;
@@ -545,10 +550,6 @@ SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
 
         auto renderComponent = mesh_root->CreateComponent<RenderComponent>();
 //    mesh_root->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
-
-        auto material = renderComponent->GetMaterial();
-        if (!m_texture_name.empty())
-            material->SetTexture("TEX2D_ALBEDO", CORE->GetCore(ResMgr)->GetObject<STexture>(m_texture_name));
     }
 
     if (m_isSkinning) {

@@ -14,7 +14,7 @@ namespace CSE {
 
     class SMaterial : public SResource {
     public:
-        enum SMaterialMode { NORMAL = 0, DEFERRED = 1 };
+        enum SMaterialMode { NORMAL = 0, DEFERRED = 1, DEPTH_ONLY = 2 };
     private:
         struct Element {
             int id = HANDLE_NULL;
@@ -63,6 +63,8 @@ namespace CSE {
 
         GLProgramHandle* GetLightPassHandle() const;
 
+        int GetTextureCount() const;
+
         static SMaterial* GenerateMaterial(GLProgramHandle* handle);
 
     protected:
@@ -93,6 +95,7 @@ namespace CSE {
         //std::vector<Element*> m_elements;
 		ElementsMap m_elements;
 		mutable int m_textureLayout = 0;
+        int m_textureCount = 0;
         SMaterialMode m_mode = NORMAL;
 
         LightMgr* m_lightMgr = nullptr;

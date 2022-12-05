@@ -46,7 +46,6 @@ namespace CSE {
 
         virtual void SetParameterfv(int targetName, float* value) const;
 
-
         void Release();
 
         void Exterminate() override;

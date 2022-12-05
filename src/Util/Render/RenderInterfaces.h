@@ -8,6 +8,8 @@
 namespace CSE {
     struct CameraMatrixStruct;
     class SMaterial;
+    class CameraBase;
+    class RenderMgr;
 
     class SISurface : public SResource {
     public:
@@ -46,14 +48,15 @@ namespace CSE {
 
         virtual void Render(const GLProgramHandle* handle = nullptr) const = 0;
 
+        virtual SMaterial* GetMaterial() const = 0;
+
+        SMaterial* GetMaterialReference() const {
+            return material;
+        }
+
     protected:
         SMaterial* material = nullptr;
     public:
         bool isRenderActive = false;
-
-    public:
-        friend class RenderContainer;
-        friend class RenderMgr;
-        friend class SGBuffer;
     };
 }
