@@ -84,22 +84,16 @@ bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, fl
     return true;
 }
 
+
 bool MeshSurface::MakeIndices(int sizeIndic, int* indices) {
     if (!m_Indics.empty()) return false;
 
-    struct Index {
-        Vector3<unsigned short> index;
-    };
-
     m_Indics.resize(sizeIndic * 3);
-    auto index_tmp = reinterpret_cast<Index*>(&m_Indics[0]);
 
     for (int i = 0; i < sizeIndic; ++i) {
-        index_tmp->index.x = static_cast<unsigned short>(*(indices)++);
-        index_tmp->index.y = static_cast<unsigned short>(*(indices)++);
-        index_tmp->index.z = static_cast<unsigned short>(*(indices)++);
-
-        index_tmp++;
+        m_Indics[i * 3] = static_cast<unsigned short>(*(indices)++);
+        m_Indics[i * 3 + 1] = static_cast<unsigned short>(*(indices)++);
+        m_Indics[i * 3 + 2] = static_cast<unsigned short>(*(indices)++);
     }
 
     m_indexSize = sizeIndic;

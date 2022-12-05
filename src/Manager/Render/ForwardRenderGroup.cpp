@@ -34,27 +34,19 @@ void ForwardRenderGroup::RemoveObjects(SIRender* object) {
     short orderLayer = material->GetOrderLayer();
     GLProgramHandle* handler = material->GetHandle();
 
-    //1. Order Render Layer Level
     auto orderLayerIter = m_rendersLayer.find(orderLayer);
     if (orderLayerIter != m_rendersLayer.end()) {
-        {
-            //2. Program Render Layer Level
-            ProgramRenderLayer& programLayer = orderLayerIter->second;
-            auto handlerPair = programLayer.find(handler);
-            if (handlerPair != programLayer.end()) {
-                auto& layerVector = handlerPair->second;
-                handlerPair->second.erase(std::remove(layerVector.begin(), layerVector.end(), object),
-                                          layerVector.end());
-                //빈공간은 제거
-                if (layerVector.empty()) {
-                    programLayer.erase(handlerPair);
-                }
-            }
+        auto& programLayer = orderLayerIter->second;
+        auto handlerPair = programLayer.find(handler);
+        if (handlerPair != programLayer.end()) {
+            auto& layerVector = handlerPair->second;
+            layerVector.erase(std::remove(layerVector.begin(), layerVector.end(), object),
+                              layerVector.end());
+
+            // 렌더링 객체가 제거된 뒤에도 공간이 비어 있는 경우, 그 공간을 제거한다.
+            if (layerVector.empty()) programLayer.erase(handlerPair);
         }
-        //빈공간은 제거
-        if (orderLayerIter->second.empty()) {
-            m_rendersLayer.erase(orderLayer);
-        }
+        if (programLayer.empty()) m_rendersLayer.erase(orderLayerIter);
     }
 }
 

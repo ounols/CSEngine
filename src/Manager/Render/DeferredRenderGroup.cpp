@@ -88,12 +88,6 @@ void DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer
     /** ======================
      *  2. Light Pass
      */
-//    if(frameBuffer == nullptr) {
-//        GetMainBuffer()->AttachFrameBuffer();
-//    }
-//    else {
-//        frameBuffer->AttachFrameBuffer();
-//    }
     const auto& deferredBuffer =
             frameBuffer == nullptr ? m_renderMgr->GetMainBuffer() : frameBuffer;
     deferredBuffer->AttachFrameBuffer();
