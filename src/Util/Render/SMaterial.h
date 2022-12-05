@@ -63,6 +63,8 @@ namespace CSE {
 
         GLProgramHandle* GetLightPassHandle() const;
 
+        int GetTextureCount() const;
+
         static SMaterial* GenerateMaterial(GLProgramHandle* handle);
 
     protected:
@@ -92,7 +94,8 @@ namespace CSE {
         short m_orderLayer = 5000;
         //std::vector<Element*> m_elements;
 		ElementsMap m_elements;
-		mutable int m_textureLayout = 1;
+		mutable int m_textureLayout = 0;
+        int m_textureCount = 0;
         SMaterialMode m_mode = NORMAL;
 
         LightMgr* m_lightMgr = nullptr;

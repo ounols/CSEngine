@@ -35,7 +35,7 @@ class TestScript extends CSEngineScript {
 		local axis = vec3();
 		axis.Set(0, 1, 0);
 		// rotation = Quaternion.AngleAxis(axis, 1);
-		gameobject.GetTransform().rotation.Rotate(Quaternion.AngleAxis(axis, 0.01));
+		gameobject.GetTransform().rotation.Rotate(Quaternion.AngleAxis(axis, -0.003));
 	}
 
 	//로테이션을 받아오는 임의의 함수

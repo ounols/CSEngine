@@ -17,7 +17,7 @@ ForwardRenderGroup::ForwardRenderGroup(const RenderMgr& renderMgr) : SRenderGrou
 ForwardRenderGroup::~ForwardRenderGroup() = default;
 
 void ForwardRenderGroup::RegisterObject(SIRender* object) {
-    const auto& material = object->GetMaterial();
+    const auto& material = object->GetMaterialReference();
     if (material == nullptr) return;
 
     short orderLayer = material->GetOrderLayer();
@@ -28,7 +28,7 @@ void ForwardRenderGroup::RegisterObject(SIRender* object) {
 }
 
 void ForwardRenderGroup::RemoveObjects(SIRender* object) {
-    const auto& material = object->GetMaterial();
+    const auto& material = object->GetMaterialReference();
     if (material == nullptr) return;
 
     short orderLayer = material->GetOrderLayer();
@@ -80,13 +80,15 @@ void ForwardRenderGroup::RenderAll(const CameraBase& camera) const {
             glUseProgram(handler.Program);
             //Attach Light
             m_lightMgr->AttachLightToShader(&handler);
+            const auto layoutBegin = m_lightMgr->GetShadowCount() + m_lightMgr->GetLightMapCount();
 
             for (const auto& render : renderComp) {
                 if (render == nullptr) continue;
                 if (!render->isRenderActive) continue;
 
+                const auto& material = render->GetMaterial();
                 render->SetMatrix(cameraMatrix);
-                BindSourceBuffer(*frameBuffer, handler, 0);
+                BindSourceBuffer(*frameBuffer, handler, layoutBegin + material->GetTextureCount() + 1);
                 render->Render();
             }
         }

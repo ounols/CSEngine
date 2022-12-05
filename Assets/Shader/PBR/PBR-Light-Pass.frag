@@ -13,6 +13,8 @@ uniform sampler2D u_sampler_albedo;
 uniform sampler2D u_sampler_material;
 //[geo.depth]//
 uniform sampler2D u_sampler_depth;
+//[vec3.camera]//
+uniform vec3 u_cameraPosition;
 
 //IBL
 //[light.irradiance]//
@@ -50,8 +52,8 @@ const lowp float c_zero = 0.0;
 const lowp float c_one = 1.0;
 const float PI = 3.14159265359;
 
-const lowp float c_shadow_width = 1024.f;
-const lowp float c_shadow_height = 1024.f;
+const lowp float c_shadow_width = 1024.0;
+const lowp float c_shadow_height = 1024.0;
 
 //Functions
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -81,7 +83,7 @@ void main(void) {
 	// retrieve data from gbuffer
 	lowp vec3  fragPos	 = texture(u_sampler_position, v_textureCoordOut).rgb;
 	lowp vec2 normal_raw = texture(u_sampler_normal, v_textureCoordOut).rg;
-	lowp vec3  normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1.f - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0.f));
+	lowp vec3  normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1.0 - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0.0));
 
 	lowp vec3  albedo    = texture(u_sampler_albedo, v_textureCoordOut).rgb;
 	lowp float metallic  = texture(u_sampler_material, v_textureCoordOut).r;
@@ -89,7 +91,7 @@ void main(void) {
 	lowp float ao        = texture(u_sampler_material, v_textureCoordOut).b;
 
 	vec3 N = normalize(normal);
-	vec3 V0 = normalize(N - fragPos);
+	vec3 V0 = normalize(N + u_cameraPosition);
 	vec3 R = reflect(-V0, N);
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
@@ -288,9 +290,9 @@ vec3 GetShadowTextureInArray(int index, vec2 uv) {
 	if(index == 2) return texture(u_shadowMap[2], uv).rgb;
 	if(index == 3) return texture(u_shadowMap[3], uv).rgb;
 	if(index == 4) return texture(u_shadowMap[4], uv).rgb;
-	if(index == 5) return texture(u_shadowMap[5], uv).rgb;
-	if(index == 6) return texture(u_shadowMap[6], uv).rgb;
-	if(index == 7) return texture(u_shadowMap[7], uv).rgb;
+//	if(index == 5) return texture(u_shadowMap[5], uv).rgb;
+//	if(index == 6) return texture(u_shadowMap[6], uv).rgb;
+//	if(index == 7) return texture(u_shadowMap[7], uv).rgb;
 
 	return texture(u_shadowMap[0], uv).rgb;
 }
