@@ -42,34 +42,28 @@ namespace CSE {
         return r.erase(0, r.find_first_not_of(" \n\t\r"));
     }
 
-    static std::vector<std::string> split(const std::string& s, char separator) {
+    static std::vector<std::string> split(const std::string& s, char seperator) {
         std::vector<std::string> output;
 
-        size_t prev_pos = 0;
-        size_t pos = 0;
+        std::string::size_type prev_pos = 0;
+        std::string::size_type pos = s.find(seperator);
 
-        // 문자열을 일부분만 저장하고 나머지는 버퍼에 저장합니다.
-        // 이렇게 하면 입력 문자열의 길이에 상관없이
-        // 항상 정해진 크기의 버퍼를 사용하기 때문에 성능이 향상됩니다.
-        constexpr size_t BUFFER_SIZE = 64;
-        char buffer[BUFFER_SIZE];
-
-        while ((pos = s.find(separator, pos)) != std::string::npos) {
-            // 입력 문자열의 일부분을 출력 벡터에 저장합니다.
+        // 문자열을 순회하면서 새로운 단어를 찾음
+        while (pos != std::string::npos) {
+            // 새로운 단어를 추가
             output.push_back(s.substr(prev_pos, pos - prev_pos));
-            prev_pos = ++pos;
+
+            // 다음 단어를 찾기 위해 위치를 업데이트
+            prev_pos = pos + 1;
+            pos = s.find(seperator, prev_pos);
         }
 
-        // 나머지 문자열을 버퍼에 저장합니다.
-        const size_t length = s.length() - prev_pos;
-        s.copy(buffer, length, prev_pos);
-        buffer[length] = '\0';
-
-        // 버퍼에 저장된 나머지 문자열을 출력 벡터에 추가합니다.
-        output.emplace_back(buffer);
+        // 마지막 단어를 추가
+        output.push_back(s.substr(prev_pos, pos - prev_pos));
 
         return output;
     }
+
 
     static void make_upper(std::string& str) {
         std::transform(str.begin(), str.end(), str.begin(), toupper);
@@ -85,7 +79,7 @@ namespace CSE {
         return str;
     }
 
-    template <typename T>
+    template<typename T>
     std::string appandAll(std::stringstream& sstream, T param) {
         sstream << param;
         auto result = sstream.str();
@@ -95,7 +89,7 @@ namespace CSE {
         return result;
     }
 
-    template <typename T0, typename ... Tn>
+    template<typename T0, typename ... Tn>
     std::string appandAll(std::stringstream& sstream, T0 param0, Tn... paramN) {
         sstream << param0;
         return appandAll(sstream, paramN...);

@@ -62,6 +62,8 @@ namespace CSE {
         static GLuint
         createProgram(const GLchar* vertexSource, const GLchar* fragmentSource, const GLProgramHandle& handle);
 
+        static GLuint createProgram(GLuint vertexShader, GLuint fragmentShader, const GLProgramHandle& handle);
+
         /**
          * @brief Loads a shader.
          *
@@ -131,6 +133,9 @@ namespace CSE {
         static void BindSkinningDataToShader(const GLProgramHandle& handle, const GLMeshID& meshId,
                                              const std::vector<mat4>& jointMatrix);
 
+        static void BindAttributeToPlane();
+
+        static void BindAttributeToCubeMap();
     private:
         /**
          * @brief The version of the shader define.
