@@ -93,15 +93,14 @@ void main(void) {
 	lowp float ao        = u_ao;
 
 	vec3 N = normalize(v_eyespaceNormal);
-	vec3 V0 = normalize(N + u_cameraPosition);
-	vec3 V1 = normalize(u_cameraPosition - N);
+	vec3 V0 = normalize(u_cameraPosition - v_worldPosition);
 	vec3 R = reflect(-V0, N);
 
 
-	float de = sin((1.0 - abs(dot(N, V1))) * PI / 2.0);
+	float de = sin((1.0 - abs(dot(N, V0))) * PI / 2.0);
 	float step_de = (1.0 - de) * 0.1;
 	highp vec3 src        = FastBlur(u_sampler_src, gl_FragCoord.xy / u_src_size).rgb;
-	highp vec3 albedo     = pow(src, vec3(2.2 * de)) * (u_albedo - vec3(step_de));
+	highp vec3 albedo     = pow(src, vec3(3.2 * de)) * (u_albedo - vec3(step_de));
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)

@@ -1,10 +1,8 @@
 precision highp float;
 precision highp int;
 
-layout (location = 0) out vec3 result_position;
-layout (location = 1) out vec3 result_normal;
-layout (location = 2) out vec3 result_albedo;
-layout (location = 3) out vec3 result_material;
+layout (location = 0) out vec4 result_normal_mr;
+layout (location = 1) out vec4 result_a_albedo;
 
 //Uniforms
 //[texture.albedo]//
@@ -28,7 +26,6 @@ uniform float u_ao;
 //Varying
 in mediump vec3 v_eyespaceNormal;
 in mediump vec2 v_textureCoordOut;
-in mediump vec3 v_worldPosition;
 
 out vec4 FragColor;
 
@@ -46,8 +43,6 @@ void main(void) {
 
 	vec3 N = normalize(v_eyespaceNormal);
 
-	result_position = v_worldPosition;
-	result_normal = N;
-	result_albedo = albedo;
-	result_material = vec3(metallic, roughness, ao);
+	result_normal_mr = vec4(N.x, N.y, metallic, roughness);
+	result_a_albedo = vec4(albedo, ao);
 }

@@ -4,6 +4,7 @@
 #include "../../Util/Render/SMaterial.h"
 #include "../../Util/Render/SGBuffer.h"
 #include "../../Util/Render/SFrameBuffer.h"
+#include "../../Util/Render/ShaderUtil.h"
 #include "../../Util/Settings.h"
 #include "../LightMgr.h"
 #include "../../Component/CameraComponent.h"
@@ -95,7 +96,10 @@ void DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer
     m_lightMgr->AttachLightMapToShader(lightPassHandle, m_lightMgr->GetShadowCount());
     const auto layoutBegin = m_lightMgr->GetShadowCount() + m_lightMgr->GetLightMapCount();
     gbuffer.AttachLightPassTexture(layoutBegin);
-    BindSourceBuffer(*deferredBuffer, *lightPassHandle, layoutBegin + 5);
+    BindSourceBuffer(*deferredBuffer, *lightPassHandle, layoutBegin + 3);
+
+    ShaderUtil::BindCameraToShader(*lightPassHandle, cameraMatrix.camera, cameraMatrix.cameraPosition,
+                                   cameraMatrix.projection, cameraMatrix.camera);
 
     gbuffer.RenderLightPass();
 

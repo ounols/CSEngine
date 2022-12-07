@@ -91,7 +91,7 @@ void main(void) {
 	lowp float ao        = 1.f;
 
 	vec3 N = normalize(v_eyespaceNormal);
-	vec3 V0 = normalize(N - v_worldPosition);
+	vec3 V0 = normalize(u_cameraPosition - v_worldPosition);
 	vec3 R = reflect(-V0, N);
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0

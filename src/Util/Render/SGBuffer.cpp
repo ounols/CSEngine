@@ -28,10 +28,8 @@ void SGBuffer::GenerateGBuffer(int width, int height) {
     m_geometryFrameBuffer->SetName(m_geometryFrameBuffer->GetName() + " - GBuffer");
     m_geometryFrameBuffer->GenerateFramebuffer(SFrameBuffer::PLANE, width, height);
 
-    m_positionTexture = m_geometryFrameBuffer->GenerateTexturebuffer(SFrameBuffer::RENDER, GL_RGB);
-    m_normalTexture = m_geometryFrameBuffer->GenerateTexturebuffer(SFrameBuffer::RENDER, GL_RGB);
-    m_albedoTexture = m_geometryFrameBuffer->GenerateTexturebuffer(SFrameBuffer::RENDER, GL_RGB);
-    m_materialTexture = m_geometryFrameBuffer->GenerateTexturebuffer(SFrameBuffer::RENDER, GL_RGB);
+    m_firstTexture = m_geometryFrameBuffer->GenerateTexturebuffer(SFrameBuffer::RENDER, GL_RGBA);
+    m_secondTexture = m_geometryFrameBuffer->GenerateTexturebuffer(SFrameBuffer::RENDER, GL_RGBA);
     m_depthTexture = m_geometryFrameBuffer->GenerateTexturebuffer(SFrameBuffer::DEPTH, GL_DEPTH_COMPONENT);
     m_geometryFrameBuffer->RasterizeFramebuffer();
 
@@ -66,10 +64,8 @@ void SGBuffer::BindLightPass(GLProgramHandle* lightPassHandle) {
     if(lightPassHandle == nullptr || m_lightPassHandle != nullptr) return;
 
     m_lightPassHandle = lightPassHandle;
-    m_positonTextureId = m_lightPassHandle->UniformLocation("geo.position")->id;
-    m_normalTextureId = m_lightPassHandle->UniformLocation("geo.normal")->id;
-    m_albedoTextureId = m_lightPassHandle->UniformLocation("geo.albedo")->id;
-    m_materialTextureId = m_lightPassHandle->UniformLocation("geo.material")->id;
+    m_firstTextureId = m_lightPassHandle->UniformLocation("geo.normal.mr")->id;
+    m_secondTextureId = m_lightPassHandle->UniformLocation("geo.albedo.a")->id;
     m_depthTextureId = m_lightPassHandle->UniformLocation("geo.depth")->id;
 }
 
@@ -78,11 +74,9 @@ void SGBuffer::AttachLightPass() const {
 }
 
 void SGBuffer::AttachLightPassTexture(int textureLayout) const {
-    m_positionTexture->Bind(m_positonTextureId, textureLayout);
-    m_normalTexture->Bind(m_normalTextureId, textureLayout + 1);
-    m_albedoTexture->Bind(m_albedoTextureId, textureLayout + 2);
-    m_materialTexture->Bind(m_materialTextureId, textureLayout + 3);
-    m_depthTexture->Bind(m_depthTextureId, textureLayout + 4);
+    m_firstTexture->Bind(m_firstTextureId, textureLayout);
+    m_secondTexture->Bind(m_secondTextureId, textureLayout + 1);
+    m_depthTexture->Bind(m_depthTextureId, textureLayout + 2);
 }
 
 void SGBuffer::RenderLightPass() const {

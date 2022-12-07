@@ -248,10 +248,14 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
 
 void ShaderUtil::BindCameraToShader(const GLProgramHandle& handle, const mat4& view, const vec3& cameraPosition,
                                     const mat4& projection, const mat4& transform) {
-    glUniformMatrix4fv(handle.Uniforms.ViewMatrix, 1, 0, view.Pointer());
-    glUniformMatrix4fv(handle.Uniforms.ModelMatrix, 1, 0, transform.Pointer());
-    glUniformMatrix4fv(handle.Uniforms.ProjectionMatrix, 1, 0, projection.Pointer());
-    glUniform3fv(handle.Uniforms.CameraPosition, 1, cameraPosition.Pointer());
+    if(handle.Uniforms.ViewMatrix >= 0)
+        glUniformMatrix4fv(handle.Uniforms.ViewMatrix, 1, 0, view.Pointer());
+    if(handle.Uniforms.ModelMatrix >= 0)
+        glUniformMatrix4fv(handle.Uniforms.ModelMatrix, 1, 0, transform.Pointer());
+    if(handle.Uniforms.ProjectionMatrix >= 0)
+        glUniformMatrix4fv(handle.Uniforms.ProjectionMatrix, 1, 0, projection.Pointer());
+    if(handle.Uniforms.CameraPosition >= 0)
+        glUniform3fv(handle.Uniforms.CameraPosition, 1, cameraPosition.Pointer());
 
     if(handle.Uniforms.ProjectionInvMatrix >= 0)
         glUniformMatrix4fv(handle.Uniforms.ProjectionInvMatrix, 1, 0, mat4::Invert(projection).Pointer());

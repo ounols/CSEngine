@@ -35,18 +35,14 @@ namespace CSE {
         SFrameBuffer* m_geometryFrameBuffer = nullptr;
         std::vector<SIRender*> m_rendersLayer;
 
-        STexture* m_positionTexture = nullptr;
-        STexture* m_normalTexture = nullptr;
-        STexture* m_albedoTexture = nullptr;
-        STexture* m_materialTexture = nullptr;
+        STexture* m_firstTexture = nullptr;
+        STexture* m_secondTexture = nullptr;
         STexture* m_depthTexture = nullptr;
 
         GLProgramHandle* m_lightPassHandle = nullptr;
 
-        int m_positonTextureId = -1;
-        int m_normalTextureId = -1;
-        int m_albedoTextureId = -1;
-        int m_materialTextureId = -1;
+        int m_firstTextureId = -1;
+        int m_secondTextureId = -1;
         int m_depthTextureId = -1;
 
         int m_width = -1;
