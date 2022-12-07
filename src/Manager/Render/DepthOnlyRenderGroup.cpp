@@ -38,14 +38,12 @@ void DepthOnlyRenderGroup::RenderAll(const CameraBase& camera) const {
     }
 
     glUseProgram(program);
-    // Initialize various state.
-
     glClear(GL_DEPTH_BUFFER_BIT);
     for (const auto& shadowObject : m_depthObjects) {
         if(!shadowObject->isRenderActive) continue;
-        const auto& shadow_transform = static_cast<RenderComponent*>(shadowObject)->GetGameObject()->GetTransform();
+        const auto& shadowTransform = static_cast<RenderComponent*>(shadowObject)->GetGameObject()->GetTransform();
 
-        if(LightMgr::SHADOW_DISTANCE < vec3::Distance(cameraMatrix.cameraPosition, shadow_transform->m_position))
+        if(LightMgr::SHADOW_DISTANCE < vec3::Distance(cameraMatrix.cameraPosition, shadowTransform->m_position))
             continue;
 
         shadowObject->SetMatrix(cameraMatrix, m_shadowHandle);

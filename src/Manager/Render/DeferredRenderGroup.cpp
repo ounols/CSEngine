@@ -27,26 +27,24 @@ void DeferredRenderGroup::RegisterObject(SIRender* object) {
     const auto& lightPassHandle = material->GetLightPassHandle();
     if (lightPassHandle == nullptr) return;
 
-    const auto& key = m_gbufferLayer.find(lightPassHandle);
-    SGBuffer* gbuffer = nullptr;
-    if (key == m_gbufferLayer.end()) {
+    auto gbuffer = m_gbufferLayer[lightPassHandle];
+    if (!gbuffer) {
         gbuffer = new SGBuffer();
         gbuffer->GenerateGBuffer(*m_width, *m_height);
         m_gbufferLayer[lightPassHandle] = gbuffer;
-    } else {
-        gbuffer = key->second;
     }
     gbuffer->PushBackToLayer(object);
     gbuffer->BindLightPass(lightPassHandle);
-}
 
+}
 void DeferredRenderGroup::RemoveObjects(SIRender* object) {
     const auto& material = object->GetMaterialReference();
     const auto& programLayer = m_gbufferLayer;
-    auto handlerPair = programLayer.find(material->GetLightPassHandle());
-    if (handlerPair != programLayer.end()) {
-        auto& layerVector = handlerPair->second;
-        handlerPair->second->RemoveToLayer(object);
+    auto it = std::find_if(programLayer.begin(), programLayer.end(), [&material](const auto& elem) {
+        return elem.first == material->GetLightPassHandle();
+    });
+    if (it != programLayer.end()) {
+        it->second->RemoveToLayer(object);
     }
 }
 
