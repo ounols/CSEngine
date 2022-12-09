@@ -5,12 +5,30 @@
 
 namespace CSE {
 
+    /**
+     * This class is responsible for rendering depth only objects for use in creating shadow maps.
+     */
     class DepthOnlyRenderGroup : public SRenderGroup {
     public:
+        /**
+         * Constructor for the DepthOnlyRenderGroup.
+         *
+         * @param renderMgr The render manager to use.
+         */
         explicit DepthOnlyRenderGroup(const RenderMgr& renderMgr);
 
+        /**
+         * Register an object to the render group.
+         *
+         * @param object The object to be registered.
+         */
         void RegisterObject(SIRender* object) override;
 
+        /**
+         * Remove an object from the render group.
+         *
+         * @param object The object to be removed.
+         */
         void RemoveObjects(SIRender* object) override;
 
         /**
@@ -19,6 +37,9 @@ namespace CSE {
          */
         void RenderAll(const CameraBase& camera) const override;
 
+        /**
+         * Removes all objects from the render group.
+         */
         void Exterminate() override;
 
     private:

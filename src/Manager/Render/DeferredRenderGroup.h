@@ -8,17 +8,32 @@ namespace CSE {
     class SGBuffer;
     class LightMgr;
 
+    /**
+     * This class is responsible for deferred rendering of G-Buffer objects.
+     */
     class DeferredRenderGroup  : public SRenderGroup {
     private:
         typedef std::unordered_map<GLProgramHandle*, SGBuffer*> GBufferLayer;
 
     public:
+        /**
+         * Constructor for DeferredRenderGroup
+         * @param renderMgr Reference to the RenderMgr object.
+         */
         explicit DeferredRenderGroup(const RenderMgr& renderMgr);
 
         ~DeferredRenderGroup() override;
 
+        /**
+         * Register an object to the render group.
+         * @param object A pointer to the object to be registered.
+         */
         void RegisterObject(SIRender* object) override;
 
+        /**
+         * Remove an object from the render group.
+         * @param object A pointer to the object to be removed.
+         */
         void RemoveObjects(SIRender* object) override;
 
         /**
@@ -34,8 +49,14 @@ namespace CSE {
          */
         void RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer) const;
 
+        /**
+         * Set the viewport size.
+         */
         void SetViewport();
 
+        /**
+         * Free all allocated resources.
+         */
         void Exterminate() override;
 
     private:

@@ -3,18 +3,18 @@ precision highp int;
 
 
 //Uniforms
-//[geo.position]//
-uniform sampler2D u_sampler_position;
-//[geo.normal]//
-uniform sampler2D u_sampler_normal;
-//[geo.albedo]//
-uniform sampler2D u_sampler_albedo;
-//[geo.material]//
-uniform sampler2D u_sampler_material;
+//[geo.normal.mr]//
+uniform sampler2D u_sampler_normal_mr;
+//[geo.albedo.a]//
+uniform sampler2D u_sampler_albedo_a;
 //[geo.depth]//
 uniform sampler2D u_sampler_depth;
 //[vec3.camera]//
 uniform vec3 u_cameraPosition;
+//[matrix.projection.inv]//
+uniform mat4 u_projectionInvMatrix;
+//[matrix.view.inv]//
+uniform mat4 u_viewInvMatrix;
 
 //IBL
 //[light.irradiance]//
@@ -72,6 +72,17 @@ float ClampedPow(float X, float Y) {
 	return pow(max(abs(X),0.000001f),Y);
 }
 
+vec3 WorldPosFromDepth(float depth, vec2 uv) {
+	float z = depth * 2.0 - 1.0;
+
+	vec4 clipSpacePosition = vec4(uv * 2.0 - 1.0, z, 1.0);
+	vec4 viewSpacePosition = u_projectionInvMatrix * clipSpacePosition;
+
+	vec4 worldSpacePosition = u_viewInvMatrix * viewSpacePosition;
+
+	return worldSpacePosition.xyz / worldSpacePosition.w;
+}
+
 
 void main(void) {
 
@@ -81,17 +92,17 @@ void main(void) {
 	}
 
 	// retrieve data from gbuffer
-	lowp vec3  fragPos	 = texture(u_sampler_position, v_textureCoordOut).rgb;
-	lowp vec2 normal_raw = texture(u_sampler_normal, v_textureCoordOut).rg;
-	lowp vec3  normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1.0 - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0.0));
+	highp vec3 fragPos	 = WorldPosFromDepth(depth, v_textureCoordOut).rgb;
+	highp vec2 normal_raw= texture(u_sampler_normal_mr, v_textureCoordOut).rg;
+	highp vec3 normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1.0 - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0.0));
 
-	lowp vec3  albedo    = texture(u_sampler_albedo, v_textureCoordOut).rgb;
-	lowp float metallic  = texture(u_sampler_material, v_textureCoordOut).r;
-	lowp float roughness = texture(u_sampler_material, v_textureCoordOut).g;
-	lowp float ao        = texture(u_sampler_material, v_textureCoordOut).b;
+	lowp vec3  albedo    = texture(u_sampler_albedo_a, v_textureCoordOut).rgb;
+	lowp float metallic  = texture(u_sampler_normal_mr, v_textureCoordOut).b;
+	lowp float roughness = 1.0 - texture(u_sampler_normal_mr, v_textureCoordOut).a;
+	lowp float ao        = texture(u_sampler_albedo_a, v_textureCoordOut).a;
 
 	vec3 N = normalize(normal);
-	vec3 V0 = normalize(N + u_cameraPosition);
+	vec3 V0 = normalize(u_cameraPosition - fragPos);
 	vec3 R = reflect(-V0, N);
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0

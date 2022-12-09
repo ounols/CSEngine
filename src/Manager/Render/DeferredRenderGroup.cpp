@@ -4,6 +4,7 @@
 #include "../../Util/Render/SMaterial.h"
 #include "../../Util/Render/SGBuffer.h"
 #include "../../Util/Render/SFrameBuffer.h"
+#include "../../Util/Render/ShaderUtil.h"
 #include "../../Util/Settings.h"
 #include "../LightMgr.h"
 #include "../../Component/CameraComponent.h"
@@ -27,14 +28,11 @@ void DeferredRenderGroup::RegisterObject(SIRender* object) {
     const auto& lightPassHandle = material->GetLightPassHandle();
     if (lightPassHandle == nullptr) return;
 
-    const auto& key = m_gbufferLayer.find(lightPassHandle);
-    SGBuffer* gbuffer = nullptr;
-    if (key == m_gbufferLayer.end()) {
+    auto gbuffer = m_gbufferLayer[lightPassHandle];
+    if (!gbuffer) {
         gbuffer = new SGBuffer();
         gbuffer->GenerateGBuffer(*m_width, *m_height);
         m_gbufferLayer[lightPassHandle] = gbuffer;
-    } else {
-        gbuffer = key->second;
     }
     gbuffer->PushBackToLayer(object);
     gbuffer->BindLightPass(lightPassHandle);
@@ -43,10 +41,11 @@ void DeferredRenderGroup::RegisterObject(SIRender* object) {
 void DeferredRenderGroup::RemoveObjects(SIRender* object) {
     const auto& material = object->GetMaterialReference();
     const auto& programLayer = m_gbufferLayer;
-    auto handlerPair = programLayer.find(material->GetLightPassHandle());
-    if (handlerPair != programLayer.end()) {
-        auto& layerVector = handlerPair->second;
-        handlerPair->second->RemoveToLayer(object);
+    auto it = std::find_if(programLayer.begin(), programLayer.end(), [&material](const auto& elem) {
+        return elem.first == material->GetLightPassHandle();
+    });
+    if (it != programLayer.end()) {
+        it->second->RemoveToLayer(object);
     }
 }
 
@@ -88,12 +87,6 @@ void DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer
     /** ======================
      *  2. Light Pass
      */
-//    if(frameBuffer == nullptr) {
-//        GetMainBuffer()->AttachFrameBuffer();
-//    }
-//    else {
-//        frameBuffer->AttachFrameBuffer();
-//    }
     const auto& deferredBuffer =
             frameBuffer == nullptr ? m_renderMgr->GetMainBuffer() : frameBuffer;
     deferredBuffer->AttachFrameBuffer();
@@ -103,7 +96,10 @@ void DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer
     m_lightMgr->AttachLightMapToShader(lightPassHandle, m_lightMgr->GetShadowCount());
     const auto layoutBegin = m_lightMgr->GetShadowCount() + m_lightMgr->GetLightMapCount();
     gbuffer.AttachLightPassTexture(layoutBegin);
-    BindSourceBuffer(*deferredBuffer, *lightPassHandle, layoutBegin + 5);
+    BindSourceBuffer(*deferredBuffer, *lightPassHandle, layoutBegin + 3);
+
+    ShaderUtil::BindCameraToShader(*lightPassHandle, cameraMatrix.camera, cameraMatrix.cameraPosition,
+                                   cameraMatrix.projection, cameraMatrix.camera);
 
     gbuffer.RenderLightPass();
 

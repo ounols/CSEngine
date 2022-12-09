@@ -81,14 +81,14 @@ std::vector<KeyFrame*> AnimatorComponent::getPreviousAndNextFrames() const {
     auto allFrames = m_currentAnimation->GetKeyFrames();
     KeyFrame* previousFrame = allFrames.front();
     KeyFrame* nextFrame = allFrames.front();
-    allFrames.pop_front();
 
-    for (const auto& frame : allFrames) {
-        nextFrame = frame;
+    // 첫 번째 키 프레임을 제외한 나머지 키 프레임만을 순회합니다.
+    for (auto it = std::next(allFrames.begin()); it != allFrames.end(); ++it) {
+        nextFrame = *it;
         if (nextFrame->GetTimeStamp() > m_animationTime) {
             break;
         }
-        previousFrame = frame;
+        previousFrame = nextFrame;
     }
 
     std::vector<KeyFrame*> result;
@@ -106,16 +106,16 @@ float AnimatorComponent::CalculateProgression(KeyFrame* previous, KeyFrame* next
 
 std::vector<mat4> AnimatorComponent::InterpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float t) {
     const auto& jointKeyFrames_prev = previousFrame->GetJointKeyFrames();
-	const auto& jointKeyFrames_next = nextFrame->GetJointKeyFrames();
+    const auto& jointKeyFrames_next = nextFrame->GetJointKeyFrames();
     const auto jointSize = jointKeyFrames_prev.size();
     std::vector<mat4> currentPose;
-    currentPose.resize(jointSize);
+    currentPose.reserve(jointSize);
 
     for (unsigned short i = 0; i < jointSize; ++i) {
         const auto& prevTransform = jointKeyFrames_prev[i];
         const auto& nextTransform = jointKeyFrames_next[i];
         JointTransform&& currentTransform = JointTransform::Interpolate(t, *prevTransform, *nextTransform);
-        currentPose[i] = std::move(currentTransform).GetLocalMatrix();
+        currentPose.emplace_back(std::move(currentTransform).GetLocalMatrix());
     }
     return currentPose;
 }

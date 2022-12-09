@@ -13,56 +13,22 @@ LightMgr::~LightMgr() {
 
 
 void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
-
     if (handle == nullptr) return;
-
-//	glUniform1i(handle->Uniforms.LightsSize, m_objects.size());
-
-    //std::vector<float> lightPosition;
-    //std::vector<int> lightType;
-    //std::vector<float> lightRadius;
-    //std::vector<float> lightColor;
 
     int index = 0;
     int shadow_index = 0;
     for (const auto& light : m_objects) {
+        if (light == nullptr || !light->GetIsEnable()) continue;
 
-        if (light == nullptr) continue;
-        if (!light->GetIsEnable()) continue;
+        const auto& lightObject = light->GetLight();
+        const auto& position = (light->m_type == LightComponent::DIRECTIONAL)
+                               ? lightObject->direction
+                               : vec4(*lightObject->position, 1.0f);
 
-        LightComponent::LIGHT type = light->m_type;
-        SLight* lightObject = light->GetLight();
-
-        float lightPosition[4] = { 0.f };
-
-        //LightMode
-        //SetLightMode(handle, light, index);
-
-        switch (type) {
-
-            case LightComponent::DIRECTIONAL:
-                lightPosition[0] = lightObject->direction.x;
-                lightPosition[1] = lightObject->direction.y;
-                lightPosition[2] = lightObject->direction.z;
-                lightPosition[3] = lightObject->direction.w;
-                break;
-            case LightComponent::POINT:
-                lightPosition[0] = lightObject->position->x;
-                lightPosition[1] = lightObject->position->y;
-                lightPosition[2] = lightObject->position->z;
-                lightPosition[3] = 1.0f;
-                break;
-            case LightComponent::SPOT:
-                break;
-            case LightComponent::NONE:
-            default:
-                break;
-        }
         glUniform4f(handle->Uniforms.LightPosition + index,
-                    lightPosition[0], lightPosition[1], lightPosition[2], lightPosition[3]);
-        glUniform3f(handle->Uniforms.LightColor + index, lightObject->color.x, lightObject->color.y,
-                    lightObject->color.z);
-        glUniform1i(handle->Uniforms.LightType + index, type);
+                    position.x, position.y, position.z, (light->m_type == LightComponent::DIRECTIONAL) ? 0.0f : 1.0f);
+        glUniform3f(handle->Uniforms.LightColor + index, lightObject->color.x, lightObject->color.y, lightObject->color.z);
+        glUniform1i(handle->Uniforms.LightType + index, light->m_type);
         if (handle->Uniforms.LightRadius >= 0)
             glUniform1f(handle->Uniforms.LightRadius + index, lightObject->radius);
         // Shadow

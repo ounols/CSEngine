@@ -45,40 +45,44 @@ void RenderMgr::SetViewport() {
 }
 
 void RenderMgr::Render() const {
-    // Render Order : Depth Buffers -> Sub Render Buffers -> Main Render Buffers
     // 1. Render depth buffer for shadows.
+    RenderShadows();
+
+    // 2. Render active sub cameras.
+    RenderSubCameras();
+
+    // 3. Main Render Buffer
+    RenderMainCamera();
+}
+
+void RenderMgr::RenderShadows() const {
     const auto& lightObjects = lightMgr->GetAll();
     for (const auto& light : lightObjects) {
         if(!light->IsShadow()) continue;
         m_depthOnlyRenderGroup->RenderAll(*light);
     }
     lightMgr->RefreshShadowCount();
+}
+
+void RenderMgr::RenderSubCameras() const {
     const auto& cameraObjects = cameraMgr->GetAll();
     const auto& mainCamera = cameraMgr->GetCurrentCamera();
 
-    // 2. Render active sub cameras.
     for (const auto& camera : cameraObjects) {
         if(!camera->GetIsEnable() || camera == mainCamera || camera->GetFrameBuffer() == nullptr) continue;
         ResetBuffer(*camera);
         m_deferredRenderGroup->RenderAll(*camera); // Deferred Render
         m_forwardRenderGroup->RenderAll(*camera); // Forward Render
     }
-    if(mainCamera == nullptr) return;
+}
 
-    // 3. Main Render Buffer
+void RenderMgr::RenderMainCamera() const {
+    const auto& mainCamera = cameraMgr->GetCurrentCamera();
+    if (mainCamera == nullptr) return;
+
     ResetBuffer(*mainCamera);
     m_deferredRenderGroup->RenderAll(*mainCamera); // Deferred Render
     m_forwardRenderGroup->RenderAll(*mainCamera); // Forward Render
-
-    /**
-     * @Todo 포스트 프로세싱을 적용하기 위한 코드
-     */
-//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//    glViewport(0, 0, (GLsizei) *m_width, (GLsizei) *m_height);
-//    glUseProgram(m_mainProgramHandle->Program);
-//    mainTexture->Bind(mainTextureId, 0);
-//
-//    ShaderUtil::BindAttributeToPlane();
 
     GetMainBuffer()->AttachFrameBuffer(GL_READ_FRAMEBUFFER);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

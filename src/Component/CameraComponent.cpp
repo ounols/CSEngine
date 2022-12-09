@@ -253,17 +253,14 @@ CameraBase::BackgroundType CameraComponent::GetBackgroundType() {
 }
 
 void CameraComponent::RenderBackground() const {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     switch (m_backgroundType) {
-        case NONE:
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            return;
         case SOLID:
             glClearColor(m_backgroundColor.x, m_backgroundColor.y, m_backgroundColor.z, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            return;
+            break;
         case SKYBOX:
             const auto& mapStruct = m_backgroundMap;
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             if (mapStruct->map == nullptr) return;
 
             glUseProgram(globalSkyboxHandle->Program);
@@ -277,7 +274,7 @@ void CameraComponent::RenderBackground() const {
             ShaderUtil::BindAttributeToCubeMap();
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_CULL_FACE);
-            return;
+            break;
     }
 }
 

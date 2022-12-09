@@ -94,12 +94,12 @@ void main(void) {
 //	if(cutoff < 0.5) discard;
 
 	vec3 N = normalize(v_eyespaceNormal);
-	vec3 V0 = normalize(N + u_cameraPosition);
+	vec3 V0 = normalize(u_cameraPosition - v_worldPosition);
 	vec3 R = reflect(-V0, N);
 	float de = sin((1.0 - abs(dot(N, vec3(1.0, 0.0, 0.0)))) * PI / 2.0);
 
-	lowp vec3 albedo     = pow(texture(u_sampler_albedo, v_textureCoordOut).rrr, vec3(2.2)) * u_albedo + (1.0 - de) * 0.05;
-	lowp float metallic  = 0.8;
+	lowp vec3 albedo     = pow(texture(u_sampler_albedo, v_textureCoordOut).rrr, vec3(2.2)) * u_albedo + (1.0 - de) * 0.02;
+	lowp float metallic  = 0.5;
 	lowp float roughness = 0.7;
 	lowp float ao        = 1.0;
 
