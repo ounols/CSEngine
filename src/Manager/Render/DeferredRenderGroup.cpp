@@ -36,8 +36,8 @@ void DeferredRenderGroup::RegisterObject(SIRender* object) {
     }
     gbuffer->PushBackToLayer(object);
     gbuffer->BindLightPass(lightPassHandle);
-
 }
+
 void DeferredRenderGroup::RemoveObjects(SIRender* object) {
     const auto& material = object->GetMaterialReference();
     const auto& programLayer = m_gbufferLayer;

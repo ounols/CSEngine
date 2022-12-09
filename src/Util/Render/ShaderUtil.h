@@ -136,6 +136,7 @@ namespace CSE {
         static void BindAttributeToPlane();
 
         static void BindAttributeToCubeMap();
+        
     private:
         /**
          * @brief The version of the shader define.
