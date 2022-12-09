@@ -152,10 +152,12 @@ SScene* SSceneLoader::LoadScene(const std::string& path) {
 }
 
 void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps) {
-	std::string name = ConvertSpaceStr(node.getAttribute("name").value);
+	std::string name = ConvertSpaceStr(node.getAttribute("name").value, true);
 	auto node_components = node.children;
 	std::string id = ConvertSpaceStr(node.getAttribute("id").value);
+    std::string hash = node.getAttribute("hash").value;
 	auto obj_new = new SGameObject(name);
+    obj_new->SetHash(hash);
 
 	for (const auto& comp : node_components) {
 		if (comp.name != "component") continue;
@@ -179,6 +181,7 @@ void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs
 	key->node = node;
 	key->id = id;
 	key->obj = obj_new;
+	key->hash = hash;
 
 	objs.push_back(key);
 }
@@ -188,13 +191,13 @@ void SSceneLoader::LinkingID(std::vector<NodeKey*>& objs, SGameObject* root) {
 
 	for (auto node_obj : objs) {
 		auto obj = node_obj->obj;
-		std::string parent_id = ConvertSpaceStr(node_obj->node.getChild("parent").value);
+		std::string parent_hash = ConvertSpaceStr(node_obj->node.getChild("parent").value);
 		obj->RemoveParent();
-		//parent_id = parent_id.substr(1, parent_id.size() - 2);
+		//parent_hash = parent_hash.substr(1, parent_hash.size() - 2);
 
-		if (parent_id == "__ROOT_OF_SCENE__") {
+		if (parent_hash == "__ROOT_OF_SCENE__") {
 			if (root == nullptr)
-				obj->SetParent(SGameObject::FindByID(parent_id));
+				obj->SetParent(SGameObject::FindByID(parent_hash));
 			else
 				obj->SetParent(root);
 			continue;
@@ -202,7 +205,7 @@ void SSceneLoader::LinkingID(std::vector<NodeKey*>& objs, SGameObject* root) {
 
 		SGameObject* target = nullptr;
 		for (auto temp : objs) {
-			if (parent_id == temp->id) {
+			if (parent_hash == temp->hash) {
 				target = temp->obj;
 				break;
 			}
@@ -213,7 +216,7 @@ void SSceneLoader::LinkingID(std::vector<NodeKey*>& objs, SGameObject* root) {
 			continue;
 		}
 		//        if(target == nullptr) {
-		//            target = SGameObject::FindByID(parent_id);
+		//            target = SGameObject::FindByID(parent_hash);
 		//            if(target == nullptr) {
 		//                obj->SetParent(SGameObject::FindByID("__ROOT_OF_SCENE__"));
 		//                continue;
@@ -226,9 +229,9 @@ void SSceneLoader::LinkingID(std::vector<NodeKey*>& objs, SGameObject* root) {
 	for (auto node_obj : remain) {
 		auto obj = node_obj->obj;
 		obj->RemoveParent();
-		std::string parent_id = ConvertSpaceStr(node_obj->node.getChild("parent").value);
+		std::string parent_hash = ConvertSpaceStr(node_obj->node.getChild("parent").value);
 
-		auto parent = SGameObject::FindByID(parent_id);
+		auto parent = SGameObject::FindByHash(parent_hash);
 		obj->SetParent(parent);
 	}
 }
@@ -257,10 +260,12 @@ void SSceneLoader::ExploringPrefab(const XNode& node, std::vector<NodeKey*>& obj
 	auto node_values = node.children;
 	std::string id = ConvertSpaceStr(node.getAttribute("id").value, true);
 	std::string file_id = ConvertSpaceStr(node.getAttribute("fileid").value, true);
+	std::string hash = ConvertSpaceStr(node.getAttribute("hash").value, true);
 
 	//Create!
 	auto prefab = SResource::Create<SPrefab>(file_id);
 	SGameObject* root = prefab->Clone(vec3(), scene->GetRoot());
+    root->SetHash(hash);
 
 	//Change objects value
 	for (const auto& child : node_values) {
@@ -287,11 +292,13 @@ void SSceneLoader::LinkingResourceID(const XNode& node, SGameObject* root, std::
 	if (root->GetResourceID() == obj_fileid) {
 		std::string obj_id = ConvertSpaceStr(node.getAttribute("id").value, true);
 		std::string obj_name = ConvertSpaceStr(node.getAttribute("name").value, true);
+		std::string obj_hash = ConvertSpaceStr(node.getAttribute("hash").value, true);
 
 		auto key = new NodeKey();
 		key->obj = root;
 		key->node = node;
 		key->id = obj_id;
+		key->hash = obj_hash;
 		root->SetName(obj_name);
 		objs.push_back(key);
 
@@ -327,7 +334,7 @@ void SSceneLoader::LinkingResourceID(const XNode& node, SGameObject* root, std::
 }
 
 std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
-	auto prefab = SResource::Get<SPrefab>(obj->GetResourceID());
+	const auto& prefab = SResource::Get<SPrefab>(obj->GetResourceID());
 	if (prefab == nullptr) return "";
 
 	std::string str_p = GetGameObjectValue(prefab->GetRoot(), true);
@@ -341,6 +348,7 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 
 	result += std::string("<prefab name=\"") + ConvertSpaceStr(obj->GetName()) + "\" id=\"" +
 		ConvertSpaceStr(obj->GetID()) + "\" fileid=\"" + ConvertSpaceStr(obj->GetResourceID()) +
+        "\" hash=\"" + obj->GetHash() +
 		"\">\n";
 
 	for (const auto& object_node : n_o->children) {
@@ -408,8 +416,8 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 		}
 
 		if (isChanged) {
-			std::string id = object_node.getAttribute("id").value;
-			std::string str = PrintGameObject(SGameObject::FindByID(id));
+			std::string hash = object_node.getAttribute("hash").value;
+			std::string str = PrintGameObject(SGameObject::FindByHash(hash));
 			result += std::string("<change") + str.substr(1, str.size() - 14) + "</changegameobject>";
 		}
 	}
@@ -423,21 +431,29 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 }
 
 std::string SSceneLoader::PrintGameObject(SGameObject* obj) {
-	std::string values;
+    std::string values;
 
-	std::string res_id = obj->GetResourceID();
-	res_id = res_id.empty() ? "" : std::string(" fileid=\"") + res_id + "\"";
-	values += std::string("<gameobject name=\"") + ConvertSpaceStr(obj->GetName()) + "\" id=\"" +
-		ConvertSpaceStr(obj->GetID()) + "\"" + res_id + ">\n";
-	for (auto component : obj->GetComponents()) {
-		values += component->PrintValue();
-	}
+    // Pre-allocate space for the string to avoid costly re-allocations
+    values.reserve(1024);
 
-	SGameObject* parent = obj->GetParent();
-	values += std::string("<parent>") +
-		((parent == nullptr) ? "__ROOT_OF_SCENE__" : ConvertSpaceStr(parent->GetID())) + "</parent>\n";
+    const std::string& res_id = obj->GetResourceID();
+    values += "<gameobject name=\"" + ConvertSpaceStr(obj->GetName()) + "\" id=\"" +
+              ConvertSpaceStr(obj->GetID()) + "\" hash=\"" + obj->GetHash() + "\"";
+    if (!res_id.empty()) {
+        values += " fileid=\"" + res_id + "\"";
+    }
+    values += ">\n";
 
-	values += "</gameobject>";
+    const auto& components = obj->GetComponents();
+    for (const auto& component : components) {
+        values += component->PrintValue();
+    }
 
-	return values;
+    const SGameObject* parent = obj->GetParent();
+    values += "<parent>" + ((parent == nullptr || parent->GetName() == "__ROOT_OF_SCENE__")
+            ? "__ROOT_OF_SCENE__" : ConvertSpaceStr(parent->GetHash())) + "</parent>\n";
+
+    values += "</gameobject>";
+
+    return values;
 }

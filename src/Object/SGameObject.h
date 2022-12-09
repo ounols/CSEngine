@@ -81,6 +81,8 @@ namespace CSE {
 
         static SGameObject* FindByID(std::string id);
 
+        static SGameObject* FindByHash(const std::string& hash);
+
 
         std::string GetName() const {
             return m_name;
@@ -106,9 +108,12 @@ namespace CSE {
 
         void SetIsEnable(bool is_enable);
 
+        std::string GenerateMeta() override;
+
     private:
         void UpdateComponent(float elapsedTime);
 
+        std::string GetMetaString(unsigned int startIndex) const;
 
     private:
         std::list<SGameObject*> m_children;

@@ -79,6 +79,20 @@ SGameObject* GameObjectMgr::FindByID(const std::string& id) const {
     return nullptr;
 }
 
+SGameObject* GameObjectMgr::FindByHash(const std::string& hash) const {
+
+    std::string obj_hash = split(hash, '?')[0];
+
+    for (const auto& object : m_objects) {
+        if (object->isPrefab()) continue;
+        const auto& objHash = object->GetHash();
+        if (objHash == obj_hash)
+            return object;
+    }
+
+    return nullptr;
+}
+
 SComponent* GameObjectMgr::FindComponentByID(const std::string& id) const {
     auto object = FindByID(id);
     if (object == nullptr) return nullptr;

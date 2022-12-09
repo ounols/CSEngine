@@ -183,6 +183,10 @@ SGameObject* SGameObject::FindByID(std::string id) {
 	return CORE->GetCore(GameObjectMgr)->FindByID(ConvertSpaceStr(std::move(id), true));
 }
 
+SGameObject* SGameObject::FindByHash(const std::string& hash) {
+    return CORE->GetCore(GameObjectMgr)->FindByHash(ConvertSpaceStr(hash, true));
+}
+
 bool SGameObject::GetIsEnable() const {
 	return isEnable;
 }
@@ -250,4 +254,19 @@ void SGameObject::SetResourceID(const std::string& resID, bool setChildren) {
 
 SComponent* SGameObject::GetSComponentByID(const std::string& id) const {
 	return CORE->GetCore(GameObjectMgr)->FindComponentByID(id);
+}
+
+std::string SGameObject::GenerateMeta() {
+    unsigned int startIndex = GetID().size() - GetName().size();
+    return GetMetaString(startIndex);
+}
+
+std::string SGameObject::GetMetaString(unsigned int startIndex) const {
+    std::string rawId = GetID();
+    std::string result = GetID().substr(startIndex) + "?" + m_hash;
+
+    for(const auto child : m_children) {
+        result += '\n' + child->GetMetaString(startIndex);
+    }
+    return result;
 }

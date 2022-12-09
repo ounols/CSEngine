@@ -31,6 +31,7 @@ void CameraComponent::Init() {
 
     m_resultTarget = vec3();
     m_pRatio = const_cast<float*>(CORE->GetCore(CameraMgr)->GetProjectionRatio());
+    Tick(0);
 }
 
 void CameraComponent::Tick(float elapsedTime) {

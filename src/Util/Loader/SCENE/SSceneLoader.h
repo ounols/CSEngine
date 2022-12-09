@@ -15,6 +15,7 @@ namespace CSE {
         struct NodeKey {
             XNode node;
             std::string id;
+            std::string hash;
             SGameObject* obj;
         };
 
