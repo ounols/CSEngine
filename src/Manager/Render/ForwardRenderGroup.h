@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <map>
 #include "../../Util/Render/SRenderGroup.h"
 
 namespace CSE {
@@ -15,7 +16,7 @@ namespace CSE {
     private:
         typedef std::vector<SIRender*> RenderInterfaces;
         typedef std::unordered_map<GLProgramHandle*, RenderInterfaces> ProgramRenderLayer;
-        typedef std::unordered_map<short, ProgramRenderLayer> OrderRenderLayer;
+        typedef std::map<short, ProgramRenderLayer> OrderRenderLayer;
 
     public:
         /**

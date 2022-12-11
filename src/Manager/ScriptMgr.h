@@ -1,12 +1,12 @@
 #pragma once
 #include "../Component/CustomComponent.h"
 #include "../Util/Matrix.h"
-#include "Base/SContainer.h"
+#include "Base/SContainerList.h"
 #include "Base/CoreBase.h"
 
 namespace CSE {
 
-    class ScriptMgr : public SContainer<Sqrat::Object*>, public CoreBase {
+    class ScriptMgr : public SContainerList<Sqrat::Object*>, public CoreBase {
     public:
         ScriptMgr();
 

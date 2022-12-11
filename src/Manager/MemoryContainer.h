@@ -1,12 +1,12 @@
 #pragma once
 #include "../SObject.h"
-#include "Base/SContainer.h"
+#include "Base/SContainerList.h"
 
 namespace CSE {
 
     class SObject;
 
-    class MemoryContainer : public SContainer<SObject*> {
+    class MemoryContainer : public SContainerList<SObject*> {
 
     protected:
         MemoryContainer();

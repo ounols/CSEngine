@@ -11,7 +11,7 @@ namespace CSE {
     /**
      * This class is responsible for deferred rendering of G-Buffer objects.
      */
-    class DeferredRenderGroup  : public SRenderGroup {
+    class DeferredRenderGroup : public SRenderGroup {
     private:
         typedef std::unordered_map<GLProgramHandle*, SGBuffer*> GBufferLayer;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Base/SContainer.h"
+#include "Base/SContainerList.h"
 #include "Base/CoreBase.h"
 #include "../Component/CameraComponent.h"
 
@@ -8,7 +8,7 @@ namespace CSE {
 
     class GLProgramHandle;
 
-    class CameraMgr : public SContainer<CameraComponent*>, public CoreBase {
+    class CameraMgr : public SContainerList<CameraComponent*>, public CoreBase {
     public:
         explicit CameraMgr();
         ~CameraMgr() override;
