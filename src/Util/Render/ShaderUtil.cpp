@@ -327,8 +327,6 @@ void ShaderUtil::BindSkinningDataToShader(const GLProgramHandle& handle, const G
         std::copy(matrix.Pointer(), matrix.Pointer() + 16, std::back_inserter(result));
     }
 
-    for (size_t i = 0; i < jointMatrix.size(); ++i) {
-        glUniformMatrix4fv(handle.Uniforms.JointMatrix + i, 1, GL_FALSE, &result[i * 16]);
-    }
+    glUniformMatrix4fv(handle.Uniforms.JointMatrix, Settings::GetMaxJoints(), GL_FALSE, &result[0]);
     glUniform1i(handle.Uniforms.SkinningMode, 1);
 }
