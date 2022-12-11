@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CSEMAT version="1.0.0">
+<shader id="File:Shader/PBR/PBR-Light-Pass.shader" deferred="1">
+
+<var name="texture.albedo" type="tex" count="1">File:Stormtrooper_D.jpg</var>
+<var name="texture.metallic" type="tex" count="1">File:Stormtrooper_M.jpg</var>
+<var name="texture.roughness" type="tex" count="1">File:Stormtrooper_R.jpg</var>
+<var name="vec3.albedo" type="vec3" count="1">1 1 1</var>
+<var name="float.metallic" type="float" count="1">-1</var>
+<var name="float.roughness" type="float" count="1">-1</var>
+<var name="float.ao" type="float" count="1">1</var>
+
+</shader>
+</CSEMAT>
