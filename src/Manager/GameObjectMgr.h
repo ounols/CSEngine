@@ -31,6 +31,8 @@ namespace CSE {
 
         SComponent* FindComponentByID(const std::string& id) const;
 
+        SComponent* FindComponentByHash(const std::string& hash) const;
+
     private:
         std::queue<SGameObject*> m_destroyObjectsQueue;
 
