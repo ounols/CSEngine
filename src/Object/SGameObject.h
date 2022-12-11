@@ -79,6 +79,8 @@ namespace CSE {
 
         SGameObject* Find(std::string name) const;
 
+        SGameObject* FindLocalByID(const std::string& id);
+
         static SGameObject* FindByID(std::string id);
 
         static SGameObject* FindByHash(const std::string& hash);

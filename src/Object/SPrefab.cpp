@@ -6,6 +6,7 @@
 #include "../Manager/ResMgr.h"
 #include "SPrefab.h"
 #include "../Util/Loader/DAE/DAELoader.h"
+#include "../Util/AssetsDef.h"
 
 using namespace CSE;
 
@@ -61,12 +62,28 @@ bool SPrefab::SetGameObject(SGameObject* obj) {
 void SPrefab::Init(const AssetMgr::AssetReference* asset) {
 
     AssetMgr::TYPE type = asset->type;
-
+    std::string path = asset->path;
 
     switch (type) {
         case AssetMgr::DAE:
-            DAELoader::GeneratePrefab(asset->path.c_str(), nullptr, nullptr, nullptr, this);
+            DAELoader::GeneratePrefab(path.c_str(), nullptr, nullptr, nullptr, this);
             break;
+    }
+
+    std::string hashRaw = OpenNativeAssetsTxtFile(path + ".meta");
+    if(hashRaw.empty()) {
+        hashRaw = "SPrefab:" + GetHash() + '\n' + m_root->GenerateMeta();
+        SaveTxtFile(path + ".meta", hashRaw);
+    }
+
+    auto hashLines = split(hashRaw, '\n');
+    unsigned int lineSize = hashLines.size();
+    SetHash(split(hashLines[0], ':')[1]);
+    for (unsigned int i = 1; i < lineSize; ++i) {
+        auto line = split(hashLines[i], ':');
+        const auto& obj = m_root->FindLocalByID(line[0]);
+        if(obj == nullptr) continue;
+        obj->SetHash(line[1]);
     }
 }
 

@@ -72,4 +72,13 @@ namespace CSE {
 #endif
 		return buf;
 	}
+
+    static bool SaveTxtFile(const std::string& path, std::string data) {
+#ifdef __ANDROID__
+        return true;
+#endif
+        std::ofstream fout(path, std::ios::binary | std::ios::trunc);
+        fout << data;
+        return fout.good();
+    }
 }

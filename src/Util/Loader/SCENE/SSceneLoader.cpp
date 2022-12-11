@@ -357,7 +357,8 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 		std::string obj_id;
 		std::string obj_name = object_node.getAttribute("name").value;
 
-        if(object_node.hasAttribute("fileId")) {
+        // fileID가 있는지 확인
+        if(object_node.hasAttribute("fileid")) {
             obj_id = object_node.getAttribute("fileid").value;
         } else {
             //            std::string id = object_node.getAttribute("id").value;
@@ -381,13 +382,13 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 		//이름 확인
 		isChanged = obj_name != target_node.getAttribute("name").value;
 		//컴포넌트 갯수 확인
-		isChanged = isChanged || object_node.children.size() != target_node.children.size();
+		isChanged |= object_node.children.size() != target_node.children.size();
 		auto compare_o = str_o.substr(object_node.sub_index,
 		                              object_node.getChild("parent").sub_index - object_node.sub_index);
 		auto compare_p = str_p.substr(target_node.sub_index,
 		                              target_node.getChild("parent").sub_index - target_node.sub_index);
 
-		isChanged = isChanged || compare_o != compare_p;
+		isChanged |= compare_o != compare_p;
 
 		if (!isChanged) {
 			std::string o_parent_resID;
