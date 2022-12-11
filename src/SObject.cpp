@@ -43,19 +43,22 @@ std::string SObject::GenerateMeta() {
 void SObject::GenerateHashString() {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, 35); // 0~9, A~Z까지 숫자 생성
+    std::uniform_int_distribution<> dis(0, 61); // 0~9, A~Z, a~z까지 숫자 생성
 
     m_hash.clear();
-    m_hash.reserve(8);
+    m_hash.reserve(16);
 
     for (int i = 0; i < 16; i++) {
         int num = dis(gen);
         if (num < 10) {
             // 0~9인 경우, 숫자 문자로 추가
             m_hash += std::to_string(num);
-        } else {
+        } else if (num < 36) {
             // 10~35인 경우, A~Z인 문자로 추가
             m_hash += static_cast<char>(num + 'A' - 10);
+        } else {
+            // 36~61인 경우, a~z인 문자로 추가
+            m_hash += static_cast<char>(num + 'a' - 36);
         }
     }
 }

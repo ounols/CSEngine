@@ -247,7 +247,7 @@
     <ClInclude Include="..\..\..\src\Manager\Base\Scene.h">
       <Filter>src\Manager\Base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\Manager\Base\SContainer.h">
+    <ClInclude Include="..\..\..\src\Manager\Base\SContainerList.h">
       <Filter>src\Manager\Base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\Object\SGameObject.h">
@@ -444,6 +444,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\Util\Render\SRenderGroup.h">
       <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Object\SGameObjectFromSPrefab.h">
+      <Filter>src\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

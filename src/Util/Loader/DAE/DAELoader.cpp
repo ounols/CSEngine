@@ -1,6 +1,7 @@
 #include "DAELoader.h"
 #include "../../MoreString.h"
 #include "DAEUtil/DAEConvertSGameObject.h"
+#include "../../../Object/SGameObjectFromSPrefab.h"
 #include <iostream>
 #include "../../../Component/DrawableSkinnedMeshComponent.h"
 #include "../../../Component/RenderComponent.h"
@@ -160,7 +161,7 @@ bool DAELoader::LoadGeometry(const XNode& root_g, DAEMeshData* meshData) {
     std::vector<VertexSkinData*> vertexSkinData;
     if (m_isSkinning) {
         vertexSkinData =
-                m_skeletonData == nullptr ? std::vector<VertexSkinData*>() : m_skinningData->get_verticesSkinData();
+                m_skinningData == nullptr ? std::vector<VertexSkinData*>() : m_skinningData->get_verticesSkinData();
     }
 
     //RAW data
@@ -518,20 +519,20 @@ DAELoader::AttachDataToObjSurface(int vertices_size, std::vector<float> vertices
 SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
     if (prefab == nullptr)
         prefab = new SPrefab();
-    auto* root = new SGameObject(m_name);
+    auto* root = new SGameObjectFromSPrefab(m_name);
     prefab->SetGameObject(root);
 
     SGameObject* joint_root = nullptr;
 
     if (m_isSkinning) {
-        joint_root = new SGameObject("Armature");
+        joint_root = new SGameObjectFromSPrefab("Armature");
         root->AddChild(joint_root);
         DAEConvertSGameObject::CreateJoints(joint_root, m_skeletonData->getHeadJoint());
     }
 
     JointComponent* joint_root_component = m_isSkinning ? joint_root->GetChildren().front()->GetComponent<JointComponent>() : nullptr;
     for (const auto& mesh : m_meshList) {
-        auto* mesh_root = new SGameObject(mesh->meshName);
+        auto* mesh_root = new SGameObjectFromSPrefab(mesh->meshName);
         root->AddChild(mesh_root);
         DrawableStaticMeshComponent* mesh_component = nullptr;
 

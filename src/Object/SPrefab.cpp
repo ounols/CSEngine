@@ -7,6 +7,7 @@
 #include "SPrefab.h"
 #include "../Util/Loader/DAE/DAELoader.h"
 #include "../Util/AssetsDef.h"
+#include "SGameObjectFromSPrefab.h"
 
 using namespace CSE;
 
@@ -81,9 +82,10 @@ void SPrefab::Init(const AssetMgr::AssetReference* asset) {
     SetHash(split(hashLines[0], ':')[1]);
     for (unsigned int i = 1; i < lineSize; ++i) {
         auto line = split(hashLines[i], ':');
-        const auto& obj = m_root->FindLocalByID(line[0]);
+        const auto& obj = static_cast<SGameObjectFromSPrefab*>(m_root->FindLocalByID(line[0]));
         if(obj == nullptr) continue;
         obj->SetHash(line[1]);
+        obj->SetRefHash(line[1]);
     }
 }
 

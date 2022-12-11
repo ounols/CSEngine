@@ -98,8 +98,8 @@ void main(void) {
 
 
 	float de = sin((1.0 - abs(dot(N, V0))) * PI / 2.0);
-	float step_de = (1.0 - de) * 0.1;
-	highp vec3 src        = FastBlur(u_sampler_src, gl_FragCoord.xy / u_src_size).rgb;
+	float step_de = (de) * 0.01;
+	highp vec3 src        = FastBlur(u_sampler_src, clamp(gl_FragCoord.xy / u_src_size + step_de, 0.0, 1.0)).rgb;
 	highp vec3 albedo     = pow(src, vec3(3.2 * de)) * (u_albedo - vec3(step_de));
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0

@@ -7,6 +7,7 @@
 #include "../Object/SScene.h"
 #include "../Component/TransformComponent.h"
 #include "EngineCore.h"
+#include "../Object/SGameObjectFromSPrefab.h"
 
 #include <map>
 
@@ -65,11 +66,20 @@ void CloningObjects(SGameObject* object, std::map<SComponent*, SComponent*>& clo
     if(object == nullptr) return;
 
     //게임 오브젝트 복사
-    auto cloneObject = new SGameObject(object->GetName() + "");
+    SGameObject* cloneObject = nullptr;
+    const auto& objectFromPrefab = dynamic_cast<SGameObjectFromSPrefab*>(object);
+    if(objectFromPrefab != nullptr) {
+        const auto& cloneFromPrefab = new SGameObjectFromSPrefab(object->GetName() + "");
+        cloneFromPrefab->SetRefHash(objectFromPrefab->GetRefHash());
+        cloneObject = cloneFromPrefab;
+    } else {
+        cloneObject = new SGameObject(object->GetName() + "");
+    }
     clone_obj[object] = cloneObject;
     cloneObject->SetIsEnable(object->GetIsEnable());
     cloneObject->SetIsPrefab(object->isPrefab(true));
     cloneObject->SetResourceID(object->GetResourceID());
+
 
     //게임 컴포넌트 복사
     const auto& target_component = object->GetComponents();

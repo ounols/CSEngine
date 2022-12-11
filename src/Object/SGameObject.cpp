@@ -17,14 +17,16 @@ SGameObject::SGameObject() {
     SGameObject::Init();
 }
 
-SGameObject::SGameObject(const SGameObject& src) : SObject() {
+SGameObject::SGameObject(std::string name) {
     CORE->GetCore(GameObjectMgr)->Register(this);
+    m_name = std::move(name);
     m_transform = CreateComponent<TransformComponent>();
 
     SGameObject::Init();
 }
 
-SGameObject::SGameObject(std::string name) {
+SGameObject::SGameObject(std::string name, std::string hash) {
+    SetHash(hash);
     CORE->GetCore(GameObjectMgr)->Register(this);
     m_name = std::move(name);
     m_transform = CreateComponent<TransformComponent>();
@@ -87,6 +89,7 @@ void SGameObject::Destroy() {
 
 void SGameObject::AddChild(SGameObject* object) {
     if (object == nullptr) return;
+    object->RemoveParent();
     m_children.push_back(object);
     object->m_parent = this;
 }
@@ -163,16 +166,8 @@ std::string SGameObject::GetID() const {
 std::string SGameObject::GetID(const SComponent* component) const {
     if (component == nullptr) return "";
 
-    int id = 0;
-
-    for (const auto& comp: m_components) {
-        if (component == comp) {
-            return GetID() + '?' + component->GetClassType();
-        }
-        id++;
-    }
-
-    return "";
+    const auto& object = component->GetGameObject();
+    return object->m_hash + "?" + component->GetClassType();
 }
 
 SGameObject* SGameObject::Find(std::string name) const {
@@ -264,8 +259,18 @@ void SGameObject::SetResourceID(const std::string& resID, bool setChildren) {
     }
 }
 
-SComponent* SGameObject::GetSComponentByID(const std::string& id) const {
-    return CORE->GetCore(GameObjectMgr)->FindComponentByID(id);
+SComponent* SGameObject::GetSComponentByHash(const std::string& hash) const {
+    const auto& object = CORE->GetCore(GameObjectMgr)->FindByHash(ConvertSpaceStr(hash, true));
+    if(object == nullptr) return nullptr;
+
+    std::string componentName = split(hash, '?')[1];
+
+    for (const auto& component : object->m_components) {
+        if(componentName == component->GetClassType()) {
+            return component;
+        }
+    }
+    return nullptr;
 }
 
 std::string SGameObject::GenerateMeta() {

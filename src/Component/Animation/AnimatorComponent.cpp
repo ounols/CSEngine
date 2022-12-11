@@ -1,4 +1,5 @@
 #include "AnimatorComponent.h"
+#include "../../Object/SGameObjectFromSPrefab.h"
 
 using namespace CSE;
 
@@ -148,7 +149,7 @@ void AnimatorComponent::SetValue(std::string name_str, Arguments value) {
     } else if (name_str == "m_currentAnimation") {
         m_currentAnimation = SResource::Create<Animation>(value[0]);
     } else if (name_str == "m_rootJoint") {
-        m_rootJoint = gameObject->GetComponentByID<JointComponent>(value[0]);
+        SET_SPREFAB_REF(m_rootJoint, JointComponent);
     }
 }
 
@@ -159,7 +160,7 @@ std::string AnimatorComponent::PrintValue() const {
     PRINT_VALUE(m_animationTime, m_animationTime);
     PRINT_VALUE(m_startTime, m_startTime);
     PRINT_VALUE(m_currentAnimation, ConvertSpaceStr(m_currentAnimation->GetID()));
-    PRINT_VALUE(m_rootJoint, ConvertSpaceStr(m_rootJoint->GetGameObject()->GetID(m_rootJoint)));
+    PRINT_VALUE_SPREFAB_REF(m_rootJoint);
 
 
     PRINT_END("component");

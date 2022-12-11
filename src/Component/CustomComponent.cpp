@@ -236,7 +236,7 @@ void CustomComponent::BindValue(CustomComponent::VARIABLE* variable, const char*
     else if(type == "int") m_classInstance->set(variable->name.c_str(), std::stoi(value_str));
 //    else if(type == "arr") m_classInstance->set(variable->name.c_str(), std::stof(value_str));
     else if(type == "comp") {
-        SComponent* comp = gameObject->GetSComponentByID(value_str);
+        SComponent* comp = gameObject->GetSComponentByHash(value_str);
         MoreComponentFunc::BindComponentToSQInstance(comp, variable->name, m_classInstance);
     }
     else if(type == "gobj") {
@@ -244,7 +244,7 @@ void CustomComponent::BindValue(CustomComponent::VARIABLE* variable, const char*
         m_classInstance->set(variable->name.c_str(), obj);
     }
     else if(type == "nut") {
-        SComponent* comp = gameObject->GetSComponentByID(value_str);
+        SComponent* comp = gameObject->GetSComponentByHash(value_str);
 
         if(dynamic_cast<CustomComponent*>(comp) != nullptr) {
             auto comp_r = static_cast<CustomComponent*>(comp);

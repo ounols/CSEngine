@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CSESCENE version="1.0.0">
-<prefab name="room" id="__ROOT_OF_SCENE__/room" fileid="File:Mesh/model/room.dae" hash="3QV8BAUSSH050ZR0">
-<changegameobject name="room" id="__ROOT_OF_SCENE__/room" hash="3QV8BAUSSH050ZR0" fileid="File:Mesh/model/room.dae">
+<prefab name="room" fileid="File:Mesh/model/room.dae" hash="HLB1JNI0J8XDGMD5">
+<changegameobject name="room" hash="HLB1JNI0J8XDGMD5" fileid="File:Mesh/model/room.dae" ref="UIGT8Z7RODKHHEIU">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 0.2 0</value>
 <value name="m_scale">4 4 4</value>
 <value name="m_rotation">0 0.706825 0 0.707388</value>
 </component>
 <parent>__ROOT_OF_SCENE__</parent>
-</changegameobject><changegameobject name="meshId1_name-mesh" id="__ROOT_OF_SCENE__/room/meshId1_name-mesh" hash="ASZ69UVV01P9KK9X" fileid="File:Mesh/model/room.dae*meshId1_name-mesh">
+</changegameobject><changegameobject name="meshId1_name-mesh" hash="QE0R1PZADU6IDB1F" fileid="File:Mesh/model/room.dae*meshId1_name-mesh" ref="FM2NMGCAN7J2B9T2">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
@@ -17,28 +17,15 @@
 <component type="RenderComponent" enable="1">
 <value name="material">File:Material/Room.mat</value>
 </component>
-<parent>3QV8BAUSSH050ZR0</parent>
-</changegameobject></prefab><gameobject name="light" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/lt/light" hash="KMURBBFTWNW1YZ6Z">
-<component type="TransformComponent" enable="1">
-<value name="m_position">-2.8 -1.5 0</value>
-<value name="m_scale">1 1 1</value>
-<value name="m_rotation">0 0 0 1</value>
-</component>
-<component type="LightComponent" enable="1">
-<value name="m_type">2</value>
-<value name="m_disableShadow">1</value>
-<value name="m_near">-10</value>
-<value name="m_far">10</value>
-</component>
-<parent>0U323GS0XCF2XAUM</parent>
-</gameobject><gameobject name="root$nbsp:of$nbsp:mesh" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh" hash="R5YK1ZK2YGDF93OR">
+<parent>HLB1JNI0J8XDGMD5</parent>
+</changegameobject></prefab><gameobject name="root$nbsp:of$nbsp:mesh" hash="1YNU2G5A8K7A3G9S">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
 <parent>__ROOT_OF_SCENE__</parent>
-</gameobject><gameobject name="ct" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/ct" hash="DN5WP4084PNAITMN">
+</gameobject><gameobject name="ct" hash="KWF6ITUSP1WF3XAY">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 -0.3 0</value>
 <value name="m_scale">1 1 1</value>
@@ -50,18 +37,18 @@
 <value name="__variable__">lightComp null null</value>
 <value name="__variable__">ambient null null</value>
 </component>
-<parent>R5YK1ZK2YGDF93OR</parent>
-</gameobject><gameobject name="camera" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/ct/camera" hash="3FSL5OPK02Z5EG80">
+<parent>1YNU2G5A8K7A3G9S</parent>
+</gameobject><gameobject name="camera" hash="N3M9GYPKWT3MW2PC">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 0.2 0.8</value>
 <value name="m_scale">1 1 1</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
 <component type="CameraComponent" enable="1">
-<value name="m_eye">__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/ct/camera?TransformComponent</value>
+<value name="m_eye">N3M9GYPKWT3MW2PC?TransformComponent</value>
 <value name="m_target">0 0 -1</value>
 <value name="m_up">0 1 0</value>
-<value name="m_targetObject">__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/ct</value>
+<value name="m_targetObject">KWF6ITUSP1WF3XAY</value>
 <value name="m_cameraMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
 <value name="m_projectionMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
 <value name="m_type">1</value>
@@ -72,8 +59,8 @@
 <value name="m_backgroundColor">0.4 0.4 0.4</value>
 <value name="m_backgroundMap.map">envCubemap.textureCubeMap</value>
 </component>
-<parent>DN5WP4084PNAITMN</parent>
-</gameobject><gameobject name="lt" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/lt" hash="0U323GS0XCF2XAUM">
+<parent>KWF6ITUSP1WF3XAY</parent>
+</gameobject><gameobject name="lt" hash="C8POEZJU789JBSFT">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">0.2 0.2 0.2</value>
@@ -85,8 +72,8 @@
 <value name="__variable__">lightComp null null</value>
 <value name="__variable__">ambient null null</value>
 </component>
-<parent>R5YK1ZK2YGDF93OR</parent>
-</gameobject><gameobject name="light" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/lt/light" hash="KMURBBFTWNW1YZ6Z">
+<parent>1YNU2G5A8K7A3G9S</parent>
+</gameobject><gameobject name="light" hash="GSNK7GRP3NLPV5T1">
 <component type="TransformComponent" enable="1">
 <value name="m_position">-2.8 -1.5 0</value>
 <value name="m_scale">1 1 1</value>
@@ -98,16 +85,16 @@
 <value name="m_near">-10</value>
 <value name="m_far">10</value>
 </component>
-<parent>0U323GS0XCF2XAUM</parent>
-</gameobject><prefab name="jack" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/jack" fileid="File:jack.dae" hash="QTG9XAKLRUB8M0SQ">
-<changegameobject name="jack" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/jack" hash="QTG9XAKLRUB8M0SQ" fileid="File:jack.dae">
+<parent>C8POEZJU789JBSFT</parent>
+</gameobject><prefab name="jack" fileid="File:jack.dae" hash="PNNPXC91O9JHSMAP">
+<changegameobject name="jack" hash="PNNPXC91O9JHSMAP" fileid="File:jack.dae" ref="JZN0PRVPQOX97ACP">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 -0.15 0</value>
 <value name="m_scale">0.0002 0.0002 0.0002</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
-<parent>R5YK1ZK2YGDF93OR</parent>
-</changegameobject><changegameobject name="Mesh_003-mesh" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/jack/Mesh_003-mesh" hash="SMM2YZ6S8WKAD1NS" fileid="File:jack.dae*Mesh_003-mesh">
+<parent>1YNU2G5A8K7A3G9S</parent>
+</changegameobject><changegameobject name="Mesh_003-mesh" hash="8L5W6DBAXXD5W0SQ" fileid="File:jack.dae*Mesh_003-mesh" ref="0QQBQ1I6FT6MR2PU">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
@@ -116,8 +103,8 @@
 <component type="RenderComponent" enable="1">
 <value name="material">File:Material/Label.mat</value>
 </component>
-<parent>QTG9XAKLRUB8M0SQ</parent>
-</changegameobject><changegameobject name="Mesh_002-mesh" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/jack/Mesh_002-mesh" hash="WE31MHSFWXEK7SG4" fileid="File:jack.dae*Mesh_002-mesh">
+<parent>PNNPXC91O9JHSMAP</parent>
+</changegameobject><changegameobject name="Mesh_002-mesh" hash="X0WVE3PEFPF4D08E" fileid="File:jack.dae*Mesh_002-mesh" ref="YZE7C63AIDWJOW41">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
@@ -126,8 +113,8 @@
 <component type="RenderComponent" enable="1">
 <value name="material">File:Material/Label.mat</value>
 </component>
-<parent>QTG9XAKLRUB8M0SQ</parent>
-</changegameobject><changegameobject name="Mesh-mesh" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/jack/Mesh-mesh" hash="8GRCXUB7WL0FDD34" fileid="File:jack.dae*Mesh-mesh">
+<parent>PNNPXC91O9JHSMAP</parent>
+</changegameobject><changegameobject name="Mesh-mesh" hash="2RZ5GCQU3YSOR9XI" fileid="File:jack.dae*Mesh-mesh" ref="A8FKMMC8BEU1BRCN">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
@@ -136,16 +123,16 @@
 <component type="RenderComponent" enable="1">
 <value name="material">File:Material/Jack.mat</value>
 </component>
-<parent>QTG9XAKLRUB8M0SQ</parent>
-</changegameobject></prefab><prefab name="jack" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/jack" fileid="File:jack.dae" hash="DF0GB5LH2MGX0WU0">
-<changegameobject name="jack" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/jack" hash="DF0GB5LH2MGX0WU0" fileid="File:jack.dae">
+<parent>PNNPXC91O9JHSMAP</parent>
+</changegameobject></prefab><prefab name="jack" fileid="File:jack.dae" hash="UOSMN6YOHQZV3ND0">
+<changegameobject name="jack" hash="UOSMN6YOHQZV3ND0" fileid="File:jack.dae" ref="JZN0PRVPQOX97ACP">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0.1 -0.45 0.12</value>
 <value name="m_scale">0.0002 0.0002 0.0002</value>
 <value name="m_rotation">0.620297 0.33914 0.33887 0.620792</value>
 </component>
-<parent>R5YK1ZK2YGDF93OR</parent>
-</changegameobject><changegameobject name="Mesh_003-mesh" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/jack/Mesh_003-mesh" hash="ZCY8K9P0B6II6NQH" fileid="File:jack.dae*Mesh_003-mesh">
+<parent>1YNU2G5A8K7A3G9S</parent>
+</changegameobject><changegameobject name="Mesh_003-mesh" hash="O2TI0NXCN3WYTR7D" fileid="File:jack.dae*Mesh_003-mesh" ref="0QQBQ1I6FT6MR2PU">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
@@ -154,8 +141,8 @@
 <component type="RenderComponent" enable="1">
 <value name="material">File:Material/Label.mat</value>
 </component>
-<parent>DF0GB5LH2MGX0WU0</parent>
-</changegameobject><changegameobject name="Mesh_002-mesh" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/jack/Mesh_002-mesh" hash="2P5HEMDGPC7KLBGN" fileid="File:jack.dae*Mesh_002-mesh">
+<parent>UOSMN6YOHQZV3ND0</parent>
+</changegameobject><changegameobject name="Mesh_002-mesh" hash="IVPYY9DED44QO28S" fileid="File:jack.dae*Mesh_002-mesh" ref="YZE7C63AIDWJOW41">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
@@ -164,8 +151,8 @@
 <component type="RenderComponent" enable="1">
 <value name="material">File:Material/Label.mat</value>
 </component>
-<parent>DF0GB5LH2MGX0WU0</parent>
-</changegameobject><changegameobject name="Mesh-mesh" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/jack/Mesh-mesh" hash="F2B3VTYWOQ8J9BK4" fileid="File:jack.dae*Mesh-mesh">
+<parent>UOSMN6YOHQZV3ND0</parent>
+</changegameobject><changegameobject name="Mesh-mesh" hash="ACE1D8A1COS4NOLE" fileid="File:jack.dae*Mesh-mesh" ref="A8FKMMC8BEU1BRCN">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 0 0</value>
 <value name="m_scale">1 1 1</value>
@@ -174,8 +161,8 @@
 <component type="RenderComponent" enable="1">
 <value name="material">File:Material/Jack.mat</value>
 </component>
-<parent>DF0GB5LH2MGX0WU0</parent>
-</changegameobject></prefab><gameobject name="" id="__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh" hash="0GM2P88LBTXVAW1Y">
+<parent>UOSMN6YOHQZV3ND0</parent>
+</changegameobject></prefab><gameobject name="" hash="C0KQWJRLQY1DMEO7">
 <component type="TransformComponent" enable="1">
 <value name="m_position">-0.2 -0.3 -0.2</value>
 <value name="m_scale">0.5 0.5 0.5</value>
@@ -184,8 +171,8 @@
 <component type="RenderComponent" enable="1">
 <value name="material">File:Material/SSS_PBR.mat</value>
 </component>
-<parent>R5YK1ZK2YGDF93OR</parent>
-</gameobject><gameobject name="testscript2$nbsp:object" id="__ROOT_OF_SCENE__/testscript2$nbsp:object" hash="86KF8J4KIK3WM586">
+<parent>1YNU2G5A8K7A3G9S</parent>
+</gameobject><gameobject name="testscript2$nbsp:object" hash="KCJFSMMARWAN7Z5A">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 -0.7 0</value>
 <value name="m_scale">1 1 1</value>
@@ -200,17 +187,17 @@
 <value name="__variable__">test_int this$nbsp:is$nbsp:test$nbsp:string!!$nbsp:문자열이다$nbsp:이거슨 str</value>
 </component>
 <parent>__ROOT_OF_SCENE__</parent>
-</gameobject><gameobject name="testscript2$nbsp:object" id="__ROOT_OF_SCENE__/testscript2$nbsp:object/testscript2$nbsp:object" hash="AUWHT1VQGSAMPBMQ">
+</gameobject><gameobject name="testscript2$nbsp:object" hash="YEX0R45S41ED1KQC">
 <component type="TransformComponent" enable="1">
 <value name="m_position">-2 -0.1 0</value>
 <value name="m_scale">0.5 0.5 0.5</value>
 <value name="m_rotation">0 0 0 1</value>
 </component>
 <component type="CameraComponent" enable="1">
-<value name="m_eye">__ROOT_OF_SCENE__/testscript2$nbsp:object/testscript2$nbsp:object?TransformComponent</value>
+<value name="m_eye">YEX0R45S41ED1KQC?TransformComponent</value>
 <value name="m_target">0 0 -1</value>
 <value name="m_up">0 1 0</value>
-<value name="m_targetObject">__ROOT_OF_SCENE__/root$nbsp:of$nbsp:mesh/lt/light</value>
+<value name="m_targetObject">GSNK7GRP3NLPV5T1</value>
 <value name="m_cameraMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
 <value name="m_projectionMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
 <value name="m_type">1</value>
@@ -222,8 +209,8 @@
 <value name="m_backgroundColor">0.4 0.4 0.4</value>
 <value name="m_backgroundMap.map">envCubemap.textureCubeMap</value>
 </component>
-<parent>86KF8J4KIK3WM586</parent>
-</gameobject><gameobject name="directional" id="__ROOT_OF_SCENE__/directional" hash="4XWY34BXX5QAV5CD">
+<parent>KCJFSMMARWAN7Z5A</parent>
+</gameobject><gameobject name="directional" hash="OXL04YMCH492E8I4">
 <component type="TransformComponent" enable="1">
 <value name="m_position">0 1 0</value>
 <value name="m_scale">1 1 1</value>

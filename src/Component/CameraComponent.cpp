@@ -177,14 +177,15 @@ void CameraComponent::SetProjectionMatrix() const {
 void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
     if (name_str == "m_eye") {
         m_eye = static_cast<TransformComponent*>(
-                SGameObject::FindByID(value[0])->GetTransform()
+                SGameObject::FindByHash(value[0])->GetTransform()
                 )->GetPosition();
     } else if (name_str == "m_target") {
         SET_VEC3(m_target);
     } else if (name_str == "m_up") {
         SET_VEC3(m_up);
     } else if (name_str == "m_targetObject") {
-        m_targetObject = SGameObject::FindByID(value[0]);
+        if(value.size() <= 0) return;
+        m_targetObject = SGameObject::FindByHash(value[0]);
     } else if (name_str == "m_cameraMatrix") {
         SET_MAT4(m_cameraMatrix);
     } else if (name_str == "m_projectionMatrix") {
@@ -220,7 +221,7 @@ std::string CameraComponent::PrintValue() const {
     PRINT_VALUE(m_eye, ConvertSpaceStr(gameObject->GetID(gameObject->GetComponent<TransformComponent>())));
     PRINT_VALUE_VEC3(m_target);
     PRINT_VALUE_VEC3(m_up);
-    PRINT_VALUE(m_targetObject, m_targetObject == nullptr ? "" : ConvertSpaceStr(m_targetObject->GetID()));
+    PRINT_VALUE(m_targetObject, m_targetObject == nullptr ? "" : ConvertSpaceStr(m_targetObject->GetHash()));
     PRINT_VALUE_MAT4(m_cameraMatrix);
     PRINT_VALUE_MAT4(m_projectionMatrix);
     PRINT_VALUE(m_type, static_cast<int>(m_type));

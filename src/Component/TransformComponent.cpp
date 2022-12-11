@@ -103,6 +103,5 @@ std::string TransformComponent::PrintValue() const {
     PRINT_VALUE(m_scale, m_scale.x, ' ', m_scale.y, ' ', m_scale.z);
     PRINT_VALUE(m_rotation, m_rotation.x, ' ', m_rotation.y, ' ', m_rotation.z, ' ', m_rotation.w);
 
-
     PRINT_END("component");
 }

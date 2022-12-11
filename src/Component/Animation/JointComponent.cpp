@@ -65,28 +65,13 @@ void JointComponent::SetBindLocalMatrix(const mat4& mat) {
 
 void JointComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
     if(name_str == "m_inverseTransformMatrix") {
-        mat4 mat = mat4();
-        mat.x.Set(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]), std::stof(value[3]));
-        mat.y.Set(std::stof(value[4]), std::stof(value[5]), std::stof(value[6]), std::stof(value[7]));
-        mat.z.Set(std::stof(value[8]), std::stof(value[9]), std::stof(value[10]), std::stof(value[11]));
-        mat.w.Set(std::stof(value[12]), std::stof(value[13]), std::stof(value[14]), std::stof(value[15]));
-        m_inverseTransformMatrix = mat4(mat);
+        SET_MAT4(m_inverseTransformMatrix)
     }
     else if(name_str == "m_animatedMatrix") {
-        mat4 mat = mat4();
-        mat.x.Set(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]), std::stof(value[3]));
-        mat.y.Set(std::stof(value[4]), std::stof(value[5]), std::stof(value[6]), std::stof(value[7]));
-        mat.z.Set(std::stof(value[8]), std::stof(value[9]), std::stof(value[10]), std::stof(value[11]));
-        mat.w.Set(std::stof(value[12]), std::stof(value[13]), std::stof(value[14]), std::stof(value[15]));
-        m_animatedMatrix = mat4(mat);
+        SET_MAT4(m_animatedMatrix)
     }
     else if(name_str == "m_localBindMatrix") {
-        mat4 mat = mat4();
-        mat.x.Set(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]), std::stof(value[3]));
-        mat.y.Set(std::stof(value[4]), std::stof(value[5]), std::stof(value[6]), std::stof(value[7]));
-        mat.z.Set(std::stof(value[8]), std::stof(value[9]), std::stof(value[10]), std::stof(value[11]));
-        mat.w.Set(std::stof(value[12]), std::stof(value[13]), std::stof(value[14]), std::stof(value[15]));
-        m_localBindMatrix = mat4(mat);
+        SET_MAT4(m_localBindMatrix)
     }
 }
 

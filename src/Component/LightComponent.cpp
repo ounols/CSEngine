@@ -159,6 +159,8 @@ void LightComponent::SetValue(std::string name_str, Arguments value) {
         m_near = std::stof(value[0]);
     } else if (name_str == "m_far") {
         m_far = std::stof(value[0]);
+    } else if (name_str == "m_direction") {
+        SET_VEC4(m_light->direction);
     }
 
     SetLightType(m_type);
@@ -171,6 +173,8 @@ std::string LightComponent::PrintValue() const {
 	PRINT_VALUE(m_disableShadow, m_disableShadow ? 1 : 0);
     PRINT_VALUE(m_near, m_near);
     PRINT_VALUE(m_far, m_far);
+    vec4 m_direction = m_light->direction;
+    PRINT_VALUE_VEC4(m_direction);
 
 	PRINT_END("component");
 }
