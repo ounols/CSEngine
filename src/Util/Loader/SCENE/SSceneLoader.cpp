@@ -357,14 +357,13 @@ std::string SSceneLoader::ComparePrefab(SGameObject* obj) {
 		std::string obj_id;
 		std::string obj_name = object_node.getAttribute("name").value;
 
-		try {
-			obj_id = object_node.getAttribute("fileid").value;
-		}
-		catch (int e) {
-			//            std::string id = object_node.getAttribute("id").value;
-			//            addedObject_str += PrintGameObject(SGameObject::FindByID(id));
-			continue;
-		}
+        if(object_node.hasAttribute("fileId")) {
+            obj_id = object_node.getAttribute("fileid").value;
+        } else {
+            //            std::string id = object_node.getAttribute("id").value;
+            //            addedObject_str += PrintGameObject(SGameObject::FindByID(id));
+            continue;
+        }
 
 		for (const auto& prefab_node : n_p->children) {
 			std::string prefab_id = prefab_node.getAttribute("fileid").value;
