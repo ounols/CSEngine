@@ -30,6 +30,8 @@ uniform float u_roughness;
 uniform float u_ao;
 //[FLOAT_IRRADIANCE]//
 uniform vec3 u_irradiance;
+//[vec3.camera]//
+uniform vec3 u_cameraPosition;
 
 
 //[light.type]//

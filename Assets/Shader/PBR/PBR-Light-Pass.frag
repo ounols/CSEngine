@@ -87,7 +87,7 @@ vec3 WorldPosFromDepth(float depth, vec2 uv) {
 void main(void) {
 
 	lowp float depth     = texture(u_sampler_depth, v_textureCoordOut).r;
-	if(depth >= 1) {
+	if(depth >= 1.0) {
 		discard;
 	}
 
