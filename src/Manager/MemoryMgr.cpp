@@ -59,6 +59,7 @@ void MemoryMgr::ExterminateObjects(bool killAll) {
 
         object->Exterminate();
         iter = m_objects.erase(iter);
+        m_hashContainer.erase(object->GetHash());
         SAFE_DELETE(object);
 #ifdef WIN32
         OutputDebugStringA("deleted.\n");

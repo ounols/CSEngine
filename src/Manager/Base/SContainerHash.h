@@ -36,6 +36,10 @@ namespace CSE {
             }
         }
 
+        bool HasHash(const std::string& hash) const {
+            return m_objects.count(hash) > 0;
+        }
+
         T Get(std::string index) const override {
             return m_objects.at(index);
         }
