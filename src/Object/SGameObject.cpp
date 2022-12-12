@@ -7,6 +7,7 @@
 #include "../Component/TransformComponent.h"
 #include "../Component/CustomComponent.h"
 #include "../Manager/EngineCore.h"
+#include "../Util/Loader/XML/XML.h"
 
 using namespace CSE;
 
@@ -261,29 +262,33 @@ void SGameObject::SetResourceID(const std::string& resID, bool setChildren) {
 
 SComponent* SGameObject::GetSComponentByHash(const std::string& hash) const {
     const auto& object = CORE->GetCore(GameObjectMgr)->FindByHash(ConvertSpaceStr(hash, true));
-    if(object == nullptr) return nullptr;
+    if (object == nullptr) return nullptr;
 
     std::string componentName = split(hash, '?')[1];
 
-    for (const auto& component : object->m_components) {
-        if(componentName == component->GetClassType()) {
+    for (const auto& component: object->m_components) {
+        if (componentName == component->GetClassType()) {
             return component;
         }
     }
     return nullptr;
 }
 
-std::string SGameObject::GenerateMeta() {
-    unsigned int startIndex = GetID().size() - GetName().size();
-    return GetMetaString(startIndex);
-}
+std::string GetMetaString(const SGameObject& object, unsigned int startIndex) {
+    std::string&& id = object.GetID().substr(startIndex);
+    std::string&& hash = object.GetHash();
 
-std::string SGameObject::GetMetaString(unsigned int startIndex) const {
-    std::string rawId = GetID();
-    std::string result = GetID().substr(startIndex) + ":" + m_hash;
+    std::string result = "<hash id=\"" + std::move(id) + "\">" + std::move(hash) + "</hash>";
 
-    for (const auto child: m_children) {
-        result += '\n' + child->GetMetaString(startIndex);
+    const auto& children = object.GetChildren();
+    for (const auto& child: children) {
+        result += '\n' + GetMetaString(*child, startIndex);
     }
     return result;
 }
+
+std::string SGameObject::GenerateMeta() {
+    unsigned int startIndex = GetID().size() - GetName().size();
+    return GetMetaString(*this, startIndex);
+}
+

@@ -9,8 +9,8 @@ using namespace CSE;
 MemoryMgr* memoryMgr = nullptr;
 
 SObject::SObject() {
-    GenerateHashString();
     memoryMgr = CORE->GetCore(MemoryMgr);
+    GenerateHashString();
 	// register this object to MemoryContainer class
     memoryMgr->Register(this);
 }
@@ -48,17 +48,30 @@ void SObject::GenerateHashString() {
     m_hash.clear();
     m_hash.reserve(16);
 
-    for (int i = 0; i < 16; i++) {
-        int num = dis(gen);
-        if (num < 10) {
-            // 0~9인 경우, 숫자 문자로 추가
-            m_hash += std::to_string(num);
-        } else if (num < 36) {
-            // 10~35인 경우, A~Z인 문자로 추가
-            m_hash += static_cast<char>(num + 'A' - 10);
-        } else {
-            // 36~61인 경우, a~z인 문자로 추가
-            m_hash += static_cast<char>(num + 'a' - 36);
+    do {
+        for (int i = 0; i < 16; i++) {
+            int num = dis(gen);
+            if (num < 10) {
+                // 0~9인 경우, 숫자 문자로 추가
+                m_hash += std::to_string(num);
+            } else if (num < 36) {
+                // 10~35인 경우, A~Z인 문자로 추가
+                m_hash += static_cast<char>(num + 'A' - 10);
+            } else {
+                // 36~61인 경우, a~z인 문자로 추가
+                m_hash += static_cast<char>(num + 'a' - 36);
+            }
         }
+    } while (memoryMgr->HasHash(m_hash));
+}
+
+void SObject::SetHash(std::string& hash) {
+    const std::string prevHash = std::string(m_hash);
+    if(hash.empty()) {
+        GenerateHashString();
+        memoryMgr->ChangeHash(prevHash, m_hash);
+        return;
     }
+    m_hash = hash;
+    memoryMgr->ChangeHash(prevHash, hash);
 }

@@ -116,8 +116,6 @@ namespace CSE {
     private:
         void UpdateComponent(float elapsedTime);
 
-        std::string GetMetaString(unsigned int startIndex) const;
-
     private:
         std::list<SGameObject*> m_children;
         SGameObject* m_parent = nullptr;

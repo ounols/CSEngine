@@ -72,21 +72,30 @@ void SPrefab::Init(const AssetMgr::AssetReference* asset) {
     }
 
     std::string hashRaw = OpenNativeAssetsTxtFile(path + ".meta");
+    //TODO: 임시로 작성함
     if(hashRaw.empty()) {
-        hashRaw = "SPrefab:" + GetHash() + '\n' + m_root->GenerateMeta();
+        hashRaw = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                  "<CSEMETA version=\"1.0.0\">\n"
+                  "<hash-data hash=\"" + m_hash + "\">\n"
+                  + m_root->GenerateMeta() +
+                  "\n</hash-data>\n</CSEMETA>";
         SaveTxtFile(path + ".meta", hashRaw);
     }
 
-    auto hashLines = split(hashRaw, '\n');
-    unsigned int lineSize = hashLines.size();
-    SetHash(split(hashLines[0], ':')[1]);
-    for (unsigned int i = 1; i < lineSize; ++i) {
-        auto line = split(hashLines[i], ':');
-        const auto& obj = static_cast<SGameObjectFromSPrefab*>(m_root->FindLocalByID(line[0]));
+    const XNode* root = XFILE().loadBuffer(hashRaw);
+    const auto& hashData = root->getNode("hash-data");
+    const auto& hashChildren = hashData.children;
+
+    for(const auto& child : hashChildren) {
+        const auto& id = child.getAttribute("id").value;
+        std::string hash = child.value;
+        const auto& obj = static_cast<SGameObjectFromSPrefab*>(m_root->FindLocalByID(id));
         if(obj == nullptr) continue;
-        obj->SetHash(line[1]);
-        obj->SetRefHash(line[1]);
+        obj->SetHash(hash);
+        obj->SetRefHash(hash);
     }
+
+    SAFE_DELETE(root);
 }
 
 void SPrefab::GenerateResourceID(SGameObject* obj) {

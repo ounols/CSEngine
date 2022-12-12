@@ -26,13 +26,7 @@ namespace CSE {
             return m_hash;
         }
 
-        void SetHash(std::string& hash) {
-            if(hash.empty()) {
-                GenerateHashString();
-                return;
-            }
-            m_hash = hash;
-        }
+        void SetHash(std::string& hash);
 
     private:
         void GenerateHashString();
