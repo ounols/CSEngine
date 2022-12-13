@@ -87,7 +87,7 @@ void FirstDemoScene::Init() {
     buffer->GenerateFramebuffer(SFrameBuffer::PLANE, 512, 512);
     const auto& buf_tex = buffer->GenerateTexturebuffer(SFrameBuffer::RENDER, GL_RGB);
     buf_tex->SetName("framebuffer_test");
-    buf_tex->SetID("framebuffer_test");
+    buf_tex->SetAbsoluteID("framebuffer_test");
     buffer->RasterizeFramebuffer();
     b->Destroy();
 

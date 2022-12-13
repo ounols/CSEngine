@@ -5,6 +5,7 @@
 #pragma once
 
 #include "SResource.h"
+#include <vector>
 
 namespace CSE {
 

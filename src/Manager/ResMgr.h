@@ -6,6 +6,7 @@
 #include "AssetMgr.h"
 #include "Base/CoreBase.h"
 #include "Base/SContainerHash.h"
+#include <vector>
 
 #ifdef __ANDROID__
 #include <android/asset_manager.h>

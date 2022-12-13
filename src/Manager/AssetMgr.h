@@ -6,7 +6,7 @@
 
 
 #include <string>
-#include <unordered_map>
+#include <list>
 #include "../Util/Loader/ZIP/zip.h"
 #ifdef __ANDROID__
 #include <android/asset_manager.h>
