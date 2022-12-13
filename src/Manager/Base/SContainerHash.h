@@ -56,6 +56,15 @@ namespace CSE {
             return m_size;
         }
 
+        void ChangeHash(const std::string& srcHash, const std::string& dstHash) {
+            T object = m_objects.at(srcHash);
+            if(object == nullptr) return;
+            m_objects.erase(srcHash);
+            const auto& prevSize = m_objects.size();
+            m_objects.insert(std::pair<std::string, T>(dstHash, object));
+            //if(prevSize - m_objects.size() == 0) throw -1;
+        }
+
     protected:
         std::unordered_map<std::string, T> m_objects;
         int m_size = 0;

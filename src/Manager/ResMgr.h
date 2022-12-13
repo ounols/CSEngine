@@ -5,6 +5,7 @@
 #include "../Object/SResource.h"
 #include "AssetMgr.h"
 #include "Base/CoreBase.h"
+#include "Base/SContainerHash.h"
 
 #ifdef __ANDROID__
 #include <android/asset_manager.h>
@@ -19,7 +20,7 @@ namespace CSE {
 
     class SISurface;
 
-    class ResMgr : public CoreBase {
+    class ResMgr : public CoreBase, public SContainerHash<SResource*> {
     public:
         explicit ResMgr();
         ~ResMgr() override;
@@ -32,31 +33,18 @@ namespace CSE {
 
         void Exterminate();
 
-        void Register(SResource* m_object);
-
-        void Remove(SResource* m_object);
-
-        template <class TYPE>
-        TYPE* GetObject(std::string name) const;
+        void Remove(SResource* m_object) override;
 
     	template <class TYPE>
-		TYPE* GetObjectById(std::string id) const;
+		TYPE* GetObjectByHash(const std::string& hash) const;
 
         SResource* GetSResource(std::string name) const;
 
-        int GetID(SResource* object) const;
-
-        int GetSize() const;
-
-        bool IsEmpty() const;
-
 		int GetStringHash(const std::string& str);
-
-        std::string RemoveDuplicatingName(std::string name) const;
 
         AssetMgr::AssetReference* GetAssetReference(std::string name) const;
 
-        std::vector<AssetMgr::AssetReference*> GetAssetReferences(AssetMgr::TYPE type) const;
+        std::list<AssetMgr::AssetReference*> GetAssetReferences(AssetMgr::TYPE type) const;
 
 #ifdef __ANDROID__
         void SetAssetManager(AAssetManager* obj);
@@ -65,37 +53,18 @@ namespace CSE {
         JNIEnv* GetEnv();
 #endif
 
-
     private:
-        std::vector<SResource*> m_resources;
         AssetMgr* m_assetManager = nullptr;
 		std::vector<std::string> m_stringIds;
+
     public:
         friend class AssetMgr;
     };
 
-
     template <class TYPE>
-    TYPE* ResMgr::GetObject(std::string name) const {
-        for (auto resource : m_resources) {
-            if (dynamic_cast<TYPE*>(resource)) {
-                if (name == resource->GetName())
-                    return static_cast<TYPE*>(resource);
-            }
-        }
+    TYPE* ResMgr::GetObjectByHash(const std::string& hash) const {
+		if(m_objects.count(hash) <= 0) return nullptr;
 
-        return nullptr;
-    }
-
-    template <class TYPE>
-    TYPE* ResMgr::GetObjectById(std::string id) const {
-		for (auto resource : m_resources) {
-			if (dynamic_cast<TYPE*>(resource)) {
-				if (id == resource->GetID())
-					return static_cast<TYPE*>(resource);
-			}
-		}
-
-		return nullptr;
+		return static_cast<TYPE*>(Get(hash));
     }
 }

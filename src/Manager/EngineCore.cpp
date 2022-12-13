@@ -48,7 +48,7 @@ void EngineCore::Init(unsigned int width, unsigned int height) {
     static_cast<SceneMgr*>(m_sceneMgr)->SetScene(new WebDemoScene());
 #else
     static_cast<SceneMgr*>(m_sceneMgr)->SetScene(new FirstDemoScene());
-//    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/reflection.scene");
+//    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/animation.scene");
 //    m_sceneMgr->SetScene(scene);
 #endif
 }

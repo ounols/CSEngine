@@ -27,5 +27,5 @@ void MemoryContainer::ChangeHash(const std::string& srcHash, const std::string& 
     m_hashContainer.erase(srcHash);
     const auto& prevSize = m_hashContainer.size();
     m_hashContainer.insert(dstHash);
-    if(prevSize - m_hashContainer.size() == 0) throw -1;
+    //if(prevSize - m_hashContainer.size() == 0) throw -1;
 }

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <utility>
 #include <vector>
+#include <random>
 
 
 namespace CSE {
@@ -115,5 +116,30 @@ namespace CSE {
         }
 
         return converted_str;
+    }
+
+    static std::string GetRandomHash(int size) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dis(0, 61); // 0~9, A~Z, a~z까지 숫자 생성
+
+        std::string result;
+        result.reserve(size);
+
+        for (int i = 0; i < size; i++) {
+            int num = dis(gen);
+            if (num < 10) {
+                // 0~9인 경우, 숫자 문자로 추가
+                result += std::to_string(num);
+            } else if (num < 36) {
+                // 10~35인 경우, A~Z인 문자로 추가
+                result += static_cast<char>(num + 'A' - 10);
+            } else {
+                // 36~61인 경우, a~z인 문자로 추가
+                result += static_cast<char>(num + 'a' - 36);
+            }
+        }
+
+        return result;
     }
 }

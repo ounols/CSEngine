@@ -228,12 +228,12 @@ std::string CameraComponent::PrintValue() const {
     PRINT_VALUE(m_pFov, m_pFov);
     PRINT_VALUE(m_orthoValue, m_oLeft, ' ', m_oRight, ' ', m_oBottom, ' ', m_oTop);
     PRINT_VALUE(m_distance, m_Near, ' ', m_Far);
-    if (m_frameBuffer != nullptr) PRINT_VALUE(m_frameBuffer, ConvertSpaceStr(m_frameBuffer->GetID()));
+    if (m_frameBuffer != nullptr) PRINT_VALUE(m_frameBuffer, ConvertSpaceStr(m_frameBuffer->GetHash()));
 
     PRINT_VALUE(m_backgroundType, static_cast<int>(m_backgroundType));
     PRINT_VALUE_VEC3(m_backgroundColor);
     if (m_backgroundMap != nullptr && m_backgroundMap->map != nullptr)
-        PRINT_VALUE(m_backgroundMap.map, ConvertSpaceStr(m_backgroundMap->map->GetID()));
+        PRINT_VALUE(m_backgroundMap.map, ConvertSpaceStr(m_backgroundMap->map->GetHash()));
 
     PRINT_END("component");
 }

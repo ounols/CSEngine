@@ -16,49 +16,26 @@ ResMgr::~ResMgr() {
     Exterminate();
 }
 
-
 void ResMgr::Init() {
     InitResource();
 }
-
 
 void ResMgr::InitResource() {
     //Make Asset Manager
     if(m_assetManager == nullptr)
         m_assetManager = new AssetMgr();
 
-
     //Load Assets
     m_assetManager->LoadAssets(Settings::IsAssetsPacked());
-
 }
-
 
 void ResMgr::Exterminate() {
     SAFE_DELETE(m_assetManager);
 }
 
-void ResMgr::Register(SResource* m_object) {
-    m_resources.push_back(m_object);
-}
-
 void ResMgr::Remove(SResource* m_object) {
-    if(m_object == nullptr) return;
-    auto iObj = std::find(m_resources.begin(), m_resources.end(), m_object);
-
-    if (iObj != m_resources.end()) {
-        m_resources.erase(iObj);
-    }
-
+    SContainerHash<SResource*>::Remove(m_object);
     CORE->GetCore(MemoryMgr)->ReleaseObject(m_object, true);
-}
-
-int ResMgr::GetSize() const {
-    return m_resources.size();
-}
-
-bool ResMgr::IsEmpty() const {
-    return m_resources.empty();
 }
 
 int ResMgr::GetStringHash(const std::string& str) {
@@ -70,39 +47,24 @@ int ResMgr::GetStringHash(const std::string& str) {
 	return m_stringIds.size() - 1;
 }
 
-int ResMgr::GetID(SResource* object) const {
-    auto it = std::find(m_resources.begin(), m_resources.end(), object);
-    if (it == m_resources.end())
-        return -1;
-    else
-        return std::distance(m_resources.begin(), it);
-}
-
-std::string ResMgr::RemoveDuplicatingName(std::string name) const {
-    for (const auto& resource : m_resources) {
-        if (name == resource->GetName()) return RemoveDuplicatingName(name + " of another");
-    }
-
-    return name;
-}
-
 AssetMgr::AssetReference* ResMgr::GetAssetReference(std::string name) const {
     return m_assetManager->GetAsset(name);
 }
 
 SResource* ResMgr::GetSResource(std::string name) const {
+    if(m_objects.count(name) > 0) return Get(name);
     make_lower(name);
-
-    for (auto res : m_resources) {
+    for (const auto& pair : m_objects) {
+        const auto& res = pair.second;
         if (make_lower_copy(res->GetName()) == name)
             return res;
-        if (make_lower_copy(res->GetID()) == name)
+        if (make_lower_copy(res->GetAbsoluteID()) == name)
             return res;
     }
     return nullptr;
 }
 
-std::vector<AssetMgr::AssetReference*> ResMgr::GetAssetReferences(AssetMgr::TYPE type) const {
+std::list<AssetMgr::AssetReference*> ResMgr::GetAssetReferences(AssetMgr::TYPE type) const {
     return m_assetManager->GetAssets(type);
 }
 

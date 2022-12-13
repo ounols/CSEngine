@@ -96,7 +96,7 @@ void CustomComponent::SetClassName(std::string name) {
     auto asset = SResource::Get<SScriptObject>(std::move(name));
     if (asset == nullptr) return;
 
-    m_classID = asset->GetID();
+    m_classID = asset->GetHash();
     m_className = asset->GetScriptClassName();
 
     RegisterScript();
