@@ -37,7 +37,9 @@ AssetMgr::~AssetMgr() {
 
 
 void AssetMgr::Exterminate() {
-    for (auto& asset : m_assets) {
+    m_assets.clear();
+
+    for (auto& asset : m_assetsList) {
         SAFE_DELETE(asset);
     }
 
@@ -46,7 +48,7 @@ void AssetMgr::Exterminate() {
 #endif
 
     zip_close(m_zip);
-    m_assets.clear();
+    m_assetsList.clear();
 }
 
 void AssetMgr::LoadAssets(bool isPacked) {
@@ -61,11 +63,12 @@ void AssetMgr::LoadAssets(bool isPacked) {
 }
 
 AssetMgr::AssetReference* AssetMgr::GetAsset(const std::string& name) const {
+
+    if(m_assets.count(name) > 0) return m_assets.at(name);
+
     std::string lowerName = name;
     make_lower(lowerName);
-
-    for (const auto& asset : m_assets) {
-        if (asset->hash == name) return asset;
+    for (const auto& asset : m_assetsList) {
         if (make_lower_copy(asset->name) == lowerName) return asset;
         if (make_lower_copy(asset->id) == lowerName) return asset;
         if (make_lower_copy(asset->path) == lowerName) return asset;
@@ -204,15 +207,15 @@ AssetMgr::AssetReference* AssetMgr::CreateAsset(const std::string& path, const s
         SaveTxtFile(asset->path + ".meta", meta);
     }
 
-//    m_assets.insert(std::pair<std::string, AssetReference*>(asset->hash, asset));
-    m_assets.push_back(asset);
+    m_assets.insert(std::pair<std::string, AssetReference*>(asset->hash, asset));
+    m_assetsList.push_back(asset);
 
     return asset;
 }
 
 void AssetMgr::SetType() {
 
-	for (const auto asset : m_assets) {
+	for (const auto asset : m_assetsList) {
         std::string type_str = asset->extension;
         make_lower(type_str);
 
@@ -324,7 +327,7 @@ AssetMgr::AssetReference* AssetMgr::AppendSubName(AssetMgr::AssetReference* asse
 std::list<AssetMgr::AssetReference*> AssetMgr::GetAssets(TYPE type) const {
     std::list<AssetReference*> result;
 
-    for(const auto& asset : m_assets) {
+    for(const auto& asset : m_assetsList) {
         if(asset->type == type) {
             result.push_back(asset);
         }

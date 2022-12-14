@@ -7,6 +7,7 @@
 
 #include <string>
 #include <list>
+#include <unordered_map>
 #include "../Util/Loader/ZIP/zip.h"
 #ifdef __ANDROID__
 #include <android/asset_manager.h>
@@ -63,7 +64,8 @@ namespace CSE {
         static AssetReference* AppendSubName(AssetReference* asset, const std::string& sub_name);
 
     private:
-        std::list<AssetReference*> m_assets;
+        std::list<AssetReference*> m_assetsList;
+        std::unordered_map<std::string, AssetReference*> m_assets;
         zip_t* m_zip = nullptr;
 #ifdef __ANDROID__
         AAssetManager* m_assetManager;
