@@ -19,8 +19,9 @@ namespace CSE {
         struct Element {
             int id = HANDLE_NULL;
             SType type = SType::UNKNOWN;
-            std::vector<std::string> value_str;
+            std::vector<std::string> valueStr;
 			int count = 1;
+            std::string raw;
         	
 			std::function<void()> attachFunc = nullptr;
         };
@@ -65,6 +66,8 @@ namespace CSE {
 
         int GetTextureCount() const;
 
+        std::string PrintMaterial() const;
+
         static SMaterial* GenerateMaterial(GLProgramHandle* handle);
 
     protected:
@@ -99,5 +102,7 @@ namespace CSE {
         SMaterialMode m_mode = NORMAL;
 
         LightMgr* m_lightMgr = nullptr;
+
+        std::string m_refHash;
     };
 }

@@ -47,6 +47,8 @@ namespace CSE {
 
 		static SType GetType(std::string type);
 		static SType GetType(unsigned int type);
+
+        static std::string ToString(SType type);
 	};
 
 	template <class TYPE>

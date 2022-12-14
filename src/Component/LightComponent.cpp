@@ -45,7 +45,7 @@ void LightComponent::Tick(float elapsedTime) {
         float color0 = (0.4f * (1 - value) + 0.4f) * bright * 5;
         float color1 = (0.3f * value + 0.3f) * bright * 5;
 
-//		float color2 = (value_str * 0.07f + 0.03f) * 10;
+//		float color2 = (valueStr * 0.07f + 0.03f) * 10;
 
         m_light->color = vec3{ color0, color1, color1 };
     }

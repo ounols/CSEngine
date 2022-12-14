@@ -234,7 +234,7 @@ void CustomComponent::BindValue(CustomComponent::VARIABLE* variable, const char*
     else if(type == "bool") m_classInstance->set(variable->name.c_str(), value_str == "t");
     else if(type == "float") m_classInstance->set(variable->name.c_str(), std::stof(value_str));
     else if(type == "int") m_classInstance->set(variable->name.c_str(), std::stoi(value_str));
-//    else if(type == "arr") m_classInstance->set(variable->name.c_str(), std::stof(value_str));
+//    else if(type == "arr") m_classInstance->set(variable->name.c_str(), std::stof(valueStr));
     else if(type == "comp") {
         SComponent* comp = gameObject->GetSComponentByHash(value_str);
         MoreComponentFunc::BindComponentToSQInstance(comp, variable->name, m_classInstance);

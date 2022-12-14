@@ -81,3 +81,8 @@ void SResource::SetHash(std::string& hash) {
     SObject::SetHash(hash);
     CORE->GetCore(ResMgr)->ChangeHash(srcHash, hash);
 }
+
+AssetMgr::AssetReference* SResource::GetAssetReference(std::string hash) const {
+    if(hash.empty()) hash = m_hash;
+    return CORE->GetCore(ResMgr)->GetAssetReference(std::move(hash));
+}

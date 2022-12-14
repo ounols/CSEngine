@@ -31,6 +31,8 @@ namespace CSE {
             return m_absoluteId;
         }
 
+        AssetMgr::AssetReference* GetAssetReference(std::string hash = "") const;
+
         void LinkResource(AssetMgr::AssetReference* asset) {
             SetResource(asset, false);
         }
