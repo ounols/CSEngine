@@ -66,7 +66,7 @@ void SPrefab::Init(const AssetMgr::AssetReference* asset) {
             break;
     }
 
-    std::string hashRaw = OpenNativeAssetsTxtFile(path + ".meta");
+    std::string hashRaw = AssetMgr::LoadAssetFile(path + ".meta");
 
     const XNode* root = XFILE().loadBuffer(hashRaw);
     const auto& hashData = root->getNode("hash-data");

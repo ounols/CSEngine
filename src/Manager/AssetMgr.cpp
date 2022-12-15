@@ -192,7 +192,7 @@ AssetMgr::AssetReference* AssetMgr::CreateAsset(const std::string& path, const s
         return nullptr;
     }
 
-    std::string meta = OpenNativeAssetsTxtFile(path + ".meta");
+    std::string meta = LoadAssetFile(path + ".meta");
     if(!meta.empty()) {
         const XNode* root = XFILE().loadBuffer(meta);
         const auto& hashData = root->getNode("hash-data");
@@ -204,7 +204,8 @@ AssetMgr::AssetReference* AssetMgr::CreateAsset(const std::string& path, const s
                            "<CSEMETA version=\"1.0.0\">\n"
                            "<hash-data hash=\"" + GetRandomHash(16) + "\">\n"
                                                                       "\n</hash-data>\n</CSEMETA>";
-        SaveTxtFile(asset->path + ".meta", meta);
+        if(!Settings::IsAssetsPacked())
+            SaveTxtFile(asset->path + ".meta", meta);
     }
 
     m_assets.insert(std::pair<std::string, AssetReference*>(asset->hash, asset));
