@@ -98,70 +98,65 @@ SGameObject* XMLParser::parseGameObject(const char* value) {
 }
 
 SType XMLParser::GetType(std::string type) {
-    if (type == "str") return SType::STRING;
-    if (type == "bool") return SType::BOOL;
-    if (type == "float") return SType::FLOAT;
-    if (type == "int") return SType::INT;
-//    if(type == "arr") dst = (void*)parseInt(values[0].c_str());
+    static const std::unordered_map<std::string, SType> typeMap = {
+            {"str", SType::STRING},
+            {"bool", SType::BOOL},
+            {"float", SType::FLOAT},
+            {"int", SType::INT},
+            {"res", SType::RESOURCE},
+            {"tex", SType::TEXTURE},
+            {"mat", SType::MATERIAL},
+            {"comp", SType::COMPONENT},
+            {"gobj", SType::GAME_OBJECT},
+            {"vec2", SType::VEC2},
+            {"vec3", SType::VEC3},
+            {"vec4", SType::VEC4},
+            {"mat2", SType::MAT2},
+            {"mat3", SType::MAT3},
+            {"mat4", SType::MAT4}
+    };
 
-    if (type == "res") return SType::RESOURCE;
-    if (type == "tex") return SType::TEXTURE;
-    if (type == "mat") return SType::MATERIAL;
-
-    if (type == "comp") return SType::COMPONENT;
-    if (type == "gobj") return SType::GAME_OBJECT;
-
-    if (type == "vec2") return SType::VEC2;
-    if (type == "vec3") return SType::VEC3;
-    if (type == "vec4") return SType::VEC4;
-
-    if (type == "mat2") return SType::MAT2;
-    if (type == "mat3") return SType::MAT3;
-    if (type == "mat4") return SType::MAT4;
-
-    return SType::UNKNOWN;
+    auto it = typeMap.find(type);
+    if (it != typeMap.end()) {
+        return it->second;
+    } else {
+        return SType::UNKNOWN;
+    }
 }
 
 SType XMLParser::GetType(unsigned int type) {
-    if (type == GL_BOOL) return SType::BOOL;
-    if (type == GL_FLOAT) return SType::FLOAT;
-    if (type == GL_INT) return SType::INT;
-    //    if(type == "arr") dst = (void*)parseInt(values[0].c_str());
-
-    if (type == GL_SAMPLER_2D) return SType::TEXTURE;
-
-
-    if (type == GL_FLOAT_VEC2) return SType::VEC2;
-    if (type == GL_FLOAT_VEC3) return SType::VEC3;
-    if (type == GL_FLOAT_VEC4) return SType::VEC4;
-
-    if (type == GL_FLOAT_MAT2) return SType::MAT2;
-    if (type == GL_FLOAT_MAT3) return SType::MAT3;
-    if (type == GL_FLOAT_MAT4) return SType::MAT4;
-
-    return SType::UNKNOWN;
+    switch (type) {
+        case GL_BOOL: return SType::BOOL;
+        case GL_FLOAT: return SType::FLOAT;
+        case GL_INT: return SType::INT;
+        case GL_SAMPLER_2D: return SType::TEXTURE;
+        case GL_FLOAT_VEC2: return SType::VEC2;
+        case GL_FLOAT_VEC3: return SType::VEC3;
+        case GL_FLOAT_VEC4: return SType::VEC4;
+        case GL_FLOAT_MAT2: return SType::MAT2;
+        case GL_FLOAT_MAT3: return SType::MAT3;
+        case GL_FLOAT_MAT4: return SType::MAT4;
+        default: return SType::UNKNOWN;
+    }
 }
 
 std::string XMLParser::ToString(SType type) {
-    if (type == SType::STRING) return "str";
-    if (type == SType::BOOL) return "bool";
-    if (type == SType::FLOAT) return "float";
-    if (type == SType::INT) return "int";
-
-    if (type == SType::RESOURCE) return "res";
-    if (type == SType::TEXTURE) return "tex";
-    if (type == SType::MATERIAL) return "mat";
-
-    if (type == SType::COMPONENT) return "comp";
-    if (type == SType::GAME_OBJECT) return "gobj";
-
-    if (type == SType::VEC2) return "vec2";
-    if (type == SType::VEC3) return "vec3";
-    if (type == SType::VEC4) return "vec4";
-
-    if (type == SType::MAT2) return "mat2";
-    if (type == SType::MAT3) return "mat3";
-    if (type == SType::MAT4) return "mat4";
-
-    return "str";
+    switch (type) {
+        case SType::STRING: return "str";
+        case SType::BOOL: return "bool";
+        case SType::FLOAT: return "float";
+        case SType::INT: return "int";
+        case SType::RESOURCE: return "res";
+        case SType::TEXTURE: return "tex";
+        case SType::MATERIAL: return "mat";
+        case SType::COMPONENT: return "comp";
+        case SType::GAME_OBJECT: return "gobj";
+        case SType::VEC2: return "vec2";
+        case SType::VEC3: return "vec3";
+        case SType::VEC4: return "vec4";
+        case SType::MAT2: return "mat2";
+        case SType::MAT3: return "mat3";
+        case SType::MAT4: return "mat4";
+        default: return "str";
+    }
 }

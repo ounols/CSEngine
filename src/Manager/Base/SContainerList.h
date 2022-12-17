@@ -12,12 +12,12 @@ namespace CSE {
         SContainerList() = default;
         ~SContainerList() override = default;
 
-        virtual void Register(T object) override {
+        void Register(T object) override {
             m_objects.push_back(object);
             m_size++;
         }
 
-        virtual void Remove(T object) override {
+        void Remove(T object) override {
 //            auto iObj = std::find(m_objects.begin(), m_objects.end(), object);
 //            if (iObj != m_objects.end()) {
                 m_objects.remove(object);

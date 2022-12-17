@@ -51,7 +51,6 @@ void GameObjectMgr::AddDestroyObject(SGameObject* object) {
 }
 
 SGameObject* GameObjectMgr::Find(const std::string& name) const {
-
     for (const auto& pair : m_objects) {
         const auto& object = pair.second;
         if (object->GetName() == name)
@@ -63,7 +62,6 @@ SGameObject* GameObjectMgr::Find(const std::string& name) const {
 }
 
 SGameObject* GameObjectMgr::FindByID(const std::string& id) const {
-
     std::string obj_id = split(id, '?')[0];
 
     for (const auto& pair : m_objects) {
@@ -78,7 +76,6 @@ SGameObject* GameObjectMgr::FindByID(const std::string& id) const {
 }
 
 SGameObject* GameObjectMgr::FindByHash(const std::string& hash) const {
-
     std::string obj_hash = split(hash, '?')[0];
     return SContainerHash<SGameObject*>::Get(obj_hash);
 }
