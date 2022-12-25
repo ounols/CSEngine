@@ -274,7 +274,7 @@ void ShaderUtil::BindAttributeToShader(const GLProgramHandle& handle, const GLMe
     };
 
     // 필요한 속성들을 정의
-    std::vector<Attribute> attributes = {
+    const std::vector<Attribute> attributes = {
             { handle.Attributes.Position,     0,                               3 },
             { handle.Attributes.Normal,       sizeof(vec3),                    3 },
             { handle.Attributes.TextureCoord, 2 * sizeof(vec3),                2 },
