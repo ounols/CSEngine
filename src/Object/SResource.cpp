@@ -64,7 +64,7 @@ void SResource::SetResource(const AssetMgr::AssetReference* asset, bool isInit) 
                            "<CSEMETA version=\"1.0.0\">\n"
                            "<hash-data hash=\"" + m_hash + "\">\n"
                            "\n</hash-data>\n</CSEMETA>";
-        SaveTxtFile(asset->path + ".meta", meta);
+        SaveTxtFile(asset->name_path + ".meta", meta);
     }
 
     SetName(asset->name);

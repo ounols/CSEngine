@@ -58,7 +58,7 @@ bool SPrefab::SetGameObject(SGameObject* obj) {
 void SPrefab::Init(const AssetMgr::AssetReference* asset) {
 
     AssetMgr::TYPE type = asset->type;
-    std::string path = asset->path;
+    std::string path = asset->name_path;
 
     switch (type) {
         case AssetMgr::DAE:

@@ -23,6 +23,7 @@ namespace CSE {
         };
 
         struct AssetReference {
+            std::string name_path;
             std::string path;
             std::string name;
             std::string id;
@@ -45,6 +46,8 @@ namespace CSE {
         std::list<AssetMgr::AssetReference*> GetAssets(TYPE type) const;
 
         static std::string LoadAssetFile(const std::string& path);
+
+        static std::string GetAssetHash(const std::string& path);
 
 #ifdef __ANDROID__
         void SetAssetManager(AAssetManager* obj);

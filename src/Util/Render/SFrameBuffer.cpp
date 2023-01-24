@@ -50,7 +50,7 @@ void SFrameBuffer::Init(const AssetMgr::AssetReference* asset) {
     const XNode* root = nullptr;
 
     try {
-        root = XFILE(asset->path.c_str()).getRoot();
+        root = XFILE(asset->name_path.c_str()).getRoot();
     }
     catch (int e) {
         SAFE_DELETE(root);

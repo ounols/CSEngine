@@ -117,7 +117,7 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
     const XNode* root;
 
     try {
-        root = XFILE(asset->path.c_str()).getRoot();
+        root = XFILE(asset->name_path.c_str()).getRoot();
     }
     catch (int e) {
         return;
