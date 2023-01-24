@@ -15,15 +15,24 @@ namespace CSE {
 
         void Exterminate() override;
 
-        const GLProgramHandle* GetHandle(const std::string& pass);
+        const GLProgramHandle* GetHandle(const std::string& pass) const;
+        const GLProgramHandle* GetHandleByMode(int mode) const;
+        const GLProgramHandle* GetGeometryHandle() const {
+            return m_geometryHandle;
+        }
+        const GLProgramHandle* GetForwardHandle() const {
+            return m_forwardHandle;
+        }
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 
     private:
-        static std::string&& GetShaderHash(const std::string& vert_path, const std::string& frag_path);
+        static std::string GetShaderHash(const std::string& vert_path, const std::string& frag_path);
 
     private:
         std::unordered_map<std::string, GLProgramHandle*> m_handles;
+        GLProgramHandle* m_geometryHandle = nullptr;
+        GLProgramHandle* m_forwardHandle = nullptr;
     };
 }

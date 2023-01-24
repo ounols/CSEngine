@@ -27,12 +27,11 @@ SMaterial::SMaterial(const SMaterial* material) : SResource(material, false) {
         m_elements.insert(std::pair<std::string, Element*>(element_pair.first, element_copy));
     }
     m_mode = material->m_mode;
-    m_handle = material->m_handle;
-    m_lightPassHandle = material->m_lightPassHandle;
+    m_shaders = material->m_shaders;
     m_orderLayer = material->m_orderLayer;
     m_textureLayout = material->m_textureLayout;
 
-    InitElements(m_elements, m_handle);
+    InitElements(m_elements, m_shaders);
     m_lightMgr = CORE->GetCore(LightMgr);
 }
 
@@ -52,12 +51,6 @@ void SMaterial::ReleaseElements() {
     m_elements.clear();
 }
 
-void SMaterial::SetHandle(GLProgramHandle* handle) {
-    throw -1; // 사용할꺼면 꼭 수정이 필요함 그래서 에러띄움
-    m_handle = handle;
-    InitElements(m_elements, m_handle);
-}
-
 void SMaterial::AttachElement() const {
     m_textureLayout = m_lightMgr->GetShadowCount();
 
@@ -68,7 +61,8 @@ void SMaterial::AttachElement() const {
     }
 }
 
-void SMaterial::InitElements(const ElementsMap& elements, GLProgramHandle* handle) {
+void SMaterial::InitElements(const ElementsMap& elements, SShaderGroup* shaders) {
+    const auto& handle = shaders->GetHandleByMode(m_mode);
     for (const auto& element_pair : elements) {
         const auto& element_name = element_pair.first.c_str();
         const auto& element = element_pair.second;
@@ -83,10 +77,6 @@ void SMaterial::InitElements(const ElementsMap& elements, GLProgramHandle* handl
 //    std::string str = PrintMaterial();
 //    std::string path = GetAssetReference(m_refHash)->path;
 //    SaveTxtFile(path, str);
-}
-
-void SMaterial::SetAttribute(const GLMeshID& meshId) const {
-    ShaderUtil::BindAttributeToShader(*m_handle, meshId);
 }
 
 void SMaterial::SetInt(const std::string& name, int value) {
@@ -128,22 +118,15 @@ void SMaterial::Init(const AssetMgr::AssetReference* asset) {
 
     auto var_nodes = shader_node.children;
     auto shader_file_id = shader_node.getAttribute("id").value;
-    auto shaderHandle = Create<GLProgramHandle>(shader_file_id);
-    if (shaderHandle == nullptr) return;
+    auto shaderGroup = Create<SShaderGroup>(shader_file_id);
+    if (shaderGroup == nullptr) return;
+    m_shaders = shaderGroup;
 
     if (shader_node.hasAttribute("deferred")) {
         auto get_deferred = std::stoi(shader_node.getAttribute("deferred").value);
         if (get_deferred == 1) {
             m_mode = DEFERRED;
         }
-    }
-
-    if (m_mode == DEFERRED) {
-        auto geometryShaderHandle = Create<GLProgramHandle>(Settings::GetDeferredGeometryPassShaderID());
-        m_handle = geometryShaderHandle;
-        m_lightPassHandle = shaderHandle;
-    } else {
-        m_handle = shaderHandle;
     }
 
     for (const auto& node : var_nodes) {
@@ -285,12 +268,8 @@ void SMaterial::SetOrderLayer(int orderLayer) {
     m_orderLayer = orderLayer;
 }
 
-GLProgramHandle* SMaterial::GetHandle() const {
-    return m_handle;
-}
-
-GLProgramHandle* SMaterial::GetLightPassHandle() const {
-    return m_lightPassHandle;
+SShaderGroup* SMaterial::GetShaders() const {
+    return m_shaders;
 }
 
 SMaterial::SMaterialMode SMaterial::GetMode() const {
@@ -305,12 +284,13 @@ int SMaterial::GetTextureCount() const {
     return m_textureLayout;
 }
 
-SMaterial* SMaterial::GenerateMaterial(GLProgramHandle* handle) {
-    if (handle == nullptr) return nullptr;
+SMaterial* SMaterial::GenerateMaterial(SShaderGroup* shaders) {
+    if (shaders == nullptr) return nullptr;
+    const auto& handle = shaders->GetHandleByMode(SMaterialMode::NORMAL);
 
     const auto& uniformList = handle->GetUniformsList();
     auto material = new SMaterial();
-    material->m_handle = handle;
+    material->m_shaders = shaders;
 
     for (const auto& uniform_pair : uniformList) {
         const auto& name = uniform_pair.first;
@@ -322,7 +302,7 @@ SMaterial* SMaterial::GenerateMaterial(GLProgramHandle* handle) {
 
         material->m_elements.insert(std::pair<std::string, Element*>(name, element));
     }
-    material->InitElements(material->m_elements, handle);
+    material->InitElements(material->m_elements, shaders);
 
     return material;
 }
@@ -332,10 +312,10 @@ std::string SMaterial::PrintMaterial() const {
                          "<CSEMAT version=\"1.0.0\">\n";
 
     if(m_mode == DEFERRED) {
-        result += "<shader id=\"" + m_lightPassHandle->GetHash() + "\" deferred=\"1\">\n";
+        result += "<shader id=\"" + m_shaders->GetHash() + "\" deferred=\"1\">\n";
     }
     else {
-        result += "<shader id=\"" + m_handle->GetHash() + "\">\n";
+        result += "<shader id=\"" + m_shaders->GetHash() + "\">\n";
     }
 
     for (const auto& var : m_elements) {

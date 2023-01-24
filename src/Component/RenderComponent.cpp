@@ -18,7 +18,7 @@ COMPONENT_CONSTRUCTOR(RenderComponent) {
 RenderComponent::~RenderComponent() = default;
 
 void RenderComponent::Exterminate() {
-    if(material != nullptr) {
+    if (material != nullptr) {
         const auto& mode = material->GetMode();
         if (m_renderMgr != nullptr) {
             m_renderMgr->Remove(this, (RenderContainer::RenderGroupMode) mode);
@@ -31,7 +31,7 @@ void RenderComponent::Exterminate() {
 
 void RenderComponent::Init() {
 
-    if(!m_disableShadow) {
+    if (!m_disableShadow) {
         m_lightMgr = CORE->GetCore(LightMgr);
         m_renderMgr->Register(this, RenderContainer::DEPTH_ONLY);
     }
@@ -41,7 +41,7 @@ void RenderComponent::Init() {
         m_skinningMesh = dynamic_cast<DrawableSkinnedMeshComponent*>(m_mesh);
     }
 
-    if(material == nullptr) {
+    if (material == nullptr) {
         isEnable = isRenderActive = false;
     }
 
@@ -60,8 +60,7 @@ void RenderComponent::Tick(float elapsedTime) {
 
 void
 RenderComponent::SetMatrix(const CameraMatrixStruct& cameraMatrixStruct, const GLProgramHandle* handle) {
-    const auto& current_handle = handle == nullptr ? m_material_clone->GetHandle() : handle;
-    ShaderUtil::BindCameraToShader(*current_handle, cameraMatrixStruct.camera, cameraMatrixStruct.cameraPosition,
+    ShaderUtil::BindCameraToShader(*handle, cameraMatrixStruct.camera, cameraMatrixStruct.cameraPosition,
                                    cameraMatrixStruct.projection,
                                    static_cast<const TransformComponent*>(gameObject->GetTransform())->GetMatrix());
 }
@@ -70,13 +69,8 @@ void RenderComponent::Render(const GLProgramHandle* handle) const {
 
     if (m_mesh == nullptr || m_material_clone == nullptr || gameObject->isPrefab()) return;
 
-    auto& current_handle = handle;
-    if(handle == nullptr) {
-        m_material_clone->AttachElement();
-        current_handle = m_material_clone->GetHandle();
-    }
-    SetJointMatrix(current_handle);
-    ShaderUtil::BindAttributeToShader(*current_handle, m_mesh->GetMeshID());
+    SetJointMatrix(handle);
+    ShaderUtil::BindAttributeToShader(*handle, m_mesh->GetMeshID());
 }
 
 void RenderComponent::SetIsEnable(bool is_enable) {
@@ -106,7 +100,7 @@ SMaterial* RenderComponent::GetMaterial() const {
 
 void RenderComponent::SetMaterial(SMaterial* material) {
     auto renderMgr = CORE->GetCore(RenderMgr);
-    if(this->material == nullptr)
+    if (this->material == nullptr)
         this->material = SResource::Create<SMaterial>(Settings::GetDefaultDeferredMaterialId());
     else {
         const auto& mode = this->material->GetMode();
@@ -122,7 +116,7 @@ void RenderComponent::SetMaterial(SMaterial* material) {
 }
 
 void RenderComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
-    if(name_str == "material") {
+    if (name_str == "material") {
         SetMaterial(SResource::Create<SMaterial>(value[0]));
     }
 }

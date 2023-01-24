@@ -4,6 +4,7 @@
 #include "../Loader/XML/XML.h"
 #include "ShaderUtil.h"
 #include "../../Manager/EngineCore.h"
+#include "SMaterial.h"
 
 
 using namespace CSE;
@@ -41,7 +42,7 @@ void SShaderGroup::Init(const AssetMgr::AssetReference* asset) {
         std::string&& vert = "";
         std::string&& frag = "";
 
-        std::string&& hashes = "";
+        std::string hashes = "";
 
         if (shader.hasAttribute("localPath")
             && shader.getAttribute("localPath").value == "1") {
@@ -65,21 +66,33 @@ void SShaderGroup::Init(const AssetMgr::AssetReference* asset) {
         const auto& existHandle = SResource::Get<GLProgramHandle>(hashes);
         GLProgramHandle* handle = nullptr;
         if (existHandle == nullptr) {
-            handle = ShaderUtil::CreateProgramHandle(vert_path.c_str(), frag_path.c_str());
+            handle = ShaderUtil::CreateProgramHandle(vert.c_str(), frag.c_str());
             handle->SetName(hashes);
         } else {
             handle = existHandle;
         }
         m_handles.insert(std::pair<std::string, GLProgramHandle*>(pass, handle));
+        if(pass == "geometry") m_geometryHandle = handle;
+        if(pass == "forward") m_forwardHandle = handle;
     }
 
     SAFE_DELETE(root);
 }
 
-std::string&& SShaderGroup::GetShaderHash(const std::string& vert_path, const std::string& frag_path) {
-    return std::move(AssetMgr::GetAssetHash(vert_path) + AssetMgr::GetAssetHash(frag_path));
+std::string SShaderGroup::GetShaderHash(const std::string& vert_path, const std::string& frag_path) {
+    return AssetMgr::GetAssetHash(vert_path) + AssetMgr::GetAssetHash(frag_path);
 }
 
-const GLProgramHandle* SShaderGroup::GetHandle(const std::string& pass) {
+const GLProgramHandle* SShaderGroup::GetHandle(const std::string& pass) const {
     return m_handles.at(pass);
+}
+
+const GLProgramHandle* SShaderGroup::GetHandleByMode(int mode) const {
+    const std::unordered_map<SMaterial::SMaterialMode, std::string> pass_map = {
+            {SMaterial::NORMAL,     "forward"},
+            {SMaterial::DEFERRED,   "geometry"},
+            {SMaterial::DEPTH_ONLY, "depthOnly"}
+    };
+
+    return m_handles.at(pass_map.at(static_cast<SMaterial::SMaterialMode>(mode)));
 }
