@@ -11,10 +11,10 @@ CLASSNAME();                            \
 auto GetComponent() override
 
 #define COMPONENT_DEFINE_CONSTRUCTOR(CLASSNAME) \
-explicit CLASSNAME(SGameObject* l_gameObject)
+explicit CLASSNAME(CSE::SGameObject* l_gameObject)
 
 #define COMPONENT_CONSTRUCTOR(CLASSNAME)    \
-CLASSNAME::CLASSNAME(SGameObject* l_gameObject) : SComponent(#CLASSNAME, l_gameObject)
+CLASSNAME::CLASSNAME(CSE::SGameObject* l_gameObject) : CSE::SComponent(#CLASSNAME, l_gameObject)
 
 #define FIND_OBJ_REFERENCE(obj, src) \
 {                           \
