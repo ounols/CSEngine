@@ -24,7 +24,6 @@ void ForwardRenderGroup::RegisterObject(SIRender* object) {
     short orderLayer = material->GetOrderLayer();
     const auto& shaders = material->GetShaders();
     if (shaders == nullptr) return;
-    auto* handle = const_cast<GLProgramHandle*>(shaders->GetHandle("forward"));
 
     auto& layer = m_rendersLayer[orderLayer][shaders];
     layer.push_back(object);

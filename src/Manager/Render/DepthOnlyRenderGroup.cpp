@@ -2,6 +2,7 @@
 #include "../../Util/Render/CameraBase.h"
 #include "../../Util/Render/SFrameBuffer.h"
 #include "../../Util/Render/ShaderUtil.h"
+#include "../../Util/Render/SMaterial.h"
 #include "../../Component/CameraComponent.h"
 #include "../../Component/RenderComponent.h"
 #include "RenderMgr.h"
@@ -12,42 +13,57 @@
 using namespace CSE;
 
 DepthOnlyRenderGroup::DepthOnlyRenderGroup(const RenderMgr& renderMgr) : SRenderGroup(renderMgr) {
-    std::string vert_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/Shadow/default_shadow.vert");
-    std::string frag_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/Shadow/default_shadow.frag");
-
-    m_shadowHandle = ShaderUtil::CreateProgramHandle(vert_str.c_str(), frag_str.c_str());
 }
 
 void DepthOnlyRenderGroup::RegisterObject(SIRender* object) {
-    m_depthObjects.push_back(object);
+    const auto& material = object->GetMaterialReference();
+    if (material == nullptr) return;
+
+    auto& depthGroup = m_depthObjects[material->GetShaders()];
+    depthGroup.push_back(object);
 }
 
 void DepthOnlyRenderGroup::RemoveObjects(SIRender* object) {
-    m_depthObjects.remove(object);
+    const auto& material = object->GetMaterialReference();
+    if (material == nullptr) return;
+
+    const auto& shaders = material->GetShaders();
+    if (shaders == nullptr) return;
+
+    auto handlerPair = m_depthObjects.find(shaders);
+    if (handlerPair != m_depthObjects.end()) {
+        auto& layerVector = handlerPair->second;
+        layerVector.erase(std::remove(layerVector.begin(), layerVector.end(), object),
+                          layerVector.end());
+
+        // 렌더링 객체가 제거된 뒤에도 공간이 비어 있는 경우, 그 공간을 제거한다.
+        if (layerVector.empty()) m_depthObjects.erase(handlerPair);
+    }
 }
 
 void DepthOnlyRenderGroup::RenderAll(const CameraBase& camera) const {
     const auto cameraMatrix = camera.GetCameraMatrixStruct();
     const auto& frameBuffer = camera.GetFrameBuffer();
-    const unsigned int program = m_shadowHandle->Program;
-    if(frameBuffer == nullptr) {
+    if (frameBuffer == nullptr) {
         m_renderMgr->GetMainBuffer()->AttachFrameBuffer();
-    }
-    else {
+    } else {
         frameBuffer->AttachFrameBuffer();
     }
 
-    glUseProgram(program);
     glClear(GL_DEPTH_BUFFER_BIT);
     for (const auto& shadowObject : m_depthObjects) {
-        if(!shadowObject->isRenderActive) continue;
-        const auto& shadowTransform = static_cast<RenderComponent*>(shadowObject)->GetGameObject()->GetTransform();
+        const auto& handle = shadowObject.first->GetDepthOnlyHandle();
+        glUseProgram(handle->Program);
+        for(const auto& render : shadowObject.second) {
+            if (!render->isRenderActive) continue;
+            const auto& shadowTransform = static_cast<RenderComponent*>(render)->GetGameObject()->GetTransform();
 
-        if(LightMgr::SHADOW_DISTANCE < vec3::Distance(cameraMatrix.cameraPosition, shadowTransform->m_position))
-            continue;
+            if (LightMgr::SHADOW_DISTANCE < vec3::Distance(cameraMatrix.cameraPosition, shadowTransform->m_position))
+                continue;
 
-        shadowObject->SetMatrix(cameraMatrix, m_shadowHandle);
-        shadowObject->Render(m_shadowHandle);
+            render->SetMatrix(cameraMatrix, handle);
+            render->Render(handle);
+        }
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

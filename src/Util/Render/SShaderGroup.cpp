@@ -74,6 +74,7 @@ void SShaderGroup::Init(const AssetMgr::AssetReference* asset) {
         m_handles.insert(std::pair<std::string, GLProgramHandle*>(pass, handle));
         if(pass == "geometry") m_geometryHandle = handle;
         if(pass == "forward") m_forwardHandle = handle;
+        if(pass == "depthOnly") m_depthOnlyHandle = handle;
     }
 
     SAFE_DELETE(root);

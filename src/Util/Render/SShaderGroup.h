@@ -23,6 +23,9 @@ namespace CSE {
         const GLProgramHandle* GetForwardHandle() const {
             return m_forwardHandle;
         }
+        const GLProgramHandle* GetDepthOnlyHandle() const {
+            return m_depthOnlyHandle;
+        }
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
@@ -34,5 +37,6 @@ namespace CSE {
         std::unordered_map<std::string, GLProgramHandle*> m_handles;
         GLProgramHandle* m_geometryHandle = nullptr;
         GLProgramHandle* m_forwardHandle = nullptr;
+        GLProgramHandle* m_depthOnlyHandle = nullptr;
     };
 }

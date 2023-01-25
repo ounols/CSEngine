@@ -5,10 +5,15 @@
 
 namespace CSE {
 
+    class SShaderGroup;
+
     /**
      * This class is responsible for rendering depth only objects for use in creating shadow maps.
      */
     class DepthOnlyRenderGroup : public SRenderGroup {
+    private:
+        typedef std::vector<SIRender*> RenderInterfaces;
+        typedef std::unordered_map<SShaderGroup*, RenderInterfaces> ProgramRenderLayer;
     public:
         /**
          * Constructor for the DepthOnlyRenderGroup.
@@ -43,7 +48,6 @@ namespace CSE {
         void Exterminate() override;
 
     private:
-        std::list<SIRender*> m_depthObjects;
-        GLProgramHandle* m_shadowHandle = nullptr;
+        ProgramRenderLayer m_depthObjects;
     };
 }
