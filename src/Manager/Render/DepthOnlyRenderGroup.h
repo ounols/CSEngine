@@ -14,6 +14,7 @@ namespace CSE {
     private:
         typedef std::vector<SIRender*> RenderInterfaces;
         typedef std::unordered_map<SShaderGroup*, RenderInterfaces> ProgramRenderLayer;
+
     public:
         /**
          * Constructor for the DepthOnlyRenderGroup.

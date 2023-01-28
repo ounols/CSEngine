@@ -10,15 +10,12 @@
 using namespace CSE;
 
 SShaderGroup::SShaderGroup() {
-
 }
 
 SShaderGroup::~SShaderGroup() {
-
 }
 
 void SShaderGroup::Exterminate() {
-
 }
 
 void SShaderGroup::Init(const AssetMgr::AssetReference* asset) {
