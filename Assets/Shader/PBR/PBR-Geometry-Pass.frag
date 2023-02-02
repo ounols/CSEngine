@@ -27,8 +27,6 @@ uniform float u_ao;
 in mediump vec3 v_eyespaceNormal;
 in mediump vec2 v_textureCoordOut;
 
-out vec4 FragColor;
-
 //Defined
 const lowp float c_zero = 0.0f;
 const lowp float c_one = 1.0f;

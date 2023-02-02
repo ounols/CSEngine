@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CSEMAT version="1.0.0">
-<shader id="File:Shader/Custom/SSS_PBR.shader">
-
-<var name="vec3.albedo" type="vec3" count="1">0.905 0.38 0.152</var>
-<var name="float.metallic" type="float" count="1">0.8</var>
-<var name="float.roughness" type="float" count="1">0.03</var>
-<var name="float.ao" type="float" count="1">1</var>
-<var name="float.blur" type="float" count="1">0.01</var>
-
-<var name="light.irradiance" type="tex" count="1">irradiance.textureCubeMap</var>
-<var name="light.prefilter" type="tex" count="1">prefilter.textureCubeMap</var>
-<var name="light.brdf" type="tex" count="1">brdfLUT.texture</var>
+<shader id="RW1OdHpivygVe6IW">
+<var name="vec3.albedo" type="vec3" count="1">0.905000 0.380000 0.152000</var>
+<var name="float.metallic" type="float" count="1">0.800000</var>
+<var name="light.brdf" type="tex" count="1">CSEENV0000000004</var>
+<var name="float.ao" type="float" count="1">1.000000</var>
+<var name="light.irradiance" type="tex" count="1">CSEENV0000000002</var>
+<var name="light.prefilter" type="tex" count="1">CSEENV0000000003</var>
+<var name="float.blur" type="float" count="1">0.010000</var>
+<var name="float.roughness" type="float" count="1">0.030000</var>
 </shader>
 </CSEMAT>
