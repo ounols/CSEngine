@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CSEMAT version="1.0.0">
-<shader id="1O5DH97SKgj5uNHs" deferred="0">
+<shader id="1O5DH97SKgj5uNHs" deferred="1">
 <var name="float.metallic" type="float" count="1">-1.000000</var>
 <var name="texture.metallic" type="tex" count="1">9fcCKbr2tGwYCCho</var>
 <var name="float.roughness" type="float" count="1">-1.000000</var>

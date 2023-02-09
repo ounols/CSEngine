@@ -11,6 +11,7 @@
 #include "EngineCore.h"
 #include "ResMgr.h"
 #include <iostream>
+#include <stack>
 
 #if defined(__linux__) || defined(__APPLE_CC__)
 
@@ -18,7 +19,9 @@
 #include <dirent.h>
 
 #elif _WIN32
+
 #include <windows.h>
+
 #endif
 #ifdef __ANDROID__
 #include <android/asset_manager.h>
@@ -134,7 +137,7 @@ void AssetMgr::ReadDirectory(const std::string& path) {
             }
 
             AssetReference* asset = CreateAsset(path, name);
-            if(asset == nullptr) continue;
+            if (asset == nullptr) continue;
             std::cout << "[pkg] " << asset->name << " (" << asset->extension << ")\n";
 
         } while (FindNextFile(hFind, &data) != 0);
@@ -335,8 +338,28 @@ std::string AssetMgr::LoadAssetFile(const std::string& path) {
         return OpenNativeAssetsTxtFile(path);
 
     std::string result;
+    std::string path_convert;
     const auto& zip = CORE->GetResMgrCore()->m_assetManager->m_zip;
-    zip_entry_open(zip, path.c_str());
+    if (path.find("/../") != std::string::npos) {
+        auto path_split = split(path, '/');
+        std::stack<std::string> path_stack;
+        for (const auto& part : path_split) {
+            if (part == "..") {
+                path_stack.pop();
+                continue;
+            }
+            path_stack.push(part);
+        }
+        while (!path_stack.empty()) {
+            path_convert = path_stack.top() + '/' + path_convert;
+            path_stack.pop();
+        }
+        path_convert = path_convert.substr(0, path_convert.size() - 1);
+    }
+    else {
+        path_convert = path;
+    }
+    zip_entry_open(zip, path_convert.c_str());
     {
         char* buf = nullptr;
         size_t bufsize = 0;
