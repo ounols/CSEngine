@@ -25,7 +25,7 @@ void SShaderGroup::Init(const AssetMgr::AssetReference* asset) {
         root = XFILE(asset->name_path.c_str()).getRoot();
     }
     catch (int e) {
-        SAFE_DELETE(root);
+//        SAFE_DELETE(root);
         return;
     }
 
