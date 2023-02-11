@@ -85,7 +85,11 @@ void RenderMgr::RenderMainCamera() const {
     m_forwardRenderGroup->RenderAll(*mainCamera); // Forward Render
 
     GetMainBuffer()->AttachFrameBuffer(GL_READ_FRAMEBUFFER);
+#ifdef IOS
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 1);
+#else
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+#endif
     glBlitFramebuffer(0, 0, *m_width, *m_height, 0, 0, *m_width, *m_height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 

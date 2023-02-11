@@ -147,7 +147,7 @@ void AssetMgr::ReadDirectory(const std::string& path) {
 }
 
 void AssetMgr::ReadPackage(const std::string& path) {
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(IOS)
     if(m_zip == nullptr) {
         SafeLog::Log(path.c_str());
         m_package_raw = OpenNativeAssetsTxtFile(path);
