@@ -99,7 +99,7 @@ namespace CSE {
     }
 
     static bool SaveTxtFile(const std::string& path, std::string data) {
-#if defined(__ANDROID__) || defined(IOS)
+#if defined(__ANDROID__) || defined(IOS) || defined(__EMSCRIPTEN__)
         return true;
 #endif
         std::ofstream fout(path, std::ios::binary | std::ios::trunc);
