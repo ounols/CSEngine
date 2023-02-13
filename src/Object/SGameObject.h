@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <list>
+#include <utility>
 #include "../SObject.h"
 
 #include "../Util/Interface/TransformInterface.h"
@@ -21,22 +22,22 @@ namespace CSE {
     public:
         SGameObject();
 
-        SGameObject(const SGameObject& src);
-
         explicit SGameObject(std::string name);
 
-        ~SGameObject();
+        explicit SGameObject(std::string name, std::string hash);
+
+        ~SGameObject() override;
 
         virtual void Init();
 
         virtual void Tick(float elapsedTime);
 
-        virtual void Exterminate() override;
+        void Exterminate() override;
 
         /**
          * \brief 자동 삭제가 아닌 특정한 상황에서 삭제될 때 호출되는 함수
          */
-        void Destroy();
+        void Destroy() override;
 
         void SetUndestroyable(bool enable) override;
 
@@ -64,9 +65,9 @@ namespace CSE {
         T* GetComponent();
 
         template <class T>
-        T* GetComponentByID(std::string id) const;
+        T* GetComponentByHash(const std::string& id) const;
 
-        SComponent* GetSComponentByID(const std::string& id) const;
+        SComponent* GetSComponentByHash(const std::string& hash) const;
 
         const std::list<SComponent*>& GetComponents() const;
 
@@ -79,7 +80,11 @@ namespace CSE {
 
         SGameObject* Find(std::string name) const;
 
+        SGameObject* FindLocalByID(const std::string& id);
+
         static SGameObject* FindByID(std::string id);
+
+        static SGameObject* FindByHash(const std::string& hash);
 
 
         std::string GetName() const {
@@ -91,7 +96,7 @@ namespace CSE {
         std::string GetID(const SComponent* component) const;
 
         void SetName(std::string name) {
-            m_name = name;
+            m_name = std::move(name);
         }
 
         TransformInterface* GetTransform() const {
@@ -106,9 +111,10 @@ namespace CSE {
 
         void SetIsEnable(bool is_enable);
 
+        std::string GenerateMeta() override;
+
     private:
         void UpdateComponent(float elapsedTime);
-
 
     private:
         std::list<SGameObject*> m_children;
@@ -145,8 +151,8 @@ namespace CSE {
     }
 
     template <class T>
-    T* SGameObject::GetComponentByID(std::string id) const {
-        return static_cast<T*>(GetSComponentByID(id));
+    T* SGameObject::GetComponentByHash(const std::string& id) const {
+        return static_cast<T*>(GetSComponentByHash(id));
     }
 
 

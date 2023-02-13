@@ -130,7 +130,7 @@ void RenderComponent::SetValue(std::string name_str, VariableBinder::Arguments v
 std::string RenderComponent::PrintValue() const {
     PRINT_START("component");
 
-    PRINT_VALUE(material, ConvertSpaceStr(material->GetID()));
+    PRINT_VALUE(material, ConvertSpaceStr(material->GetHash()));
 
     PRINT_END("component");
 }

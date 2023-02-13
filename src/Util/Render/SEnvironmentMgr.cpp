@@ -75,7 +75,9 @@ void SEnvironmentMgr::RenderPBREnvironment() {
     // ---------------------------------------------------------
     m_envCubemap = new STexture(STexture::TEX_CUBE);
     m_envCubemap->SetName("envCubemap.textureCubeMap");
-    m_envCubemap->SetID("envCubemap.textureCubeMap");
+    m_envCubemap->SetAbsoluteID("envCubemap.textureCubeMap");
+    std::string hash = "CSEENV0000000001";
+    m_envCubemap->SetHash(hash);
     m_envCubemap->InitTextureMipmap(512, 512);
 
 
@@ -124,7 +126,9 @@ void SEnvironmentMgr::RenderPBREnvironment() {
     // --------------------------------------------------------------------------------
     m_irradianceMap = new STexture(STexture::TEX_CUBE);
     m_irradianceMap->SetName("irradiance.textureCubeMap");
-    m_irradianceMap->SetID("irradiance.textureCubeMap");
+    m_irradianceMap->SetAbsoluteID("irradiance.textureCubeMap");
+    hash = "CSEENV0000000002";
+    m_irradianceMap->SetHash(hash);
     m_irradianceMap->InitTexture(32, 32);
 
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
@@ -157,7 +161,9 @@ void SEnvironmentMgr::RenderPBREnvironment() {
     // --------------------------------------------------------------------------------
     m_prefilterMap = new STexture(STexture::TEX_CUBE);
     m_prefilterMap->SetName("prefilter.textureCubeMap");
-    m_prefilterMap->SetID("prefilter.textureCubeMap");
+    m_prefilterMap->SetAbsoluteID("prefilter.textureCubeMap");
+    hash = "CSEENV0000000003";
+    m_prefilterMap->SetHash(hash);
     m_prefilterMap->InitTextureMipmap(128, 128);
 
     // generate mipmaps for the cubemap so OpenGL automatically allocates the required memory.
@@ -205,7 +211,9 @@ void SEnvironmentMgr::RenderPBREnvironment() {
     std::cout << "[PBR] Backing a 2D LUT from the BRDF equations used...";
     m_brdfMap = new STexture();
     m_brdfMap->SetName("brdfLUT.texture");
-    m_brdfMap->SetID("brdfLUT.texture");
+    m_brdfMap->SetAbsoluteID("brdfLUT.texture");
+    hash = "CSEENV0000000004";
+    m_brdfMap->SetHash(hash);
     m_brdfMap->InitTexture(512, 512, GL_RG, GL_RG16F, GL_FLOAT);
 
     // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.

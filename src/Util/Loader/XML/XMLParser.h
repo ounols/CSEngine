@@ -47,11 +47,13 @@ namespace CSE {
 
 		static SType GetType(std::string type);
 		static SType GetType(unsigned int type);
+
+        static std::string ToString(SType type);
 	};
 
 	template <class TYPE>
 	TYPE* XMLParser::parseResources(const char* value) {
-        TYPE* res = CORE->GetCore(ResMgr)->GetObjectById<TYPE>(value);
+        TYPE* res = CORE->GetCore(ResMgr)->GetObjectByHash<TYPE>(value);
 		return res;
 	}
 

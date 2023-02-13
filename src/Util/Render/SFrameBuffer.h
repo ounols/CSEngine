@@ -3,6 +3,7 @@
 #include "../../Object/SResource.h"
 #include "../../OGLDef.h"
 #include "../Vector.h"
+#include <vector>
 
 namespace CSE {
 

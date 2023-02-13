@@ -14,7 +14,8 @@ GameObjectMgr::~GameObjectMgr() = default;
 
 void GameObjectMgr::Init() {
 
-    for (const auto& object : m_objects) {
+    for (const auto& pair : m_objects) {
+        const auto& object = pair.second;
         if (object == nullptr) continue;
         object->Init();
     }
@@ -25,7 +26,7 @@ void GameObjectMgr::Init() {
 void GameObjectMgr::Update(float elapsedTime) {
     auto iterator = m_objects.begin();
     while (iterator != m_objects.end()) {
-        const auto& object = *iterator;
+        const auto& object = iterator->second;
         if (object == nullptr) continue;
         object->Tick(elapsedTime);
         ++iterator;
@@ -39,13 +40,8 @@ void GameObjectMgr::DestroyQueuedObject() {
     for (; !m_destroyObjectsQueue.empty(); m_destroyObjectsQueue.pop()) {
         const auto& object = m_destroyObjectsQueue.front();
 
-        auto iGameObj = std::find(m_objects.begin(), m_objects.end(), object);
-
-        if (iGameObj != m_objects.end()) {
-            m_size--;
-            m_objects.erase(iGameObj);
-            CORE->GetCore(MemoryMgr)->ReleaseObject(object);
-        }
+        SContainerHash<SGameObject*>::Remove(object);
+        CORE->GetCore(MemoryMgr)->ReleaseObject(object);
     }
 }
 
@@ -55,8 +51,8 @@ void GameObjectMgr::AddDestroyObject(SGameObject* object) {
 }
 
 SGameObject* GameObjectMgr::Find(const std::string& name) const {
-
-    for (auto object : m_objects) {
+    for (const auto& pair : m_objects) {
+        const auto& object = pair.second;
         if (object->GetName() == name)
             return object;
     }
@@ -66,10 +62,10 @@ SGameObject* GameObjectMgr::Find(const std::string& name) const {
 }
 
 SGameObject* GameObjectMgr::FindByID(const std::string& id) const {
-
     std::string obj_id = split(id, '?')[0];
 
-    for (auto object : m_objects) {
+    for (const auto& pair : m_objects) {
+        const auto& object = pair.second;
         if (object->isPrefab()) continue;
         auto id_ = object->GetID();
         if (id_ == obj_id)
@@ -77,6 +73,11 @@ SGameObject* GameObjectMgr::FindByID(const std::string& id) const {
     }
 
     return nullptr;
+}
+
+SGameObject* GameObjectMgr::FindByHash(const std::string& hash) const {
+    std::string obj_hash = split(hash, '?')[0];
+    return SContainerHash<SGameObject*>::Get(obj_hash);
 }
 
 SComponent* GameObjectMgr::FindComponentByID(const std::string& id) const {
@@ -91,6 +92,20 @@ SComponent* GameObjectMgr::FindComponentByID(const std::string& id) const {
             return component;
         }
     }
+    return nullptr;
+}
 
+SComponent* GameObjectMgr::FindComponentByHash(const std::string& hash) const {
+    auto object = FindByHash(hash);
+    if (object == nullptr) return nullptr;
+
+    auto components = object->GetComponents();
+    auto split_str = split(hash, '?');
+
+    for (auto component : components) {
+        if (split_str[1] == component->GetClassType()) {
+            return component;
+        }
+    }
     return nullptr;
 }

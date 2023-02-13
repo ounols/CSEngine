@@ -7,6 +7,7 @@
 #include "../Util/AssetsDef.h"
 #include "../Util/MoreString.h"
 #include "../Util/SafeLog.h"
+#include "../Util/Loader/XML/XML.h"
 #include "EngineCore.h"
 #include "ResMgr.h"
 #include <iostream>
@@ -36,7 +37,9 @@ AssetMgr::~AssetMgr() {
 
 
 void AssetMgr::Exterminate() {
-    for (auto asset : m_assets) {
+    m_assets.clear();
+
+    for (auto& asset : m_assetsList) {
         SAFE_DELETE(asset);
     }
 
@@ -45,6 +48,7 @@ void AssetMgr::Exterminate() {
 #endif
 
     zip_close(m_zip);
+    m_assetsList.clear();
 }
 
 void AssetMgr::LoadAssets(bool isPacked) {
@@ -58,13 +62,17 @@ void AssetMgr::LoadAssets(bool isPacked) {
     SetType();
 }
 
-AssetMgr::AssetReference* AssetMgr::GetAsset(std::string name) const {
-    make_lower(name);
-    for (auto asset : m_assets) {
-        if (make_lower_copy(asset->name) == name) return asset;
-        if (make_lower_copy(asset->id) == name) return asset;
-        if (make_lower_copy(asset->path) == name) return asset;
-        if (make_lower_copy(asset->name_full) == name) return asset;
+AssetMgr::AssetReference* AssetMgr::GetAsset(const std::string& name) const {
+
+    if(m_assets.count(name) > 0) return m_assets.at(name);
+
+    std::string lowerName = name;
+    make_lower(lowerName);
+    for (const auto& asset : m_assetsList) {
+        if (make_lower_copy(asset->name) == lowerName) return asset;
+        if (make_lower_copy(asset->id) == lowerName) return asset;
+        if (make_lower_copy(asset->path) == lowerName) return asset;
+        if (make_lower_copy(asset->name_full) == lowerName) return asset;
     }
     auto errorLog = "[Assets Warning] " + name + " does not exist.";
     SafeLog::Log(errorLog.c_str());
@@ -103,6 +111,7 @@ void AssetMgr::ReadDirectory(const std::string& path) {
         }
 
         AssetReference* asset = CreateAsset(path + name, name);
+        if(asset == nullptr) continue;
         std::cout << "[pkg] " << asset->name << " (" << asset->extension << ")\n";
     }
     closedir(dirp);
@@ -125,7 +134,8 @@ void AssetMgr::ReadDirectory(const std::string& path) {
 			}
 
 			AssetReference* asset = CreateAsset(path + name, name);
-			std::cout << "[pkg] " << asset->name << " (" << asset->extension << ")\n";
+            if(asset == nullptr) continue;
+            std::cout << "[pkg] " << asset->name << " (" << asset->extension << ")\n";
 
         } while (FindNextFile(hFind, &data) != 0);
         FindClose(hFind);
@@ -154,11 +164,11 @@ void AssetMgr::ReadPackage(const std::string& path) {
             int isdir = zip_entry_isdir(m_zip);
             if(isdir != 0) continue;
             AssetReference* asset = CreateAsset(name, name_cropped);
+            if(asset == nullptr) continue;
             std::cout << "(Packed)[pkg] " << asset->name << " (" << asset->extension << ")\n";
         }
         zip_entry_close(m_zip);
     }
-
 }
 
 AssetMgr::AssetReference* AssetMgr::CreateAsset(const std::string& path, const std::string& name_full, std::string name) {
@@ -176,16 +186,37 @@ AssetMgr::AssetReference* AssetMgr::CreateAsset(const std::string& path, const s
         asset->name = name;
     }
 
+    // Ignore meta files
+    if(asset->extension == "meta") {
+        SAFE_DELETE(asset);
+        return nullptr;
+    }
 
-    m_assets.push_back(asset);
+    std::string meta = LoadAssetFile(path + ".meta");
+    if(!meta.empty()) {
+        const XNode* root = XFILE().loadBuffer(meta);
+        const auto& hashData = root->getNode("hash-data");
+        asset->hash = hashData.getAttribute("hash").value;
+        SAFE_DELETE(root);
+    }
+    else {
+        std::string meta = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                           "<CSEMETA version=\"1.0.0\">\n"
+                           "<hash-data hash=\"" + GetRandomHash(16) + "\">\n"
+                                                                      "\n</hash-data>\n</CSEMETA>";
+        if(!Settings::IsAssetsPacked())
+            SaveTxtFile(asset->path + ".meta", meta);
+    }
+
+    m_assets.insert(std::pair<std::string, AssetReference*>(asset->hash, asset));
+    m_assetsList.push_back(asset);
 
     return asset;
 }
 
 void AssetMgr::SetType() {
 
-	for (int i = 0; i < m_assets.size(); ++i) {
-		const auto asset = m_assets[i];
+	for (const auto asset : m_assetsList) {
         std::string type_str = asset->extension;
         make_lower(type_str);
 
@@ -294,10 +325,10 @@ AssetMgr::AssetReference* AssetMgr::AppendSubName(AssetMgr::AssetReference* asse
     return asset;
 }
 
-std::vector<AssetMgr::AssetReference*> AssetMgr::GetAssets(AssetMgr::TYPE type) const {
-    std::vector<AssetReference*> result;
+std::list<AssetMgr::AssetReference*> AssetMgr::GetAssets(TYPE type) const {
+    std::list<AssetReference*> result;
 
-    for(const auto& asset : m_assets) {
+    for(const auto& asset : m_assetsList) {
         if(asset->type == type) {
             result.push_back(asset);
         }

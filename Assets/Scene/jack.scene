@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CSESCENE version="1.0.0">
+<gameobject name="root" hash="AsbEcdKOo2MnUJ7d">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 -1 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</gameobject><prefab name="room" fileid="uNGRjCUSofcbx9Jf" hash="5y2Y8090aw8yMGa8">
+<changegameobject name="room" hash="5y2Y8090aw8yMGa8" fileid="uNGRjCUSofcbx9Jf" ref="vTinSVtoJVHgX62k">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0.2 0</value>
+<value name="m_scale">4 4 4</value>
+<value name="m_rotation">0 0.706825 0 0.707388</value>
+</component>
+<parent>AsbEcdKOo2MnUJ7d</parent>
+</changegameobject><changegameobject name="meshId1_name-mesh" hash="UNGRL0zqm7fhJoiK" fileid="uNGRjCUSofcbx9Jf*meshId1_name-mesh" ref="dUMA9KyGqh3YoCyc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">u1hDcJZ5c3ldqc8S</value>
+</component>
+<parent>5y2Y8090aw8yMGa8</parent>
+</changegameobject></prefab><gameobject name="root$nbsp:of$nbsp:mesh" hash="AEUSdONFW9IDdXZG">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<parent>AsbEcdKOo2MnUJ7d</parent>
+</gameobject><gameobject name="ct" hash="6LAPrjjMeCZHozaU">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 -0.3 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID">zxxRpmeHeKTNexOi</value>
+<value name="__variable__">renderComp null null</value>
+<value name="__variable__">lightComp null null</value>
+<value name="__variable__">ambient null null</value>
+</component>
+<parent>AEUSdONFW9IDdXZG</parent>
+</gameobject><gameobject name="camera" hash="gS6cUdo0duAucves">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0.2 0.8</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CameraComponent" enable="1">
+<value name="m_eye">gS6cUdo0duAucves?TransformComponent</value>
+<value name="m_target">0 0 -1</value>
+<value name="m_up">0 1 0</value>
+<value name="m_targetObject">6LAPrjjMeCZHozaU</value>
+<value name="m_cameraMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
+<value name="m_projectionMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
+<value name="m_type">1</value>
+<value name="m_pFov">45</value>
+<value name="m_orthoValue">-1 1 -1 1</value>
+<value name="m_distance">0.1 100</value>
+<value name="m_backgroundType">2</value>
+<value name="m_backgroundColor">0.4 0.4 0.4</value>
+<value name="m_backgroundMap.map">gkekEUynaeuIsJBv</value>
+</component>
+<parent>6LAPrjjMeCZHozaU</parent>
+</gameobject><gameobject name="lt" hash="FQu9r0LCtyTc5hSM">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID">99aE9w5RIJsnXa1V</value>
+<value name="__variable__">renderComp null null</value>
+<value name="__variable__">lightComp null null</value>
+<value name="__variable__">ambient null null</value>
+</component>
+<parent>AEUSdONFW9IDdXZG</parent>
+</gameobject><gameobject name="light" hash="hvqjK2vJacZEGDMi">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-2.8 -1.5 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="LightComponent" enable="1">
+<value name="m_type">2</value>
+<value name="m_disableShadow">1</value>
+<value name="m_near">-10</value>
+<value name="m_far">10</value>
+<value name="m_direction">1 0.5 1 1</value>
+</component>
+<parent>FQu9r0LCtyTc5hSM</parent>
+</gameobject><prefab name="jack" fileid="wGV66wCkCczS0bh7" hash="FtOpoJZUmybT1ImI">
+<changegameobject name="jack" hash="FtOpoJZUmybT1ImI" fileid="wGV66wCkCczS0bh7" ref="AqGIXkDy7hg6dzQ0">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 -0.15 0</value>
+<value name="m_scale">0.0002 0.0002 0.0002</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<parent>AEUSdONFW9IDdXZG</parent>
+</changegameobject><changegameobject name="Mesh_003-mesh" hash="AJIIsA8DYA0awd7H" fileid="wGV66wCkCczS0bh7*Mesh_003-mesh" ref="Fmws036sSkA2PyTY">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">DA8ckWbXcsBuUVy1</value>
+</component>
+<parent>FtOpoJZUmybT1ImI</parent>
+</changegameobject><changegameobject name="Mesh_002-mesh" hash="QNLU7NZx1Q4aQyll" fileid="wGV66wCkCczS0bh7*Mesh_002-mesh" ref="m66HDaBpb04NtaGf">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">DA8ckWbXcsBuUVy1</value>
+</component>
+<parent>FtOpoJZUmybT1ImI</parent>
+</changegameobject><changegameobject name="Mesh-mesh" hash="8lbpEwMvfyLg8SeB" fileid="wGV66wCkCczS0bh7*Mesh-mesh" ref="6UoskN5bW6z6i9n6">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">ImqEcF61TJeCdUdt</value>
+</component>
+<parent>FtOpoJZUmybT1ImI</parent>
+</changegameobject></prefab><prefab name="jack" fileid="wGV66wCkCczS0bh7" hash="HQC95NNukWpDQ23n">
+<changegameobject name="jack" hash="HQC95NNukWpDQ23n" fileid="wGV66wCkCczS0bh7" ref="AqGIXkDy7hg6dzQ0">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.1 -0.45 0.12</value>
+<value name="m_scale">0.0002 0.0002 0.0002</value>
+<value name="m_rotation">0.620297 0.33914 0.33887 0.620792</value>
+</component>
+<parent>AEUSdONFW9IDdXZG</parent>
+</changegameobject><changegameobject name="Mesh_003-mesh" hash="qjxQco5kbdA0rIQi" fileid="wGV66wCkCczS0bh7*Mesh_003-mesh" ref="Fmws036sSkA2PyTY">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">DA8ckWbXcsBuUVy1</value>
+</component>
+<parent>HQC95NNukWpDQ23n</parent>
+</changegameobject><changegameobject name="Mesh_002-mesh" hash="lvX1Toqk1J5qweae" fileid="wGV66wCkCczS0bh7*Mesh_002-mesh" ref="m66HDaBpb04NtaGf">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">DA8ckWbXcsBuUVy1</value>
+</component>
+<parent>HQC95NNukWpDQ23n</parent>
+</changegameobject><changegameobject name="Mesh-mesh" hash="hwvk0tP0G4LQWNGD" fileid="wGV66wCkCczS0bh7*Mesh-mesh" ref="6UoskN5bW6z6i9n6">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">ImqEcF61TJeCdUdt</value>
+</component>
+<parent>HQC95NNukWpDQ23n</parent>
+</changegameobject></prefab><gameobject name="" hash="Szxl46YG1jLerM29">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-0.2 -0.3 -0.2</value>
+<value name="m_scale">0.5 0.5 0.5</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">36xlJpO8dlaD20Q4</value>
+</component>
+<parent>AEUSdONFW9IDdXZG</parent>
+</gameobject><gameobject name="testscript2$nbsp:object" hash="vc3RzFY5Gfx8DVuM">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 -0.7 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID">OR7wHU8BrNtyjDsn</value>
+<value name="__variable__">meshObj null null</value>
+<value name="__variable__">materialComp null null</value>
+<value name="__variable__">testScript null null</value>
+<value name="__variable__">count 3 int</value>
+<value name="__variable__">test_int this$nbsp:is$nbsp:test$nbsp:string!!$nbsp:문자열이다$nbsp:이거슨 str</value>
+</component>
+<parent>AsbEcdKOo2MnUJ7d</parent>
+</gameobject><gameobject name="testscript2$nbsp:object" hash="tqZcIgdCb0X0kq7Y">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-2 -0.1 0</value>
+<value name="m_scale">0.5 0.5 0.5</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CameraComponent" enable="1">
+<value name="m_eye">tqZcIgdCb0X0kq7Y?TransformComponent</value>
+<value name="m_target">0 0 -1</value>
+<value name="m_up">0 1 0</value>
+<value name="m_targetObject">hvqjK2vJacZEGDMi</value>
+<value name="m_cameraMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
+<value name="m_projectionMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
+<value name="m_type">1</value>
+<value name="m_pFov">45</value>
+<value name="m_orthoValue">-1 1 -1 1</value>
+<value name="m_distance">0.1 100</value>
+<value name="m_frameBuffer">uKj1kg1mt9jn3MaK</value>
+<value name="m_backgroundType">2</value>
+<value name="m_backgroundColor">0.4 0.4 0.4</value>
+<value name="m_backgroundMap.map">gkekEUynaeuIsJBv</value>
+</component>
+<parent>vc3RzFY5Gfx8DVuM</parent>
+</gameobject><gameobject name="directional" hash="fDtEGfpGt9Iq7uB7">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 1 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="LightComponent" enable="1">
+<value name="m_type">1</value>
+<value name="m_disableShadow">0</value>
+<value name="m_near">-10</value>
+<value name="m_far">10</value>
+<value name="m_direction">0 1 1 0</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID">VfSm43gcNfQwkpFj</value>
+<value name="__variable__">lightComp null null</value>
+<value name="__variable__">diffuse null null</value>
+<value name="__variable__">count 0.000000 float</value>
+</component>
+<parent>AsbEcdKOo2MnUJ7d</parent>
+</gameobject></CSESCENE>

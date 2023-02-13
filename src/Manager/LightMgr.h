@@ -1,7 +1,7 @@
 #pragma once
 
 #include <list>
-#include "Base/SContainer.h"
+#include "Base/SContainerList.h"
 #include "../Component/LightComponent.h"
 #include "../Util/Render/RenderInterfaces.h"
 
@@ -14,7 +14,7 @@ namespace CSE {
      * LightMgr class is a manager of Light components.
      * This class also manages ShadowMap for giving shadow effects to objects in the scene.
      */
-    class LightMgr : public SContainer<LightComponent*>, public CoreBase {
+    class LightMgr : public SContainerList<LightComponent*>, public CoreBase {
     public:
         const int SHADOW_WIDTH = 1024;     ///< Width of the shadow map
         const int SHADOW_HEIGHT = 1024;    ///< Height of the shadow map

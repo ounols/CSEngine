@@ -85,7 +85,7 @@ void SFrameBuffer::Init(const AssetMgr::AssetReference* asset) {
                 const auto& texture = GenerateTexturebuffer(type, format);
                 const auto& textureName = "?Texture" + std::to_string(index);
                 texture->SetName(GetName() + textureName);
-                texture->SetID(GetID() + textureName);
+                texture->SetAbsoluteID(GetHash() + textureName);
             } else {
                 GenerateRenderbuffer(type, format);
             }
@@ -356,7 +356,7 @@ STexture* SFrameBuffer::GetTexture(const char* id) const {
         const auto& texture = buffer->texture;
         if (texture == nullptr) continue;
 
-        std::string bufferId = texture->GetID();
+        std::string bufferId = texture->GetHash();
         if (bufferId == id) return texture;
     }
     return nullptr;

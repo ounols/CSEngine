@@ -6,7 +6,8 @@
 
 
 #include <string>
-#include <vector>
+#include <list>
+#include <unordered_map>
 #include "../Util/Loader/ZIP/zip.h"
 #ifdef __ANDROID__
 #include <android/asset_manager.h>
@@ -25,6 +26,7 @@ namespace CSE {
             std::string path;
             std::string name;
             std::string id;
+            std::string hash;
             std::string name_full;
             std::string extension;
             TYPE type = NONE;
@@ -38,9 +40,9 @@ namespace CSE {
 
         void LoadAssets(bool isPacked);
 
-        AssetReference* GetAsset(std::string name) const;
+        AssetReference* GetAsset(const std::string& name) const;
 
-        std::vector<AssetReference*> GetAssets(TYPE type) const;
+        std::list<AssetMgr::AssetReference*> GetAssets(TYPE type) const;
 
         static std::string LoadAssetFile(const std::string& path);
 
@@ -62,7 +64,8 @@ namespace CSE {
         static AssetReference* AppendSubName(AssetReference* asset, const std::string& sub_name);
 
     private:
-        std::vector<AssetReference*> m_assets;
+        std::list<AssetReference*> m_assetsList;
+        std::unordered_map<std::string, AssetReference*> m_assets;
         zip_t* m_zip = nullptr;
 #ifdef __ANDROID__
         AAssetManager* m_assetManager;

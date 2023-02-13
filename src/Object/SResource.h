@@ -21,15 +21,17 @@ namespace CSE {
 
         void SetName(std::string name);
 
-        void SetID(std::string id);
+        void SetAbsoluteID(std::string id);
 
         std::string GetName() const {
             return m_name;
         }
 
-        std::string GetID() const {
-            return m_id;
+        std::string GetAbsoluteID() const {
+            return m_absoluteId;
         }
+
+        AssetMgr::AssetReference* GetAssetReference(std::string hash = "") const;
 
         void LinkResource(AssetMgr::AssetReference* asset) {
             SetResource(asset, false);
@@ -40,8 +42,8 @@ namespace CSE {
         }
 
         template <class T>
-        static T* Create(const std::string& name, bool isForceCreate = false) {
-            if (!isForceCreate) {
+        static T* Create(const std::string& name) {
+            {
                 SResource* res = GetResource(name);
                 if (res != nullptr) return static_cast<T*>(res);
             }
@@ -53,9 +55,9 @@ namespace CSE {
         }
 
         template <class T>
-        static T* Create(const AssetMgr::AssetReference* asset, bool isForceCreate = false) {
+        static T* Create(const AssetMgr::AssetReference* asset) {
             if (asset == nullptr) return nullptr;
-            if (!isForceCreate) {
+            {
                 SResource* res = GetResource(asset->name);
                 if (res != nullptr) return static_cast<T*>(res);
             }
@@ -73,6 +75,8 @@ namespace CSE {
             return nullptr;
         }
 
+        void SetHash(std::string& hash) override;
+
     protected:
         virtual void Init(const AssetMgr::AssetReference* asset) = 0;
 
@@ -85,7 +89,7 @@ namespace CSE {
 
     private:
         std::string m_name;
-        std::string m_id;
+        std::string m_absoluteId;
         bool m_isInited = false;
 
     };

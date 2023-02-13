@@ -31,6 +31,7 @@ void CameraComponent::Init() {
 
     m_resultTarget = vec3();
     m_pRatio = const_cast<float*>(CORE->GetCore(CameraMgr)->GetProjectionRatio());
+    Tick(0);
 }
 
 void CameraComponent::Tick(float elapsedTime) {
@@ -176,14 +177,15 @@ void CameraComponent::SetProjectionMatrix() const {
 void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
     if (name_str == "m_eye") {
         m_eye = static_cast<TransformComponent*>(
-                SGameObject::FindByID(value[0])->GetTransform()
+                SGameObject::FindByHash(value[0])->GetTransform()
                 )->GetPosition();
     } else if (name_str == "m_target") {
         SET_VEC3(m_target);
     } else if (name_str == "m_up") {
         SET_VEC3(m_up);
     } else if (name_str == "m_targetObject") {
-        m_targetObject = SGameObject::FindByID(value[0]);
+        if(value.size() <= 0) return;
+        m_targetObject = SGameObject::FindByHash(value[0]);
     } else if (name_str == "m_cameraMatrix") {
         SET_MAT4(m_cameraMatrix);
     } else if (name_str == "m_projectionMatrix") {
@@ -219,19 +221,19 @@ std::string CameraComponent::PrintValue() const {
     PRINT_VALUE(m_eye, ConvertSpaceStr(gameObject->GetID(gameObject->GetComponent<TransformComponent>())));
     PRINT_VALUE_VEC3(m_target);
     PRINT_VALUE_VEC3(m_up);
-    PRINT_VALUE(m_targetObject, m_targetObject == nullptr ? "" : ConvertSpaceStr(m_targetObject->GetID()));
+    PRINT_VALUE(m_targetObject, m_targetObject == nullptr ? "" : ConvertSpaceStr(m_targetObject->GetHash()));
     PRINT_VALUE_MAT4(m_cameraMatrix);
     PRINT_VALUE_MAT4(m_projectionMatrix);
     PRINT_VALUE(m_type, static_cast<int>(m_type));
     PRINT_VALUE(m_pFov, m_pFov);
     PRINT_VALUE(m_orthoValue, m_oLeft, ' ', m_oRight, ' ', m_oBottom, ' ', m_oTop);
     PRINT_VALUE(m_distance, m_Near, ' ', m_Far);
-    if (m_frameBuffer != nullptr) PRINT_VALUE(m_frameBuffer, ConvertSpaceStr(m_frameBuffer->GetID()));
+    if (m_frameBuffer != nullptr) PRINT_VALUE(m_frameBuffer, ConvertSpaceStr(m_frameBuffer->GetHash()));
 
     PRINT_VALUE(m_backgroundType, static_cast<int>(m_backgroundType));
     PRINT_VALUE_VEC3(m_backgroundColor);
     if (m_backgroundMap != nullptr && m_backgroundMap->map != nullptr)
-        PRINT_VALUE(m_backgroundMap.map, ConvertSpaceStr(m_backgroundMap->map->GetID()));
+        PRINT_VALUE(m_backgroundMap.map, ConvertSpaceStr(m_backgroundMap->map->GetHash()));
 
     PRINT_END("component");
 }
