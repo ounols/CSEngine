@@ -23,8 +23,10 @@ void WebDemoScene::Init() {
     ab->GetComponent<CustomComponent>()->SetClassName("Stormtrooper.script");
 
     auto camera = new SGameObject("camera");
-    camera->CreateComponent<CameraComponent>();
+    const auto& camera_comp = camera->CreateComponent<CameraComponent>();
     camera->GetTransform()->m_position = vec3{0, 0, 1.2f };
+    camera_comp->SetBackgroundSkybox();
+    camera_comp->SetBackgroundType(CameraBase::SKYBOX);
 
     SGameObject* direction = new SGameObject();
     direction->SetParent(root);

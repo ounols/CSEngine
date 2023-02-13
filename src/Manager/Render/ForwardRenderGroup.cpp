@@ -1,6 +1,7 @@
 #include "ForwardRenderGroup.h"
 #include "../../Util/Render/CameraBase.h"
 #include "../../Util/Render/SMaterial.h"
+#include "../../Util/Render/SShaderGroup.h"
 #include "../../Util/Render/SFrameBuffer.h"
 #include "../../Component/CameraComponent.h"
 #include "RenderMgr.h"
@@ -21,9 +22,10 @@ void ForwardRenderGroup::RegisterObject(SIRender* object) {
     if (material == nullptr) return;
 
     short orderLayer = material->GetOrderLayer();
-    GLProgramHandle* handler = material->GetHandle();
+    const auto& shaders = material->GetShaders();
+    if (shaders == nullptr) return;
 
-    auto& layer = m_rendersLayer[orderLayer][handler];
+    auto& layer = m_rendersLayer[orderLayer][shaders];
     layer.push_back(object);
 }
 
@@ -32,12 +34,13 @@ void ForwardRenderGroup::RemoveObjects(SIRender* object) {
     if (material == nullptr) return;
 
     short orderLayer = material->GetOrderLayer();
-    GLProgramHandle* handler = material->GetHandle();
+    const auto& shaders = material->GetShaders();
+    if (shaders == nullptr) return;
 
     auto orderLayerIter = m_rendersLayer.find(orderLayer);
     if (orderLayerIter != m_rendersLayer.end()) {
         auto& programLayer = orderLayerIter->second;
-        auto handlerPair = programLayer.find(handler);
+        auto handlerPair = programLayer.find(shaders);
         if (handlerPair != programLayer.end()) {
             auto& layerVector = handlerPair->second;
             layerVector.erase(std::remove(layerVector.begin(), layerVector.end(), object),
@@ -54,7 +57,7 @@ void ForwardRenderGroup::RenderAll(const CameraBase& camera) const {
     const auto cameraMatrix = camera.GetCameraMatrixStruct();
     const auto& cameraBuffer = camera.GetFrameBuffer();
     const auto& frameBuffer = cameraBuffer == nullptr
-            ? m_renderMgr->GetMainBuffer() : cameraBuffer;
+                              ? m_renderMgr->GetMainBuffer() : cameraBuffer;
     OrderRenderLayer orderRenderLayer(m_rendersLayer.begin(), m_rendersLayer.end());
     frameBuffer->AttachFrameBuffer();
 
@@ -63,7 +66,7 @@ void ForwardRenderGroup::RenderAll(const CameraBase& camera) const {
         ProgramRenderLayer programComp(orderLayer.begin(), orderLayer.end());
 
         for (const auto& programPair : programComp) {
-            const auto& handler = *programPair.first;
+            const auto& handler = *programPair.first->GetForwardHandle();
             const auto& renderComp = programPair.second;
 
             if (programPair.first == nullptr) continue;
@@ -79,9 +82,10 @@ void ForwardRenderGroup::RenderAll(const CameraBase& camera) const {
                 if (!render->isRenderActive) continue;
 
                 const auto& material = render->GetMaterial();
-                render->SetMatrix(cameraMatrix);
+                material->AttachElement();
+                render->SetMatrix(cameraMatrix, &handler);
                 BindSourceBuffer(*frameBuffer, handler, layoutBegin + material->GetTextureCount() + 1);
-                render->Render();
+                render->Render(&handler);
             }
         }
     }

@@ -16,7 +16,6 @@ SPrefab::SPrefab() = default;
 SPrefab::~SPrefab() = default;
 
 void SPrefab::Exterminate() {
-
 }
 
 SGameObject* SPrefab::Clone(const vec3& position, SGameObject* parent) {
@@ -27,7 +26,6 @@ SGameObject* SPrefab::Clone(const vec3& position, SGameObject* parent) {
     clone->SetUndestroyable(false);
 
     return clone;
-
 }
 
 
@@ -39,7 +37,6 @@ SGameObject* SPrefab::Clone(const vec3& position, const vec3& scale, Quaternion 
     clone->GetTransform()->m_rotation = Quaternion(rotation);
     clone->SetIsPrefab(false);
     clone->SetUndestroyable(false);
-
 
     return clone;
 }
@@ -56,9 +53,8 @@ bool SPrefab::SetGameObject(SGameObject* obj) {
 }
 
 void SPrefab::Init(const AssetMgr::AssetReference* asset) {
-
     AssetMgr::TYPE type = asset->type;
-    std::string path = asset->path;
+    std::string path = asset->name_path;
 
     switch (type) {
         case AssetMgr::DAE:
@@ -67,38 +63,37 @@ void SPrefab::Init(const AssetMgr::AssetReference* asset) {
     }
 
     std::string hashRaw = AssetMgr::LoadAssetFile(path + ".meta");
+    if(!hashRaw.empty()) {
+        const XNode* root = XFILE().loadBuffer(hashRaw);
+        const auto& hashData = root->getNode("hash-data");
+        std::string hash = hashData.getAttribute("hash").value;
+        SetHash(hash);
+        const auto& hashChildren = hashData.children;
 
-    const XNode* root = XFILE().loadBuffer(hashRaw);
-    const auto& hashData = root->getNode("hash-data");
-    std::string hash = hashData.getAttribute("hash").value;
-    SetHash(hash);
-    const auto& hashChildren = hashData.children;
-
-    if(hashData.children.size() <= 0) {
-        hashRaw = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-                  "<CSEMETA version=\"1.0.0\">\n"
-                  "<hash-data hash=\"" + m_hash + "\">\n"
-                  + m_root->GenerateMeta() +
-                  "\n</hash-data>\n</CSEMETA>";
-        SaveTxtFile(path + ".meta", hashRaw);
-    }
-    else {
-        for(const auto& child : hashChildren) {
-            const auto& id = child.getAttribute("id").value;
-            std::string hash = child.value;
-            const auto& obj = static_cast<SGameObjectFromSPrefab*>(m_root->FindLocalByID(id));
-            if(obj == nullptr) continue;
-            obj->SetHash(hash);
-            obj->SetRefHash(hash);
+        if(hashData.children.size() <= 0) {
+            hashRaw = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                      "<CSEMETA version=\"1.0.0\">\n"
+                      "<hash-data hash=\"" + m_hash + "\">\n"
+                      + m_root->GenerateMeta() +
+                      "\n</hash-data>\n</CSEMETA>";
+            SaveTxtFile(path + ".meta", hashRaw);
         }
+        else {
+            for(const auto& child : hashChildren) {
+                const auto& id = child.getAttribute("id").value;
+                std::string hash = child.value;
+                const auto& obj = static_cast<SGameObjectFromSPrefab*>(m_root->FindLocalByID(id));
+                if(obj == nullptr) continue;
+                obj->SetHash(hash);
+                obj->SetRefHash(hash);
+            }
+        }
+        SAFE_DELETE(root);
     }
     GenerateResourceID();
-
-    SAFE_DELETE(root);
 }
 
 void SPrefab::GenerateResourceID(SGameObject* obj) {
-
     if (obj == nullptr) {
         obj = m_root;
         obj->SetResourceID(GetHash());
@@ -111,5 +106,4 @@ void SPrefab::GenerateResourceID(SGameObject* obj) {
     for (auto child : obj->GetChildren()) {
         GenerateResourceID(child);
     }
-
 }

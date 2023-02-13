@@ -7,6 +7,7 @@
 namespace CSE {
 
     class LightMgr;
+    class SShaderGroup;
 
     /**
      * This class is used for forward-rendering objects.
@@ -15,7 +16,7 @@ namespace CSE {
     class ForwardRenderGroup : public SRenderGroup {
     private:
         typedef std::vector<SIRender*> RenderInterfaces;
-        typedef std::unordered_map<GLProgramHandle*, RenderInterfaces> ProgramRenderLayer;
+        typedef std::unordered_map<SShaderGroup*, RenderInterfaces> ProgramRenderLayer;
         typedef std::map<short, ProgramRenderLayer> OrderRenderLayer;
 
     public:

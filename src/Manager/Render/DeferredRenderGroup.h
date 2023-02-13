@@ -7,13 +7,14 @@ namespace CSE {
 
     class SGBuffer;
     class LightMgr;
+    class SShaderGroup;
 
     /**
      * This class is responsible for deferred rendering of G-Buffer objects.
      */
     class DeferredRenderGroup : public SRenderGroup {
     private:
-        typedef std::unordered_map<GLProgramHandle*, SGBuffer*> GBufferLayer;
+        typedef std::unordered_map<SShaderGroup*, SGBuffer*> GBufferLayer;
 
     public:
         /**
@@ -47,7 +48,7 @@ namespace CSE {
          * @param camera Structure containing information values of the camera to be drawn.
          * @param gbuffer G-Buffer object to be drawn.
          */
-        void RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer) const;
+        void RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer, const SShaderGroup& shaders) const;
 
         /**
          * Set the viewport size.
@@ -61,7 +62,6 @@ namespace CSE {
 
     private:
         GBufferLayer m_gbufferLayer;
-        GLProgramHandle* m_geometryHandle = nullptr;
 
         unsigned int* m_width = nullptr;
         unsigned int* m_height = nullptr;

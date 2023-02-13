@@ -29,9 +29,9 @@ namespace CSE {
 
         void
         SetMatrix(const CameraMatrixStruct& cameraMatrixStruct,
-                  const GLProgramHandle* handle = nullptr) override;
+                  const GLProgramHandle* handle) override;
 
-        void Render(const GLProgramHandle* handle = nullptr) const override;
+        void Render(const GLProgramHandle* handle) const override;
 
         void SetIsEnable(bool is_enable) override;
 

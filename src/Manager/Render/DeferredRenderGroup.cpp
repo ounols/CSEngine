@@ -17,32 +17,31 @@ DeferredRenderGroup::DeferredRenderGroup(const RenderMgr& renderMgr) : SRenderGr
     m_height = renderMgr.GetHeight();
 
     m_lightMgr = CORE->GetCore(LightMgr);
-
-    m_geometryHandle = SResource::Create<GLProgramHandle>(Settings::GetDeferredGeometryPassShaderID());
 }
 
 DeferredRenderGroup::~DeferredRenderGroup() = default;
 
 void DeferredRenderGroup::RegisterObject(SIRender* object) {
     const auto& material = object->GetMaterialReference();
-    const auto& lightPassHandle = material->GetLightPassHandle();
-    if (lightPassHandle == nullptr) return;
+    const auto& shaders = material->GetShaders();
+    if (shaders == nullptr) return;
+    auto* handle = const_cast<GLProgramHandle*>(shaders->GetHandle("deferred"));
 
-    auto gbuffer = m_gbufferLayer[lightPassHandle];
+    auto gbuffer = m_gbufferLayer[shaders];
     if (!gbuffer) {
         gbuffer = new SGBuffer();
         gbuffer->GenerateGBuffer(*m_width, *m_height);
-        m_gbufferLayer[lightPassHandle] = gbuffer;
+        m_gbufferLayer[shaders] = gbuffer;
     }
     gbuffer->PushBackToLayer(object);
-    gbuffer->BindLightPass(lightPassHandle);
+    gbuffer->BindLightPass(handle);
 }
 
 void DeferredRenderGroup::RemoveObjects(SIRender* object) {
     const auto& material = object->GetMaterialReference();
     const auto& programLayer = m_gbufferLayer;
     auto it = std::find_if(programLayer.begin(), programLayer.end(), [&material](const auto& elem) {
-        return elem.first == material->GetLightPassHandle();
+        return elem.first == material->GetShaders();
     });
     if (it != programLayer.end()) {
         it->second->RemoveToLayer(object);
@@ -51,13 +50,15 @@ void DeferredRenderGroup::RemoveObjects(SIRender* object) {
 
 void DeferredRenderGroup::RenderAll(const CameraBase& camera) const {
     for (const auto& gbuffer_pair : m_gbufferLayer) {
-        const auto& light_handle = gbuffer_pair.first;
+        const auto& shaders = gbuffer_pair.first;
         const auto& gbuffer = gbuffer_pair.second;
-        RenderGbuffer(camera, *gbuffer);
+        RenderGbuffer(camera, *gbuffer, *shaders);
     }
 }
 
-void DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer) const {
+void
+DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbuffer,
+                                   const SShaderGroup& shaders) const {
     const auto cameraMatrix = camera.GetCameraMatrixStruct();
     const auto& frameBuffer = camera.GetFrameBuffer();
     const bool hasFrameBuffer = frameBuffer != nullptr;
@@ -73,15 +74,18 @@ void DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer
     glViewport(0, 0, *m_width, *m_height);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glUseProgram(m_geometryHandle->Program);
     const auto& renderLayer = gbuffer.GetRendersLayer();
+    const auto& handle = shaders.GetGeometryHandle();
+    glUseProgram(handle->Program);
 
     for (const auto& render : renderLayer) {
         if (render == nullptr) continue;
         if (!render->isRenderActive) continue;
 
-        render->SetMatrix(cameraMatrix);
-        render->Render();
+        const auto& material = render->GetMaterial();
+        material->AttachElement();
+        render->SetMatrix(cameraMatrix, handle);
+        render->Render(handle);
     }
 
     /** ======================

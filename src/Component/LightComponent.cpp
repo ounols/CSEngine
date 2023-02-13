@@ -108,7 +108,7 @@ void LightComponent::SetDepthMap() {
                                                           GL_DEPTH_COMPONENT);
     m_depthTexture->SetParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     m_depthTexture->SetParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-#if defined(ANDROID) || defined(__EMSCRIPTEN__)
+#if defined(ANDROID) || defined(__EMSCRIPTEN__) || defined(IOS)
     m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #else

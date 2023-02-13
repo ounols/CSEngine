@@ -171,6 +171,9 @@
     <ClCompile Include="..\..\..\src\Util\Render\SRenderGroup.cpp">
       <Filter>src\Util\Render</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\Util\Render\SShaderGroup.cpp">
+      <Filter>src\Util\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Sample\FirstDemoScene.h" />
@@ -447,6 +450,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\Object\SGameObjectFromSPrefab.h">
       <Filter>src\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\Render\SShaderGroup.h">
+      <Filter>src\Util\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -171,7 +171,7 @@ void STexture::SetParameterfv(int targetName, float* value) const {
 }
 
 void STexture::Init(const AssetMgr::AssetReference* asset) {
-	const std::string img_str = CSE::AssetMgr::LoadAssetFile(asset->path);
+	const std::string img_str = CSE::AssetMgr::LoadAssetFile(asset->name_path);
 
     LoadFromMemory(reinterpret_cast<const unsigned char*>(img_str.c_str()), img_str.length());
 }

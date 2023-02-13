@@ -233,6 +233,7 @@
     <ClInclude Include="..\..\..\src\Util\Render\SkyboxUtil.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SMaterial.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SRenderGroup.h" />
+    <ClInclude Include="..\..\..\src\Util\Render\SShaderGroup.h" />
     <ClInclude Include="..\..\..\src\Util\Render\STexture.h" />
     <ClInclude Include="..\..\..\src\Util\SafeLog.h" />
     <ClInclude Include="..\..\..\src\Util\ScriptDef.h" />
@@ -297,6 +298,7 @@
     <ClCompile Include="..\..\..\src\Util\Render\ShaderUtil.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\SMaterial.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\SRenderGroup.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Render\SShaderGroup.cpp" />
     <ClCompile Include="..\..\..\src\Util\Render\STexture.cpp" />
     <ClCompile Include="..\..\..\src\Util\SafeLog.cpp" />
     <ClCompile Include="..\..\..\src\Util\Settings.cpp" />

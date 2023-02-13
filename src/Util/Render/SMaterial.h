@@ -7,6 +7,7 @@
 #include "../STypeDef.h"
 #include "../Interface/TransformInterface.h"
 #include "../Render/GLMeshID.h"
+#include "SShaderGroup.h"
 
 namespace CSE {
 
@@ -36,13 +37,9 @@ namespace CSE {
 
         void Exterminate() override;
 
-        void SetHandle(GLProgramHandle* handle);
-
         void AttachElement() const;
 
-		void InitElements(const ElementsMap& elements, GLProgramHandle* handle);
-
-		void SetAttribute(const GLMeshID& meshId) const;
+		void InitElements(const ElementsMap& elements, SShaderGroup* shaders);
 
 		void SetInt(const std::string& name, int value);
 
@@ -60,15 +57,13 @@ namespace CSE {
 
         void SetMode(SMaterialMode mode);
 
-        GLProgramHandle* GetHandle() const;
-
-        GLProgramHandle* GetLightPassHandle() const;
+        SShaderGroup* GetShaders() const;
 
         int GetTextureCount() const;
 
         std::string PrintMaterial() const;
 
-        static SMaterial* GenerateMaterial(GLProgramHandle* handle);
+        static SMaterial* GenerateMaterial(SShaderGroup* shaders);
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
@@ -92,8 +87,7 @@ namespace CSE {
         void SetTextureFunc(Element* element, SResource* texture);
 
     private:
-        GLProgramHandle* m_handle = nullptr;
-        GLProgramHandle* m_lightPassHandle = nullptr;
+        SShaderGroup* m_shaders = nullptr;
         short m_orderLayer = 5000;
         //std::vector<Element*> m_elements;
 		ElementsMap m_elements;
