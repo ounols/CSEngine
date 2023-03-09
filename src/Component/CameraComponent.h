@@ -9,9 +9,19 @@ namespace CSE {
         mat4 camera;
         mat4 projection;
         vec3 cameraPosition;
+        bool isCube;
 
-        CameraMatrixStruct(const mat4& camera, const mat4& projection, const vec3& cameraPosition)
-                : camera(camera), projection(projection), cameraPosition(cameraPosition) {}
+        CameraMatrixStruct(const mat4& camera, const mat4& projection, const vec3& cameraPosition, bool isCube = false)
+                : camera(camera), projection(projection), cameraPosition(cameraPosition), isCube(isCube) {}
+    };
+
+    static mat4 CubeCameraMatrix[] = {
+            mat4::LookAt(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, -1.0f, 0.0f)),
+            mat4::LookAt(vec3(0.0f, 0.0f, 0.0f), vec3(-1.0f, 0.0f, 0.0f), vec3(0.0f, -1.0f, 0.0f)),
+            mat4::LookAt(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f)),
+            mat4::LookAt(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, -1.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f)),
+            mat4::LookAt(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, -1.0f, 0.0f)),
+            mat4::LookAt(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f), vec3(0.0f, -1.0f, 0.0f))
     };
 
     class SFrameBuffer;
@@ -20,10 +30,10 @@ namespace CSE {
     class CameraComponent : public SComponent, public CameraBase {
     public:
         enum CAMERATYPE {
-            PERSPECTIVE, ORTHO
+            PERSPECTIVE = 1, ORTHO = 2, CUBE = 3
         };
     public:
-        CameraComponent();
+        COMPONENT_DEFINE_CONSTRUCTOR(CameraComponent);
 
         ~CameraComponent() override;
 
@@ -70,6 +80,8 @@ namespace CSE {
         void SetPerspective(float fov, float near, float far);
 
         void SetOrtho(float left, float right, float top, float bottom);
+
+        void SetCubeCamera();
 
         void SetProjectionMatrix() const;
 

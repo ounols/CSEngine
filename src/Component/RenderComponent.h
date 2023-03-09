@@ -14,7 +14,7 @@ namespace CSE {
 
     class RenderComponent : public SComponent, public SIRender {
     public:
-        RenderComponent();
+        COMPONENT_DEFINE_CONSTRUCTOR(RenderComponent);
 
         ~RenderComponent() override;
 
@@ -29,13 +29,13 @@ namespace CSE {
 
         void
         SetMatrix(const CameraMatrixStruct& cameraMatrixStruct,
-                  const GLProgramHandle* handle = nullptr) override;
+                  const GLProgramHandle* handle) override;
 
-        void Render(const GLProgramHandle* handle = nullptr) const override;
+        void Render(const GLProgramHandle* handle) const override;
 
         void SetIsEnable(bool is_enable) override;
 
-        SMaterial* GetMaterial() const;
+        SMaterial* GetMaterial() const override;
 
         void SetMaterial(SMaterial* material);
 
@@ -54,5 +54,6 @@ namespace CSE {
         SMaterial* m_material_clone = nullptr;
         // SMaterial* material (Override)
         bool m_disableShadow = false;
+        bool m_isPrefab = false;
     };
 }

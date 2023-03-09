@@ -1,11 +1,11 @@
 #pragma once
 #include <vector>
 #include "../Object/SGameObject.h"
-#include "Base/SContainer.h"
+#include "Base/SContainerHash.h"
 
 namespace CSE {
 
-    class GameObjectContainer : public SContainer<SGameObject*> {
+    class GameObjectContainer : public SContainerHash<SGameObject*> {
     protected:
         GameObjectContainer();
 

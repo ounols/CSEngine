@@ -9,10 +9,11 @@
 #include "ScriptMgr.h"
 #include "CameraMgr.h"
 #include "LightMgr.h"
-#include "RenderMgr.h"
+#include "Render/RenderMgr.h"
 #include "SceneMgr.h"
 #include "MemoryMgr.h"
 #include "../Sample/FirstDemoScene.h"
+#include "../Sample/WebDemoScene.h"
 #include "../Util/Loader/SCENE/SSceneLoader.h"
 #include "../Util/AssetsDef.h"
 
@@ -47,8 +48,8 @@ void EngineCore::Init(unsigned int width, unsigned int height) {
     static_cast<SceneMgr*>(m_sceneMgr)->SetScene(new WebDemoScene());
 #else
     static_cast<SceneMgr*>(m_sceneMgr)->SetScene(new FirstDemoScene());
-//    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/test_scene.scene");
-//    SceneMgr::getInstance()->SetScene(scene);
+//    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/animation.scene");
+//    m_sceneMgr->SetScene(scene);
 #endif
 }
 

@@ -52,7 +52,17 @@ bool STexture::Load(unsigned char* data) {
     glBindTexture(m_targetGL, m_texId);
 
     m_internalFormat = GL_RGB;
-    if (m_channels == 4) m_internalFormat = GL_RGBA;
+    switch (m_channels) {
+        case 1:
+            m_internalFormat = GL_R8;
+            break;
+        case 2:
+            m_internalFormat = GL_RG;
+            break;
+        case 4:
+            m_internalFormat = GL_RGBA;
+            break;
+    }
 
     glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_internalFormat, m_glType, data);
 
@@ -130,7 +140,7 @@ bool STexture::InitTexture(int width, int height, int channel, int internalForma
             }
             break;
 
-        default:
+        case TEX_2D:
             glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_channels, m_glType, nullptr);
     }
 
@@ -161,7 +171,7 @@ void STexture::SetParameterfv(int targetName, float* value) const {
 }
 
 void STexture::Init(const AssetMgr::AssetReference* asset) {
-	const std::string img_str = CSE::AssetMgr::LoadAssetFile(asset->path);
+	const std::string img_str = CSE::AssetMgr::LoadAssetFile(asset->name_path);
 
     LoadFromMemory(reinterpret_cast<const unsigned char*>(img_str.c_str()), img_str.length());
 }

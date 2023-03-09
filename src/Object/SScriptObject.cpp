@@ -23,7 +23,7 @@ void SScriptObject::Exterminate() {
 }
 
 void SScriptObject::Init(const AssetMgr::AssetReference* asset) {
-    RemakeScript(asset->path);
+    RemakeScript(asset->name_path);
 }
 
 void SScriptObject::RegisterScript(const std::string& script) {

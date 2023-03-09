@@ -31,9 +31,12 @@ void CameraComponent::Init() {
 
     m_resultTarget = vec3();
     m_pRatio = const_cast<float*>(CORE->GetCore(CameraMgr)->GetProjectionRatio());
+    Tick(0);
 }
 
 void CameraComponent::Tick(float elapsedTime) {
+    if(m_type == CUBE) return;
+
     if (m_targetObject == nullptr)
         m_resultTarget = *m_eye + m_target;
     else {
@@ -134,6 +137,10 @@ void CameraComponent::SetOrtho(float left, float right, float top, float bottom)
     m_oTop = top;
 }
 
+void CameraComponent::SetCubeCamera() {
+    m_type = CUBE;
+}
+
 void CameraComponent::SetCameraMatrix() {
     m_cameraMatrix = mat4::LookAt(*m_eye, m_resultTarget, m_up);
 }
@@ -149,14 +156,20 @@ vec3 CameraComponent::GetCameraPosition() const {
 
 void CameraComponent::SetProjectionMatrix() const {
 	std::mutex mutex;
-
 	mutex.lock();
-    if (m_type == PERSPECTIVE) {
-        m_projectionMatrix = mat4::Perspective(m_pFov, *m_pRatio, m_Near, m_Far);
 
-    } else {
-        m_projectionMatrix = mat4::Ortho(m_oLeft, m_oRight, m_oTop, m_oBottom, m_Near, m_Far);
+    switch (m_type) {
+        case PERSPECTIVE:
+            m_projectionMatrix = mat4::Perspective(m_pFov, *m_pRatio, m_Near, m_Far);
+            break;
+        case ORTHO:
+            m_projectionMatrix = mat4::Ortho(m_oLeft, m_oRight, m_oTop, m_oBottom, m_Near, m_Far);
+            break;
+        case CUBE:
+            m_projectionMatrix = mat4::Perspective(90.0f, 1.0f, 0.1f, 10.0f);
+            break;
     }
+
     m_isProjectionInited = true;
 	mutex.unlock();
 }
@@ -164,24 +177,21 @@ void CameraComponent::SetProjectionMatrix() const {
 void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
     if (name_str == "m_eye") {
         m_eye = static_cast<TransformComponent*>(
-                SGameObject::FindByID(value[0])->GetTransform()
+                SGameObject::FindByHash(value[0])->GetTransform()
                 )->GetPosition();
     } else if (name_str == "m_target") {
         SET_VEC3(m_target);
     } else if (name_str == "m_up") {
         SET_VEC3(m_up);
     } else if (name_str == "m_targetObject") {
-        m_targetObject = SGameObject::FindByID(value[0]);
+        if(value.size() <= 0) return;
+        m_targetObject = SGameObject::FindByHash(value[0]);
     } else if (name_str == "m_cameraMatrix") {
         SET_MAT4(m_cameraMatrix);
     } else if (name_str == "m_projectionMatrix") {
         SET_MAT4(m_projectionMatrix);
     } else if (name_str == "m_type") {
-        if (value[0] == "PERSPECTIVE") {
-            m_type = PERSPECTIVE;
-        } else {
-            m_type = ORTHO;
-        }
+        m_type = static_cast<CAMERATYPE>(std::stoi(value[0]));
     } else if (name_str == "m_pFov") {
         m_pFov = std::stof(value[0]);
     } else if (name_str == "m_orthoValue") {
@@ -211,19 +221,19 @@ std::string CameraComponent::PrintValue() const {
     PRINT_VALUE(m_eye, ConvertSpaceStr(gameObject->GetID(gameObject->GetComponent<TransformComponent>())));
     PRINT_VALUE_VEC3(m_target);
     PRINT_VALUE_VEC3(m_up);
-    PRINT_VALUE(m_targetObject, m_targetObject == nullptr ? "" : ConvertSpaceStr(m_targetObject->GetID()));
+    PRINT_VALUE(m_targetObject, m_targetObject == nullptr ? "" : ConvertSpaceStr(m_targetObject->GetHash()));
     PRINT_VALUE_MAT4(m_cameraMatrix);
     PRINT_VALUE_MAT4(m_projectionMatrix);
-    PRINT_VALUE(m_type, m_type == PERSPECTIVE ? "PERSPECTIVE" : "ORTHO");
+    PRINT_VALUE(m_type, static_cast<int>(m_type));
     PRINT_VALUE(m_pFov, m_pFov);
     PRINT_VALUE(m_orthoValue, m_oLeft, ' ', m_oRight, ' ', m_oBottom, ' ', m_oTop);
     PRINT_VALUE(m_distance, m_Near, ' ', m_Far);
-    if (m_frameBuffer != nullptr) PRINT_VALUE(m_frameBuffer, ConvertSpaceStr(m_frameBuffer->GetID()));
+    if (m_frameBuffer != nullptr) PRINT_VALUE(m_frameBuffer, ConvertSpaceStr(m_frameBuffer->GetHash()));
 
     PRINT_VALUE(m_backgroundType, static_cast<int>(m_backgroundType));
     PRINT_VALUE_VEC3(m_backgroundColor);
     if (m_backgroundMap != nullptr && m_backgroundMap->map != nullptr)
-        PRINT_VALUE(m_backgroundMap.map, ConvertSpaceStr(m_backgroundMap->map->GetID()));
+        PRINT_VALUE(m_backgroundMap.map, ConvertSpaceStr(m_backgroundMap->map->GetHash()));
 
     PRINT_END("component");
 }
@@ -245,17 +255,14 @@ CameraBase::BackgroundType CameraComponent::GetBackgroundType() {
 }
 
 void CameraComponent::RenderBackground() const {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     switch (m_backgroundType) {
-        case NONE:
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            return;
         case SOLID:
             glClearColor(m_backgroundColor.x, m_backgroundColor.y, m_backgroundColor.z, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            return;
+            break;
         case SKYBOX:
             const auto& mapStruct = m_backgroundMap;
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             if (mapStruct->map == nullptr) return;
 
             glUseProgram(globalSkyboxHandle->Program);
@@ -269,7 +276,7 @@ void CameraComponent::RenderBackground() const {
             ShaderUtil::BindAttributeToCubeMap();
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_CULL_FACE);
-            return;
+            break;
     }
 }
 

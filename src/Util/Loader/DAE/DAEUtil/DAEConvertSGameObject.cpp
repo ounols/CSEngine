@@ -1,11 +1,8 @@
-//
-// Created by ounols on 19. 2. 9.
-//
-
 #include "DAEConvertSGameObject.h"
 #include "../../../../Component/Animation/JointComponent.h"
 #include "../../../../Component/Animation/AnimatorComponent.h"
 #include "../../../../Manager/EngineCore.h"
+#include "../../../../Object/SGameObjectFromSPrefab.h"
 
 using namespace CSE;
 
@@ -17,7 +14,7 @@ SGameObject* DAEConvertSGameObject::CreateJoints(SGameObject* parent, Joint* dat
 
     if (parent == nullptr) return nullptr;
 
-    auto jointObject = new SGameObject(data->GetName());
+    auto jointObject = new SGameObjectFromSPrefab(data->GetName());
     auto joint = jointObject->CreateComponent<JointComponent>();
     joint->SetID(data->GetIndex());
 	int jointIndex = CORE->GetCore(ResMgr)->GetStringHash(data->GetName());
@@ -39,7 +36,7 @@ SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, JointCo
                                                     const std::string& name, Animation* animation) {
     if (parent == nullptr) return nullptr;
 
-    auto animationObject = new SGameObject(parent->GetName() + "_animation");
+    auto animationObject = new SGameObjectFromSPrefab(parent->GetName() + "_animation");
     auto animator = animationObject->CreateComponent<AnimatorComponent>();
 
     std::list<KeyFrame*> frames;
@@ -63,12 +60,15 @@ SGameObject* DAEConvertSGameObject::CreateAnimation(SGameObject* parent, JointCo
 }
 
 KeyFrame* DAEConvertSGameObject::CreateKeyFrame(KeyFrameData* data) {
-    std::map<int, JointTransform*> map;
-    for (const auto& jointData : data->jointTransforms) {
+    std::vector<JointTransform*> resultData;
+    const auto& jointTransforms = data->jointTransforms;
+    resultData.reserve(jointTransforms.size());
+
+    for (const auto& jointData : jointTransforms) {
         JointTransform* jointTransform = CreateTransform(jointData);
-        map[jointData->jointId] = jointTransform;
+        resultData.push_back(jointTransform);
     }
-    return new KeyFrame(data->time, map);
+    return new KeyFrame(data->time, std::move(resultData));
 }
 
 JointTransform* DAEConvertSGameObject::CreateTransform(JointTransformData* data) {

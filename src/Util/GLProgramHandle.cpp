@@ -97,6 +97,7 @@ void GLProgramHandle::SetAttributesList(std::map<std::string, std::string>& vert
     GLenum type;
 
     glGetProgramiv(Program, GL_ACTIVE_ATTRIBUTES, &count);
+    AttributesList.clear();
 
     for (int i = 0; i < count; i++) {
         GLchar name[32];
@@ -131,6 +132,7 @@ GLProgramHandle::SetUniformsList(std::map<std::string, std::string>& vert, std::
     GLenum type;
 
     glGetProgramiv(Program, GL_ACTIVE_UNIFORMS, &count);
+    UniformsList.clear();
 
     for (int i = 0; i < count; i++) {
         GLchar name[64];
@@ -184,7 +186,7 @@ std::string GLProgramHandle::getImplementName(std::map<std::string, std::string>
 
 void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
     //
-    std::string shader_combine = CSE::AssetMgr::LoadAssetFile(asset->path);
+    std::string shader_combine = CSE::AssetMgr::LoadAssetFile(asset->name_path);
 
     auto shader_combine_vector = split(shader_combine, ',');
 
@@ -197,8 +199,8 @@ void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
     auto vert_asset = resMgr->GetAssetReference(m_vertShaderName);
     auto frag_asset = resMgr->GetAssetReference(m_fragShaderName);
 
-    std::string vert_str = CSE::AssetMgr::LoadAssetFile(vert_asset->path);
-    std::string frag_str = CSE::AssetMgr::LoadAssetFile(frag_asset->path);
+    std::string vert_str = CSE::AssetMgr::LoadAssetFile(vert_asset->name_path);
+    std::string frag_str = CSE::AssetMgr::LoadAssetFile(frag_asset->name_path);
 
     if (vert_str.empty() || frag_str.empty()) return;
 

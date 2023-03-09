@@ -45,7 +45,7 @@ void LightComponent::Tick(float elapsedTime) {
         float color0 = (0.4f * (1 - value) + 0.4f) * bright * 5;
         float color1 = (0.3f * value + 0.3f) * bright * 5;
 
-//		float color2 = (value_str * 0.07f + 0.03f) * 10;
+//		float color2 = (valueStr * 0.07f + 0.03f) * 10;
 
         m_light->color = vec3{ color0, color1, color1 };
     }
@@ -108,7 +108,7 @@ void LightComponent::SetDepthMap() {
                                                           GL_DEPTH_COMPONENT);
     m_depthTexture->SetParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     m_depthTexture->SetParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-#if defined(ANDROID) || defined(__EMSCRIPTEN__)
+#if defined(ANDROID) || defined(__EMSCRIPTEN__) || defined(IOS)
     m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     m_depthTexture->SetParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #else
@@ -159,6 +159,8 @@ void LightComponent::SetValue(std::string name_str, Arguments value) {
         m_near = std::stof(value[0]);
     } else if (name_str == "m_far") {
         m_far = std::stof(value[0]);
+    } else if (name_str == "m_direction") {
+        SET_VEC4(m_light->direction);
     }
 
     SetLightType(m_type);
@@ -171,6 +173,8 @@ std::string LightComponent::PrintValue() const {
 	PRINT_VALUE(m_disableShadow, m_disableShadow ? 1 : 0);
     PRINT_VALUE(m_near, m_near);
     PRINT_VALUE(m_far, m_far);
+    vec4 m_direction = m_light->direction;
+    PRINT_VALUE_VEC4(m_direction);
 
 	PRINT_END("component");
 }

@@ -9,8 +9,12 @@
 #define COMPONENT_DECLARE(CLASSNAME)    \
 CLASSNAME();                            \
 auto GetComponent() override
+
+#define COMPONENT_DEFINE_CONSTRUCTOR(CLASSNAME) \
+explicit CLASSNAME(CSE::SGameObject* l_gameObject)
+
 #define COMPONENT_CONSTRUCTOR(CLASSNAME)    \
-CLASSNAME::CLASSNAME() : SComponent(#CLASSNAME)
+CLASSNAME::CLASSNAME(CSE::SGameObject* l_gameObject) : CSE::SComponent(#CLASSNAME, l_gameObject)
 
 #define FIND_OBJ_REFERENCE(obj, src) \
 {                           \
@@ -26,7 +30,7 @@ CLASSNAME::CLASSNAME() : SComponent(#CLASSNAME)
 #define INIT_COMPONENT_CLONE(className, cloneName) \
 className* cloneName = nullptr;    \
 if (object == nullptr) {            \
-cloneName = new className();       \
+cloneName = new className(object);       \
 } else {    \
 cloneName = object->CreateComponent<className>();    \
 }

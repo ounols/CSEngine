@@ -57,12 +57,6 @@
     <ClCompile Include="..\..\..\src\Manager\OGLMgr.cpp">
       <Filter>src\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\Manager\RenderContainer.cpp">
-      <Filter>src\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\Manager\RenderMgr.cpp">
-      <Filter>src\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\Manager\ResMgr.cpp">
       <Filter>src\Manager</Filter>
     </ClCompile>
@@ -159,6 +153,27 @@
     <ClCompile Include="..\..\..\src\Manager\CoreBufferContainer.cpp">
       <Filter>src\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\Manager\Render\DeferredRenderGroup.cpp">
+      <Filter>src\Manager\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Manager\Render\DepthOnlyRenderGroup.cpp">
+      <Filter>src\Manager\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Manager\Render\ForwardRenderGroup.cpp">
+      <Filter>src\Manager\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Manager\Render\RenderContainer.cpp">
+      <Filter>src\Manager\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Manager\Render\RenderMgr.cpp">
+      <Filter>src\Manager\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Util\Render\SRenderGroup.cpp">
+      <Filter>src\Util\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Util\Render\SShaderGroup.cpp">
+      <Filter>src\Util\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Sample\FirstDemoScene.h" />
@@ -223,12 +238,6 @@
     <ClInclude Include="..\..\..\src\Manager\OGLMgr.h">
       <Filter>src\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\Manager\RenderContainer.h">
-      <Filter>src\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\Manager\RenderMgr.h">
-      <Filter>src\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\Manager\ResMgr.h">
       <Filter>src\Manager</Filter>
     </ClInclude>
@@ -241,7 +250,7 @@
     <ClInclude Include="..\..\..\src\Manager\Base\Scene.h">
       <Filter>src\Manager\Base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\Manager\Base\SContainer.h">
+    <ClInclude Include="..\..\..\src\Manager\Base\SContainerList.h">
       <Filter>src\Manager\Base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\Object\SGameObject.h">
@@ -421,6 +430,30 @@
     <ClInclude Include="..\..\..\src\Manager\CoreBufferContainer.h">
       <Filter>src\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Manager\Render\DeferredRenderGroup.h">
+      <Filter>src\Manager\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Manager\Render\DepthOnlyRenderGroup.h">
+      <Filter>src\Manager\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Manager\Render\ForwardRenderGroup.h">
+      <Filter>src\Manager\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Manager\Render\RenderContainer.h">
+      <Filter>src\Manager\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Manager\Render\RenderMgr.h">
+      <Filter>src\Manager\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\Render\SRenderGroup.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Object\SGameObjectFromSPrefab.h">
+      <Filter>src\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\Render\SShaderGroup.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CSEngine.rc" />
@@ -458,6 +491,9 @@
     </Filter>
     <Filter Include="src\Util\Render">
       <UniqueIdentifier>{99f41871-70c2-4470-9281-b2664237c669}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Manager\Render">
+      <UniqueIdentifier>{1fa98e1c-2004-497f-8aa6-7a713b7dbc86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

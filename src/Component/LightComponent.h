@@ -17,7 +17,7 @@ namespace CSE {
             NONE = 0, DIRECTIONAL = 1, POINT = 2, SPOT = 3
         };
     public:
-        LightComponent();
+        COMPONENT_DEFINE_CONSTRUCTOR(LightComponent);
 
         ~LightComponent() override;
 

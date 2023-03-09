@@ -9,7 +9,7 @@ namespace CSE {
 
     class TransformComponent : public SComponent, public TransformInterface {
     public:
-        TransformComponent();
+        COMPONENT_DEFINE_CONSTRUCTOR(TransformComponent);
 
         ~TransformComponent() override;
 

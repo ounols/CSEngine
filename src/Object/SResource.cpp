@@ -8,6 +8,8 @@
 #include "../Manager/ResMgr.h"
 #include "../Manager/EngineCore.h"
 #include "../Manager/MemoryMgr.h"
+#include "../Util/AssetsDef.h"
+#include "../Util/Loader/XML/XML.h"
 
 
 using namespace CSE;
@@ -32,11 +34,11 @@ SResource::SResource(const SResource* resource, bool isRegister) : SObject(isReg
 SResource::~SResource() = default;
 
 void SResource::SetName(std::string name) {
-    m_name = CORE->GetCore(ResMgr)->RemoveDuplicatingName(std::move(name));
+    m_name = std::move(name);
 }
 
-void SResource::SetID(std::string id) {
-    m_id = std::move(id);
+void SResource::SetAbsoluteID(std::string id) {
+    m_absoluteId = std::move(id);
 }
 
 void SResource::SetResource(std::string name, bool isInit) {
@@ -52,7 +54,18 @@ void SResource::SetResource(const AssetMgr::AssetReference* asset, bool isInit) 
     if (m_isInited) return;
 
     m_isInited = true;
-    m_id = asset->id;
+    m_absoluteId = asset->id;
+    if(!asset->hash.empty()) {
+        std::string hash = asset->hash;
+        SetHash(hash);
+    }
+    else {
+        std::string meta = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                           "<CSEMETA version=\"1.0.0\">\n"
+                           "<hash-data hash=\"" + m_hash + "\">\n"
+                           "\n</hash-data>\n</CSEMETA>";
+        SaveTxtFile(asset->name_path + ".meta", meta);
+    }
 
     SetName(asset->name);
     if (isInit)
@@ -61,4 +74,15 @@ void SResource::SetResource(const AssetMgr::AssetReference* asset, bool isInit) 
 
 SResource* SResource::GetResource(std::string name) {
     return CORE->GetCore(ResMgr)->GetSResource(std::move(name));
+}
+
+void SResource::SetHash(std::string& hash) {
+    std::string srcHash = m_hash;
+    SObject::SetHash(hash);
+    CORE->GetCore(ResMgr)->ChangeHash(srcHash, hash);
+}
+
+AssetMgr::AssetReference* SResource::GetAssetReference(std::string hash) const {
+    if(hash.empty()) hash = m_hash;
+    return CORE->GetCore(ResMgr)->GetAssetReference(std::move(hash));
 }

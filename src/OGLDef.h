@@ -28,6 +28,10 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+#elif IOS
+
+#include <OpenGLES/ES3/gl.h>
+
 #elif __APPLE_CC__
 
 #include <glad/glad.h>
@@ -42,6 +46,8 @@ static void checkGlError(const char *op) {
     int error = glGetError();
     if (error != GL_NO_ERROR) {
 #ifdef __ANDROID__
+        
+#elif IOS
 
 #else
         SafeLog::Log((std::string(op) + ": glError " + std::to_string(error)).c_str());

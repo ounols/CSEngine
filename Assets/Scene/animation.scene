@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CSESCENE version="1.0.0">
+<gameobject name="root" hash="Sso4TqtRyDzmbXaq">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</gameobject><prefab name="stormtrooper" fileid="ckckxt1sCSKLL2dX" hash="jvpT5vSLP8naHZth">
+<changegameobject name="stormtrooper" hash="jvpT5vSLP8naHZth" fileid="ckckxt1sCSKLL2dX" ref="tp5frVSiLAH4hGv4">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-0.5 -0.3 0</value>
+<value name="m_scale">0.15 0.15 0.15</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID">zxxRpmeHeKTNexOi</value>
+<value name="__variable__">renderComp null null</value>
+<value name="__variable__">lightComp null null</value>
+<value name="__variable__">ambient null null</value>
+</component>
+<parent>Sso4TqtRyDzmbXaq</parent>
+</changegameobject><changegameobject name="Stormtroopermesh-mesh" hash="PTLek9VQmBpHxTC4" fileid="ckckxt1sCSKLL2dX*Stormtroopermesh-mesh" ref="YqyfUKNUcfKoqjwu">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">jKMiPVi6vm46GlUF</value>
+</component>
+<parent>jvpT5vSLP8naHZth</parent>
+</changegameobject></prefab><prefab name="stormtrooper" fileid="ckckxt1sCSKLL2dX" hash="jeCLTYGYx5QimhT5">
+<changegameobject name="stormtrooper" hash="jeCLTYGYx5QimhT5" fileid="ckckxt1sCSKLL2dX" ref="tp5frVSiLAH4hGv4">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 -0.3 0</value>
+<value name="m_scale">0.15 0.15 0.15</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID">zxxRpmeHeKTNexOi</value>
+<value name="__variable__">renderComp null null</value>
+<value name="__variable__">lightComp null null</value>
+<value name="__variable__">ambient null null</value>
+</component>
+<parent>Sso4TqtRyDzmbXaq</parent>
+</changegameobject><changegameobject name="Stormtroopermesh-mesh" hash="0qVrr8wjuimeChNy" fileid="ckckxt1sCSKLL2dX*Stormtroopermesh-mesh" ref="YqyfUKNUcfKoqjwu">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">jKMiPVi6vm46GlUF</value>
+</component>
+<parent>jeCLTYGYx5QimhT5</parent>
+</changegameobject></prefab><prefab name="stormtrooper" fileid="ckckxt1sCSKLL2dX" hash="MuRkQYvefSqFHF3m">
+<changegameobject name="stormtrooper" hash="MuRkQYvefSqFHF3m" fileid="ckckxt1sCSKLL2dX" ref="tp5frVSiLAH4hGv4">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.5 -0.3 0</value>
+<value name="m_scale">0.15 0.15 0.15</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID">zxxRpmeHeKTNexOi</value>
+<value name="__variable__">renderComp null null</value>
+<value name="__variable__">lightComp null null</value>
+<value name="__variable__">ambient null null</value>
+</component>
+<parent>Sso4TqtRyDzmbXaq</parent>
+</changegameobject><changegameobject name="Stormtroopermesh-mesh" hash="9zImGQ8texbVYQQh" fileid="ckckxt1sCSKLL2dX*Stormtroopermesh-mesh" ref="YqyfUKNUcfKoqjwu">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">jKMiPVi6vm46GlUF</value>
+</component>
+<parent>MuRkQYvefSqFHF3m</parent>
+</changegameobject></prefab><gameobject name="camera" hash="EKr6DGQigOdOfYHW">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 1.2</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CameraComponent" enable="1">
+<value name="m_eye">EKr6DGQigOdOfYHW?TransformComponent</value>
+<value name="m_target">0 0 -1</value>
+<value name="m_up">0 1 0</value>
+<value name="m_targetObject">Sso4TqtRyDzmbXaq</value>
+<value name="m_cameraMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
+<value name="m_projectionMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
+<value name="m_type">1</value>
+<value name="m_pFov">45</value>
+<value name="m_orthoValue">-1 1 -1 1</value>
+<value name="m_distance">0.1 100</value>
+<value name="m_backgroundType">2</value>
+<value name="m_backgroundColor">0.4 0.4 0.4</value>
+<value name="m_backgroundMap.map">1xDInjTYsymsQszI</value>
+</component>
+<parent>Sso4TqtRyDzmbXaq</parent>
+</gameobject><gameobject name="directional" hash="gcih73m6Q6QC1j14">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0.5 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="LightComponent" enable="1">
+<value name="m_type">1</value>
+<value name="m_disableShadow">0</value>
+<value name="m_near">-10</value>
+<value name="m_far">10</value>
+<value name="m_direction">0 1 1 0</value>
+</component>
+<parent>Sso4TqtRyDzmbXaq</parent>
+</gameobject></CSESCENE>

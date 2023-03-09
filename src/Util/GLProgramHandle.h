@@ -11,9 +11,11 @@
 
 namespace CSE {
     struct GLUniformHandles {
-        GLint ModelView = HANDLE_NULL;
-        GLint ModelNoCameraMatrix = HANDLE_NULL;
-        GLint Projection = HANDLE_NULL;
+        GLint ViewMatrix = HANDLE_NULL;
+        GLint ModelMatrix = HANDLE_NULL;
+        GLint ProjectionMatrix = HANDLE_NULL;
+        GLint ViewInvMatrix = HANDLE_NULL;
+        GLint ProjectionInvMatrix = HANDLE_NULL;
         GLint CameraPosition = HANDLE_NULL;
         // Light
         GLint LightPosition = HANDLE_NULL;
@@ -30,6 +32,9 @@ namespace CSE {
         // Skinning
         GLint JointMatrix = HANDLE_NULL;
         GLint SkinningMode = HANDLE_NULL;
+        // Buffers
+        GLint SourceBuffer = HANDLE_NULL;
+        GLint SourceBufferSize = HANDLE_NULL;
     };
 
     struct GLAttributeHandles {

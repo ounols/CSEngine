@@ -17,11 +17,6 @@ namespace CSE {
 
         void RenderPBREnvironment();
 
-        void InitShadowEnvironment();
-        GLProgramHandle* GetShadowEnvironment() const {
-            return m_shadowDepthMapShader;
-        }
-
         void BindPBREnvironmentMap(const GLProgramHandle* handle, int textureLayout) const;
 
         static unsigned int GetWidth();
@@ -52,9 +47,6 @@ namespace CSE {
         GLProgramHandle* m_irradianceShader;
         GLProgramHandle* m_prefilterShader;
         GLProgramHandle* m_brdfShader;
-
-        GLProgramHandle* m_shadowDepthMapShader;
-
 
         STexture* m_hdrTexture;
         STexture* m_envCubemap;

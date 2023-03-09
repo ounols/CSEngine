@@ -7,7 +7,6 @@
 #include "../../MacroDef.h"
 #include <utility>
 #include <vector>
-#include <map>
 #include <string>
 
 namespace CSE {
@@ -49,16 +48,14 @@ namespace CSE {
 
     class KeyFrame {
     public:
-        KeyFrame(float timeStamp, std::map<int, JointTransform*> pose) {
+        KeyFrame(float timeStamp, std::vector<JointTransform*>&& pose) {
             m_timeStamp = timeStamp;
             m_pose = std::move(pose);
         }
 
         ~KeyFrame() {
             for (auto pair : m_pose) {
-                JointTransform* temp = pair.second;
-
-                SAFE_DELETE(temp);
+                SAFE_DELETE(pair);
             }
 
             m_pose.clear();
@@ -68,12 +65,12 @@ namespace CSE {
             return m_timeStamp;
         }
 
-        std::map<int, JointTransform*> GetJointKeyFrames() const {
+        std::vector<JointTransform*> GetJointKeyFrames() const {
             return m_pose;
         }
 
     private:
         float m_timeStamp = 0;
-        std::map<int, JointTransform*> m_pose;
+        std::vector<JointTransform*> m_pose;
     };
 }

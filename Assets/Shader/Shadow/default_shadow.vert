@@ -10,9 +10,11 @@ in vec3 a_weights;
 
 // Uniforms
 //[matrix.projection]//
-uniform mat4 lightSpaceMatrix;
-//[matrix.modelview]//
-uniform mat4 model;
+uniform mat4 u_projectionMatrix;
+//[matrix.view]//
+uniform mat4 u_viewMatrix;
+//[matrix.model]//
+uniform mat4 u_modelMatrix;
 //[matrix.joint]//
 uniform mat4 u_jointMatrix[MAX_JOINTS];
 //[matrix.skinning_mode]//
@@ -35,5 +37,5 @@ void main() {
         position_final = a_position;
     }
 
-    gl_Position = lightSpaceMatrix * model * position_final;
+    gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * position_final;
 }

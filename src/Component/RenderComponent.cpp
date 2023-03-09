@@ -1,5 +1,5 @@
 #include "RenderComponent.h"
-#include "../Manager/RenderMgr.h"
+#include "../Manager/Render/RenderMgr.h"
 #include "../Manager/LightMgr.h"
 #include "../Manager/EngineCore.h"
 #include "../Util/Render/ShaderUtil.h"
@@ -12,24 +12,28 @@ using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(RenderComponent) {
     m_renderMgr = CORE->GetCore(RenderMgr);
-    m_renderMgr->Register(this);
     SetMaterial(nullptr);
 }
 
 RenderComponent::~RenderComponent() = default;
 
 void RenderComponent::Exterminate() {
-    if(m_renderMgr != nullptr) m_renderMgr->Remove(this);
-    if(m_lightMgr != nullptr) m_lightMgr->RemoveShadowObject(this);
+    if (material != nullptr) {
+        const auto& mode = material->GetMode();
+        if (m_renderMgr != nullptr) {
+            m_renderMgr->Remove(this, (RenderContainer::RenderGroupMode) mode);
+            m_renderMgr->Remove(this, RenderContainer::DEPTH_ONLY);
+        }
+    }
     SAFE_DELETE(m_material_clone);
     material = nullptr;
 }
 
 void RenderComponent::Init() {
 
-    if(!m_disableShadow) {
+    if (!m_disableShadow) {
         m_lightMgr = CORE->GetCore(LightMgr);
-        m_lightMgr->RegisterShadowObject(this);
+        m_renderMgr->Register(this, RenderContainer::DEPTH_ONLY);
     }
 
     m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
@@ -37,7 +41,7 @@ void RenderComponent::Init() {
         m_skinningMesh = dynamic_cast<DrawableSkinnedMeshComponent*>(m_mesh);
     }
 
-    if(material == nullptr) {
+    if (material == nullptr) {
         isEnable = isRenderActive = false;
     }
 
@@ -56,20 +60,17 @@ void RenderComponent::Tick(float elapsedTime) {
 
 void
 RenderComponent::SetMatrix(const CameraMatrixStruct& cameraMatrixStruct, const GLProgramHandle* handle) {
-    const auto& current_handle = handle == nullptr ? m_material_clone->GetHandle() : handle;
-    ShaderUtil::BindCameraToShader(*current_handle, cameraMatrixStruct.camera, cameraMatrixStruct.cameraPosition,
+    ShaderUtil::BindCameraToShader(*handle, cameraMatrixStruct.camera, cameraMatrixStruct.cameraPosition,
                                    cameraMatrixStruct.projection,
                                    static_cast<const TransformComponent*>(gameObject->GetTransform())->GetMatrix());
 }
 
 void RenderComponent::Render(const GLProgramHandle* handle) const {
 
-    if (m_mesh == nullptr || m_material_clone == nullptr) return;
+    if (m_mesh == nullptr || m_material_clone == nullptr || gameObject->isPrefab()) return;
 
-    const auto& current_handle = handle == nullptr ? m_material_clone->GetHandle() : handle;
-    if(handle == nullptr) m_material_clone->AttachElement();
-    SetJointMatrix(current_handle);
-    ShaderUtil::BindAttributeToShader(*current_handle, m_mesh->GetMeshID());
+    SetJointMatrix(handle);
+    ShaderUtil::BindAttributeToShader(*handle, m_mesh->GetMeshID());
 }
 
 void RenderComponent::SetIsEnable(bool is_enable) {
@@ -99,19 +100,23 @@ SMaterial* RenderComponent::GetMaterial() const {
 
 void RenderComponent::SetMaterial(SMaterial* material) {
     auto renderMgr = CORE->GetCore(RenderMgr);
-    renderMgr->Remove(this);
-    if(this->material == nullptr)
+    if (this->material == nullptr)
         this->material = SResource::Create<SMaterial>(Settings::GetDefaultDeferredMaterialId());
-    else
+    else {
+        const auto& mode = this->material->GetMode();
+        renderMgr->Remove(this, (RenderContainer::RenderGroupMode) mode);
         this->material = material;
-    renderMgr->Register(this);
+    }
+
+    const auto& mode = this->material->GetMode();
+    renderMgr->Register(this, (RenderContainer::RenderGroupMode) mode);
 
     SAFE_DELETE(m_material_clone)
     m_material_clone = new SMaterial(this->material);
 }
 
 void RenderComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
-    if(name_str == "material") {
+    if (name_str == "material") {
         SetMaterial(SResource::Create<SMaterial>(value[0]));
     }
 }
@@ -119,7 +124,7 @@ void RenderComponent::SetValue(std::string name_str, VariableBinder::Arguments v
 std::string RenderComponent::PrintValue() const {
     PRINT_START("component");
 
-    PRINT_VALUE(material, ConvertSpaceStr(material->GetID()));
+    PRINT_VALUE(material, ConvertSpaceStr(material->GetHash()));
 
     PRINT_END("component");
 }
