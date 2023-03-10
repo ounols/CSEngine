@@ -41,7 +41,7 @@ endif()
 ################################################################################
 # Target
 ################################################################################
-add_executable(${PROJECT_NAME} main.cpp ${CSENGINE_SRC} ${CSEDITOR_SRC} ${IMGUI_SRC})
+add_executable(${PROJECT_NAME} ${CSENGINE_SRC} ${CSEDITOR_SRC} ${IMGUI_SRC})
 
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 set(ROOT_NAMESPACE CSEngine)
