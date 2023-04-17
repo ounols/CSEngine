@@ -26,8 +26,6 @@
 
 using namespace CSE;
 
-SFrameBuffer::BlitObject SFrameBuffer::m_blitObject = SFrameBuffer::BlitObject();
-
 SFrameBuffer::SFrameBuffer() {
     SetUndestroyable(true);
 }
@@ -231,7 +229,7 @@ void SFrameBuffer::ResizeFrameBuffer(int width, int height) {
     RasterizeFramebuffer();
 }
 
-void SFrameBuffer::BlitFrameBuffer(const SFrameBuffer& dst, BlitType type) {
+void SFrameBuffer::PostFrameBuffer(GLProgramHandle* handle) {
     if (m_mainColorBuffer == nullptr || m_depthBuffer == nullptr) {
         Exterminate();
         GenerateFramebuffer(PLANE, m_size->x, m_size->y);
@@ -240,35 +238,20 @@ void SFrameBuffer::BlitFrameBuffer(const SFrameBuffer& dst, BlitType type) {
         RasterizeFramebuffer();
     }
 
-    const SFrameBuffer* a;
-    const SFrameBuffer* b;
-    if (type == REVERSE) {
-        a = this;
-        b = &dst;
-    } else {
-        a = &dst;
-        b = this;
-    }
-    const auto& aColorTexture = a->m_mainColorBuffer->texture;
-    const auto& bColorTexture = b->m_mainColorBuffer->texture;
-    const auto& aDepthTexture = a->m_depthBuffer->texture;
-    const auto& bDepthTexture = b->m_depthBuffer->texture;
+    const auto& colorTexture = m_mainColorBuffer->texture;
+    const auto& depthTexture = m_depthBuffer->texture;
 
-    if (m_blitObject.handle == nullptr) {
-        m_blitObject.handle = SResource::Create<GLProgramHandle>(Settings::GetDefaultBlitBufferShaderID());
-        m_blitObject.aColor = m_blitObject.handle->UniformLocation("a.color")->id;
-        m_blitObject.bColor = m_blitObject.handle->UniformLocation("b.color")->id;
-        m_blitObject.aDepth = m_blitObject.handle->UniformLocation("a.depth")->id;
-        m_blitObject.bDepth = m_blitObject.handle->UniformLocation("b.depth")->id;
+    if (m_postObject.handle == nullptr) {
+        m_postObject.handle = handle;
+        m_postObject.color = m_postObject.handle->UniformLocation("post.color")->id;
+        m_postObject.depth = m_postObject.handle->UniformLocation("post.depth")->id;
     }
 
     AttachFrameBuffer();
     glViewport(0, 0, m_size->x, m_size->y);
-    glUseProgram(m_blitObject.handle->Program);
-    aColorTexture->Bind(m_blitObject.aColor, 0);
-    bColorTexture->Bind(m_blitObject.bColor, 1);
-    aDepthTexture->Bind(m_blitObject.aDepth, 2);
-    bDepthTexture->Bind(m_blitObject.bDepth, 3);
+    glUseProgram(m_postObject.handle->Program);
+    colorTexture->Bind(m_postObject.color, 0);
+    depthTexture->Bind(m_postObject.depth, 1);
 
     ShaderUtil::BindAttributeToPlane();
 }

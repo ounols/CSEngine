@@ -18,6 +18,9 @@ using namespace CSE;
 CameraMgr* cameraMgr = nullptr;
 LightMgr* lightMgr = nullptr;
 
+//TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
+GLProgramHandle* postHandle = nullptr;
+
 RenderMgr::RenderMgr() = default;
 
 RenderMgr::~RenderMgr() {
@@ -36,6 +39,9 @@ void RenderMgr::Init() {
     m_forwardRenderGroup = new ForwardRenderGroup(*this);
     m_deferredRenderGroup = new DeferredRenderGroup(*this);
     m_depthOnlyRenderGroup = new DepthOnlyRenderGroup(*this);
+
+    //TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
+    postHandle = SResource::Create<GLProgramHandle>("File:Shader/Post/dof.post");
 }
 
 void RenderMgr::SetViewport() {
@@ -84,7 +90,10 @@ void RenderMgr::RenderMainCamera() const {
     m_deferredRenderGroup->RenderAll(*mainCamera); // Deferred Render
     m_forwardRenderGroup->RenderAll(*mainCamera); // Forward Render
 
-    GetMainBuffer()->AttachFrameBuffer(GL_READ_FRAMEBUFFER);
+    //TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
+    const auto& mainBuffer = GetMainBuffer();
+    mainBuffer->PostFrameBuffer(postHandle);
+    mainBuffer->AttachFrameBuffer(GL_READ_FRAMEBUFFER);
 #ifdef IOS
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 1);
 #else

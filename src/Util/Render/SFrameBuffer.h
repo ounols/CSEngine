@@ -58,6 +58,11 @@ namespace CSE {
             int aDepth = -1;
             int bDepth = -1;
         };
+        struct PostObject {
+            GLProgramHandle* handle = nullptr;
+            int color = -1;
+            int depth = -1;
+        };
 
     public:
         SFrameBuffer();
@@ -106,18 +111,7 @@ namespace CSE {
 
         void Exterminate() override;
 
-        /**
-         * Safely blit the framebuffer.
-         * Each framebuffer must be in BufferType::MULTI state, and all buffers must be in the form of STexture.
-         * For blit techniques that are not suitable for that condition, it is faster to use glBlitFramebuffer.
-         * @note The format of the framebuffer should be organized in the following order:
-         *        - [0] = Color Buffer
-         *        - [1] = Depth Buffer
-         *
-         * @param dst The framebuffer to merge.
-         * @param type Determine the order in which they will be merged. Default is IN_ORDER.
-         */
-        void BlitFrameBuffer(const SFrameBuffer& dst, BlitType type = IN_ORDER);
+        void PostFrameBuffer(GLProgramHandle* handle);
 
         int GetWidth() const;
 
@@ -195,6 +189,6 @@ namespace CSE {
         /**
          * 안전한 Blit을 구현하기 위한 구조체
          */
-        static BlitObject m_blitObject;
+        PostObject m_postObject;
     };
 }
