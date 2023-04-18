@@ -238,16 +238,33 @@ void SFrameBuffer::PostFrameBuffer(GLProgramHandle* handle) {
         RasterizeFramebuffer();
     }
 
-    const auto& colorTexture = m_mainColorBuffer->texture;
-    const auto& depthTexture = m_depthBuffer->texture;
-
     if (m_postObject.handle == nullptr) {
         m_postObject.handle = handle;
         m_postObject.color = m_postObject.handle->UniformLocation("post.color")->id;
         m_postObject.depth = m_postObject.handle->UniformLocation("post.depth")->id;
+
+        m_postObject.copyBuffer = new STexture(static_cast<STexture::Type>(m_dimension));
+        m_postObject.copyBuffer->InitTexture(m_size->x, m_size->y, GL_RGB, GenerateInternalFormat(GL_RGB),
+                                     GenerateInternalType(GL_RGB));
+        m_postObject.copyTexId = m_postObject.copyBuffer->GetTextureID();
+
+        unsigned int copy_fbo;
+        glGenFramebuffers(1, &copy_fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, copy_fbo);
+        m_postObject.copyFbo = copy_fbo;
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_postObject.copyTexId, 0);
     }
 
+    // Blit for copy buffer
+    AttachFrameBuffer(GL_READ_FRAMEBUFFER);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_postObject.copyFbo);
+    glBlitFramebuffer(0, 0, m_size->x, m_size->y, 0, 0, m_size->x, m_size->y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    const auto& colorTexture = m_postObject.copyBuffer;
+    const auto& depthTexture = m_depthBuffer->texture;
+
     AttachFrameBuffer();
+    glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, m_size->x, m_size->y);
     glUseProgram(m_postObject.handle->Program);
     colorTexture->Bind(m_postObject.color, 0);

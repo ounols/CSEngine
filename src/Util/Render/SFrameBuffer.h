@@ -51,15 +51,11 @@ namespace CSE {
             int format = 0;
             short level = 0;
         };
-        struct BlitObject {
-            GLProgramHandle* handle = nullptr;
-            int aColor = -1;
-            int bColor = -1;
-            int aDepth = -1;
-            int bDepth = -1;
-        };
         struct PostObject {
             GLProgramHandle* handle = nullptr;
+            STexture* copyBuffer = nullptr;
+            int copyFbo = -1;
+            int copyTexId = -1;
             int color = -1;
             int depth = -1;
         };
@@ -186,9 +182,6 @@ namespace CSE {
         mutable BufferStatus m_bufferStatus = BufferStatus::NONE;
         mutable unsigned short m_colorAttachmentSize = 0;
 
-        /**
-         * 안전한 Blit을 구현하기 위한 구조체
-         */
         PostObject m_postObject;
     };
 }
