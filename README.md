@@ -3,7 +3,10 @@
 
 # CSEngine - Cross Platform C++ Game Engine
 
-![intro-image2](https://github.com/ounols/CSEngine/raw/master/intro_image2.gif)</br>
+<div align=center>
+<img src="https://github.com/ounols/CSEngine/raw/master/intro_image2.gif" alt="drawing" width="60%"/>
+</div>
+
 [![Android Build](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml/badge.svg?branch=master)](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml)
 [![Linux Build](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml/badge.svg?branch=master)](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml)
 [![MacOS Build](https://github.com/ounols/CSEngine/actions/workflows/build-macos.yml/badge.svg?branch=master)](https://github.com/ounols/CSEngine/actions/workflows/build-macos.yml)
