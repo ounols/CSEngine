@@ -109,6 +109,8 @@ namespace CSE {
 
         void PostFrameBuffer(GLProgramHandle* handle);
 
+        STexture* BlitCopiedFrameBuffer() const;
+
         int GetWidth() const;
 
         int GetHeight() const;
@@ -182,6 +184,6 @@ namespace CSE {
         mutable BufferStatus m_bufferStatus = BufferStatus::NONE;
         mutable unsigned short m_colorAttachmentSize = 0;
 
-        PostObject m_postObject;
+        mutable PostObject m_postObject;
     };
 }

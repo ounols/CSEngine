@@ -109,13 +109,24 @@ vec3 bokeh(sampler2D tex, sampler2D depth_tex, vec2 uv, float radius) {
     return num / weight;
 }
 
+vec3 ColorBalance(vec3 color, vec3 shadows, vec3 midtones, vec3 highlights) {
+
+    color = shadows * color + midtones * color * color + highlights * color * color * color;
+
+    // Return the modified color
+    return color;
+}
+
+const vec3 sha = vec3(0.5, 0.5, 0.7);
+const vec3 mid = vec3(0.5, 0.5, 0.5);
+const vec3 hig = vec3(0.7, 0.53, 0.5);
 
 void main(void) {
 
     float depth = texture(u_depth, v_textureCoordOut).r;
-    float dof_depth = min(depth, 0.7);
-    vec4 color = vec4(bokeh(u_color, u_depth, v_textureCoordOut, max(cos((dof_depth + 0.06) * 6.283184) * 4. + 4., 0.) * 15.), 1.0);
+    float dof_depth = min(depth, 0.48);
+    vec3 color = bokeh(u_color, u_depth, v_textureCoordOut, max(cos((dof_depth + 0.06) * 6.283184) * 4. + 4., 0.) * 15.);
 
-    FragColor = color;
+    FragColor = vec4(ColorBalance(color, sha, mid, hig), 1.);
     gl_FragDepth = depth;
 }
