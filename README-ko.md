@@ -4,7 +4,7 @@
 
 # CSEngine - Cross Platform C++ Game Engine
 
-![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)</br>
+![intro-image2](https://github.com/ounols/CSEngine/raw/master/intro_image2.gif)</br>
 [![Android Build](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml/badge.svg?branch=master)](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml)
 [![Linux Build](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml/badge.svg?branch=master)](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml)
 [![MacOS Build](https://github.com/ounols/CSEngine/actions/workflows/build-macos.yml/badge.svg?branch=master)](https://github.com/ounols/CSEngine/actions/workflows/build-macos.yml)
@@ -16,6 +16,8 @@ CSEngine은 크로스 플랫폼 기반 3D 게임 엔진입니다.
 `💡 아직 개발 중이기 때문에 실사용으로 적합하지 않은 단계입니다.`
 
 ## 요구 사항
+
+![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)
 
 ### 공통 사항
 

@@ -3,7 +3,7 @@
 
 # CSEngine - Cross Platform C++ Game Engine
 
-![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)</br>
+![intro-image2](https://github.com/ounols/CSEngine/raw/master/intro_image2.gif)</br>
 [![Android Build](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml/badge.svg?branch=master)](https://github.com/ounols/CSEngine/actions/workflows/build-android.yml)
 [![Linux Build](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml/badge.svg?branch=master)](https://github.com/ounols/CSEngine/actions/workflows/build-linux.yml)
 [![MacOS Build](https://github.com/ounols/CSEngine/actions/workflows/build-macos.yml/badge.svg?branch=master)](https://github.com/ounols/CSEngine/actions/workflows/build-macos.yml)
@@ -15,6 +15,8 @@ CSEngine is a cross-platform 3D game engine.
 `💡 As it is under development, it is not yet suitable for practical use.`
 
 ## Requirements
+
+![intro-image](https://github.com/ounols/CSEngine/raw/master/intro_image.png)
 
 ### In all environments
 
