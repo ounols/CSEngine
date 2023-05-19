@@ -41,7 +41,7 @@ void RenderMgr::Init() {
     m_depthOnlyRenderGroup = new DepthOnlyRenderGroup(*this);
 
     //TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
-    postHandle = SResource::Create<GLProgramHandle>("File:Shader/Post/dof.post");
+    postHandle = SResource::Create<GLProgramHandle>("File:Shader/SDF/sdf.post");
 }
 
 void RenderMgr::SetViewport() {
