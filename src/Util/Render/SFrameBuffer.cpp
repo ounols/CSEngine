@@ -11,6 +11,8 @@
 #include "../Settings.h"
 #include "../GLProgramHandle.h"
 #include "ShaderUtil.h"
+#include "CameraBase.h"
+#include "../../Component/CameraComponent.h"
 
 #if defined(__CSE_DESKTOP__)
 #define CSE_GL_DEPTH_COMPONENT GL_DEPTH_COMPONENT32F
@@ -229,7 +231,7 @@ void SFrameBuffer::ResizeFrameBuffer(int width, int height) {
     RasterizeFramebuffer();
 }
 
-void SFrameBuffer::PostFrameBuffer(GLProgramHandle* handle) {
+void SFrameBuffer::PostFrameBuffer(GLProgramHandle* handle, const CameraBase& camera) {
     if (m_mainColorBuffer == nullptr || m_depthBuffer == nullptr) {
         Exterminate();
         GenerateFramebuffer(PLANE, m_size->x, m_size->y);
@@ -253,6 +255,8 @@ void SFrameBuffer::PostFrameBuffer(GLProgramHandle* handle) {
 
     const auto& colorTexture = m_postObject.copyBuffer;
     const auto& depthTexture = m_depthBuffer->texture;
+    const float sizeRaw[2] = { static_cast<float>(m_size->x), static_cast<float>(m_size->y) };
+    const auto& uniforms = m_postObject.handle->Uniforms;
 
     AttachFrameBuffer();
     glClear(GL_COLOR_BUFFER_BIT);
@@ -260,6 +264,11 @@ void SFrameBuffer::PostFrameBuffer(GLProgramHandle* handle) {
     glUseProgram(m_postObject.handle->Program);
     colorTexture->Bind(m_postObject.color, 0);
     depthTexture->Bind(m_postObject.depth, 1);
+    const auto& cameraStruct = camera.GetCameraMatrixStruct();
+    ShaderUtil::BindCameraToShader(*m_postObject.handle, cameraStruct.camera, cameraStruct.cameraPosition,
+                                   cameraStruct.projection, mat4::Identity());
+    if(uniforms.SourceBufferSize >= 0)
+        glUniform2fv(uniforms.SourceBufferSize, 1, sizeRaw);
 
     ShaderUtil::BindAttributeToPlane();
 }

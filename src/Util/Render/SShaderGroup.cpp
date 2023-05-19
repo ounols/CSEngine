@@ -87,7 +87,7 @@ const GLProgramHandle* SShaderGroup::GetHandle(const std::string& pass) const {
 
 const GLProgramHandle* SShaderGroup::GetHandleByMode(int mode) const {
     const std::unordered_map<SMaterial::SMaterialMode, std::string> pass_map = {
-            {SMaterial::NORMAL,     "forward"},
+            {SMaterial::FORWARD,    "forward"},
             {SMaterial::DEFERRED,   "geometry"},
             {SMaterial::DEPTH_ONLY, "depthOnly"}
     };

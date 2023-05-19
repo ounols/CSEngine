@@ -286,7 +286,7 @@ int SMaterial::GetTextureCount() const {
 
 SMaterial* SMaterial::GenerateMaterial(SShaderGroup* shaders) {
     if (shaders == nullptr) return nullptr;
-    const auto& handle = shaders->GetHandleByMode(SMaterialMode::NORMAL);
+    const auto& handle = shaders->GetHandleByMode(SMaterialMode::FORWARD);
 
     const auto& uniformList = handle->GetUniformsList();
     auto material = new SMaterial();

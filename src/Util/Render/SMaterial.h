@@ -15,7 +15,7 @@ namespace CSE {
 
     class SMaterial : public SResource {
     public:
-        enum SMaterialMode { NORMAL = 0, DEFERRED = 1, DEPTH_ONLY = 2 };
+        enum SMaterialMode { FORWARD = 0, DEFERRED = 1, DEPTH_ONLY = 2 };
     private:
         struct Element {
             int id = HANDLE_NULL;
@@ -93,7 +93,7 @@ namespace CSE {
 		ElementsMap m_elements;
 		mutable int m_textureLayout = 0;
         int m_textureCount = 0;
-        SMaterialMode m_mode = NORMAL;
+        SMaterialMode m_mode = FORWARD;
 
         LightMgr* m_lightMgr = nullptr;
 

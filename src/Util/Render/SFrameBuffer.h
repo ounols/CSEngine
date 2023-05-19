@@ -11,6 +11,8 @@ namespace CSE {
 
     class GLProgramHandle;
 
+    class CameraBase;
+
     /**
      * @see To use the SFrameBuffer class, you need to follow the steps below:
      *  1. Generate a framebuffer.
@@ -107,7 +109,7 @@ namespace CSE {
 
         void Exterminate() override;
 
-        void PostFrameBuffer(GLProgramHandle* handle);
+        void PostFrameBuffer(GLProgramHandle* handle, const CameraBase& camera);
 
         STexture* BlitCopiedFrameBuffer() const;
 

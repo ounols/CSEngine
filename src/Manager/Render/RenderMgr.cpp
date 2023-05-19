@@ -92,7 +92,7 @@ void RenderMgr::RenderMainCamera() const {
 
     //TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
     const auto& mainBuffer = GetMainBuffer();
-    mainBuffer->PostFrameBuffer(postHandle);
+    mainBuffer->PostFrameBuffer(postHandle, *mainCamera);
     mainBuffer->AttachFrameBuffer(GL_READ_FRAMEBUFFER);
 #ifdef IOS
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 1);
