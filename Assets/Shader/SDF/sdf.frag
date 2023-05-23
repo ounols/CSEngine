@@ -7,8 +7,8 @@ uniform sampler2D u_color;
 uniform sampler2D u_depth;
 //[buffer.source.size]//
 uniform vec2 u_src_size;
-//[matrix.view]//
-uniform mat4 u_viewMatrix;
+//[matrix.view.inv]//
+uniform mat4 u_viewInvMatrix;
 //[matrix.projection]//
 uniform mat4 u_projectionMatrix;
 //[vec3.camera]//
@@ -30,8 +30,9 @@ vec2 opU( vec2 d1, vec2 d2 )
 vec2 map(in vec3 pos)
 {
     vec2 res = vec2(pos.y, 0.);
-    res = vec2(sdSphere(pos+vec3(0.1, 0., 0.), 0.1), 20.);
-    res = opU(vec2(sdSphere(pos, 0.1), 20.), res);
+    res = vec2(sdSphere(pos-vec3(-0.2f, -0.3f, -0.2f), 0.1), 20.);
+    res = opU(vec2(sdSphere(pos-vec3( 0, -0.15f, 0), 0.1), 20.), res);
+    res = opU(vec2(sdSphere(pos-vec3( 0.1f, -0.45f, 0.12f), 0.1), 20.), res);
 
     return res;
 }
@@ -40,7 +41,7 @@ vec2 raycast(in vec3 ro, in vec3 rd)
 {
     vec2 res = vec2(-1.0, -1.0);
 
-    float tmin = 1.0;
+    float tmin = 0.001;
     float tmax = 20.0;
 
     float t = tmin;
@@ -91,7 +92,7 @@ vec4 render( in vec3 ro, in vec3 rd)
     if( m>-0.5 )
     {
         vec3 pos = ro + t*rd;
-        vec3 nor = (m<1.5) ? vec3(0.0, 1.0, 0.0) : calcNormal(pos);
+        vec3 nor = calcNormal(pos);
         vec3 ref = reflect(rd, nor);
         col = vec4(nor, 1.);
     }
@@ -116,18 +117,17 @@ void main(void) {
     {
         // camera
         vec3 ro = u_cameraPosition;
-        vec3 ta = vec3(0, 0, 0);
 
-        vec3 tot = vec3(0.0);
-        vec2 p = (gl_FragCoord.xy-0.5*u_src_size.xy)/min(u_src_size.x, u_src_size.y);
+        vec2 p = vec2(2. * (v_textureCoordOut - 0.5));
+        float aspect = u_src_size.x / u_src_size.y;
+        p.x *= aspect;
 
-        mat3 ca = setCamera(ro, ta, 0.);
-        float fov = atan(1.0f / u_projectionMatrix[1][1]);
-        fov /= 0.008726644;
-        float fl = 1.0f / tan(fov * 0.5f);
+        mat3 viewInv = mat3(u_viewInvMatrix);
+        viewInv[2] = -viewInv[2]; // inverse z direction
 
         // ray direction
-        vec3 rd = ca * normalize( vec3(p,fl) );
+//        vec3 rd = ca * normalize( vec3(p, fl) );
+        vec3 rd = viewInv * normalize( vec3(p.xy, u_projectionMatrix[1].y) );
 
         // render
         vec4 col = render(ro, rd);
