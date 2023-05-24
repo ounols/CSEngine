@@ -61,6 +61,12 @@ void SMaterial::AttachElement() const {
     }
 }
 
+SMaterial::Element* SMaterial::GetElement(const std::string& key) const {
+    const auto& result = m_elements.find(key);
+    if(result == m_elements.end()) return nullptr;
+    return result->second;
+}
+
 void SMaterial::InitElements(const ElementsMap& elements, SShaderGroup* shaders) {
     const auto& handle = shaders->GetHandleByMode(m_mode);
     for (const auto& element_pair : elements) {

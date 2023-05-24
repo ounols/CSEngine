@@ -14,6 +14,7 @@
 #include "../Util/Loader/SCENE/SSceneLoader.h"
 #include "../Util/Render/SFrameBuffer.h"
 #include "../Util/Render/SMaterial.h"
+#include "../Util/Loader/3DTEX/VolumeTextureGenerator.h"
 
 using namespace CSE;
 
@@ -31,6 +32,7 @@ void FirstDemoScene::Init() {
     SPrefab* jack = SResource::Create<SPrefab>("jack.prefab");
     SPrefab* plane = SResource::Create<SPrefab>("plane_circle.prefab");
     SPrefab* roomPrefab = SResource::Create<SPrefab>("room.prefab");
+    VolumeTextureGenerator* generator = new VolumeTextureGenerator();
 
 //	daeLoader->GeneratePrefab();
 
@@ -169,6 +171,9 @@ void FirstDemoScene::Init() {
         const auto& material = SResource::Create<SMaterial>("File:Material/SSS_PBR.mat");
         material->SetOrderLayer(6000);
         render->SetMaterial(material);
+        const auto& meshComp = c2->GetComponent<DrawableStaticMeshComponent>();
+        const auto& mesh = meshComp->GetMeshID();
+        generator->GenerateVolumeTexture(6, mesh, *material);
     }
 //    c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
@@ -267,6 +272,7 @@ void FirstDemoScene::Init() {
     //===============
 
     SSceneLoader::SavePrefab(root, CSE::NativeAssetsPath() + "Scene/test_scene.scene");
+    SAFE_DELETE(generator);
 }
 
 

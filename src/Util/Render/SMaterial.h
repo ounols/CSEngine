@@ -39,6 +39,8 @@ namespace CSE {
 
         void AttachElement() const;
 
+        SMaterial::Element* GetElement(const std::string& key) const;
+
 		void InitElements(const ElementsMap& elements, SShaderGroup* shaders);
 
 		void SetInt(const std::string& name, int value);

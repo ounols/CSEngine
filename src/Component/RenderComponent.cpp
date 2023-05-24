@@ -32,7 +32,6 @@ void RenderComponent::Exterminate() {
 void RenderComponent::Init() {
 
     if (!m_disableShadow) {
-        m_lightMgr = CORE->GetCore(LightMgr);
         m_renderMgr->Register(this, RenderContainer::DEPTH_ONLY);
     }
 
