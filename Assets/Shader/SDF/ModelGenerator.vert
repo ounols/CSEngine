@@ -21,5 +21,5 @@ out mediump vec2 v_textureCoordOut;
 
 void main(void) {
     v_textureCoordOut = a_textureCoordIn;
-    gl_Position = u_projectionMatrix * a_position;
+    gl_Position = u_projectionMatrix * u_viewMatrix * a_position;
 }

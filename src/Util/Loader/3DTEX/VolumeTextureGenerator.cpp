@@ -28,6 +28,9 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
     const auto half_distance = max_distance / 2.f;
 
     glDisable(GL_CULL_FACE);
+    glEnable(GL_ALPHA_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glGenRenderbuffers(1, &captureRBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
@@ -53,7 +56,7 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
 
     const auto& handle = m_handle;
     mat4 identity = mat4::Identity();
-    mat4 view = mat4::RotateX(90.f);
+    mat4 view = mat4::RotateZ(180.f);
 
     glUseProgram(handle->Program);
     glClearColor(0, 0, 0, 0);
@@ -61,8 +64,8 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
 
     material.AttachElement();
     {
-        const auto& albedo_tex = handle->UniformLocation("texture.albedo");
-        if(albedo_tex->id >= 0) {
+        auto albedo_tex = handle->UniformLocation("texture.albedo");
+        if(albedo_tex != nullptr && albedo_tex->id >= 0) {
             const auto& e = material.GetElement("texture.albedo");
             if(e != nullptr) {
                 STexture* tex = SResource::Create<STexture>(e->raw);
@@ -88,10 +91,12 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
 
     }
 
-    std::string save_str = CSE::AssetsPath() + "test" + ".bmp";
+    std::string save_str = CSE::AssetsPath() + "test" + ".png";
     glViewport(0, 0, tex2d_size, tex2d_size);
     saveScreenshot(save_str.c_str());
     glEnable(GL_CULL_FACE);
+    glDisable(GL_ALPHA_TEST);
+    glDisable(GL_BLEND);
 
     glDeleteFramebuffers(1, &captureFBO);
     glDeleteRenderbuffers(1, &captureRBO);
