@@ -57,4 +57,9 @@ namespace CSE {
 
         return saved;
     }
+
+    static int savePng(const char* filename, int width, int height, int chennel, void* data) {
+        int saved = stbi_write_png(filename, width, height, chennel, data, 0);
+        return saved;
+    }
 }
