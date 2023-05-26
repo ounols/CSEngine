@@ -52,8 +52,6 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
 
     const auto& handle = m_handle;
-    const auto& max_distance = mesh.m_maxSize + mesh.m_maxSize / 2.f;
-    const float step = max_distance / size;
     mat4 identity = mat4::Identity();
     mat4 view = mat4::Identity();
 
@@ -76,17 +74,17 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
     glClearColor(0, 0, 1, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // X axis Render
-    Render(level, mesh, handle, step);
+    Render(level, mesh, handle);
 
     unsigned char* data = new unsigned char[tex2d_size * tex2d_size * 4] {0};
 
     // X axis Render
     {
-        view = mat4::Identity();
+        view = mat4::RotateZ(180.f);
         if(handle->Uniforms.ViewMatrix >= 0)
             glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Render(level, mesh, handle, step);
+        Render(level, mesh, handle);
 
         glViewport(0, 0, tex2d_size, tex2d_size);
         auto data_y = CaptureBuffer();
@@ -99,7 +97,7 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
             int y = (index / tex2d_size) % size;
             int z = (int)(index / size) % level + (index / (tex2d_size * size)) * level;
 
-            int data_index = GetIndex(level, x, y, z / 2);
+            int data_index = GetIndex(level, x, y, z / 2 + size / 4);
 
             data_index *= 4;
 
@@ -114,11 +112,11 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
 
     // Y axis Render
     {
-        view = mat4::RotateX(90.f);
+        view = mat4::RotateZ(180.f) * mat4::RotateX(90.f);
         if(handle->Uniforms.ViewMatrix >= 0)
             glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Render(level, mesh, handle, step);
+        Render(level, mesh, handle);
 
         glViewport(0, 0, tex2d_size, tex2d_size);
         auto data_y = CaptureBuffer();
@@ -132,7 +130,6 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
             int z = (int)(index / size) % level + (index / (tex2d_size * size)) * level;
 
             int data_index = GetIndex(level, x, z / 2 + size / 4, y);
-
             data_index *= 4;
 
             if(data[data_index] <= 0)     data[data_index] = data_y[i];
@@ -147,11 +144,11 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
     // Z axis Render
     {
 //        view = mat4::RotateZ(180.f);
-        view = mat4::RotateY(-90.f);
+        view = mat4::RotateZ(180.f) * mat4::RotateY(-90.f);
         if(handle->Uniforms.ViewMatrix >= 0)
             glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Render(level, mesh, handle, step);
+        Render(level, mesh, handle);
 
         glViewport(0, 0, tex2d_size, tex2d_size);
         auto data_y = CaptureBuffer();
@@ -164,8 +161,7 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
             int y = (index / tex2d_size) % size;
             int z = (int)(index / size) % level + (index / (tex2d_size * size)) * level;
 
-            int data_index = GetIndex(level, z, y, x);
-
+            int data_index = GetIndex(level, z / 2 + size / 4, y, x);
             data_index *= 4;
 
             if(data[data_index] <= 0)     data[data_index] = data_y[i + 1];
@@ -196,9 +192,9 @@ int CSE::VolumeTextureGenerator::GetIndex(int level, int x, int y, int z) {
     return result;
 }
 
-void CSE::VolumeTextureGenerator::Render(int level, const GLMeshID& mesh, GLProgramHandle* handle, float aspect) {
+void CSE::VolumeTextureGenerator::Render(int level, const GLMeshID& mesh, GLProgramHandle* handle) {
     int size = level * level;
-    const auto& max_distance = mesh.m_maxSize + mesh.m_maxSize / 4.f;
+    const auto& max_distance = mesh.m_maxSize + mesh.m_maxSize / 6.f;
     const auto half_distance = max_distance / 2.f;
     const auto step = max_distance / size;
 

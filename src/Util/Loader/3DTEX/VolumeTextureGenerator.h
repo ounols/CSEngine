@@ -19,7 +19,7 @@ namespace CSE {
     private:
         static int GetIndex(int level, int x, int y, int z);
 
-        static void Render(int level, const GLMeshID& mesh, GLProgramHandle* handle, float aspect);
+        static void Render(int level, const GLMeshID& mesh, GLProgramHandle* handle);
 
         static unsigned char* CaptureBuffer();
 
