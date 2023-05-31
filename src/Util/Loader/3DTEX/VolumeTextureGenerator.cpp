@@ -71,7 +71,7 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
         if(handle->Uniforms.ViewMatrix >= 0)
             glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
     }
-    glClearColor(0, 0, 1, 0);
+    glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // X axis Render
     Render(level, mesh, handle);
@@ -80,7 +80,7 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
 
     // X axis Render
     {
-        view = mat4::RotateZ(180.f);
+        view = mat4::RotateY(180.f);
         if(handle->Uniforms.ViewMatrix >= 0)
             glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -93,7 +93,7 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
             unsigned char cur_alpha = data_y[i + 3];
             if(cur_alpha <= 0) continue;
             int index = i / 4;
-            int x = index % size;
+            int x = size - index % size;
             int y = (index / tex2d_size) % size;
             int z = (int)(index / size) % level + (index / (tex2d_size * size)) * level;
 
@@ -112,7 +112,7 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
 
     // Y axis Render
     {
-        view = mat4::RotateZ(180.f) * mat4::RotateX(90.f);
+        view = mat4::RotateX(90.f);
         if(handle->Uniforms.ViewMatrix >= 0)
             glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -144,7 +144,7 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
     // Z axis Render
     {
 //        view = mat4::RotateZ(180.f);
-        view = mat4::RotateZ(180.f) * mat4::RotateY(-90.f);
+        view = mat4::RotateY(-90.f);
         if(handle->Uniforms.ViewMatrix >= 0)
             glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -188,13 +188,14 @@ int CSE::VolumeTextureGenerator::GetIndex(int level, int x, int y, int z) {
     int size = level * level;
     int tex2d_size = size * level;
     ivec2 offset = ivec2{ (z % level), (z / level) };
-    int result = (offset.x * size) + (offset.y * tex2d_size * size) + x + y * tex2d_size;
+    int result = z * size * size + y * size + x;
+//    int result = (offset.x * size) + (offset.y * tex2d_size * size) + x + y * tex2d_size;
     return result;
 }
 
 void CSE::VolumeTextureGenerator::Render(int level, const GLMeshID& mesh, GLProgramHandle* handle) {
     int size = level * level;
-    const auto& max_distance = mesh.m_maxSize + mesh.m_maxSize / 6.f;
+    const auto& max_distance = mesh.m_maxSize + mesh.m_maxSize;
     const auto half_distance = max_distance / 2.f;
     const auto step = max_distance / size;
 

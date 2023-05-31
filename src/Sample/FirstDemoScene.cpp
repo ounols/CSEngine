@@ -173,7 +173,7 @@ void FirstDemoScene::Init() {
         render->SetMaterial(material);
         const auto& meshComp = c2->GetComponent<DrawableStaticMeshComponent>();
         const auto& mesh = meshComp->GetMeshID();
-        generator->GenerateVolumeTexture(6, mesh, *material);
+        generator->GenerateVolumeTexture(8, mesh, *material);
     }
 //    c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 

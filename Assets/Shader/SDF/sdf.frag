@@ -5,6 +5,8 @@ precision highp float;
 uniform sampler2D u_color;
 //[post.depth]//
 uniform sampler2D u_depth;
+//[test.tex.3d]//
+uniform sampler3D u_t3;
 //[buffer.source.size]//
 uniform vec2 u_src_size;
 //[matrix.view.inv]//
@@ -22,17 +24,21 @@ float sdSphere(vec3 p, float s) {
     return length(p)-s;
 }
 
-vec2 opU( vec2 d1, vec2 d2 )
-{
+float sdBox( vec3 p, vec3 b ) {
+    vec3 d = abs(p) - b;
+    return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
+}
+
+vec2 opU( vec2 d1, vec2 d2 ) {
     return (d1.x<d2.x) ? d1 : d2;
 }
 
 vec2 map(in vec3 pos)
 {
     vec2 res = vec2(pos.y, 0.);
-    res = vec2(sdSphere(pos-vec3(-0.2f, -0.3f, -0.2f), 0.1), 20.);
-    res = opU(vec2(sdSphere(pos-vec3( 0, -0.15f, 0), 0.1), 20.), res);
-    res = opU(vec2(sdSphere(pos-vec3( 0.1f, -0.45f, 0.12f), 0.1), 20.), res);
+    res = vec2(sdSphere(pos-vec3(-0.2f, -1.3f, -0.2f), 0.1), 20.);
+    res = opU(vec2(sdBox(pos-vec3( 0, 0, 0), vec3(0.1,0.1,0.1)), 20.), res);
+    res = opU(vec2(sdSphere(pos-vec3( 0.1f, -1.45f, 0.12f), 0.1), 20.), res);
 
     return res;
 }
@@ -109,6 +115,63 @@ mat3 setCamera( in vec3 ro, in vec3 ta, float cr )
     return mat3( cu, cv, cw );
 }
 
+#define AABB_SIZE 1.
+
+vec2 RayAABBIntersection(vec3 ro, vec3 rd) {
+
+    vec3 aabbmin = vec3(-AABB_SIZE/2) * 0.5;
+    vec3 aabbmax =  vec3(AABB_SIZE/2) * 0.5;
+
+    vec3 invR = vec3(1.0) / rd;
+
+    vec3 tbbmin = invR * (aabbmin - ro);
+    vec3 tbbmax = invR * (aabbmax - ro);
+
+    vec3 tmin = min(tbbmin, tbbmax);
+    vec3 tmax = max(tbbmin, tbbmax);
+
+    float tnear = max(max(tmin.x, tmin.y), tmin.z);
+    float tfar  = min(min(tmax.x, tmax.y), tmax.z);
+
+    return tfar > tnear ? vec2(tnear, tfar) : vec2(-1.);
+}
+
+vec4 renderTexture(vec3 origin, vec3 direction) {
+    vec2 isct = RayAABBIntersection(origin, direction);
+
+    vec3 near = origin+direction*isct.x;
+    vec3 far  = origin+direction*isct.y;
+
+    if(isct.x <= -1.0f) {
+        return vec4(1, 1, 1, 1);
+    }
+
+    float D = abs(isct.y - isct.x);
+
+    vec3 wp = origin + direction * isct.x;
+    vec3 vol_size = vec3(AABB_SIZE);
+    vec3 tp = wp + ( vol_size * 0.5 );
+    float steps = D / 128.f;
+
+    // Evaluate from 0 to D...
+    for (float t = 0.0; t < D; t += steps) {
+        // Get the current position along the ray
+        vec3 currentPos = tp + direction * t;
+
+        // Get normalized density from volume
+        vec4 density = texture(u_t3, currentPos / vol_size);
+
+        // Get color from transfer function given the normalized density
+        vec4 src = vec4(density);
+
+        if (src.a > 0.5) {
+            return src;
+        }
+    }
+
+    return vec4(1, 1, 1, 0);
+}
+
 void main(void) {
 
     float depth = texture(u_depth, v_textureCoordOut).r;
@@ -130,7 +193,7 @@ void main(void) {
         vec3 rd = viewInv * normalize( vec3(p.xy, u_projectionMatrix[1].y) );
 
         // render
-        vec4 col = render(ro, rd);
+        vec4 col = renderTexture(ro-vec3(-0.2f, -1.3f, -0.2f), rd);
         if(col.w >= 0.5) {
             color = col.xyz;
         }
