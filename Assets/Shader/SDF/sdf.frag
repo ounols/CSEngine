@@ -133,17 +133,18 @@ vec2 RayAABBIntersection(vec3 ro, vec3 rd) {
     float tnear = max(max(tmin.x, tmin.y), tmin.z);
     float tfar  = min(min(tmax.x, tmax.y), tmax.z);
 
-    return tfar > tnear ? vec2(tnear, tfar) : vec2(-1.);
+    return tfar > tnear ? vec2(tnear, tfar) : vec2(-999.);
 }
 
 vec4 renderTexture(vec3 origin, vec3 direction) {
     vec2 isct = RayAABBIntersection(origin, direction);
 
-    vec3 near = origin+direction*isct.x;
-    vec3 far  = origin+direction*isct.y;
-
-    if(isct.x <= -1.0f) {
+    if(isct.x <= -999.) {
         return vec4(1, 1, 1, 1);
+    }
+
+    if(isct.x < 0.) {
+        isct.x = 0.3;
     }
 
     float D = abs(isct.y - isct.x);
