@@ -35,6 +35,11 @@ namespace CSE {
         // Buffers
         GLint SourceBuffer = HANDLE_NULL;
         GLint SourceBufferSize = HANDLE_NULL;
+        // SDFs
+        GLint SdfEnvsize = HANDLE_NULL;
+        GLint SdfNodeSize = HANDLE_NULL;
+        GLint SdfNodeSpace = HANDLE_NULL;
+
     };
 
     struct GLAttributeHandles {

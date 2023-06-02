@@ -62,17 +62,20 @@ void FirstDemoScene::Init() {
 
 
     SGameObject* root = new SGameObject("root");
-    root->GetTransform()->m_position = vec3{0, -1, 0};
+    root->GetTransform()->m_position = vec3{0, 0, 0};
 
     auto room = roomPrefab->Clone(vec3{0, 0.2f, 0}, root);
     room->GetTransform()->m_scale = vec3{ 4.f, 4.f, 4.f };
-    room->GetTransform()->m_rotation.Rotate(Quaternion::AngleAxis(vec3{0, 1, 0}, 3.14f / 2));
+//    room->GetTransform()->m_rotation.Rotate(Quaternion::AngleAxis(vec3{0, 1, 0}, 3.14f / 2));
 
     const auto& room_children = room->GetChildren();
     for (const auto& gameObject : room_children) {
         const auto& component = gameObject->GetComponent<RenderComponent>();
         if(component == nullptr) continue;
         component->SetMaterial(SResource::Create<SMaterial>("File:Material/Room.mat"));
+        const auto& meshComp = gameObject->GetComponent<DrawableStaticMeshComponent>();
+        const auto& mesh = meshComp->GetMeshID();
+//        generator->GenerateVolumeTexture(8, mesh, *SResource::Create<SMaterial>("File:Material/Room.mat"));
     }
 
     //Managing Memory Test
@@ -173,7 +176,7 @@ void FirstDemoScene::Init() {
         render->SetMaterial(material);
         const auto& meshComp = c2->GetComponent<DrawableStaticMeshComponent>();
         const auto& mesh = meshComp->GetMeshID();
-        generator->GenerateVolumeTexture(8, mesh, *material);
+//        generator->GenerateVolumeTexture(8, mesh, *material);
     }
 //    c2->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
 
@@ -257,7 +260,7 @@ void FirstDemoScene::Init() {
 //    a->GetTransform()->m_scale = vec3{ 2.f, 2.f, 2.f };
 //    a->GetComponent<CameraComponent>()->SetTarget(vec3{ 0.0f, -1.0f, -1.f });
     auto a_cam = a->GetComponent<CameraComponent>();
-    a_cam->SetTarget(camera_gm);
+    a_cam->SetTarget(c2);
     a_cam->SetBackgroundSkybox();
     a_cam->SetBackgroundType(CameraBase::SKYBOX);
 //    a->CreateComponent<CustomComponent>();
@@ -281,6 +284,10 @@ void FirstDemoScene::Tick(float elapsedTime) {
     if (startTIme == 0) {
         startTIme = elapsedTime;
     }
+
+    c2->GetTransform()->m_position.x = sinf(elapsedTime*0.001) * 1.0f;;
+    c2->GetTransform()->m_position.y = cosf(elapsedTime*0.001) * 0.5f;;
+    c2->GetTransform()->m_position.z = cosf(elapsedTime*0.001) * 0.5f;;
 
     //===============
 //	SGameObject* d = GameObjectMgr::getInstance()->Find("dae mesh");

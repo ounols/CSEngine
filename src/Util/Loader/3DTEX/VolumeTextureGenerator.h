@@ -23,6 +23,8 @@ namespace CSE {
 
         static unsigned char* CaptureBuffer();
 
+        static int SavePng(const char* filename, int width, int height, int chennel, void* data);
+
     private:
         GLProgramHandle* m_handle = nullptr;
     };

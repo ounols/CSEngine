@@ -231,18 +231,7 @@ void SFrameBuffer::ResizeFrameBuffer(int width, int height) {
     RasterizeFramebuffer();
 }
 
-STexture* tex3d = nullptr;
-unsigned int tex3d_id = 0;
-
 void SFrameBuffer::PostFrameBuffer(GLProgramHandle* handle, const CameraBase& camera) {
-
-    if(tex3d == nullptr) {
-        tex3d = SResource::Create<STexture>("File:test.png");
-        tex3d->GenerateMipmap();
-        const auto& e = handle->UniformLocation("test.tex.3d");
-        if(e != nullptr) tex3d_id = handle->UniformLocation("test.tex.3d")->id;
-    }
-
     if (m_mainColorBuffer == nullptr || m_depthBuffer == nullptr) {
         Exterminate();
         GenerateFramebuffer(PLANE, m_size->x, m_size->y);
@@ -260,10 +249,6 @@ void SFrameBuffer::PostFrameBuffer(GLProgramHandle* handle, const CameraBase& ca
     // Blit for copy buffer
     BlitCopiedFrameBuffer();
 
-    AttachFrameBuffer(GL_READ_FRAMEBUFFER);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_postObject.copyFbo);
-    glBlitFramebuffer(0, 0, m_size->x, m_size->y, 0, 0, m_size->x, m_size->y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
     const auto& colorTexture = m_postObject.copyBuffer;
     const auto& depthTexture = m_depthBuffer->texture;
     const float sizeRaw[2] = { static_cast<float>(m_size->x), static_cast<float>(m_size->y) };
@@ -275,7 +260,6 @@ void SFrameBuffer::PostFrameBuffer(GLProgramHandle* handle, const CameraBase& ca
     glUseProgram(m_postObject.handle->Program);
     colorTexture->Bind(m_postObject.color, 0);
     depthTexture->Bind(m_postObject.depth, 1);
-    tex3d->Bind(tex3d_id, 2);
     const auto& cameraStruct = camera.GetCameraMatrixStruct();
     ShaderUtil::BindCameraToShader(*m_postObject.handle, cameraStruct.camera, cameraStruct.cameraPosition,
                                    cameraStruct.projection, mat4::Identity());

@@ -1,3 +1,7 @@
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#endif
+
 #include "VolumeTextureGenerator.h"
 #include "../../../OGLDef.h"
 #include "../../GLProgramHandle.h"
@@ -6,8 +10,10 @@
 #include "../../Render/ShaderUtil.h"
 #include "../../Render/SEnvironmentMgr.h"
 #include "../../Render/STexture.h"
-#include "../../CaptureDef.h"
+#include "../../Loader/STB/stb_image_write.h"
 #include "../../AssetsDef.h"
+
+using namespace CSE;
 
 CSE::VolumeTextureGenerator::VolumeTextureGenerator() {
     m_handle = SResource::Create<GLProgramHandle>("File:Shader/SDF/ModelGenerator.shader");
@@ -175,7 +181,7 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
 
 
     std::string save_str = CSE::AssetsPath() + "test" + ".png";
-    savePng(save_str.c_str(), tex2d_size, tex2d_size, 4, data);
+    SavePng(save_str.c_str(), tex2d_size, tex2d_size, 4, data);
     glEnable(GL_CULL_FACE);
     glDisable(GL_BLEND);
 
@@ -230,4 +236,9 @@ unsigned char* CSE::VolumeTextureGenerator::CaptureBuffer() {
     glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
     return data;
+}
+
+int CSE::VolumeTextureGenerator::SavePng(const char* filename, int width, int height, int chennel, void* data) {
+    int saved = stbi_write_png(filename, width, height, chennel, data, 0);
+    return saved;
 }
