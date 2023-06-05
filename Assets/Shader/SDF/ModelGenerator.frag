@@ -17,6 +17,6 @@ out vec4 FragColor;
 void main(void) {
 
 	vec3 albedo = texture(u_sampler_albedo, v_textureCoordOut).rgb * u_albedo;
-	FragColor = vec4(0, 1, 0, 1.0);
+	FragColor = vec4(albedo, 1.0);
 
 }

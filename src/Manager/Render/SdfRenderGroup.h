@@ -29,6 +29,7 @@ namespace CSE {
         vec3 m_nodeSize = vec3{ 7.f, 3.f, 7.f };
         vec2 m_mapSize = vec2{ -1, -1 };
         float m_nodeSpace = 0.5f;
+        mutable int m_frameCount = 0;
         unsigned int m_envSizeId = 0;
         unsigned int m_nodeSizeId = 0;
         unsigned int m_nodeSpaceId = 0;

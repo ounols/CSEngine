@@ -140,19 +140,38 @@ vec4 texCubemap(vec3 uvw, vec3 pos) {
 }
 
 vec4 texCubemapSmooth(vec3 uvw, vec3 pos) {
-	vec3 spos = fract(pos) * 2. - 1.;
+	vec3 spos = fract(pos) * 0.5;
+	vec3 spos_abs = abs(spos);
+	vec3 direction = normalize(uvw);
+//	vec3 direction = normalize(uvw + spos * u_node_space);
 
-	vec4 color = texCubemap(normalize(uvw + spos * u_node_space), pos);
-	vec4 sub_color = vec4(0.);
 	vec3 offset_x = vec3((spos.x < 0 ? -1. : 1.), 0., 0.);
 	vec3 offset_y = vec3(0., (spos.y < 0 ? -1. : 1.), 0.);
 	vec3 offset_z = vec3(0., 0., (spos.z < 0 ? -1. : 1.));
-	sub_color += mix(color, texCubemap(normalize(uvw + spos * u_node_space), pos + offset_x), abs(spos.x));
-	sub_color += mix(color, texCubemap(normalize(uvw + spos * u_node_space), pos + offset_y), abs(spos.y));
-	sub_color += mix(color, texCubemap(normalize(uvw + spos * u_node_space), pos + offset_z), abs(spos.z));
 
-	sub_color /= 3.;
-	color = mix(color, sub_color, 1.);
+	vec4 c000 = texCubemap(direction, pos);
+	vec4 c100 = texCubemap(direction, pos + offset_x);
+	vec4 c010 = texCubemap(direction, pos + offset_y);
+	vec4 c110 = texCubemap(direction, pos + offset_x + offset_y);
+	vec4 c001 = texCubemap(direction, pos + offset_z);
+	vec4 c101 = texCubemap(direction, pos + offset_x + offset_z);
+	vec4 c011 = texCubemap(direction, pos + offset_y + offset_z);
+	vec4 c111 = texCubemap(direction, pos + offset_x + offset_y + offset_z);
+
+
+	vec4 color = mix(
+		mix(
+		mix(c000, c100, spos_abs.x * 2.),
+		mix(c010, c110, spos_abs.x * 2.),
+		spos_abs.y * 2.
+		),
+		mix(
+		mix(c001, c101, spos_abs.x * 2.),
+		mix(c011, c111, spos_abs.x * 2.),
+		spos_abs.y * 2.
+		),
+		spos_abs.z * 2.
+	);
 
 //	return mix(color2, color, d);
 	return color;
@@ -161,9 +180,9 @@ vec4 texCubemapSmooth(vec3 uvw, vec3 pos) {
 
 void main(void) {
 
-	lowp vec3 albedo     = vec3(0.01);
-	lowp float metallic  = 0.9;
-	lowp float roughness = 0.1;
+	lowp vec3 albedo     = vec3(0.3);
+	lowp float metallic  = 0.99;
+	lowp float roughness = 0.05;
 	lowp float ao        = 1.f;
 
 	vec3 N = normalize(v_eyespaceNormal);
@@ -230,16 +249,18 @@ void main(void) {
 	vec3 kD = 1.0 - kS;
 	kD *= 1.0 - metallic;
 	vec3 irradiance = texture(u_sampler_irradiance, N).rgb;
-	vec3 diffuse      = (irradiance) * albedo;
+	vec3 gi_i = texCubemapSmooth(N, SDF_P).rgb;
+
+	vec3 diffuse      = (irradiance + gi_i) * albedo;
 
 	// sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
 	const float MAX_REFLECTION_LOD = 4.0;
 	vec3 prefilteredColor = textureLod(u_prefilterMap, R,  roughness * MAX_REFLECTION_LOD).rgb;
 	vec2 brdf  = texture(u_brdfLUT, vec2(max(dot(N, V0), 0.0), roughness)).rg;
 	vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
-	vec3 gi = texCubemapSmooth(N, SDF_P).rgb;
+	vec3 gi_s = texCubemapSmooth(R, SDF_P).rgb * (kS * brdf.x + brdf.y);
 
-	vec3 ambient = (kD * diffuse + gi) * ao;
+	vec3 ambient = (kD * diffuse + gi_s) * ao;
 
 //	vec3 irradiance = u_irradiance.r < 0.00 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
 //	vec3 ambient = irradiance * albedo * ao;
@@ -251,7 +272,7 @@ void main(void) {
 	// gamma correct
 	color = pow(color, vec3(1.0/2.2));
 
-	color = texCubemapSmooth(N, SDF_P).rgb;
+//	color = texCubemapSmooth(N, SDF_P).rgb;
 //	if(floor(mod(SDF_P.y, 2)) < 0.3) {
 //		color = vec3(1.);
 //	}

@@ -13,12 +13,12 @@ vec3(0., -1., 0.),
 vec3(-1., 0., 0.)
 );
 const mat3 c_pv_m2 = mat3(
-vec3(1., 0., 0.),
+vec3(-1., 0., 0.),
 vec3(0., 0., 1.),
 vec3(0., 1., 0.)
 );
 const mat3 c_pv_m3 = mat3(
-vec3(1., 0., 0.),
+vec3(-1., 0., 0.),
 vec3(0., 0., -1.),
 vec3(0., -1., 0.)
 );
@@ -43,6 +43,8 @@ uniform int u_env_size;
 uniform vec3 u_node_size;
 //[sdf.node.space]//
 uniform float u_node_space;
+//[sdf.frame.count]//
+uniform int u_frame;
 //[buffer.source.size]//
 uniform vec2 u_src_size;
 
@@ -190,7 +192,7 @@ vec3 renderTexture(vec3 origin, vec3 direction) {
     vec3 wp = origin + direction * isct.x;
     vec3 vol_size = vec3(AABB_SIZE);
     vec3 tp = wp + (vol_size * 0.5);
-    float steps = D / 128.f;
+    float steps = D / 512.f;
 
     // Evaluate from 0 to D...
     for (float t = 0.0; t < D; t += steps) {
@@ -204,14 +206,20 @@ vec3 renderTexture(vec3 origin, vec3 direction) {
         vec4 src = vec4(density);
 
         if (src.a > 0.5) {
-            return (src.rgb + src.a * src.rgb * 1.0) * (1. - (t / D) * 2.);  // restore color
+            return (src.rgb + src.a * src.rgb * 1.5) * (1. - (t / D) * 1.);  // restore color
         }
     }
 
     return vec3(0.);
 }
 
+vec2 rand( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)) ); return fract(sin(p)*43758.5453) * 10.; }
+
 void main(void) {
+
+    vec2 renderFrame = rand(v_textureCoordOut);
+    int isRender = int(mod(renderFrame.x + renderFrame.y, 10));
+    if(isRender != int(mod(u_frame, 10))) discard;
 
     float index_pos_y = u_node_size.x * u_node_size.y * u_node_size.z;
     float node_index = floor(mod(v_textureCoordOut.x * 6., 6.))

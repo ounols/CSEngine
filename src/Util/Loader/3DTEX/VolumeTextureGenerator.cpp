@@ -139,8 +139,8 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
             data_index *= 4;
 
             if(data[data_index] <= 0)     data[data_index] = data_y[i];
-            if(data[data_index + 1] <= 0) data[data_index + 1] = data_y[i + 2];
-            if(data[data_index + 2] <= 0) data[data_index + 2] = data_y[i + 1];
+            if(data[data_index + 1] <= 0) data[data_index + 1] = data_y[i + 1];
+            if(data[data_index + 2] <= 0) data[data_index + 2] = data_y[i + 2];
             if(data[data_index + 3] <= 0) data[data_index + 3] = data_y[i + 3];
         }
 
@@ -170,9 +170,9 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
             int data_index = GetIndex(level, z / 2 + size / 4, y, x);
             data_index *= 4;
 
-            if(data[data_index] <= 0)     data[data_index] = data_y[i + 1];
-            if(data[data_index + 1] <= 0) data[data_index + 1] = data_y[i + 2];
-            if(data[data_index + 2] <= 0) data[data_index + 2] = data_y[i];
+            if(data[data_index] <= 0)     data[data_index] = data_y[i];
+            if(data[data_index + 1] <= 0) data[data_index + 1] = data_y[i + 1];
+            if(data[data_index + 2] <= 0) data[data_index + 2] = data_y[i + 2];
             if(data[data_index + 3] <= 0) data[data_index + 3] = data_y[i + 3];
         }
 

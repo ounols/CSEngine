@@ -218,6 +218,7 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
     auto sdfEnvSize = handle->UniformLocation("sdf.env.size");
     auto sdfNodeSize = handle->UniformLocation("sdf.node.size");
     auto sdfNodeSpace = handle->UniformLocation("sdf.node.space");
+    auto sdfFrameCount = handle->UniformLocation("sdf.frame.count");
 
     handle->Attributes.Position = position != nullptr ? position->id : HANDLE_NULL;
     handle->Attributes.Normal = normal != nullptr ? normal->id : HANDLE_NULL;
@@ -250,6 +251,7 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
     handle->Uniforms.SdfEnvsize = sdfEnvSize != nullptr ? sdfEnvSize->id : HANDLE_NULL;
     handle->Uniforms.SdfNodeSize = sdfNodeSize != nullptr ? sdfNodeSize->id : HANDLE_NULL;
     handle->Uniforms.SdfNodeSpace = sdfNodeSpace != nullptr ? sdfNodeSpace->id : HANDLE_NULL;
+    handle->Uniforms.SdfFrameCount = sdfFrameCount != nullptr ? sdfFrameCount->id : HANDLE_NULL;
 }
 
 void ShaderUtil::BindCameraToShader(const GLProgramHandle& handle, const mat4& view, const vec3& cameraPosition,

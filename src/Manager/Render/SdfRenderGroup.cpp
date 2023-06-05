@@ -11,7 +11,7 @@ using namespace CSE;
 SdfRenderGroup::SdfRenderGroup(const RenderMgr& renderMgr) : SRenderGroup(renderMgr) {
     m_envSize = 16;
     m_nodeSize = vec3{ 10, 8, 8 };
-    m_nodeSpace = 0.7;
+    m_nodeSpace = 0.3;
 
     m_sdfMapBuffer = new SFrameBuffer();
     m_sdfMapBuffer->SetName("SDF Render Group Texture");
@@ -36,18 +36,7 @@ SdfRenderGroup::SdfRenderGroup(const RenderMgr& renderMgr) : SRenderGroup(render
         const auto& e = m_sdfHandle->UniformLocation("sdf.tex");
         if (e != nullptr) m_testTextureId = m_sdfHandle->UniformLocation("sdf.tex")->id;
     }
-    {
-        const auto& e = m_sdfHandle->UniformLocation("sdf.env.size");
-        if (e != nullptr) m_envSizeId = m_sdfHandle->UniformLocation("sdf.env.size")->id;
-    }
-    {
-        const auto& e = m_sdfHandle->UniformLocation("sdf.node.size");
-        if (e != nullptr) m_nodeSizeId = m_sdfHandle->UniformLocation("sdf.node.size")->id;
-    }
-    {
-        const auto& e = m_sdfHandle->UniformLocation("sdf.node.space");
-        if (e != nullptr) m_nodeSpaceId = m_sdfHandle->UniformLocation("sdf.node.space")->id;
-    }
+    m_frameCount = 0;
 }
 
 SdfRenderGroup::~SdfRenderGroup() = default;
@@ -68,7 +57,7 @@ void SdfRenderGroup::RenderAll(const CameraBase& camera) const {
     const auto& cameraStruct = camera.GetCameraMatrixStruct();
 
     m_sdfMapBuffer->AttachFrameBuffer();
-    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, (int)m_mapSize.x, (int)m_mapSize.y);
     glUseProgram(m_sdfHandle->Program);
     m_testTexture->Bind(m_testTextureId, 0);
@@ -78,6 +67,7 @@ void SdfRenderGroup::RenderAll(const CameraBase& camera) const {
     BindShaderUniforms(*m_sdfHandle);
 
     ShaderUtil::BindAttributeToPlane();
+    ++m_frameCount;
 
 //    std::string save_str = CSE::AssetsPath() + "testmap" + ".png";
 //    saveScreenshot(save_str.c_str());
@@ -96,4 +86,6 @@ void SdfRenderGroup::BindShaderUniforms(const GLProgramHandle& handle) const {
         glUniform3fv(uniforms.SdfNodeSize, 1, m_nodeSize.Pointer());
     if(uniforms.SdfNodeSpace != HANDLE_NULL)
         glUniform1f(uniforms.SdfNodeSpace, m_nodeSpace);
+    if(uniforms.SdfFrameCount != HANDLE_NULL)
+        glUniform1i(uniforms.SdfFrameCount, m_frameCount);
 }
