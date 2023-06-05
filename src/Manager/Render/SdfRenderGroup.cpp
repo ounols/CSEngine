@@ -10,8 +10,8 @@ using namespace CSE;
 
 SdfRenderGroup::SdfRenderGroup(const RenderMgr& renderMgr) : SRenderGroup(renderMgr) {
     m_envSize = 16;
-    m_nodeSize = vec3{ 8, 8, 8 };
-    m_nodeSpace = 0.3;
+    m_nodeSize = vec3{ 10, 8, 8 };
+    m_nodeSpace = 0.7;
 
     m_sdfMapBuffer = new SFrameBuffer();
     m_sdfMapBuffer->SetName("SDF Render Group Texture");

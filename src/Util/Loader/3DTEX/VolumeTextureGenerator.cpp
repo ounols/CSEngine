@@ -69,8 +69,8 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
         if(albedo_tex != nullptr && albedo_tex->id >= 0) {
             const auto& e = material.GetElement("texture.albedo");
             if(e != nullptr) {
-                STexture* tex = SResource::Create<STexture>(e->raw);
-//              tex->Bind(albedo_tex->id, 0);
+                STexture* tex = SResource::Get<STexture>(e->valueStr[0]);
+                tex->Bind(albedo_tex->id, 0);
             }
         }
 

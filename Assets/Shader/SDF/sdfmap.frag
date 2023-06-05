@@ -14,12 +14,12 @@ vec3(-1., 0., 0.)
 );
 const mat3 c_pv_m2 = mat3(
 vec3(1., 0., 0.),
-vec3(0., 0., -1.),
+vec3(0., 0., 1.),
 vec3(0., 1., 0.)
 );
 const mat3 c_pv_m3 = mat3(
 vec3(1., 0., 0.),
-vec3(0., 0., 1.),
+vec3(0., 0., -1.),
 vec3(0., -1., 0.)
 );
 const mat3 c_pv_m4 = mat3(
@@ -204,7 +204,7 @@ vec3 renderTexture(vec3 origin, vec3 direction) {
         vec4 src = vec4(density);
 
         if (src.a > 0.5) {
-            return (src.rgb + src.a * src.rgb * 2.0) * (1. - (t / D) * 3.);  // restore color
+            return (src.rgb + src.a * src.rgb * 1.0) * (1. - (t / D) * 2.);  // restore color
         }
     }
 
