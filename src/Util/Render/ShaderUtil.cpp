@@ -216,6 +216,7 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
     auto srcBuffer = handle->UniformLocation("buffer.source");
     auto srcBufferSize = handle->UniformLocation("buffer.source.size");
     auto sdfEnvSize = handle->UniformLocation("sdf.env.size");
+    auto sdfCellSize = handle->UniformLocation("sdf.cell.size");
     auto sdfNodeSize = handle->UniformLocation("sdf.node.size");
     auto sdfNodeSpace = handle->UniformLocation("sdf.node.space");
     auto sdfFrameCount = handle->UniformLocation("sdf.frame.count");
@@ -248,7 +249,8 @@ void ShaderUtil::BindVariables(GLProgramHandle* handle) {
     handle->Uniforms.LightBrdfLut = lightBrdf != nullptr ? lightBrdf->id : HANDLE_NULL;
     handle->Uniforms.SourceBuffer = srcBuffer != nullptr ? srcBuffer->id : HANDLE_NULL;
     handle->Uniforms.SourceBufferSize = srcBufferSize != nullptr ? srcBufferSize->id : HANDLE_NULL;
-    handle->Uniforms.SdfEnvsize = sdfEnvSize != nullptr ? sdfEnvSize->id : HANDLE_NULL;
+    handle->Uniforms.SdfEnvSize = sdfEnvSize != nullptr ? sdfEnvSize->id : HANDLE_NULL;
+    handle->Uniforms.SdfCellSize = sdfCellSize != nullptr ? sdfCellSize->id : HANDLE_NULL;
     handle->Uniforms.SdfNodeSize = sdfNodeSize != nullptr ? sdfNodeSize->id : HANDLE_NULL;
     handle->Uniforms.SdfNodeSpace = sdfNodeSpace != nullptr ? sdfNodeSpace->id : HANDLE_NULL;
     handle->Uniforms.SdfFrameCount = sdfFrameCount != nullptr ? sdfFrameCount->id : HANDLE_NULL;

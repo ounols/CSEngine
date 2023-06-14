@@ -5,17 +5,22 @@
 #include "../../Util/Render/SFrameBuffer.h"
 #include "../../Util/Render/ShaderUtil.h"
 #include "../../Component/CameraComponent.h"
+#include "../LightMgr.h"
+#include "../EngineCore.h"
 
 using namespace CSE;
 
 SdfRenderGroup::SdfRenderGroup(const RenderMgr& renderMgr) : SRenderGroup(renderMgr) {
-    m_envSize = 16;
-    m_nodeSize = vec3{ 10, 8, 8 };
-    m_nodeSpace = 0.3;
+    m_envSize = 32;
+    m_nodeSize = vec3{ 10, 4, 4 };
+    m_nodeSpace = 0.5;
 
     m_sdfMapBuffer = new SFrameBuffer();
     m_sdfMapBuffer->SetName("SDF Render Group Texture");
-    m_mapSize = vec2{ m_envSize * 6.f, m_nodeSize.x * m_nodeSize.y * m_nodeSize.z * m_envSize };
+    float wh = 6.f * m_nodeSize.x * m_nodeSize.y * m_nodeSize.z;
+    float wh_sqrt = sqrtf(wh);
+    m_cellSize = vec2{ ceilf(wh_sqrt), floorf(wh_sqrt) };
+    m_mapSize = vec2{ m_envSize * m_cellSize.x,  m_envSize * m_cellSize.y };
 //    m_mapSize = ivec2{ 256, 256 };
     m_sdfMapBuffer->GenerateFramebuffer(SFrameBuffer::PLANE, m_mapSize.x, m_mapSize.y);
 
@@ -37,6 +42,8 @@ SdfRenderGroup::SdfRenderGroup(const RenderMgr& renderMgr) : SRenderGroup(render
         if (e != nullptr) m_testTextureId = m_sdfHandle->UniformLocation("sdf.tex")->id;
     }
     m_frameCount = 0;
+
+    m_lightMgr = CORE->GetCore(LightMgr);
 }
 
 SdfRenderGroup::~SdfRenderGroup() = default;
@@ -61,6 +68,7 @@ void SdfRenderGroup::RenderAll(const CameraBase& camera) const {
     glViewport(0, 0, (int)m_mapSize.x, (int)m_mapSize.y);
     glUseProgram(m_sdfHandle->Program);
     m_testTexture->Bind(m_testTextureId, 0);
+    m_lightMgr->AttachLightToShader(m_sdfHandle);
     ShaderUtil::BindCameraToShader(*m_sdfHandle, cameraStruct.camera, cameraStruct.cameraPosition,
                                    cameraStruct.projection, mat4::Identity());
     glUniform2fv(uniforms.SourceBufferSize, 1, m_mapSize.Pointer());
@@ -68,6 +76,7 @@ void SdfRenderGroup::RenderAll(const CameraBase& camera) const {
 
     ShaderUtil::BindAttributeToPlane();
     ++m_frameCount;
+    m_frameCount %= 100;
 
 //    std::string save_str = CSE::AssetsPath() + "testmap" + ".png";
 //    saveScreenshot(save_str.c_str());
@@ -80,8 +89,10 @@ void SdfRenderGroup::Exterminate() {
 void SdfRenderGroup::BindShaderUniforms(const GLProgramHandle& handle) const {
     const auto& uniforms = handle.Uniforms;
 
-    if(uniforms.SdfEnvsize != HANDLE_NULL)
-        glUniform1i(uniforms.SdfEnvsize, m_envSize);
+    if(uniforms.SdfEnvSize != HANDLE_NULL)
+        glUniform1i(uniforms.SdfEnvSize, m_envSize);
+    if(uniforms.SdfCellSize != HANDLE_NULL)
+        glUniform2fv(uniforms.SdfCellSize, 1, m_cellSize.Pointer());
     if(uniforms.SdfNodeSize != HANDLE_NULL)
         glUniform3fv(uniforms.SdfNodeSize, 1, m_nodeSize.Pointer());
     if(uniforms.SdfNodeSpace != HANDLE_NULL)

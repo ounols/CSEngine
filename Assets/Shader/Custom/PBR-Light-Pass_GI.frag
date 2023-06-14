@@ -1,27 +1,20 @@
 precision highp float;
 precision highp int;
 
-//Uniforms
-//[texture.albedo]//
-uniform sampler2D u_sampler_albedo;
-//[texture.metallic]//
-uniform sampler2D u_sampler_metallic;
-//[texture.roughness]//
-uniform sampler2D u_sampler_roughness;
-//[texture.ao]//
-uniform sampler2D u_sampler_ao;
-//[texture.sdfmap]//
-uniform sampler2D u_sampler_sdf;
 
-//[sdf.env.size]//
-uniform int u_env_size;
-//[sdf.cell.size]//
-uniform vec2 u_cell_size;
-vec2 inv_cell_size = vec2(1. / u_cell_size.x, 1. / u_cell_size.y);
-//[sdf.node.size]//
-uniform vec3 u_node_size;
-//[sdf.node.space]//
-uniform float u_node_space;
+//Uniforms
+//[geo.normal.mr]//
+uniform sampler2D u_sampler_normal_mr;
+//[geo.albedo.a]//
+uniform sampler2D u_sampler_albedo_a;
+//[geo.depth]//
+uniform sampler2D u_sampler_depth;
+//[vec3.camera]//
+uniform vec3 u_cameraPosition;
+//[matrix.projection.inv]//
+uniform mat4 u_projectionInvMatrix;
+//[matrix.view.inv]//
+uniform mat4 u_viewInvMatrix;
 
 //IBL
 //[light.irradiance]//
@@ -31,24 +24,11 @@ uniform samplerCube u_prefilterMap;
 //[light.brdf]//
 uniform sampler2D u_brdfLUT;
 
-//[vec3.albedo]//
-uniform vec3 u_albedo;
-//[float.metallic]//
-uniform float u_metallic;
-//[float.roughness]//
-uniform float u_roughness;
-//[float.ao]//
-uniform float u_ao;
-//[FLOAT_IRRADIANCE]//
-uniform vec3 u_irradiance;
-//[vec3.camera]//
-uniform vec3 u_cameraPosition;
-
 
 //[light.type]//
 uniform int u_lightType[MAX_LIGHTS];
-//[light.matrix]//
-uniform mat4 u_lightMatrix[MAX_LIGHTS];
+//[light.position]//
+uniform vec4 u_lightPosition[MAX_LIGHTS];
 //[light.radius]//
 uniform float u_lightRadius[MAX_LIGHTS];
 //[light.color]//
@@ -59,14 +39,11 @@ uniform sampler2D u_shadowMap[MAX_LIGHTS];
 uniform lowp int u_shadowMode[MAX_LIGHTS];
 //[light.size]//
 uniform int u_lightSize;
+//[light.matrix]//
+uniform mat4 u_lightMatrix[MAX_LIGHTS];
 
 //Varying
-in mediump vec3 v_eyespaceNormal;//EyespaceNormal;
-in lowp vec3 v_lightPosition[MAX_LIGHTS];
-//in lowp vec4 v_fragPosLightSpace[MAX_LIGHTS];
 in mediump vec2 v_textureCoordOut;
-in lowp float v_distance[MAX_LIGHTS];
-in mediump vec3 v_worldPosition;
 
 out vec4 FragColor;
 
@@ -75,8 +52,8 @@ const lowp float c_zero = 0.0;
 const lowp float c_one = 1.0;
 const float PI = 3.14159265359;
 
-const lowp float c_shadow_width = 1024.f;
-const lowp float c_shadow_height = 1024.f;
+const lowp float c_shadow_width = 1024.0;
+const lowp float c_shadow_height = 1024.0;
 
 //Functions
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -95,108 +72,38 @@ float ClampedPow(float X, float Y) {
 	return pow(max(abs(X),0.000001f),Y);
 }
 
-void cubemap(vec3 r, out float texId, out vec2 st) {
-	vec3 uvw;
-	vec3 absr = abs(r);
-	if (absr.x > absr.y && absr.x > absr.z) {
-		// x major
-		float negx = step(r.x, 0.0);
-		uvw = vec3(r.zy, absr.x) * vec3(mix(-1.0, 1.0, negx), -1, 1);
-		texId = negx;
-	} else if (absr.y > absr.z) {
-		// y major
-		float negy = step(r.y, 0.0);
-		uvw = vec3(r.xz, absr.y) * vec3(1.0, mix(1.0, -1.0, negy), 1.0);
-		texId = 2.0 + negy;
-	} else {
-		// z major
-		float negz = step(r.z, 0.0);
-		uvw = vec3(r.xy, absr.z) * vec3(mix(1.0, -1.0, negz), -1, 1);
-		texId = 4.0 + negz;
-	}
-	st = vec2(uvw.xy / uvw.z + 1.) * .5;
-}
+vec3 WorldPosFromDepth(float depth, vec2 uv) {
+	float z = depth * 2.0 - 1.0;
 
-vec4 texCubemap(vec3 uvw, vec3 pos) {
-	float texId;
-	vec2 st;
-	vec3 ipos = floor(pos);
-	float index_pos_y = u_node_size.x * u_node_size.y * u_node_size.z;
-	float index = (u_node_size.z - ipos.z) * u_node_size.y * u_node_size.x
-					+ (u_node_size.y - ipos.y) * u_node_size.x
-					+ (u_node_size.x - ipos.x);
+	vec4 clipSpacePosition = vec4(uv * 2.0 - 1.0, z, 1.0);
+	vec4 viewSpacePosition = u_projectionInvMatrix * clipSpacePosition;
 
-	index = min(index, index_pos_y);
-	index = max(index, 0.);
-//	if(index < 0. || index > index_pos_y) return vec4(1., 0, 0, 1);
+	vec4 worldSpacePosition = u_viewInvMatrix * viewSpacePosition;
 
-	cubemap(uvw, texId, st);
-	st = vec2(st.x / u_cell_size.x, st.y / u_cell_size.y);
-	vec4 color = vec4(0);
-	for (int i = 0; i < 6; ++i) {
-		vec4 side = texture(u_sampler_sdf, st
-					+ vec2(
-							floor(mod((index * 6. + float(i)), u_cell_size.x)) * inv_cell_size.x,
-							floor((index * 6. + float(i)) / u_cell_size.x) * inv_cell_size.y
-					));
-		float select = step(float(i) - 0.5, texId) *
-		step(texId, float(i) + .5);
-		color = mix(color, side, select);
-	}
-	return color;
-}
-
-vec4 texCubemapSmooth(vec3 uvw, vec3 pos) {
-	vec3 spos = fract(pos) * 0.5;
-	vec3 spos_abs = abs(spos);
-	vec3 direction = normalize(uvw);
-//	vec3 direction = normalize(uvw + spos * u_node_space);
-
-	vec3 offset_x = vec3((spos.x < 0 ? -1. : 1.), 0., 0.);
-	vec3 offset_y = vec3(0., (spos.y < 0 ? -1. : 1.), 0.);
-	vec3 offset_z = vec3(0., 0., (spos.z < 0 ? -1. : 1.));
-
-	vec4 c000 = texCubemap(direction, pos);
-	vec4 c100 = texCubemap(direction, pos + offset_x);
-	vec4 c010 = texCubemap(direction, pos + offset_y);
-	vec4 c110 = texCubemap(direction, pos + offset_x + offset_y);
-	vec4 c001 = texCubemap(direction, pos + offset_z);
-	vec4 c101 = texCubemap(direction, pos + offset_x + offset_z);
-	vec4 c011 = texCubemap(direction, pos + offset_y + offset_z);
-	vec4 c111 = texCubemap(direction, pos + offset_x + offset_y + offset_z);
-
-
-	vec4 color = mix(
-		mix(
-		mix(c000, c100, spos_abs.x * 2.),
-		mix(c010, c110, spos_abs.x * 2.),
-		spos_abs.y * 2.
-		),
-		mix(
-		mix(c001, c101, spos_abs.x * 2.),
-		mix(c011, c111, spos_abs.x * 2.),
-		spos_abs.y * 2.
-		),
-		spos_abs.z * 2.
-	);
-
-//	return mix(color2, color, d);
-	return color;
+	return worldSpacePosition.xyz / worldSpacePosition.w;
 }
 
 
 void main(void) {
 
-	lowp vec3 albedo     = pow(texture(u_sampler_albedo, v_textureCoordOut).rgb, vec3(2.2)) * u_albedo;
-	lowp float metallic  = texture(u_sampler_metallic, v_textureCoordOut).r;
-	lowp float roughness = texture(u_sampler_roughness, v_textureCoordOut).r * 0.7;
-	lowp float ao        = 1.f;
+	lowp float depth     = texture(u_sampler_depth, v_textureCoordOut).r;
+	if(depth >= 1.0) {
+		discard;
+	}
 
-	vec3 N = normalize(v_eyespaceNormal);
-	vec3 V0 = normalize(u_cameraPosition - v_worldPosition);
+	// retrieve data from gbuffer
+	highp vec3 fragPos	 = WorldPosFromDepth(depth, v_textureCoordOut).rgb;
+	highp vec2 normal_raw= texture(u_sampler_normal_mr, v_textureCoordOut).rg;
+	highp vec3 normal	 = vec3(normal_raw.x, normal_raw.y, max(sqrt(1.0 - normal_raw.x * normal_raw.x - normal_raw.y * normal_raw.y), 0.0));
+
+	lowp vec3  albedo    = texture(u_sampler_albedo_a, v_textureCoordOut).rgb;
+	lowp float metallic  = texture(u_sampler_normal_mr, v_textureCoordOut).b;
+	lowp float roughness = 1.0 - texture(u_sampler_normal_mr, v_textureCoordOut).a;
+	lowp float ao        = texture(u_sampler_albedo_a, v_textureCoordOut).a;
+
+	vec3 N = normalize(normal);
+	vec3 V0 = normalize(u_cameraPosition - fragPos);
 	vec3 R = reflect(-V0, N);
-
-	vec3 SDF_P = (v_worldPosition + u_node_size * u_node_space * 0.5) / u_node_space;
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
@@ -209,15 +116,19 @@ void main(void) {
 	lowp int index_shadow = 0;
 	for(int i = 0; i < u_lightSize; ++i) {
 
+		// direction light : position light
+		lowp vec4 lightFragPosition = (u_lightType[i] == 1) ? vec4(c_zero, c_zero, c_zero, c_one) : vec4(fragPos, c_one);
+		vec3 aux = vec3(u_lightPosition[i] - lightFragPosition);
+
 		// calculate per-light radiance
 		vec3 V = (u_lightType[i] > 1) ? V0 : N;
-		vec3 L = v_lightPosition[i];
+		vec3 L = normalize(aux);
 		vec3 H = normalize(V + L);
-		float distance = v_distance[i];
-		float attenuation = 1.0 / (distance * distance);
+		float distance = length(aux);
+		float attenuation = max(1.0 / (distance * distance), 0.01);
 		float shadow = 0.0;
 		if(u_shadowMode[i] == 1) {
-			lowp vec4 fragPosLightSpace = u_lightMatrix[i] * vec4(v_worldPosition, c_one);
+			lowp vec4 fragPosLightSpace = u_lightMatrix[i] * vec4(fragPos, c_one);
 			shadow = ShadowCalculation(index_shadow, fragPosLightSpace, N, L);
 			++index_shadow;
 		}
@@ -241,7 +152,7 @@ void main(void) {
 		// multiply kD by the inverse metalness such that only non-metals
 		// have diffuse lighting, or a linear blend if partly metal (pure metals
 		// have no diffuse light).
-		kD *= 1.0f - metallic;
+		kD *= 1.0 - metallic;
 
 		// scale light by NdotL
 		float NdotL = max(dot(N, L), 0.0);
@@ -256,39 +167,28 @@ void main(void) {
 	vec3 kD = 1.0 - kS;
 	kD *= 1.0 - metallic;
 	vec3 irradiance = texture(u_sampler_irradiance, N).rgb;
-	vec3 gi_i = texCubemapSmooth(N, SDF_P).rgb;
-
-	vec3 diffuse      = (gi_i) * albedo;
+	vec3 diffuse      = irradiance * albedo;
 
 	// sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
 	const float MAX_REFLECTION_LOD = 4.0;
 	vec3 prefilteredColor = textureLod(u_prefilterMap, R,  roughness * MAX_REFLECTION_LOD).rgb;
 	vec2 brdf  = texture(u_brdfLUT, vec2(max(dot(N, V0), 0.0), roughness)).rg;
 	vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
-	vec3 gi_s = texCubemapSmooth(R, SDF_P).rgb * (kS * brdf.x + brdf.y);
-	gi_s = max(vec3(0.), gi_s);
-	gi_s = min(vec3(1.), gi_s);
 
-	vec3 ambient = (kD * diffuse + gi_s) * ao;
+	vec3 ambient = (kD * diffuse + specular) * ao;
 
-//	vec3 irradiance = u_irradiance.r < 0.00 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
-//	vec3 ambient = irradiance * albedo * ao;
+	//	vec3 irradiance = u_irradiance.r < 0.00 ? texture(u_sampler_irradiance, N).rgb : vec3(0.03);
+	//	vec3 ambient = irradiance * albedo * ao;
 
-	vec3 color = ambient + Lo;
+	vec3 color = Lo;
 
 	// HDR tonemapping
 	color = color / (color + vec3(1.0));
 	// gamma correct
 	color = pow(color, vec3(1.0/2.2));
 
-//	color = texCubemapSmooth(N, SDF_P).rgb;
-//	if(floor(mod(SDF_P.y, 2)) < 0.3) {
-//		color = vec3(1.);
-//	}
-//	else color = vec3(0.);
-
 	FragColor = vec4(color, 1.0);
-
+	gl_FragDepth = depth;
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
@@ -302,7 +202,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness) {
 float DistributionGGXMobile(vec3 N, vec3 H, float roughness) {
 	// Walter et al. 2007, "Microfacet Models for Refraction through Rough Surfaces"
 
-	vec3 NxH = cross(v_eyespaceNormal, H);
+	vec3 NxH = cross(N, H);
 	float NoH = max(dot(N, H), 0.0);
 	float oneMinusNoHSquared = dot(NxH, NxH);
 
@@ -389,7 +289,7 @@ float ShadowCalculation(int index, vec4 fragPosLightSpace, vec3 N, vec3 D)
 
 	// keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
 	if(projCoords.z > 1.0)
-	shadow = 0.0;
+		shadow = 0.0;
 
 	return shadow;
 }
@@ -401,9 +301,9 @@ vec3 GetShadowTextureInArray(int index, vec2 uv) {
 	if(index == 2) return texture(u_shadowMap[2], uv).rgb;
 	if(index == 3) return texture(u_shadowMap[3], uv).rgb;
 	if(index == 4) return texture(u_shadowMap[4], uv).rgb;
-	//	if(index == 5) return texture(u_shadowMap[5], uv).rgb;
-	//	if(index == 6) return texture(u_shadowMap[6], uv).rgb;
-	//	if(index == 7) return texture(u_shadowMap[7], uv).rgb;
+//	if(index == 5) return texture(u_shadowMap[5], uv).rgb;
+//	if(index == 6) return texture(u_shadowMap[6], uv).rgb;
+//	if(index == 7) return texture(u_shadowMap[7], uv).rgb;
 
 	return texture(u_shadowMap[0], uv).rgb;
 }

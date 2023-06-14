@@ -7,6 +7,7 @@ namespace CSE {
     class STexture;
     class GLProgramHandle;
     class SFrameBuffer;
+    class LightMgr;
 
     class SdfRenderGroup : public SRenderGroup {
     public:
@@ -28,15 +29,14 @@ namespace CSE {
         int m_envSize = 16;
         vec3 m_nodeSize = vec3{ 7.f, 3.f, 7.f };
         vec2 m_mapSize = vec2{ -1, -1 };
+        vec2 m_cellSize = vec2{ -1, -1 };
         float m_nodeSpace = 0.5f;
         mutable int m_frameCount = 0;
-        unsigned int m_envSizeId = 0;
-        unsigned int m_nodeSizeId = 0;
-        unsigned int m_nodeSpaceId = 0;
 
         SFrameBuffer* m_sdfMapBuffer = nullptr;
         STexture* m_mapTexture = nullptr;
-        unsigned int m_mapTextureId = 0;
+
+        LightMgr* m_lightMgr = nullptr;
 
         //For Implement Only (must remove!)
         STexture* m_testTexture = nullptr;

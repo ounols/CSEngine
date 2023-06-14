@@ -39,6 +39,8 @@ vec3(0., 0., -1.)
 uniform sampler3D u_sdf_tex;
 //[sdf.env.size]//
 uniform int u_env_size;
+//[sdf.cell.size]//
+uniform vec2 u_cell_size;
 //[sdf.node.size]//
 uniform vec3 u_node_size;
 //[sdf.node.space]//
@@ -56,103 +58,38 @@ uniform mat4 u_projectionMatrix;
 //[vec3.camera]//
 uniform vec3 u_cameraPosition;
 
+//[light.type]//
+uniform int u_lightType[MAX_LIGHTS];
+//[light.matrix]//
+uniform mat4 u_lightMatrix[MAX_LIGHTS];
+//[light.radius]//
+uniform float u_lightRadius[MAX_LIGHTS];
+//[light.color]//
+uniform vec3 u_lightColor[MAX_LIGHTS];
+//[light.shadow_map]//
+uniform sampler2D u_shadowMap[MAX_LIGHTS];
+//[light.shadow_mode]//
+uniform lowp int u_shadowMode[MAX_LIGHTS];
+//[light.size]//
+uniform int u_lightSize;
+//[light.position]//
+uniform vec4 u_lightPosition[MAX_LIGHTS];
+
 //Varying
 in mediump vec2 v_textureCoordOut;
 out vec4 FragColor;
 
-float sdSphere(vec3 p, float s) {
-    return length(p)-s;
-}
-
-float sdBox(vec3 p, vec3 b) {
-    vec3 d = abs(p) - b;
-    return min(max(d.x, max(d.y, d.z)), 0.0) + length(max(d, 0.0));
-}
-
-vec2 opU(vec2 d1, vec2 d2) {
-    return (d1.x<d2.x) ? d1 : d2;
-}
-
-vec2 map(in vec3 pos)
-{
-    vec2 res = vec2(pos.y, 0.);
-    res = vec2(sdSphere(pos-vec3(-0.2f, -1.3f, -0.2f), 0.1), 20.);
-    res = opU(vec2(sdBox(pos-vec3(0, 0, 0), vec3(0.1, 0.1, 0.1)), 20.), res);
-    res = opU(vec2(sdSphere(pos-vec3(0.1f, -1.45f, 0.12f), 0.1), 20.), res);
-
-    return res;
-}
-
-vec2 raycast(in vec3 ro, in vec3 rd)
-{
-    vec2 res = vec2(-1.0, -1.0);
-
-    float tmin = 0.001;
-    float tmax = 20.0;
-
-    float t = tmin;
-    for (int i=0; i<70 && t<tmax; i++)
-    {
-        vec2 h = map(ro+rd*t);
-        if (abs(h.x)<(0.0001*t))
-        {
-            res = vec2(t, h.y);
-            break;
-        }
-        t += h.x;
-    }
-
-    return res;
-}
-
-vec3 calcNormal(in vec3 pos)
-{
-    #if 0
-    vec2 e = vec2(1.0, -1.0)*0.5773*0.0005;
-    return normalize(e.xyy*map(pos + e.xyy).x +
-    e.yyx*map(pos + e.yyx).x +
-    e.yxy*map(pos + e.yxy).x +
-    e.xxx*map(pos + e.xxx).x);
-    #else
-    // inspired by tdhooper and klems - a way to prevent the compiler from inlining map() 4 times
-    vec3 n = vec3(0.0);
-    for (int i=0; i<4; i++)
-    {
-        vec3 e = 0.5773*(2.0*vec3((((i+3)>>1)&1), ((i>>1)&1), (i&1))-1.0);
-        n += e*map(pos+0.0005*e).x;
-        //if( n.x+n.y+n.z>100.0 ) break;
-    }
-    return normalize(n);
-    #endif
-}
-
-vec4 render(in vec3 ro, in vec3 rd)
-{
-    // background
-    vec4 col = vec4(0, 1., 0, 0);
-
-    // raycast scene
-    vec2 res = raycast(ro, rd);
-    float t = res.x;
-    float m = res.y;
-    if (m>-0.5)
-    {
-        vec3 pos = ro + t*rd;
-        vec3 nor = calcNormal(pos);
-        vec3 ref = reflect(rd, nor);
-        col = vec4(nor, 1.);
-    }
-    return vec4(clamp(col, 0.0, 1.0));
-}
-
-
-mat3 setCamera(in vec3 ro, in vec3 ta, float cr)
-{
-    vec3 cw = normalize(ta-ro);
-    vec3 cp = vec3(sin(cr), cos(cr), 0.0);
-    vec3 cu = normalize(cross(cw, cp));
-    vec3 cv =          (cross(cu, cw));
-    return mat3(cu, cv, cw);
+vec3 getNormal(vec3 v){
+    const float eps = 1e-3;
+    vec3 p = vec3(
+    texture(u_sdf_tex,v+vec3(eps,  0,  0)).x,
+    texture(u_sdf_tex,v+vec3(0,  eps,  0)).x,
+    texture(u_sdf_tex,v+vec3(0,  0,  eps)).x);
+    vec3 n = vec3(
+    texture(u_sdf_tex,v-vec3(eps,  0,  0)).x,
+    texture(u_sdf_tex,v-vec3(0,  eps,  0)).x,
+    texture(u_sdf_tex,v-vec3(0,  0,  eps)).x);
+    return normalize(p-n);
 }
 
 #define AABB_SIZE 4. * 1.1370995 * 4.
@@ -174,6 +111,22 @@ vec2 RayAABBIntersection(vec3 ro, vec3 rd) {
     float tfar  = min(min(tmax.x, tmax.y), tmax.z);
 
     return tfar > tnear ? vec2(tnear, tfar) : vec2(-999.);
+}
+
+vec2 sdTexture(vec3 tp, vec3 direction, float distance, vec3 vol_size) {
+    float steps = distance / 64.f;
+
+    for (float t = 0.0; t < distance; t += steps) {
+        // Get the current position along the ray
+        vec3 currentPos = tp + direction * t;
+
+        // Get normalized density from volume
+        vec4 density = texture(u_sdf_tex, currentPos / vol_size);
+        if(density.a <= 0.5) continue;
+
+        return vec2(length(currentPos), t - steps);
+    }
+    return vec2(0.);
 }
 
 vec3 renderTexture(vec3 origin, vec3 direction) {
@@ -198,16 +151,27 @@ vec3 renderTexture(vec3 origin, vec3 direction) {
     for (float t = 0.0; t < D; t += steps) {
         // Get the current position along the ray
         vec3 currentPos = tp + direction * t;
+        vec3 uvw = currentPos / vol_size;
 
         // Get normalized density from volume
-        vec4 density = texture(u_sdf_tex, currentPos / vol_size);
+        vec4 density = texture(u_sdf_tex, uvw);
+        if (density.a <= 0.5) continue;
 
         // Get color from transfer function given the normalized density
         vec4 src = vec4(density);
+        vec3 n = -getNormal(uvw);
 
-        if (src.a > 0.5) {
-            return (src.rgb + src.a * src.rgb * 1.5) * (1. - (t / D) * 1.);  // restore color
+        // Simple diffuse shading
+        vec3 co = vec3(0.);
+        for(int i = 0; i < 3; ++i) {
+            vec3 l = u_lightPosition[i].xyz;
+            vec3 H = normalize(n + l);
+            vec2 shadow = sdTexture(currentPos + l * (D / 63.f), l, D, vol_size);
+            float dif = (shadow.x > 0.) ? 0. : clamp(dot(n, l), 0.01, 1.);
+            co += dif * u_lightColor[i];
         }
+        src = src * vec4(co, 1.);
+        return (src.rgb + src.a * src.rgb * 1.5) * (1. - (t / D) * 1.);  // restore color
     }
 
     return vec3(0.);
@@ -218,26 +182,28 @@ vec2 rand( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.
 void main(void) {
 
     vec2 renderFrame = rand(v_textureCoordOut);
-    int isRender = int(mod(renderFrame.x + renderFrame.y, 10));
-    if(isRender != int(mod(u_frame, 10))) discard;
+    int isRender = int(mod(renderFrame.x * renderFrame.y, 20));
+    if(isRender != int(mod(u_frame, 20))) discard;
 
     float index_pos_y = u_node_size.x * u_node_size.y * u_node_size.z;
-    float node_index = floor(mod(v_textureCoordOut.x * 6., 6.))
-                    + floor(mod(v_textureCoordOut.y * index_pos_y, index_pos_y)) * 6.;
+    float node_index = floor(mod(v_textureCoordOut.x * u_cell_size.x, u_cell_size.x))
+                    + floor(mod(v_textureCoordOut.y * u_cell_size.y, u_cell_size.y)) * u_cell_size.x;
     float pos_index = floor(node_index / 6.);
+    if(pos_index > index_pos_y) discard;
+
 
     vec3 pos = vec3(floor(mod(pos_index, u_node_size.x)),
                     floor(mod((pos_index / u_node_size.x) , u_node_size.y)),
                     floor(pos_index / (u_node_size.x * u_node_size.y)));
 
     // Setting New UV
-    vec2 new_uv = vec2(1. - fract(v_textureCoordOut.x / (1./6.)),
-                       fract(v_textureCoordOut.y / (1. / index_pos_y)));
+    vec2 new_uv = vec2(1. - fract(v_textureCoordOut.x / (1. / u_cell_size.x)),
+                       fract(v_textureCoordOut.y / (1. / u_cell_size.y)));
 
     vec3 color = vec3(0, 0, 0);
     {
         // camera
-        vec3 ro = vec3(0, 0, 0) - pos * u_node_space + u_node_size * u_node_space * 0.5;
+        vec3 ro = vec3(0, -0.2, 0) - pos * u_node_space + u_node_size * u_node_space * 0.5;
 
         vec2 p = vec2(2. * (new_uv - 0.5));
 

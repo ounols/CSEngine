@@ -146,9 +146,9 @@ void CustomComponent::SetValue(std::string name_str, VariableBinder::Arguments v
     //variable : 0.name , 1.value, 2. type
     else if (name_str == "__variable__") {
         for(auto& val : m_variables) {
-            if(val.name == value[0]) {
-				val.value = value[1];
-				val.type = value[2];
+            if(val.name == trim(value[0])) {
+				val.value = trim(value[1]);
+				val.type = trim(value[2]);
                 BindValue(&val, ConvertSpaceStr(value[1], true).c_str());
             }
         }

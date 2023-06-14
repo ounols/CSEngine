@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CSEMAT version="1.0.0">
-<shader id="RW1OdHpivygVe6IW">
-<var name="vec3.albedo" type="vec3" count="1">0.200000 1.000000 0.500000</var>
+<shader id="fDp2P6pqngCX29kE">
+<var name="vec3.albedo" type="vec3" count="1">1.0 1.0 1.0</var>
+<var name="texture.albedo" type="tex" count="1">RzzhOcFvwCP8U7Ur</var>
+<var name="texture.roughness" type="tex" count="1">Xv3YS5Zneh5eU0bR</var>
+<var name="texture.metallic" type="tex" count="1">mQOU6f8C72KTL147</var>
 <var name="float.metallic" type="float" count="1">0.900000</var>
+<var name="texture.sdfmap" type="tex" count="1">CSEENV0000000005</var>
 <var name="light.brdf" type="tex" count="1">CSEENV0000000004</var>
 <var name="float.ao" type="float" count="1">1.000000</var>
 <var name="light.irradiance" type="tex" count="1">CSEENV0000000002</var>

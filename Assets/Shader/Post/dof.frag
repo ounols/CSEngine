@@ -5,6 +5,8 @@ precision highp float;
 uniform sampler2D u_color;
 //[post.depth]//
 uniform sampler2D u_depth;
+//[buffer.source.size]//
+uniform vec2 u_size;
 //Varying
 in mediump vec2 v_textureCoordOut;
 out vec4 FragColor;
@@ -27,7 +29,7 @@ For more information, please refer to <http://unlicense.org/>
 const float GoldenAngle = 2.39996323;
 
 // more is better quality
-const float Iterations = 400.0;
+const float Iterations = 100.0;
 
 const mat2 Rotation = mat2(
 cos(GoldenAngle),
@@ -81,7 +83,7 @@ vec3 bokeh(sampler2D tex, sampler2D depth_tex, vec2 uv, float radius) {
 
     vec2 horizontalAngle = vec2(0.0, radius * 0.01 / sqrt(Iterations));
 
-    vec2 aspect = vec2(1080.0/1920.0, 1.0);
+    vec2 aspect = vec2(u_size.y/u_size.x, 1.0);
     vec3 col = vec3(0.);
     float depth = 0.;
 
@@ -117,7 +119,7 @@ vec3 ColorBalance(vec3 color, vec3 shadows, vec3 midtones, vec3 highlights) {
     return color;
 }
 
-const vec3 sha = vec3(0.5, 0.5, 0.7);
+const vec3 sha = vec3(0.7, 0.7, 0.9);
 const vec3 mid = vec3(0.5, 0.5, 0.5);
 const vec3 hig = vec3(0.7, 0.53, 0.5);
 

@@ -36,7 +36,8 @@ namespace CSE {
         GLint SourceBuffer = HANDLE_NULL;
         GLint SourceBufferSize = HANDLE_NULL;
         // SDFs
-        GLint SdfEnvsize = HANDLE_NULL;
+        GLint SdfEnvSize = HANDLE_NULL;
+        GLint SdfCellSize = HANDLE_NULL;
         GLint SdfNodeSize = HANDLE_NULL;
         GLint SdfNodeSpace = HANDLE_NULL;
         GLint SdfFrameCount = HANDLE_NULL;
