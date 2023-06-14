@@ -17,7 +17,6 @@ uniform sampler2D u_sampler_sdf;
 uniform int u_env_size;
 //[sdf.cell.size]//
 uniform vec2 u_cell_size;
-vec2 inv_cell_size = vec2(1. / u_cell_size.x, 1. / u_cell_size.y);
 //[sdf.node.size]//
 uniform vec3 u_node_size;
 //[sdf.node.space]//
@@ -125,6 +124,8 @@ vec4 texCubemap(vec3 uvw, vec3 pos) {
 	float index = (u_node_size.z - ipos.z) * u_node_size.y * u_node_size.x
 					+ (u_node_size.y - ipos.y) * u_node_size.x
 					+ (u_node_size.x - ipos.x);
+	vec2 inv_cell_size = vec2(1. / u_cell_size.x, 1. / u_cell_size.y);
+
 
 	index = min(index, index_pos_y);
 	index = max(index, 0.);
@@ -152,9 +153,9 @@ vec4 texCubemapSmooth(vec3 uvw, vec3 pos) {
 	vec3 direction = normalize(uvw);
 //	vec3 direction = normalize(uvw + spos * u_node_space);
 
-	vec3 offset_x = vec3((spos.x < 0 ? -1. : 1.), 0., 0.);
-	vec3 offset_y = vec3(0., (spos.y < 0 ? -1. : 1.), 0.);
-	vec3 offset_z = vec3(0., 0., (spos.z < 0 ? -1. : 1.));
+	vec3 offset_x = vec3((spos.x < 0. ? -1. : 1.), 0., 0.);
+	vec3 offset_y = vec3(0., (spos.y < 0. ? -1. : 1.), 0.);
+	vec3 offset_z = vec3(0., 0., (spos.z < 0. ? -1. : 1.));
 
 	vec4 c000 = texCubemap(direction, pos);
 	vec4 c100 = texCubemap(direction, pos + offset_x);

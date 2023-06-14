@@ -1,4 +1,5 @@
 precision highp float;
+precision mediump sampler3D;
 
 const float c_p_d = 1.00000036;
 
@@ -96,8 +97,8 @@ vec3 getNormal(vec3 v){
 
 vec2 RayAABBIntersection(vec3 ro, vec3 rd) {
 
-    vec3 aabbmin = vec3(-AABB_SIZE/2) * 0.5;
-    vec3 aabbmax =  vec3(AABB_SIZE/2) * 0.5;
+    vec3 aabbmin = vec3(-AABB_SIZE/2.) * 0.5;
+    vec3 aabbmax =  vec3(AABB_SIZE/2.) * 0.5;
 
     vec3 invR = vec3(1.0) / rd;
 
@@ -114,7 +115,7 @@ vec2 RayAABBIntersection(vec3 ro, vec3 rd) {
 }
 
 vec2 sdTexture(vec3 tp, vec3 direction, float distance, vec3 vol_size) {
-    float steps = distance / 64.f;
+    float steps = distance / 64.;
 
     for (float t = 0.0; t < distance; t += steps) {
         // Get the current position along the ray
@@ -145,7 +146,7 @@ vec3 renderTexture(vec3 origin, vec3 direction) {
     vec3 wp = origin + direction * isct.x;
     vec3 vol_size = vec3(AABB_SIZE);
     vec3 tp = wp + (vol_size * 0.5);
-    float steps = D / 512.f;
+    float steps = D / 1024.;
 
     // Evaluate from 0 to D...
     for (float t = 0.0; t < D; t += steps) {
@@ -166,7 +167,7 @@ vec3 renderTexture(vec3 origin, vec3 direction) {
         for(int i = 0; i < 3; ++i) {
             vec3 l = u_lightPosition[i].xyz;
             vec3 H = normalize(n + l);
-            vec2 shadow = sdTexture(currentPos + l * (D / 63.f), l, D, vol_size);
+            vec2 shadow = sdTexture(currentPos + l * (D / 63.), l, D, vol_size);
             float dif = (shadow.x > 0.) ? 0. : clamp(dot(n, l), 0.01, 1.);
             co += dif * u_lightColor[i];
         }
@@ -182,8 +183,8 @@ vec2 rand( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.
 void main(void) {
 
     vec2 renderFrame = rand(v_textureCoordOut);
-    int isRender = int(mod(renderFrame.x * renderFrame.y, 20));
-    if(isRender != int(mod(u_frame, 20))) discard;
+    int isRender = int(mod(renderFrame.x * renderFrame.y, 20.));
+    if(isRender != int(mod(float(u_frame), 20.))) discard;
 
     float index_pos_y = u_node_size.x * u_node_size.y * u_node_size.z;
     float node_index = floor(mod(v_textureCoordOut.x * u_cell_size.x, u_cell_size.x))
@@ -193,7 +194,7 @@ void main(void) {
 
 
     vec3 pos = vec3(floor(mod(pos_index, u_node_size.x)),
-                    floor(mod((pos_index / u_node_size.x) , u_node_size.y)),
+                    floor(mod(pos_index / u_node_size.x, u_node_size.y)),
                     floor(pos_index / (u_node_size.x * u_node_size.y)));
 
     // Setting New UV

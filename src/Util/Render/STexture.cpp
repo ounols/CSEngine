@@ -212,7 +212,8 @@ void STexture::Init(const AssetMgr::AssetReference* asset) {
                       "<hash-data hash=\"" + m_hash + "\">\n"
                       + "<tex type=\"" + std::to_string(TEX_2D) + "\" depth=\"" + std::to_string(m_depth) + "\"></tex>" +
                       "\n</hash-data>\n</CSEMETA>";
-            SaveTxtFile(asset->name_path + ".meta", hashRaw);
+            if (!Settings::IsAssetsPacked())
+                SaveTxtFile(asset->name_path + ".meta", hashRaw);
         }
         else {
             for(const auto& child : hashChildren) {
