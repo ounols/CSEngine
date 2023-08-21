@@ -51,6 +51,7 @@ namespace CSE {
         void Render() const;
         void Exterminate();
         void ResizeWindow(unsigned int width, unsigned int height);
+        void SetDeviceBuffer(unsigned int id);
         void GenerateCores();
 
     private:

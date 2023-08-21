@@ -30,6 +30,7 @@ using namespace CSE;
 
         _mainProc = new MainProc();
         _mainProc->Init(self.bounds.size.height, self.bounds.size.width);
+        _mainProc->SetDeviceBuffer(1);
         
         _startEngineTime = [NSDate timeIntervalSinceReferenceDate];
         _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(drawFrame)];

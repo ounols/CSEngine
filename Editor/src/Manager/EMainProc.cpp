@@ -13,3 +13,11 @@ EMainProc::EMainProc() {
 EMainProc::~EMainProc() {
 
 }
+
+void EMainProc::Update() {
+
+}
+
+void EMainProc::Render() const {
+
+}

@@ -14,6 +14,8 @@ namespace CSE {
 
         void ResizeWindow(GLuint width, GLuint height) const;
 
+        void SetDeviceBuffer(unsigned int id);
+
         void Update(float elapsedTime);
 
         void Render(float elapsedTime) const;

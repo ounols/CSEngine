@@ -116,3 +116,7 @@ void EngineCore::ResizeWindow(unsigned int width, unsigned int height) {
     static_cast<RenderMgr*>(m_renderMgr)->SetViewport();
 }
 
+void EngineCore::SetDeviceBuffer(unsigned int id) {
+    static_cast<RenderMgr*>(m_renderMgr)->SetDeviceBuffer(id);
+}
+

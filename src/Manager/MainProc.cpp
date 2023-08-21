@@ -37,6 +37,10 @@ void MainProc::ResizeWindow(GLuint width, GLuint height) const {
     CORE->ResizeWindow(width, height);
 }
 
+void MainProc::SetDeviceBuffer(unsigned int id) {
+    CORE->SetDeviceBuffer(id);
+}
+
 void MainProc::GenerateCores() {
     CORE->GenerateCores();
 }

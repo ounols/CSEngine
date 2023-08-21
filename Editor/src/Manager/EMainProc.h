@@ -12,7 +12,8 @@ namespace CSEditor {
 
         ~EMainProc();
 
-
+        void Update();
+        void Render() const;
     };
 
 }
