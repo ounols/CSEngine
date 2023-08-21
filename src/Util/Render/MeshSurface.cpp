@@ -47,6 +47,10 @@ bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, fl
         vertex_tmp->Position.y = *(vertices)++;
         vertex_tmp->Position.z = *(vertices)++;
 
+        const auto d = vec3::Distance(vec3::Zero, vertex_tmp->Position);
+        if(d > m_meshId.m_maxSize)
+            m_meshId.m_maxSize = d;
+
         if (normals == nullptr) {
             vertex_tmp->Normal.Set(0, 0, 0);
         } else {

@@ -9,6 +9,7 @@ namespace CSE {
 
     class CameraBase;
     class SGBuffer;
+    class GLProgramHandle;
 
     /**
      * @class RenderMgr
@@ -60,6 +61,8 @@ namespace CSE {
             return m_height;
         }
 
+        void BindSdfMapUniforms(const GLProgramHandle& handle) const;
+
     protected:
         /**
          * @brief Destroy all resources used for rendering.
@@ -86,5 +89,10 @@ namespace CSE {
          * @brief Render main camera.
          */
         void RenderMainCamera() const;
+
+        /**
+         * @brief Render SDF Map
+         */
+        void RenderSdfMap() const;
     };
 }

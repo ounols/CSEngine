@@ -21,6 +21,9 @@ void RenderContainer::Register(SIRender* object, RenderGroupMode groupMode) {
         case DEPTH_ONLY:
             m_depthOnlyRenderGroup->RegisterObject(object);
             break;
+        case SDF:
+            m_sdfRenderGroup->RegisterObject(object);
+            break;
     }
 }
 
@@ -33,7 +36,10 @@ void RenderContainer::Remove(SIRender* object, RenderContainer::RenderGroupMode 
             m_deferredRenderGroup->RemoveObjects(object);
             break;
         case DEPTH_ONLY:
-            m_depthOnlyRenderGroup->RegisterObject(object);
+            m_depthOnlyRenderGroup->RemoveObjects(object);
+            break;
+        case SDF:
+            m_sdfRenderGroup->RemoveObjects(object);
             break;
     }
 }
@@ -45,4 +51,6 @@ void RenderContainer::Exterminate() {
     SAFE_DELETE(m_deferredRenderGroup);
     m_depthOnlyRenderGroup->Exterminate();
     SAFE_DELETE(m_depthOnlyRenderGroup);
+    m_sdfRenderGroup->Exterminate();
+    SAFE_DELETE(m_sdfRenderGroup);
 }

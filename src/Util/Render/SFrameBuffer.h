@@ -11,6 +11,8 @@ namespace CSE {
 
     class GLProgramHandle;
 
+    class CameraBase;
+
     /**
      * @see To use the SFrameBuffer class, you need to follow the steps below:
      *  1. Generate a framebuffer.
@@ -51,12 +53,13 @@ namespace CSE {
             int format = 0;
             short level = 0;
         };
-        struct BlitObject {
+        struct PostObject {
             GLProgramHandle* handle = nullptr;
-            int aColor = -1;
-            int bColor = -1;
-            int aDepth = -1;
-            int bDepth = -1;
+            STexture* copyBuffer = nullptr;
+            int copyFbo = -1;
+            int copyTexId = -1;
+            int color = -1;
+            int depth = -1;
         };
 
     public:
@@ -106,18 +109,9 @@ namespace CSE {
 
         void Exterminate() override;
 
-        /**
-         * Safely blit the framebuffer.
-         * Each framebuffer must be in BufferType::MULTI state, and all buffers must be in the form of STexture.
-         * For blit techniques that are not suitable for that condition, it is faster to use glBlitFramebuffer.
-         * @note The format of the framebuffer should be organized in the following order:
-         *        - [0] = Color Buffer
-         *        - [1] = Depth Buffer
-         *
-         * @param dst The framebuffer to merge.
-         * @param type Determine the order in which they will be merged. Default is IN_ORDER.
-         */
-        void BlitFrameBuffer(const SFrameBuffer& dst, BlitType type = IN_ORDER);
+        void PostFrameBuffer(GLProgramHandle* handle, const CameraBase& camera);
+
+        STexture* BlitCopiedFrameBuffer() const;
 
         int GetWidth() const;
 
@@ -192,9 +186,6 @@ namespace CSE {
         mutable BufferStatus m_bufferStatus = BufferStatus::NONE;
         mutable unsigned short m_colorAttachmentSize = 0;
 
-        /**
-         * 안전한 Blit을 구현하기 위한 구조체
-         */
-        static BlitObject m_blitObject;
+        mutable PostObject m_postObject;
     };
 }

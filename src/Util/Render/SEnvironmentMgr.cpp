@@ -6,7 +6,6 @@
 #include "../AssetsDef.h"
 #include "../Matrix.h"
 #include "SkyboxUtil.h"
-#include "../CaptureDef.h"
 
 #include <string>
 #include <iostream>

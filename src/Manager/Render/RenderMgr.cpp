@@ -12,11 +12,15 @@
 #include "ForwardRenderGroup.h"
 #include "DeferredRenderGroup.h"
 #include "DepthOnlyRenderGroup.h"
+#include "SdfRenderGroup.h"
 
 using namespace CSE;
 
 CameraMgr* cameraMgr = nullptr;
 LightMgr* lightMgr = nullptr;
+
+//TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
+GLProgramHandle* postHandle = nullptr;
 
 RenderMgr::RenderMgr() = default;
 
@@ -36,6 +40,10 @@ void RenderMgr::Init() {
     m_forwardRenderGroup = new ForwardRenderGroup(*this);
     m_deferredRenderGroup = new DeferredRenderGroup(*this);
     m_depthOnlyRenderGroup = new DepthOnlyRenderGroup(*this);
+    m_sdfRenderGroup = new SdfRenderGroup(*this);
+
+    //TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
+    postHandle = SResource::Create<GLProgramHandle>("File:Shader/Post/dof.post");
 }
 
 void RenderMgr::SetViewport() {
@@ -45,6 +53,9 @@ void RenderMgr::SetViewport() {
 }
 
 void RenderMgr::Render() const {
+    // 0. Render SDF Map.
+    RenderSdfMap();
+
     // 1. Render depth buffer for shadows.
     RenderShadows();
 
@@ -84,13 +95,21 @@ void RenderMgr::RenderMainCamera() const {
     m_deferredRenderGroup->RenderAll(*mainCamera); // Deferred Render
     m_forwardRenderGroup->RenderAll(*mainCamera); // Forward Render
 
-    GetMainBuffer()->AttachFrameBuffer(GL_READ_FRAMEBUFFER);
+    //TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
+    const auto& mainBuffer = GetMainBuffer();
+//    mainBuffer->PostFrameBuffer(postHandle, *mainCamera);
+    mainBuffer->AttachFrameBuffer(GL_READ_FRAMEBUFFER);
 #ifdef IOS
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 1);
 #else
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 #endif
     glBlitFramebuffer(0, 0, *m_width, *m_height, 0, 0, *m_width, *m_height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+}
+
+void RenderMgr::RenderSdfMap() const {
+    const auto& mainCamera = cameraMgr->GetCurrentCamera();
+    m_sdfRenderGroup->RenderAll(*mainCamera);
 }
 
 void RenderMgr::Exterminate() {
@@ -104,4 +123,8 @@ void RenderMgr::ResetBuffer(const CameraBase& camera) const {
     }
     frameBuffer->AttachFrameBuffer();
     camera.RenderBackground();
+}
+
+void RenderMgr::BindSdfMapUniforms(const GLProgramHandle& handle) const {
+    static_cast<SdfRenderGroup*>(m_sdfRenderGroup)->BindShaderUniforms(handle);
 }

@@ -161,6 +161,8 @@ void LightComponent::SetValue(std::string name_str, Arguments value) {
         m_far = std::stof(value[0]);
     } else if (name_str == "m_direction") {
         SET_VEC4(m_light->direction);
+    } else if (name_str == "m_color") {
+        SET_VEC3(m_light->color);
     }
 
     SetLightType(m_type);
@@ -175,6 +177,8 @@ std::string LightComponent::PrintValue() const {
     PRINT_VALUE(m_far, m_far);
     vec4 m_direction = m_light->direction;
     PRINT_VALUE_VEC4(m_direction);
+    vec3 m_color = m_light->color;
+    PRINT_VALUE_VEC3(m_color);
 
 	PRINT_END("component");
 }

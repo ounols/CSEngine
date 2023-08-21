@@ -4,8 +4,6 @@
 
 #pragma once
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-
 #include "Loader/STB/stb_image_write.h"
 #include "../OGLDef.h"
 
@@ -55,6 +53,11 @@ namespace CSE {
 
         delete[] data;
 
+        return saved;
+    }
+
+    static int savePng(const char* filename, int width, int height, int chennel, void* data) {
+        int saved = stbi_write_png(filename, width, height, chennel, data, 0);
         return saved;
     }
 }
