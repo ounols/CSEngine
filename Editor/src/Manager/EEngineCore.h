@@ -1,12 +1,30 @@
 #pragma once
 
-#include "../../../src/Manager/EngineCore.h"
+#include "../../../src/Manager/EngineCoreInstance.h"
 
 namespace CSEditor {
 
-    class EEngineCore : public CSE::EngineCore {
+    class EPreviewCore;
+
+    class EEngineCore : public CSE::EngineCoreInstance {
     protected:
-        EEngineCore();
+        DECLARE_SINGLETON(EEngineCore);
+        ~EEngineCore() override;
+
+    public:
+        void StartPreviewCore(unsigned int width, unsigned int height);
+        void StopPreviewCore();
+        void UpdatePreviewCore(float elapsedTime);
+        void RenderPreviewCore() const;
+        bool IsPreview() const {
+            return m_previewCore != nullptr;
+        }
+        EPreviewCore* GetPreviewCore() const {
+            return m_previewCore;
+        }
+
+    private:
+        EPreviewCore* m_previewCore = nullptr;
     };
 
 }
