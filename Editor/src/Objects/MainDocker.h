@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#define __CSE_EDITOR__
 
 #include "Base/WindowBase.h"
 #include <vector>

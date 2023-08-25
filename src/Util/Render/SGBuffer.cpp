@@ -56,7 +56,7 @@ void SGBuffer::ResizeGBuffer(int width, int height) {
 void SGBuffer::ReleaseGBuffer() {
     if(m_geometryFrameBuffer != nullptr) {
         resMgr->Remove(m_geometryFrameBuffer);
-        SAFE_DELETE(m_geometryFrameBuffer);
+        m_geometryFrameBuffer = nullptr;
     }
 }
 

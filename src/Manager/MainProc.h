@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../OGLDef.h"
+#ifndef __CSE_EDITOR__
 
 namespace CSE {
 
@@ -26,3 +27,5 @@ namespace CSE {
     };
 
 }
+
+#endif

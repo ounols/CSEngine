@@ -60,10 +60,6 @@ namespace CSE {
 
         void SetType(Type type);
 
-        int getMWidth() const;
-
-        int getMHeight() const;
-
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 

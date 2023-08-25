@@ -1,3 +1,5 @@
+#ifndef __CSE_EDITOR__
+
 #include "MainProc.h"
 #include "EngineCore.h"
 
@@ -44,3 +46,5 @@ void MainProc::SetDeviceBuffer(unsigned int id) {
 void MainProc::GenerateCores() {
     CORE->GenerateCores();
 }
+
+#endif

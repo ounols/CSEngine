@@ -5,25 +5,31 @@
 #include "MainDocker.h"
 #include "imgui_internal.h"
 #include "../../src/MacroDef.h"
+#include "../Manager/EEngineCore.h"
 
 #include "InspectorWindow.h"
 #include "PreviewWindow.h"
 
 using namespace CSEditor;
 
+namespace CSEMainDocker {
+    PreviewWindow* previewWindow = nullptr;
+}
+
 MainDocker::MainDocker() {
 
 }
 
 MainDocker::~MainDocker() {
-    for (auto window : m_windows) {
+    for (auto window: m_windows) {
         SAFE_DELETE(window);
     }
     m_windows.clear();
+    EEngineCore::delInstance();
 }
 
 void MainDocker::SetUI() {
-    if(!m_bIsInit) GenerateWindows();
+    if (!m_bIsInit) GenerateWindows();
 
     ImGui::SetNextWindowPos(m_mainViewport->WorkPos);
     ImGui::SetNextWindowSize(m_mainViewport->WorkSize);
@@ -44,7 +50,7 @@ void MainDocker::SetUI() {
     m_dockerspaceId = ImGui::GetID("MainDockSpace");
     ImGui::DockSpace(m_dockerspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
     SetMenuBar();
-    if(!m_bIsInit) SetDockerNodes();
+    if (!m_bIsInit) SetDockerNodes();
     ImGui::End();
 
     SetWindowsUI();
@@ -65,8 +71,15 @@ void MainDocker::SetMenuBar() const {
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Debug")) {
-            if (ImGui::MenuItem("Start Game")) {
-
+            if(CSEMainDocker::previewWindow->IsPreview()) {
+                if (ImGui::MenuItem("Stop Preview")) {
+                    CSEMainDocker::previewWindow->ReleasePreview();
+                }
+            }
+            else {
+                if (ImGui::MenuItem("Start Preview")) {
+                    CSEMainDocker::previewWindow->InitPreview();
+                }
             }
             ImGui::EndMenu();
         }
@@ -87,13 +100,15 @@ void MainDocker::SetDockerNodes() {
 }
 
 void MainDocker::GenerateWindows() {
+    CSEMainDocker::previewWindow = new PreviewWindow();
+
     m_windows.reserve(2);
     m_windows.push_back(new InspectorWindow());
-    m_windows.push_back(new PreviewWindow());
+    m_windows.push_back(CSEMainDocker::previewWindow);
 }
 
 void MainDocker::SetWindowsUI() {
-    for (const auto& window : m_windows) {
+    for (const auto& window: m_windows) {
         window->SetUI();
     }
 }

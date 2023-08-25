@@ -14,6 +14,7 @@ link_directories(/usr/local/lib)
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
+add_compile_definitions(__CSE_EDITOR__)
 
 include_directories(${OPENGL_INCLUDE_DIR})
 
@@ -35,6 +36,8 @@ file(GLOB CSENGINE_SRC
         "../../../src/*/*/*/*/*/*.*"
         "../../../src/*/*/*/*/*/*/*.*"
         )
+# 엔진 기본값으로 지정된 소스파일 제거
+list(FILTER CSENGINE_SRC EXCLUDE REGEX ".*CSEngine/src/Manager/EngineCore.")
 
 file(GLOB SQUIRREL_SRC
         "../../../External/Squirrel/lib/sqstdlib/*.*"
