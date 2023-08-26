@@ -41,6 +41,7 @@ namespace CSE {
         GLint SdfNodeSize = HANDLE_NULL;
         GLint SdfNodeSpace = HANDLE_NULL;
         GLint SdfFrameCount = HANDLE_NULL;
+        GLint SdfMap = HANDLE_NULL;
 
     };
 

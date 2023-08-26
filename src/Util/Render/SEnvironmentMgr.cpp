@@ -358,9 +358,14 @@ unsigned int* SEnvironmentMgr::GetPointerHeight() {
     return &m_height;
 }
 
-void SEnvironmentMgr::BindPBREnvironmentMap(const GLProgramHandle* handle, int textureLayout) const {
-    if(handle == nullptr) return;
-    m_irradianceMap->Bind(handle->Uniforms.LightIrradiance, textureLayout);
-    m_prefilterMap->Bind(handle->Uniforms.LightPrefilter, textureLayout + 1);
-    m_brdfMap->Bind(handle->Uniforms.LightBrdfLut, textureLayout + 2);
+int SEnvironmentMgr::BindPBREnvironmentMap(const GLProgramHandle* handle, int textureLayout) const {
+    if(handle == nullptr) return 0;
+    int steps = 0;
+    if(handle->Uniforms.LightIrradiance != HANDLE_NULL)
+        m_irradianceMap->Bind(handle->Uniforms.LightIrradiance, textureLayout + steps++);
+    if(handle->Uniforms.LightPrefilter != HANDLE_NULL)
+        m_prefilterMap->Bind(handle->Uniforms.LightPrefilter, textureLayout + steps++);
+    if(handle->Uniforms.LightBrdfLut != HANDLE_NULL)
+        m_brdfMap->Bind(handle->Uniforms.LightBrdfLut, textureLayout + steps++);
+    return steps;
 }

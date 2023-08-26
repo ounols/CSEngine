@@ -42,7 +42,7 @@ namespace CSE {
          * @param handle Shader handle
          * @param textureLayout Layout of the texture
          */
-        void AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const;
+        int AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const;
 
         /**
          * Initialize the LightMgr.

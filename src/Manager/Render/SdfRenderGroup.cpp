@@ -100,3 +100,12 @@ void SdfRenderGroup::BindShaderUniforms(const GLProgramHandle& handle) const {
     if(uniforms.SdfFrameCount != HANDLE_NULL)
         glUniform1i(uniforms.SdfFrameCount, m_frameCount);
 }
+
+int SdfRenderGroup::BindShaderMap(const GLProgramHandle& handle, int textureLayout) const {
+    int steps = 0;
+    if(handle.Uniforms.SdfMap != HANDLE_NULL) {
+        m_mapTexture->Bind(handle.Uniforms.SdfMap, textureLayout);
+        ++steps;
+    }
+    return steps;
+}

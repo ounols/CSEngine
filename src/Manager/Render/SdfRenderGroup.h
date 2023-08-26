@@ -25,6 +25,8 @@ namespace CSE {
 
         void BindShaderUniforms(const GLProgramHandle& handle) const;
 
+        int BindShaderMap(const GLProgramHandle& handle, int textureLayout) const;
+
     private:
         int m_envSize = 16;
         vec3 m_nodeSize = vec3{ 7.f, 3.f, 7.f };

@@ -97,14 +97,17 @@ DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbu
     gbuffer.AttachLightPass();
     //Attach Light
     m_lightMgr->AttachLightToShader(lightPassHandle);
-    m_lightMgr->AttachLightMapToShader(lightPassHandle, m_lightMgr->GetShadowCount());
-    const auto layoutBegin = m_lightMgr->GetShadowCount() + m_lightMgr->GetLightMapCount();
+    int layoutBegin =  m_lightMgr->GetShadowCount();
+    layoutBegin += m_lightMgr->AttachLightMapToShader(lightPassHandle, layoutBegin);
+    {
+        m_renderMgr->BindSdfMapUniforms(*lightPassHandle); //TODO: SDF렌더링 효과 켜고 끄기 적용 반드시 하기 바람!
+        layoutBegin += m_renderMgr->BindSdfMapTextures(*lightPassHandle, layoutBegin);
+    }
     gbuffer.AttachLightPassTexture(layoutBegin);
     BindSourceBuffer(*deferredBuffer, *lightPassHandle, layoutBegin + 3);
 
     ShaderUtil::BindCameraToShader(*lightPassHandle, cameraMatrix.camera, cameraMatrix.cameraPosition,
                                    cameraMatrix.projection, cameraMatrix.camera);
-
     gbuffer.RenderLightPass();
 
     /** ======================
