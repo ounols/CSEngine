@@ -13,7 +13,7 @@ namespace CSEditor {
     public:
         MainDocker();
 
-        ~MainDocker();
+        ~MainDocker() override;
 
         void SetUI() override;
 

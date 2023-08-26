@@ -8,6 +8,13 @@ namespace CSEditor {
 
     class EPreviewCore;
 
+    class HierarchyData;
+
+    class ELogMgr;
+}
+
+namespace CSEditor {
+
     class EEngineCore : public CSE::EngineCoreInstance {
     public:
         enum InvokeState {
@@ -25,11 +32,15 @@ namespace CSEditor {
 
     public:
         static CSE::EngineCoreInstance* getInstance();
+
         static EEngineCore* getEditorInstance();
 
         static void delInstance();
 
-    public:
+        CSEditor::ELogMgr* GetLogMgrCore() const {
+            return static_cast<CSEditor::ELogMgr*>(m_logMgr);
+        }
+
         void BindPreviewFramebuffer() const;
 
         void InitPreviewFramebuffer();
@@ -78,6 +89,18 @@ namespace CSEditor {
             return m_previewTextureId;
         }
 
+        void SetHierarchyData(HierarchyData* data) {
+            m_hierarchyData = data;
+        }
+
+        HierarchyData* GetHierarchyData() const {
+            return m_hierarchyData;
+        }
+
+        void GenerateCores() override;
+
+        void AddLog(const char* log, int category = 1);
+
     private:
         static long long int GetCurrentMillis();
 
@@ -95,8 +118,10 @@ namespace CSEditor {
         unsigned int m_previewWidth = 0;
         unsigned int m_previewHeight = 0;
 
+        HierarchyData* m_hierarchyData = nullptr;
+        ELogMgr* m_logMgr = nullptr;
+
     protected:
         static EEngineCore* sInstance;
     };
-
 }

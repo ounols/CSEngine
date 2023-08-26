@@ -9,11 +9,14 @@
 
 #include "InspectorWindow.h"
 #include "PreviewWindow.h"
+#include "HierarchyWindow.h"
+#include "ConsoleWindow.h"
 
 using namespace CSEditor;
 
 namespace CSEMainDocker {
     PreviewWindow* previewWindow = nullptr;
+    HierarchyWindow* hierarchyWindow = nullptr;
 }
 
 MainDocker::MainDocker() {
@@ -25,6 +28,7 @@ MainDocker::~MainDocker() {
         SAFE_DELETE(window);
     }
     m_windows.clear();
+    EEngineCore::getEditorInstance()->Exterminate();
     EEngineCore::delInstance();
 }
 
@@ -93,18 +97,25 @@ void MainDocker::SetDockerNodes() {
     ImGui::DockBuilderSetNodeSize(m_dockerspaceId, m_mainViewport->WorkSize);
 
     auto dockRight = ImGui::DockBuilderSplitNode(m_dockerspaceId, ImGuiDir_Right, 0.25f, nullptr, &m_dockerspaceId);
+    auto dockLeft = ImGui::DockBuilderSplitNode(m_dockerspaceId, ImGuiDir_Left, 0.25f, nullptr, &m_dockerspaceId);
+    auto dockDown = ImGui::DockBuilderSplitNode(m_dockerspaceId, ImGuiDir_Down, 0.25f, nullptr, &m_dockerspaceId);
     ImGui::DockBuilderDockWindow("Preview", m_dockerspaceId);
     ImGui::DockBuilderDockWindow("Inspector", dockRight);
+    ImGui::DockBuilderDockWindow("Hierarchy", dockLeft);
+    ImGui::DockBuilderDockWindow("Console Log", dockDown);
     ImGui::DockBuilderFinish(m_dockerspaceId);
     m_bIsInit = true;
 }
 
 void MainDocker::GenerateWindows() {
     CSEMainDocker::previewWindow = new PreviewWindow();
+    CSEMainDocker::hierarchyWindow = new HierarchyWindow();
 
-    m_windows.reserve(2);
+    m_windows.reserve(4);
     m_windows.push_back(new InspectorWindow());
     m_windows.push_back(CSEMainDocker::previewWindow);
+    m_windows.push_back(CSEMainDocker::hierarchyWindow);
+    m_windows.push_back(new ConsoleWindow());
 }
 
 void MainDocker::SetWindowsUI() {

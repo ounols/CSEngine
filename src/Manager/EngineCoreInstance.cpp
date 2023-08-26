@@ -1,4 +1,5 @@
 #include "EngineCoreInstance.h"
+#include "Base/CoreBase.h"
 #include "ResMgr.h"
 #include "GameObjectMgr.h"
 #include "OGLMgr.h"
@@ -42,10 +43,11 @@ void EngineCoreInstance::Init(unsigned int width, unsigned int height) {
 #ifdef __EMSCRIPTEN__
     static_cast<SceneMgr*>(m_sceneMgr)->SetScene(new WebDemoScene());
 #else
-    static_cast<SceneMgr*>(m_sceneMgr)->SetScene(new FirstDemoScene());
-//    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/animation.scene");
-//    m_sceneMgr->SetScene(scene);
+//    static_cast<SceneMgr*>(m_sceneMgr)->SetScene(new FirstDemoScene());
+    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/sdfgi.scene");
+    m_sceneMgr->SetScene(scene);
 #endif
+    m_isReady = true;
 }
 
 void EngineCoreInstance::Update(float elapsedTime) {
@@ -65,7 +67,8 @@ void EngineCoreInstance::Render() const {
 }
 
 void EngineCoreInstance::Exterminate() {
-    static_cast<MemoryMgr*>(m_memoryMgr)->ExterminateObjects(true);
+    if(m_memoryMgr != nullptr)
+        static_cast<MemoryMgr*>(m_memoryMgr)->ExterminateObjects(true);
     for (auto core : m_cores) {
         SAFE_DELETE(core);
     }

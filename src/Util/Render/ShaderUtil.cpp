@@ -11,7 +11,7 @@
 using namespace CSE;
 
 #if defined(__CSE_DESKTOP__)
-std::string ShaderUtil::m_defineVersion = "#version 330 core\n";
+char* ShaderUtil::m_defineVersion = "#version 330 core\n";
 #elif defined(__CSE_ES__)
 std::string ShaderUtil::m_defineVersion = "#version 300 es\n";
 #endif
@@ -105,7 +105,7 @@ GLuint ShaderUtil::createProgram(GLuint vertexShader, GLuint fragmentShader, con
 
 GLuint ShaderUtil::loadShader(GLenum shaderType, const char* pSource, const GLProgramHandle& handle) {
     GLuint shader = glCreateShader(shaderType);
-    std::string srcString = m_defineVersion
+    std::string srcString = std::string(m_defineVersion)
                             + "#define MAX_JOINTS " + std::to_string(Settings::GetMaxJoints()) + '\n'
                             + "#define MAX_LIGHTS " + std::to_string(Settings::GetMaxLights()) + '\n'
                             + pSource;

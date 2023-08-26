@@ -1,8 +1,22 @@
 #include "EEngineCore.h"
 #include "EPreviewCore.h"
+#include "ELogMgr.h"
 #include "../../src/MacroDef.h"
 #include "../../src/OGLDef.h"
+#include "../../src/Util/Render/ShaderUtil.h"
+#include "../Objects/ConsoleWindow.h"
 #include <chrono>
+
+#include "../../src/Manager/Base/CoreBase.h"
+#include "../../src/Manager/ResMgr.h"
+#include "../../src/Manager/GameObjectMgr.h"
+#include "../../src/Manager/OGLMgr.h"
+#include "../../src/Manager/ScriptMgr.h"
+#include "../../src/Manager/CameraMgr.h"
+#include "../../src/Manager/LightMgr.h"
+#include "../../src/Manager/Render/RenderMgr.h"
+#include "../../src/Manager/SceneMgr.h"
+#include "../../src/Manager/MemoryMgr.h"
 
 using namespace CSE;
 using namespace CSEditor;
@@ -30,9 +44,9 @@ void EEngineCore::delInstance() {
 EEngineCore::EEngineCore() = default;
 
 EEngineCore::~EEngineCore() {
+    if (m_previewCore != nullptr) StopPreviewCore();
     glDeleteTextures(1, &m_previewTextureId);
     glDeleteFramebuffers(1, &m_previewFbo);
-    if (m_previewCore != nullptr) StopPreviewCore();
 }
 
 void EEngineCore::BindPreviewFramebuffer() const {
@@ -48,6 +62,7 @@ void EEngineCore::InitPreviewFramebuffer() {
 void EEngineCore::StartPreviewCore() {
     if (m_previewCore != nullptr) throw -1;
 
+    m_logMgr->ClearLog();
     m_previewElapsedTime = 0.f;
     m_startTime = GetCurrentMillis();
 
@@ -101,4 +116,42 @@ void EEngineCore::ResizePreviewFramebuffer(unsigned int width, unsigned int heig
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_previewTextureId, 0);
+}
+
+void EEngineCore::GenerateCores() {
+    if(m_isGenerated) return;
+    m_isGenerated = true;
+    m_cores = std::vector<CoreBase*>();
+    m_cores.reserve(9);
+
+    m_resMgr = new ResMgr();
+    m_gameObjectMgr = new GameObjectMgr();
+    m_oglMgr = new OGLMgr();
+    m_renderMgr = new RenderMgr();
+    m_cameraMgr = new CameraMgr();
+    m_lightMgr = new LightMgr();
+    m_sceneMgr = new SceneMgr();
+    m_memoryMgr = new MemoryMgr();
+    m_logMgr = new ELogMgr();
+
+    m_cores.push_back(m_resMgr);
+    m_cores.push_back(m_gameObjectMgr);
+    m_updateCores.push_back(m_gameObjectMgr);
+
+    m_cores.push_back(m_oglMgr);
+    m_renderCores.push_back(m_oglMgr);
+    m_cores.push_back(m_renderMgr);
+    m_renderCores.push_back(dynamic_cast<RenderCoreBase* const>(m_renderMgr));
+    m_cores.push_back(m_cameraMgr);
+    m_cores.push_back(m_lightMgr);
+
+    m_cores.push_back(m_sceneMgr);
+    m_updateCores.push_back(m_sceneMgr);
+    m_cores.push_back(m_memoryMgr);
+
+    m_cores.push_back(m_logMgr);
+}
+
+void EEngineCore::AddLog(const char* log, int category) {
+    m_logMgr->AddLog(log, static_cast<ELogMgr::Category>(category));
 }

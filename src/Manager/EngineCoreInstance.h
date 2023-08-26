@@ -3,7 +3,6 @@
 #include <vector>
 #include <list>
 #include "../MacroDef.h"
-#include "Base/CoreBase.h"
 #include "Base/RenderCoreBase.h"
 
 #define GET_CORE_FUNCTION(CORENAME, core_instance)  \
@@ -24,6 +23,7 @@ namespace CSE {
     class MemoryMgr;
     class ScriptMgr;
     class OGLMgr;
+    class CoreBase;
 }
 
 namespace CSE {
@@ -49,9 +49,13 @@ namespace CSE {
         void Exterminate();
         void ResizeWindow(unsigned int width, unsigned int height);
         void SetDeviceBuffer(unsigned int id);
-        void GenerateCores();
+        virtual void GenerateCores();
 
-    private:
+        bool IsReady() const {
+            return m_isReady;
+        }
+
+    protected:
         std::vector<CoreBase*> m_cores;
         std::list<RenderCoreBase*> m_renderCores;
         std::list<CoreBase*> m_updateCores;
@@ -69,5 +73,6 @@ namespace CSE {
         OGLMgr* m_oglMgr = nullptr;
 
         bool m_isGenerated = false;
+        bool m_isReady = false;
     };
 }

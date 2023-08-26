@@ -64,6 +64,10 @@ static void glfw_error_callback(int error, const char* description) {
 int main(int, char**) {
 #if defined(_WIN64)
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#if defined(MSVC_CMAKE)
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
+#endif
 #endif
 
     // Setup window
@@ -93,10 +97,12 @@ int main(int, char**) {
     //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
+    unsigned int width = 1280;
+    unsigned int height = 720;
 
     // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
-    if (window == NULL)
+    GLFWwindow* window = glfwCreateWindow(width, height, "CSEditor", NULL, NULL);
+    if (window == nullptr)
         return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
@@ -110,6 +116,7 @@ int main(int, char**) {
     //init GLEW
     glewInit();
 #endif
+    CSEditor::EEngineCore::getEditorInstance()->Init(width, height);
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -265,7 +272,7 @@ int main(int, char**) {
         glfwSwapBuffers(window);
     }
 
-    delete mainDocker;
+    SAFE_DELETE(mainDocker);
 
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
@@ -274,11 +281,5 @@ int main(int, char**) {
 
     glfwDestroyWindow(window);
     glfwTerminate();
-
-#if defined(_WIN64)
-    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
-    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
-    _CrtDumpMemoryLeaks();
-#endif
     return 0;
 }
