@@ -53,11 +53,11 @@ void RenderMgr::SetViewport() {
 }
 
 void RenderMgr::Render() const {
-    // 0. Render SDF Map.
-    RenderSdfMap();
-
-    // 1. Render depth buffer for shadows.
+    // 0. Render depth buffer for shadows.
     RenderShadows();
+
+    // 1. Render SDF Map.
+    RenderSdfMap();
 
     // 2. Render active sub cameras.
     RenderSubCameras();
@@ -123,4 +123,8 @@ void RenderMgr::ResetBuffer(const CameraBase& camera) const {
 
 void RenderMgr::BindSdfMapUniforms(const GLProgramHandle& handle) const {
     static_cast<SdfRenderGroup*>(m_sdfRenderGroup)->BindShaderUniforms(handle);
+}
+
+int RenderMgr::BindSdfMapTextures(const GLProgramHandle& handle, int textureLayout) const {
+    return static_cast<SdfRenderGroup*>(m_sdfRenderGroup)->BindShaderMap(handle, textureLayout);
 }

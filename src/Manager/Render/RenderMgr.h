@@ -62,6 +62,7 @@ namespace CSE {
         }
 
         void BindSdfMapUniforms(const GLProgramHandle& handle) const;
+        int BindSdfMapTextures(const GLProgramHandle& handle, int textureLayout) const;
 
     protected:
         /**
