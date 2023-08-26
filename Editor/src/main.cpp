@@ -7,6 +7,9 @@
 #if defined(__APPLE_CC__)
 #include <glad/glad.h>
 #include <iostream>
+#elif defined(_WIN64)
+#include <gl/glew.h>
+#include <crtdbg.h>
 #endif
 
 #include "imgui.h"
@@ -59,6 +62,10 @@ static void glfw_error_callback(int error, const char* description) {
 }
 
 int main(int, char**) {
+#if defined(_WIN64)
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
     // Setup window
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
@@ -99,6 +106,9 @@ int main(int, char**) {
         std::cout << "Failed to initialize OpenGL context\n";
         return -1;
     }
+#elif defined(_WIN64)
+    //init GLEW
+    glewInit();
 #endif
 
     // Setup Dear ImGui context
@@ -265,5 +275,10 @@ int main(int, char**) {
     glfwDestroyWindow(window);
     glfwTerminate();
 
+#if defined(_WIN64)
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
+    _CrtDumpMemoryLeaks();
+#endif
     return 0;
 }

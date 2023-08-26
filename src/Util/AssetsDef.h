@@ -27,7 +27,11 @@ namespace CSE {
     static std::string NativeAssetsPath() {
         std::string path;
 #if defined(__CSE_EDITOR__)
+    #if defined(MSVC_CMAKE)
+        path.append("../../../../../Assets/");
+    #else
         path.append("../../../../Assets/");
+#endif
 #elif defined(MSVC_CMAKE)
         path.append("../../../../Assets/");
 #elif defined(IOS)

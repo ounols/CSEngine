@@ -1,5 +1,7 @@
 set(PROJECT_NAME CSEditor)
 
+add_compile_definitions(__CSE_EDITOR__)
+
 ################################################################################
 # Source groups
 ################################################################################
@@ -13,6 +15,8 @@ file(GLOB CSENGINE_SRC
         "../../../../src/*/*/*/*/*/*.*"
 #        "../../../../src/*/*/*/*/*/*/*.*"
         )
+# 엔진 기본값으로 지정된 소스파일 제거
+list(FILTER CSENGINE_SRC EXCLUDE REGEX ".*CSEngine/src/Manager/EngineCore.")
 
 file(GLOB CSEDITOR_SRC
         "../../../src/*.*"
