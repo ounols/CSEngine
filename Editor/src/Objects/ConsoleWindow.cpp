@@ -48,7 +48,7 @@ void ConsoleWindow::Draw(const char* title, bool* p_open) {
     ImGui::SameLine();
     bool copy = ImGui::Button("Copy");
     ImGui::SameLine();
-    m_filter.Draw("m_filter", -100.0f);
+    m_filter.Draw("Filter", -100.0f);
 
     ImGui::Separator();
 
