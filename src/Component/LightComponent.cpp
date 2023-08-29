@@ -171,10 +171,10 @@ void LightComponent::SetValue(std::string name_str, Arguments value) {
 std::string LightComponent::PrintValue() const {
 	PRINT_START("component");
 
-	PRINT_VALUE(m_type, static_cast<int>(m_type));
-	PRINT_VALUE(m_disableShadow, m_disableShadow ? 1 : 0);
-    PRINT_VALUE(m_near, m_near);
-    PRINT_VALUE(m_far, m_far);
+	PRINT_VALUE("int", m_type, static_cast<int>(m_type));
+	PRINT_VALUE("bool", m_disableShadow, m_disableShadow ? 1 : 0);
+    PRINT_VALUE("float", m_near, m_near);
+    PRINT_VALUE("float", m_far, m_far);
     vec4 m_direction = m_light->direction;
     PRINT_VALUE_VEC4(m_direction);
     vec3 m_color = m_light->color;

@@ -218,22 +218,22 @@ void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments v
 std::string CameraComponent::PrintValue() const {
     PRINT_START("component");
 
-    PRINT_VALUE(m_eye, ConvertSpaceStr(gameObject->GetID(gameObject->GetComponent<TransformComponent>())));
+    PRINT_VALUE("comp", m_eye, ConvertSpaceStr(gameObject->GetID(gameObject->GetComponent<TransformComponent>())));
     PRINT_VALUE_VEC3(m_target);
     PRINT_VALUE_VEC3(m_up);
-    PRINT_VALUE(m_targetObject, m_targetObject == nullptr ? "" : ConvertSpaceStr(m_targetObject->GetHash()));
+    PRINT_VALUE("obj", m_targetObject, m_targetObject == nullptr ? "" : ConvertSpaceStr(m_targetObject->GetHash()));
     PRINT_VALUE_MAT4(m_cameraMatrix);
     PRINT_VALUE_MAT4(m_projectionMatrix);
-    PRINT_VALUE(m_type, static_cast<int>(m_type));
-    PRINT_VALUE(m_pFov, m_pFov);
-    PRINT_VALUE(m_orthoValue, m_oLeft, ' ', m_oRight, ' ', m_oBottom, ' ', m_oTop);
-    PRINT_VALUE(m_distance, m_Near, ' ', m_Far);
-    if (m_frameBuffer != nullptr) PRINT_VALUE(m_frameBuffer, ConvertSpaceStr(m_frameBuffer->GetHash()));
+    PRINT_VALUE("int", m_type, static_cast<int>(m_type));
+    PRINT_VALUE("float", m_pFov, m_pFov);
+    PRINT_VALUE("vec4", m_orthoValue, m_oLeft, ' ', m_oRight, ' ', m_oBottom, ' ', m_oTop);
+    PRINT_VALUE("vec2", m_distance, m_Near, ' ', m_Far);
+    if (m_frameBuffer != nullptr) PRINT_VALUE("res", m_frameBuffer, ConvertSpaceStr(m_frameBuffer->GetHash()));
 
-    PRINT_VALUE(m_backgroundType, static_cast<int>(m_backgroundType));
+    PRINT_VALUE("int", m_backgroundType, static_cast<int>(m_backgroundType));
     PRINT_VALUE_VEC3(m_backgroundColor);
     if (m_backgroundMap != nullptr && m_backgroundMap->map != nullptr)
-        PRINT_VALUE(m_backgroundMap.map, ConvertSpaceStr(m_backgroundMap->map->GetHash()));
+        PRINT_VALUE("res", m_backgroundMap.map, ConvertSpaceStr(m_backgroundMap->map->GetHash()));
 
     PRINT_END("component");
 }

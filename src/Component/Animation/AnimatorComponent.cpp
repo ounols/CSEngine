@@ -157,9 +157,9 @@ std::string AnimatorComponent::PrintValue() const {
 
     PRINT_START("component");
 
-    PRINT_VALUE(m_animationTime, m_animationTime);
-    PRINT_VALUE(m_startTime, m_startTime);
-    PRINT_VALUE(m_currentAnimation, ConvertSpaceStr(m_currentAnimation->GetHash()));
+    PRINT_VALUE("float", m_animationTime, m_animationTime);
+    PRINT_VALUE("float", m_startTime, m_startTime);
+    PRINT_VALUE("res", m_currentAnimation, ConvertSpaceStr(m_currentAnimation->GetHash()));
     PRINT_VALUE_SPREFAB_REF(m_rootJoint);
 
 
