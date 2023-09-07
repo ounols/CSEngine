@@ -3,7 +3,19 @@
 // If you are new to Dear ImGui, read documentation from the docs/ folder + read the top of imgui.cpp.
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
 
-
+// For Emscripten
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <functional>
+#define GLFW_INCLUDE_ES3
+static std::function<void()>            MainLoopForEmscriptenP;
+static void MainLoopForEmscripten()     { MainLoopForEmscriptenP(); }
+#define EMSCRIPTEN_MAINLOOP_BEGIN       MainLoopForEmscriptenP = [&]()
+#define EMSCRIPTEN_MAINLOOP_END         ; emscripten_set_main_loop(MainLoopForEmscripten, 0, true)
+#else
+#define EMSCRIPTEN_MAINLOOP_BEGIN
+#define EMSCRIPTEN_MAINLOOP_END
+#endif
 #if defined(__APPLE_CC__)
 #include <glad/glad.h>
 #include <iostream>
@@ -19,7 +31,7 @@
 
 #define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
-#include <GLES2/gl2.h>
+#include <GLES3/gl3.h>
 #endif
 
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
@@ -76,7 +88,13 @@ int main(int, char**) {
         return 1;
 
     // Decide GL+GLSL versions
-#if defined(IMGUI_IMPL_OPENGL_ES2)
+#if defined(__EMSCRIPTEN__)
+    // GL ES 2.0 + GLSL 100
+    const char* glsl_version = "#version 300 es";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+#elif defined(IMGUI_IMPL_OPENGL_ES2)
     // GL ES 2.0 + GLSL 100
     const char* glsl_version = "#version 100";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
@@ -126,7 +144,9 @@ int main(int, char**) {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+#ifndef __EMSCRIPTEN__
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+#endif
     //io.ConfigViewportsNoAutoMerge = true;
     //io.ConfigViewportsNoTaskBarIcon = true;
 
@@ -169,7 +189,14 @@ int main(int, char**) {
     auto* mainDocker = new CSEditor::MainDocker();
 
     // Main loop
+#ifdef __EMSCRIPTEN__
+    // For an Emscripten build we are disabling file-system access, so let's not attempt to do a fopen() of the imgui.ini file.
+    // You may manually call LoadIniSettingsFromMemory() to load settings from your own storage.
+    io.IniFilename = nullptr;
+    EMSCRIPTEN_MAINLOOP_BEGIN {
+#else
     while (!glfwWindowShouldClose(window)) {
+#endif
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
@@ -271,6 +298,9 @@ int main(int, char**) {
 
         glfwSwapBuffers(window);
     }
+#ifdef __EMSCRIPTEN__
+    EMSCRIPTEN_MAINLOOP_END;
+#endif
 
     SAFE_DELETE(mainDocker);
 

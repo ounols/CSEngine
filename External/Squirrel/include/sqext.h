@@ -293,6 +293,17 @@ namespace sqext {
 			sq_pop(vm, 1);
 		}
 
+        bool call_safe(int index) {
+            sq_pushobject(vm, get(index).GetObject());
+            sq_pushobject(vm, object);
+
+            if (SQ_FAILED(sq_call(vm, 1, false, true)))
+                return false;
+
+            sq_pop(vm, 1);
+            return true;
+        }
+
 		/**
 		* @brief Call a function by its handle
 		* @param index Index of the handle
@@ -533,6 +544,24 @@ namespace sqext {
 
 			handles[index] = handle;
 		}
+
+        bool bind_safe(int index, const SQChar *key) {
+            if (index >= handles.size())
+                handles.resize(index + 1);
+
+            HSQMEMBERHANDLE handle;
+
+            sq_pushobject(vm, classobj.GetObject());
+            sq_pushstring(vm, key, -1);
+
+            if (SQ_FAILED(sq_getmemberhandle(vm, -2, &handle)))
+                return false;
+
+            sq_pop(vm, 1);
+
+            handles[index] = handle;
+            return true;
+        }
 
 		/**
 		* @brief Bind a member handle of member "key" to an index. This will bind

@@ -29,6 +29,8 @@ namespace CSE {
 #if defined(__CSE_EDITOR__)
     #if defined(MSVC_CMAKE)
         path.append("../../../../../Assets/");
+    #elif defined(__EMSCRIPTEN__)
+        path = "";
     #else
         path.append("../../../../Assets/");
 #endif

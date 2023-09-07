@@ -34,7 +34,10 @@ void CustomComponent::Init() {
     if (m_funcInit < 0 || m_isError) return;
 
     try {
-        m_classInstance->call(m_funcInit);
+        if(!m_classInstance->call_safe(m_funcInit)) {
+            m_isError = true;
+            SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+        }
     } catch (Sqrat::Exception e) {
         m_isError = true;
 		SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
@@ -44,7 +47,6 @@ void CustomComponent::Init() {
 
 
 void CustomComponent::Tick(float elapsedTime) {
-
     if (m_specialization == nullptr) return;
     if (m_classInstance == nullptr) return;
     if (m_funcTick < 0) return;
@@ -68,7 +70,10 @@ void CustomComponent::RegisterScript() {
 
     try {
         m_specialization = new sqext::SQIClass(m_className.c_str());
-        m_specialization->bind(m_funcSetCSEngine, "SetCSEngine");
+        if(!m_specialization->bind_safe(m_funcSetCSEngine, "SetCSEngine")) {
+            m_funcSetCSEngine = -1;
+            SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+        }
     }
     catch (Sqrat::Exception e) {
         m_funcSetCSEngine = -1;
@@ -76,16 +81,28 @@ void CustomComponent::RegisterScript() {
     }
 
     try {
-        m_specialization->bind(m_funcInit, "Init");
+        if(!m_specialization->bind_safe(m_funcInit, "Init")) {
+            m_funcInit = -1;
+            SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+
+        }
     }
     catch (Sqrat::Exception e) { m_funcInit = -1; }
     try {
-        m_specialization->bind(m_funcTick, "Tick");
+        if(!m_specialization->bind_safe(m_funcTick, "Tick")) {
+            m_funcTick = -1;
+            SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+
+        }
     }
     catch (Sqrat::Exception e) { m_funcTick = -1; }
 
     try {
-        m_specialization->bind(m_funcExterminate, "Destroy");
+        if(!m_specialization->bind_safe(m_funcExterminate, "Destroy")){
+            m_funcExterminate = -1;
+            SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+
+        }
     }
     catch (Sqrat::Exception e) { m_funcExterminate = -1; }
 
