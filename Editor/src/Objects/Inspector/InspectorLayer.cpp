@@ -36,6 +36,11 @@ void InspectorLayer::UpdateParams() {
 void InspectorLayer::RenderUI() {
     if (!ImGui::CollapsingHeader(m_component->GetClassType().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
         return;
+    // When Dragging
+    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+        ImGui::SetDragDropPayload("INSP_COMP", m_component, sizeof(CSE::SComponent));
+        ImGui::EndDragDropSource();
+    }
 
     ImGui::BeginTable(m_component->GetHash().c_str(), 2, ImGuiTableFlags_None);
     ImGui::TableNextRow();

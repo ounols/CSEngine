@@ -48,6 +48,13 @@ PRINT_VALUE("vec3", variable, v.x, ' ', v.y, ' ', v.z);}
 vec4 v = variable;\
 PRINT_VALUE("vec4", variable, v.x, ' ', v.y, ' ', v.z, ' ', v.w);}
 
+#define PRINT_VALUE_COLOR3(variable) {\
+vec3 v = variable;\
+PRINT_VALUE("col3", variable, v.x, ' ', v.y, ' ', v.z);}
+#define PRINT_VALUE_COLOR4(variable) {\
+vec4 v = variable;\
+PRINT_VALUE("col4", variable, v.x, ' ', v.y, ' ', v.z, ' ', v.w);}
+
 #define SET_VEC3(variable) {vec3 vec = vec3();\
 vec.Set(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]));\
 variable = std::move(vec);}

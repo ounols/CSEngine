@@ -58,11 +58,12 @@ void HierarchyWindow::RenderGameObject(CSE::SGameObject& parent) {
                                                                             : NULL) |
                                                   (m_selected != nullptr && m_selected == &parent
                                                    ? ImGuiTreeNodeFlags_Selected : NULL), name.c_str());
-    if (ImGui::IsItemClicked()) {
+    if (ImGui::IsItemDeactivated() && ImGui::IsItemHovered()) {
         m_selected = &parent;
     }
-    if (ImGui::BeginDragDropSource()) {
-
+    // When Dragging
+    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+        ImGui::SetDragDropPayload("INSP_GOBJ", &parent, sizeof(CSE::SGameObject));
         ImGui::EndDragDropSource();
     }
 

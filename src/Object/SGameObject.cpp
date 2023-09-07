@@ -27,7 +27,7 @@ SGameObject::SGameObject(std::string name) {
 }
 
 SGameObject::SGameObject(std::string name, std::string hash) {
-    SetHash(hash);
+    SObject::SetHash(hash);
     CORE->GetCore(GameObjectMgr)->Register(this);
     m_name = std::move(name);
     m_transform = CreateComponent<TransformComponent>();
@@ -290,5 +290,11 @@ std::string GetMetaString(const SGameObject& object, unsigned int startIndex) {
 std::string SGameObject::GenerateMeta() {
     unsigned int startIndex = GetID().size() - GetName().size();
     return GetMetaString(*this, startIndex);
+}
+
+void SGameObject::SetHash(std::string& hash) {
+    const std::string prevHash = std::string(m_hash);
+    SObject::SetHash(hash);
+    CORE->GetCore(GameObjectMgr)->ChangeHash(prevHash, hash);
 }
 

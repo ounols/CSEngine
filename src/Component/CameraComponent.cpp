@@ -231,7 +231,7 @@ std::string CameraComponent::PrintValue() const {
     if (m_frameBuffer != nullptr) PRINT_VALUE("res", m_frameBuffer, ConvertSpaceStr(m_frameBuffer->GetHash()));
 
     PRINT_VALUE("int", m_backgroundType, static_cast<int>(m_backgroundType));
-    PRINT_VALUE_VEC3(m_backgroundColor);
+    PRINT_VALUE_COLOR3(m_backgroundColor);
     if (m_backgroundMap != nullptr && m_backgroundMap->map != nullptr)
         PRINT_VALUE("res", m_backgroundMap.map, ConvertSpaceStr(m_backgroundMap->map->GetHash()));
 

@@ -113,6 +113,8 @@ namespace CSE {
 
         std::string GenerateMeta() override;
 
+        void SetHash(std::string& hash) override;
+
     private:
         void UpdateComponent(float elapsedTime);
 

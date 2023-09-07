@@ -178,7 +178,7 @@ std::string LightComponent::PrintValue() const {
     vec4 m_direction = m_light->direction;
     PRINT_VALUE_VEC4(m_direction);
     vec3 m_color = m_light->color;
-    PRINT_VALUE_VEC3(m_color);
+    PRINT_VALUE_COLOR3(m_color);
 
 	PRINT_END("component");
 }
