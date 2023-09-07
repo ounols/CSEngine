@@ -77,11 +77,13 @@ void MainDocker::SetMenuBar() const {
         if (ImGui::BeginMenu("Debug")) {
             if(CSEMainDocker::previewWindow->IsPreview()) {
                 if (ImGui::MenuItem("Stop Preview")) {
+                    CSEMainDocker::hierarchyWindow->ClearSelectedObject();
                     CSEMainDocker::previewWindow->ReleasePreview();
                 }
             }
             else {
                 if (ImGui::MenuItem("Start Preview")) {
+                    CSEMainDocker::hierarchyWindow->ClearSelectedObject();
                     CSEMainDocker::previewWindow->InitPreview();
                 }
             }

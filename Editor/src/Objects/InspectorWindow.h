@@ -1,13 +1,19 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include "Base/WindowBase.h"
 
 class XNode;
 
+namespace CSE {
+    class SGameObject;
+}
+
 namespace CSEditor {
 
     class EEngineCore;
+    class InspectorLayer;
 
     class InspectorWindow : public WindowBase {
     public:
@@ -17,10 +23,14 @@ namespace CSEditor {
 
         void SetUI() override;
 
+        void ReleaseLayers();
+
     private:
-        void GenerateValueInputs(const XNode& buffer);
+        void InitLayers(const CSE::SGameObject& object);
 
     private:
         EEngineCore* m_core = nullptr;
+        CSE::SGameObject* m_selectedPrev = nullptr;
+        std::vector<InspectorLayer*> m_layers;
     };
 }

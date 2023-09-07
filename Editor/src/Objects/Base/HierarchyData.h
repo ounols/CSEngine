@@ -14,6 +14,10 @@ namespace CSEditor {
             return m_selected;
         }
 
+        void ClearSelectedObject() {
+            m_selected = nullptr;
+        }
+
     protected:
         CSE::SGameObject* m_selected = nullptr;
     };
