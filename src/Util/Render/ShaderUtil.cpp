@@ -89,9 +89,10 @@ GLuint ShaderUtil::createProgram(GLuint vertexShader, GLuint fragmentShader, con
 
                 }
             }
+            glDeleteShader(vertexShader);
+            glDeleteShader(fragmentShader);
             glDeleteProgram(program);
-            program = 0;
-
+            return 0;
         }
         glDetachShader(program, vertexShader);
         glDetachShader(program, fragmentShader);

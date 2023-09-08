@@ -93,7 +93,7 @@ void EngineCoreInstance::GenerateCores() {
 
     m_cores.push_back(m_resMgr);
     m_cores.push_back(m_gameObjectMgr);
-    m_updateCores.push_back(m_gameObjectMgr);
+//    m_updateCores.push_back(m_gameObjectMgr);
 
     m_cores.push_back(m_oglMgr);
     m_renderCores.push_back(m_oglMgr);
