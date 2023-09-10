@@ -109,6 +109,7 @@ void AssetMgr::ReadDirectory(const std::string& path) {
         if (dp->d_type == DT_DIR) {
             if (name == "." || name == "..") continue;
 
+            CreateAssetFolder(path, name);
             ReadDirectory(path + name + '/');
             continue;
         }
@@ -132,6 +133,7 @@ void AssetMgr::ReadDirectory(const std::string& path) {
             if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
                 if (name == "." || name == "..") continue;
 
+                CreateAssetFolder(path, name);
                 ReadDirectory(path + name + '/');
                 continue;
             }
@@ -170,7 +172,10 @@ void AssetMgr::ReadPackage(const std::string& path) {
                 path_str = name_str.substr(0, rFindIndex + 1);
             }
             int isdir = zip_entry_isdir(m_zip);
-            if (isdir != 0) continue;
+            if (isdir != 0) {
+                CreateAssetFolder(path_str, name_cropped);
+                continue;
+            }
             AssetReference* asset = CreateAsset(path_str, name_cropped);
             if (asset == nullptr) continue;
             std::cout << "(Packed)[pkg] " << asset->name << " (" << asset->extension << ")\n";
@@ -203,6 +208,22 @@ AssetMgr::CreateAsset(const std::string& path, const std::string& name_full, std
     }
 
     asset->hash = GetAssetHash(asset->name_path);
+
+    m_assets.insert(std::pair<std::string, AssetReference*>(asset->hash, asset));
+    m_assetsList.push_back(asset);
+
+    return asset;
+}
+
+AssetMgr::AssetReference* AssetMgr::CreateAssetFolder(const std::string& path, const std::string& name_full) {
+    auto asset = new AssetReference();
+    asset->path = path;
+    asset->name_path = path + name_full;
+    asset->id = "Folder:" + asset->name_path.substr(CSE::AssetsPath().size());
+    asset->name_full = name_full;
+    asset->name = name_full;
+
+    asset->hash = "FOLDER" + GetRandomHash(10);
 
     m_assets.insert(std::pair<std::string, AssetReference*>(asset->hash, asset));
     m_assetsList.push_back(asset);

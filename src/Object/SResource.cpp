@@ -45,14 +45,14 @@ void SResource::SetResource(std::string name, bool isInit) {
     if (m_isInited) return;
 
     auto asset = CORE->GetCore(ResMgr)->GetAssetReference(std::move(name));
-
     SetResource(asset, isInit);
 }
 
-void SResource::SetResource(const AssetMgr::AssetReference* asset, bool isInit) {
+void SResource::SetResource(AssetMgr::AssetReference* asset, bool isInit) {
     if (asset == nullptr) return;
     if (m_isInited) return;
 
+    asset->resource = this;
     m_isInited = true;
     m_absoluteId = asset->id;
     if(!asset->hash.empty()) {

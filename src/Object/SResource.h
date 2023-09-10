@@ -83,7 +83,7 @@ namespace CSE {
     private:
         void SetResource(std::string name, bool isInit = true);
 
-        void SetResource(const AssetMgr::AssetReference* asset, bool isInit = true);
+        void SetResource(AssetMgr::AssetReference* asset, bool isInit = true);
 
         static SResource* GetResource(std::string name);
 

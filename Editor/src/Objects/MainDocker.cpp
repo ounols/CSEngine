@@ -11,6 +11,7 @@
 #include "PreviewWindow.h"
 #include "HierarchyWindow.h"
 #include "ConsoleWindow.h"
+#include "AssetWindow.h"
 
 using namespace CSEditor;
 
@@ -99,12 +100,13 @@ void MainDocker::SetDockerNodes() {
     ImGui::DockBuilderSetNodeSize(m_dockerspaceId, m_mainViewport->WorkSize);
 
     auto dockRight = ImGui::DockBuilderSplitNode(m_dockerspaceId, ImGuiDir_Right, 0.25f, nullptr, &m_dockerspaceId);
-    auto dockLeft = ImGui::DockBuilderSplitNode(m_dockerspaceId, ImGuiDir_Left, 0.25f, nullptr, &m_dockerspaceId);
     auto dockDown = ImGui::DockBuilderSplitNode(m_dockerspaceId, ImGuiDir_Down, 0.25f, nullptr, &m_dockerspaceId);
+    auto dockLeft = ImGui::DockBuilderSplitNode(m_dockerspaceId, ImGuiDir_Left, 0.25f, nullptr, &m_dockerspaceId);
     ImGui::DockBuilderDockWindow("Preview", m_dockerspaceId);
     ImGui::DockBuilderDockWindow("Inspector", dockRight);
-    ImGui::DockBuilderDockWindow("Hierarchy", dockLeft);
     ImGui::DockBuilderDockWindow("Console Log", dockDown);
+    ImGui::DockBuilderDockWindow("Assets Explorer", dockDown);
+    ImGui::DockBuilderDockWindow("Hierarchy", dockLeft);
     ImGui::DockBuilderFinish(m_dockerspaceId);
     m_bIsInit = true;
 }
@@ -118,6 +120,7 @@ void MainDocker::GenerateWindows() {
     m_windows.push_back(CSEMainDocker::previewWindow);
     m_windows.push_back(CSEMainDocker::hierarchyWindow);
     m_windows.push_back(new ConsoleWindow());
+    m_windows.push_back(new AssetWindow());
 }
 
 void MainDocker::SetWindowsUI() {
