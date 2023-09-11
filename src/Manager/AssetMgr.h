@@ -88,5 +88,4 @@ namespace CSE {
         std::string m_package_raw;
 #endif
     };
-
 }

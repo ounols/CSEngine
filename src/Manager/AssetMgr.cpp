@@ -108,8 +108,9 @@ void AssetMgr::ReadDirectory(const std::string& path) {
 
         if (dp->d_type == DT_DIR) {
             if (name == "." || name == "..") continue;
-
+#ifdef __CSE_EDITOR__
             CreateAssetFolder(path, name);
+#endif
             ReadDirectory(path + name + '/');
             continue;
         }
@@ -132,8 +133,9 @@ void AssetMgr::ReadDirectory(const std::string& path) {
 
             if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
                 if (name == "." || name == "..") continue;
-
+#ifdef __CSE_EDITOR__
                 CreateAssetFolder(path, name);
+#endif
                 ReadDirectory(path + name + '/');
                 continue;
             }
@@ -173,7 +175,9 @@ void AssetMgr::ReadPackage(const std::string& path) {
             }
             int isdir = zip_entry_isdir(m_zip);
             if (isdir != 0) {
+#ifdef __CSE_EDITOR__
                 CreateAssetFolder(path_str, name_cropped);
+#endif
                 continue;
             }
             AssetReference* asset = CreateAsset(path_str, name_cropped);
@@ -219,6 +223,7 @@ AssetMgr::AssetReference* AssetMgr::CreateAssetFolder(const std::string& path, c
     auto asset = new AssetReference();
     asset->path = path;
     asset->name_path = path + name_full;
+    asset->extension = "/\\?folder";
     asset->id = "Folder:" + asset->name_path.substr(CSE::AssetsPath().size());
     asset->name_full = name_full;
     asset->name = name_full;

@@ -64,7 +64,7 @@ namespace CSE {
             T* object = new T();
             SResource* res = object;
 
-            res->SetResource(asset);
+            res->SetResource(const_cast<AssetMgr::AssetReference*>(asset));
             return object;
         }
 
