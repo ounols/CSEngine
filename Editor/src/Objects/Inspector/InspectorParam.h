@@ -22,6 +22,7 @@ namespace CSEditor {
     private:
         void GenerateValue(const XNode& node);
         void GenerateFunc();
+        void ReplaceValueString(const char* str, const int size);
 
     private:
         std::string m_name;

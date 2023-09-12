@@ -183,13 +183,8 @@ void InspectorParam::GenerateValue(const XNode& node) {
             m_deleteFunc = [ptr]() {
                 delete[] ptr;
             };
-            m_updateFunc = [ptr](const XNode& node) {
-                memset(ptr, 0, sizeof(char) * 128);
-                const auto& str = node.value.c_str();
-                const int size = node.value.size();
-                for (int i = 0; i < size; ++i) {
-                    ptr[i] = str[i];
-                }
+            m_updateFunc = [this](const XNode& node) {
+                ReplaceValueString(node.value.c_str(), node.value.size());
             };
             break;
         }
@@ -333,14 +328,41 @@ void InspectorParam::GenerateFunc() {
             break;
         }
         case InspectorParamType::RES: {
-            auto* value = static_cast<char*>(m_value);
-            m_paramFunc = [value, name]() {
-                return ImGui::InputText(name, value, 128);
+            m_paramFunc = [this]() {
+                auto* str = static_cast<char*>(m_value);
+                const auto& value = CSE::SResource::Get<CSE::SResource>(str);
+                const auto& name = value->GetName() + " (Resource)";
+                ImGui::Button(name.c_str());
+                // When Dragging
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+                    ImGui::SetDragDropPayload("INSP_RES", value, sizeof(CSE::SResource));
+                    ImGui::EndDragDropSource();
+                }
+                // When Dropped
+                if (ImGui::BeginDragDropTarget()) {
+                    if (const auto& payload = ImGui::AcceptDragDropPayload("INSP_RES")) {
+                        const auto& dropObject = static_cast<CSE::SResource*>(payload->Data);
+                        const auto& str = dropObject->GetHash();
+                        ReplaceValueString(str.c_str(), str.size());
+                        ImGui::EndDragDropTarget();
+                        return true;
+                    }
+                    if (const auto& payload = ImGui::AcceptDragDropPayload("AW_RES")) {
+                        const auto& dropObject = static_cast<CSE::AssetMgr::AssetReference*>(payload->Data);
+                        const auto& str = dropObject->hash;
+                        ReplaceValueString(str.c_str(), str.size());
+                        ImGui::EndDragDropTarget();
+                        return true;
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+                return false;
             };
-            m_getFunc = [value]() {
+            m_getFunc = [this]() {
                 std::vector<std::string> result;
+                auto* str = static_cast<char*>(m_value);
                 result.reserve(1);
-                result.emplace_back(value);
+                result.emplace_back(str);
                 return result;
             };
             break;
@@ -426,5 +448,13 @@ void InspectorParam::GenerateFunc() {
         }
         default:
             break;
+    }
+}
+
+void InspectorParam::ReplaceValueString(const char* str, const int size) {
+    auto* ptr = static_cast<char*>(m_value);
+    memset(ptr, 0, sizeof(char) * 128);
+    for (int i = 0; i < size; ++i) {
+        ptr[i] = str[i];
     }
 }

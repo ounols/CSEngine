@@ -100,7 +100,7 @@ void MainDocker::SetDockerNodes() {
     ImGui::DockBuilderSetNodeSize(m_dockerspaceId, m_mainViewport->WorkSize);
 
     auto dockRight = ImGui::DockBuilderSplitNode(m_dockerspaceId, ImGuiDir_Right, 0.25f, nullptr, &m_dockerspaceId);
-    auto dockDown = ImGui::DockBuilderSplitNode(m_dockerspaceId, ImGuiDir_Down, 0.25f, nullptr, &m_dockerspaceId);
+    auto dockDown = ImGui::DockBuilderSplitNode(m_dockerspaceId, ImGuiDir_Down, 0.4f, nullptr, &m_dockerspaceId);
     auto dockLeft = ImGui::DockBuilderSplitNode(m_dockerspaceId, ImGuiDir_Left, 0.25f, nullptr, &m_dockerspaceId);
     ImGui::DockBuilderDockWindow("Preview", m_dockerspaceId);
     ImGui::DockBuilderDockWindow("Inspector", dockRight);

@@ -18,9 +18,19 @@ namespace CSEditor {
         void RefreshAssets();
 
         void RefreshExplorer();
+
+        void ChangeCurrentPath(std::string path);
+
     private:
+        void OnDragDrop(const CSE::AssetMgr::AssetReference& asset);
+
+    private:
+        std::string m_targetPath;
+
         std::unordered_map<std::string, AssetsVector> m_assets;
         AssetsVector* m_selectedFolder = nullptr;
         std::string m_currentPath;
+
+        std::vector<std::string> m_pathSelector;
     };
 }
