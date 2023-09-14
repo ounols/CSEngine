@@ -9,6 +9,7 @@
 #include "../Component/SComponent.h"
 #include "sqrat/sqratUtil.h"
 #include "../Util/MoreString.h"
+#include "Base/ReflectionRef.h"
 
 namespace CSE {
 
@@ -142,9 +143,10 @@ namespace CSE {
 
     template <class T>
     T* SGameObject::GetComponent() {
+        const auto& ref = ReflectionRef<T>();
         for (const auto& component : m_components) {
             if (component == nullptr) continue;
-            if (dynamic_cast<T*>(component)) {
+            if (ref.IsSameClass(component)) {
                 return static_cast<T*>(component);
             }
         }

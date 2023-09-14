@@ -34,7 +34,7 @@ void InspectorLayer::UpdateParams() {
 }
 
 void InspectorLayer::RenderUI() {
-    if (!ImGui::CollapsingHeader(m_component->GetClassType().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+    if (!ImGui::CollapsingHeader(m_component->GetClassType(), ImGuiTreeNodeFlags_DefaultOpen))
         return;
     // When Dragging
     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {

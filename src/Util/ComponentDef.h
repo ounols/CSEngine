@@ -10,11 +10,15 @@
 CLASSNAME();                            \
 auto GetComponent() override
 
-#define COMPONENT_DEFINE_CONSTRUCTOR(CLASSNAME) \
+#define COMPONENT_DEFINE_CONSTRUCTOR(CLASSNAME)                 \
+static const char* GetClassStaticType() { return #CLASSNAME; }  \
 explicit CLASSNAME(CSE::SGameObject* l_gameObject)
 
 #define COMPONENT_CONSTRUCTOR(CLASSNAME)    \
 CLASSNAME::CLASSNAME(CSE::SGameObject* l_gameObject) : CSE::SComponent(#CLASSNAME, l_gameObject)
+
+#define COMPONENT_DERIVED_CLASS_TYPE(CLASSNAME) \
+SetClassType(#CLASSNAME)
 
 #define FIND_OBJ_REFERENCE(obj, src) \
 {                           \

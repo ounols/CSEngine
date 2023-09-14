@@ -24,7 +24,7 @@ namespace CSE {
     };
 }
 
-#define PRINT_START(type) std::string result = std::string("<") + (type) + " type=\"" + m_classType + "\" enable=\"" + (isEnable ? "1" : "0") + "\">" + '\n'
+#define PRINT_START(type) std::string result = std::string("<") + (type) + " type=\"" + GetClassType() + "\" enable=\"" + (isEnable ? "1" : "0") + "\">" + '\n'
 #define PRINT_END(type) result += std::string("</") + (type) + ">\n"; return result
 #define PRINT_VALUE(type, variable, ...) {std::stringstream temp;\
 result += std::string("<value name=\"") + #variable + "\" t=\"" + type + "\">" + appandAll(temp, __VA_ARGS__) + "</value>\n";}

@@ -27,5 +27,3 @@ IMPLEMENT_SINGLETON(EngineCore);
 EngineCore::EngineCore() = default;
 
 EngineCore::~EngineCore() = default;
-
-

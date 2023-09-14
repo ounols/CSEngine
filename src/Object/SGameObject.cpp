@@ -126,7 +126,6 @@ const std::list<SGameObject*>& SGameObject::GetChildren() const {
 }
 
 void SGameObject::AddComponent(SComponent* component) {
-    auto str_class = component->GetClassType();
     m_components.push_back(component);
 }
 

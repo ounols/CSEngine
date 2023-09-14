@@ -36,11 +36,11 @@ void CustomComponent::Init() {
     try {
         if(!m_classInstance->call_safe(m_funcInit)) {
             m_isError = true;
-            SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+            SafeLog::Log(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
         }
     } catch (Sqrat::Exception e) {
         m_isError = true;
-		SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+		SafeLog::Log(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
     }
 
 }
@@ -57,7 +57,7 @@ void CustomComponent::Tick(float elapsedTime) {
     }
     catch (Sqrat::Exception e) {
         m_isError = true;
-		SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+		SafeLog::Log(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
     }
 
 }
@@ -72,18 +72,18 @@ void CustomComponent::RegisterScript() {
         m_specialization = new sqext::SQIClass(m_className.c_str());
         if(!m_specialization->bind_safe(m_funcSetCSEngine, "SetCSEngine")) {
             m_funcSetCSEngine = -1;
-            SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+            SafeLog::Log(("[" + m_className + " (SetCSEngine)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
         }
     }
     catch (Sqrat::Exception e) {
         m_funcSetCSEngine = -1;
-		SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+		SafeLog::Log(("[" + m_className + " (SetCSEngine)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
     }
 
     try {
         if(!m_specialization->bind_safe(m_funcInit, "Init")) {
             m_funcInit = -1;
-            SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+            SafeLog::Log(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
 
         }
     }
@@ -91,7 +91,7 @@ void CustomComponent::RegisterScript() {
     try {
         if(!m_specialization->bind_safe(m_funcTick, "Tick")) {
             m_funcTick = -1;
-            SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+            SafeLog::Log(("[" + m_className + " (Tick)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
 
         }
     }
@@ -100,7 +100,7 @@ void CustomComponent::RegisterScript() {
     try {
         if(!m_specialization->bind_safe(m_funcExterminate, "Destroy")){
             m_funcExterminate = -1;
-            SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+            SafeLog::Log(("[" + m_className + " (Destroy)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
 
         }
     }
