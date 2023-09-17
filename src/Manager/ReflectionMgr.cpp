@@ -3,13 +3,9 @@
 
 using namespace CSE;
 
-ReflectionMgr::ReflectionMgr() {
+ReflectionMgr::ReflectionMgr() = default;
 
-}
-
-ReflectionMgr::~ReflectionMgr() {
-
-}
+ReflectionMgr::~ReflectionMgr() = default;
 
 void ReflectionMgr::Init() {
     for (auto* node = ReflectionMgr::m_defineWrapper.m_defined;;) {

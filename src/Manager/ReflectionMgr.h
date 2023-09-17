@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <unordered_map>
 #include <functional>
 #include <utility>
@@ -59,6 +60,7 @@ namespace CSE {
         private:
             WrapperContainer m_defined = nullptr;
             WrapperContainer m_node = nullptr;
+
         public:
             friend ReflectionMgr;
         };

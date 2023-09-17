@@ -14,9 +14,7 @@ ConsoleWindow::ConsoleWindow() {
     Clear();
 }
 
-ConsoleWindow::~ConsoleWindow() {
-
-}
+ConsoleWindow::~ConsoleWindow() = default;
 
 void ConsoleWindow::SetUI() {
     Draw("Console Log");

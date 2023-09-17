@@ -67,12 +67,12 @@ void MainDocker::SetMenuBar() const {
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Edit")) {
-            if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-            if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+            ImGui::MenuItem("Undo", "CTRL+Z");
+            ImGui::MenuItem("Redo", "CTRL+Y", false, false); // Disabled item
             ImGui::Separator();
-            if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-            if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-            if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+            ImGui::MenuItem("Cut", "CTRL+X");
+            ImGui::MenuItem("Copy", "CTRL+C");
+            ImGui::MenuItem("Paste", "CTRL+V");
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Debug")) {

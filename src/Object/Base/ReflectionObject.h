@@ -9,9 +9,7 @@ namespace CSE {
     class ReflectionObject {
     public:
         ReflectionObject() = default;
-        explicit ReflectionObject(std::string type) : m_class(std::move(type)) {
-
-        }
+        explicit ReflectionObject(std::string type) : m_class(std::move(type)) {}
 
         virtual ~ReflectionObject() = default;
 

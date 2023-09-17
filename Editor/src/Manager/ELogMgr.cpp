@@ -3,17 +3,11 @@
 
 using namespace CSEditor;
 
-ELogMgr::ELogMgr() {
+ELogMgr::ELogMgr() = default;
 
-}
+ELogMgr::~ELogMgr() = default;
 
-ELogMgr::~ELogMgr() {
-
-}
-
-void ELogMgr::Init() {
-
-}
+void ELogMgr::Init() {}
 
 void ELogMgr::RegisterWindow(ConsoleWindow* window) {
     m_consoleWindow = window;

@@ -22,13 +22,9 @@
 using namespace CSE;
 constexpr short ENGINE_COUNT = 10;
 
-EngineCoreInstance::EngineCoreInstance() {
+EngineCoreInstance::EngineCoreInstance() = default;
 
-}
-
-EngineCoreInstance::~EngineCoreInstance() {
-
-}
+EngineCoreInstance::~EngineCoreInstance() = default;
 
 void EngineCoreInstance::Init(unsigned int width, unsigned int height) {
     GenerateCores();

@@ -12,9 +12,7 @@ AssetWindow::AssetWindow() {
     m_currentPath = CSE::AssetsPath();
 }
 
-AssetWindow::~AssetWindow() {
-
-}
+AssetWindow::~AssetWindow() = default;
 
 void AssetWindow::SetUI() {
     ImGui::Begin("Assets Explorer");

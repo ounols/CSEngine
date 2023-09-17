@@ -13,9 +13,7 @@ HierarchyWindow::HierarchyWindow() {
     EEngineCore::getEditorInstance()->SetHierarchyData(this);
 }
 
-HierarchyWindow::~HierarchyWindow() {
-
-}
+HierarchyWindow::~HierarchyWindow() = default;
 
 void HierarchyWindow::SetUI() {
     ImGui::Begin("Hierarchy");

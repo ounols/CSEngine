@@ -236,14 +236,11 @@ void CustomComponent::CreateClassInstance(const std::vector<std::string>& variab
                 name = "null";
                 break;
         }
-
         m_variables.emplace_back(val, name, value);
     }
-
 }
 
 void CustomComponent::BindValue(CustomComponent::VARIABLE* variable, const char* value) const {
-
     std::string type = variable->type;
     std::string value_str = value;
 
@@ -268,5 +265,4 @@ void CustomComponent::BindValue(CustomComponent::VARIABLE* variable, const char*
             m_classInstance->set(variable->name.c_str(), comp_r->GetClassInstance());
         }
     }
-
 }

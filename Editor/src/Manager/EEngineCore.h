@@ -20,6 +20,7 @@ namespace CSEditor {
         enum InvokeState {
             NONE = 0, START, RESIZE, STOP
         };
+
     private:
         EEngineCore(const EEngineCore&);
 

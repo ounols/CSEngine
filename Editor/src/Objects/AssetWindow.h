@@ -9,6 +9,7 @@ namespace CSEditor {
     class AssetWindow : public WindowBase {
     private:
         typedef std::vector<CSE::AssetMgr::AssetReference*> AssetsVector;
+
     public:
         AssetWindow();
         ~AssetWindow() override;
