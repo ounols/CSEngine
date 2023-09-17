@@ -29,7 +29,7 @@ namespace CSE {
 
         typedef std::unordered_map<std::string, Element*> ElementsMap;
     public:
-        SMaterial();
+        RESOURCE_DEFINE_CONSTRUCTOR(SMaterial);
 
         explicit SMaterial(const SMaterial* material);
 

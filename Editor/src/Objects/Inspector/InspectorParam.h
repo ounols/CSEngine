@@ -33,5 +33,6 @@ namespace CSEditor {
         std::function<void(const XNode&)> m_updateFunc = nullptr;
         std::function<std::vector<std::string>()> m_getFunc = nullptr;
         void* m_value = nullptr;
+        std::string m_classType = "";
     };
 }

@@ -28,7 +28,7 @@
 
 using namespace CSE;
 
-SFrameBuffer::SFrameBuffer() {
+RESOURCE_CONSTRUCTOR(SFrameBuffer) {
     SetUndestroyable(true);
 }
 
@@ -37,7 +37,7 @@ SFrameBuffer::~SFrameBuffer() = default;
 void SFrameBuffer::Exterminate() {
     glDeleteFramebuffers(1, &m_fbo);
 
-    for (const auto& buffer : m_buffers) {
+    for (const auto& buffer: m_buffers) {
         ReleaseBufferObject(buffer);
     }
     m_buffers.clear();
@@ -72,7 +72,7 @@ void SFrameBuffer::Init(const AssetMgr::AssetReference* asset) {
 
         const XNode& buffers = cse_framebuffer.getChild("buffers");
         int index = 0;
-        for (const auto& buffer_node : buffers.children) {
+        for (const auto& buffer_node: buffers.children) {
             auto type_str = buffer_node.getAttribute("type").value;
             auto format_str = buffer_node.getAttribute("format").value;
             auto isTexture_str = buffer_node.getAttribute("isTexture").value;
@@ -188,7 +188,7 @@ void SFrameBuffer::RasterizeFramebuffer() {
 void SFrameBuffer::AttachCubeBuffer(int index, int level) const {
     if (m_dimension != CUBE) return;
 
-    for (const auto& buffer : m_buffers) {
+    for (const auto& buffer: m_buffers) {
         const auto& texture = buffer->texture;
         if (texture == nullptr) continue;
         glFramebufferTexture2D(GL_FRAMEBUFFER, GenerateAttachmentType(buffer->type, false),
@@ -215,7 +215,7 @@ void SFrameBuffer::ResizeFrameBuffer(int width, int height) {
     GenerateFramebuffer(m_dimension, width, height);
     m_depthBuffer = m_mainColorBuffer = nullptr;
 
-    for (const auto& buffer : origBufferVector) {
+    for (const auto& buffer: origBufferVector) {
         auto type = buffer->type;
         auto format = buffer->format;
         auto level = buffer->level;
@@ -263,14 +263,14 @@ void SFrameBuffer::PostFrameBuffer(GLProgramHandle* handle, const CameraBase& ca
     const auto& cameraStruct = camera.GetCameraMatrixStruct();
     ShaderUtil::BindCameraToShader(*m_postObject.handle, cameraStruct.camera, cameraStruct.cameraPosition,
                                    cameraStruct.projection, mat4::Identity());
-    if(uniforms.SourceBufferSize >= 0)
+    if (uniforms.SourceBufferSize >= 0)
         glUniform2fv(uniforms.SourceBufferSize, 1, sizeRaw);
 
     ShaderUtil::BindAttributeToPlane();
 }
 
 STexture* SFrameBuffer::BlitCopiedFrameBuffer() const {
-    if(m_postObject.copyFbo < 0) {
+    if (m_postObject.copyFbo < 0) {
         m_postObject.copyBuffer = new STexture(static_cast<STexture::Type>(m_dimension));
         m_postObject.copyBuffer->InitTexture(m_size->x, m_size->y, GL_RGB, GenerateInternalFormat(GL_RGB),
                                              GenerateInternalType(GL_RGB));
@@ -368,7 +368,7 @@ STexture* SFrameBuffer::GetTexture(int index) const {
 }
 
 STexture* SFrameBuffer::GetTexture(const char* id) const {
-    for (const auto& buffer : m_buffers) {
+    for (const auto& buffer: m_buffers) {
         const auto& texture = buffer->texture;
         if (texture == nullptr) continue;
 

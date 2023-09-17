@@ -19,10 +19,8 @@ namespace CSE {
                 std::function<ReflectionObject*()> m_func;
                 DefineWrapperNode* m_next = nullptr;
 
-                DefineWrapperNode(std::string name, std::function<ReflectionObject*()> func) {
-                    m_name = std::move(name);
-                    m_func = std::move(func);
-                }
+                DefineWrapperNode(std::string name, std::function<ReflectionObject*()> func) : m_name(std::move(name)),
+	                m_func(std::move(func)) {}
             };
 
             typedef DefineWrapperNode* WrapperContainer;
@@ -30,9 +28,7 @@ namespace CSE {
         public:
             DefineWrapper() = default;
 
-            DefineWrapper(const DefineWrapper& other) {
-                m_defined = other.m_defined;
-            }
+            DefineWrapper(const DefineWrapper& other) : m_defined(other.m_defined), m_node(other.m_node) {}
 
             static unsigned char* SetDefine(std::string&& type, std::function<ReflectionObject*()>&& func) {
                 if (ReflectionMgr::m_defineWrapper.m_defined == nullptr) {

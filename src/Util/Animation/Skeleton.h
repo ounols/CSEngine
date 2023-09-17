@@ -11,13 +11,11 @@ namespace CSE {
 
     class Skeleton : public SResource {
     public:
-        Skeleton() {
-            SetUndestroyable(true);
-        }
+        RESOURCE_DEFINE_CONSTRUCTOR(Skeleton);
 
-        Skeleton(int jointCount, Joint* headJoint) : m_jointCount(jointCount), m_headJoint(headJoint) {
+        Skeleton(int jointCount, Joint* headJoint) : m_jointCount(jointCount), m_headJoint(headJoint),
+                                                     SResource("Skeleton") {
             SetUndestroyable(true);
-
         }
 
         ~Skeleton() override {

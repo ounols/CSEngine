@@ -15,14 +15,14 @@ using namespace CSE;
 
 unsigned int STexture::m_emptyTextureId = 0;
 
-STexture::STexture() {
+RESOURCE_CONSTRUCTOR(STexture) {
     SetUndestroyable(true);
     if(m_emptyTextureId == 0) {
         LoadEmpty();
     }
 }
 
-STexture::STexture(STexture::Type type) {
+RESOURCE_SUB_CONSTRUCTOR(STexture, STexture::Type type) {
     SetUndestroyable(true);
     SetType(type);
 }

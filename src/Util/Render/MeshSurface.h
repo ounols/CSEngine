@@ -8,7 +8,7 @@ namespace CSE {
 
     class MeshSurface : public SISurface {
     public:
-        MeshSurface();
+        RESOURCE_DEFINE_CONSTRUCTOR(MeshSurface);
         MeshSurface(int sizeVert, float* vertices, float* normals);
         MeshSurface(int sizeVert, float* vertices, float* normals, float* texCoords);
 //        MeshSurface(int sizeVert, int sizeIndic, float* vertices, float* normals, float* texCoords, float* indices);

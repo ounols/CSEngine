@@ -32,6 +32,7 @@ namespace CSE {
             std::string hash;
             std::string name_full;
             std::string extension;
+            std::string class_type;
             TYPE type = NONE;
             SResource* resource;
         };

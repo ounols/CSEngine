@@ -28,6 +28,14 @@ namespace CSE {
 #define PRINT_END(type) result += std::string("</") + (type) + ">\n"; return result
 #define PRINT_VALUE(type, variable, ...) {std::stringstream temp;\
 result += std::string("<value name=\"") + #variable + "\" t=\"" + type + "\">" + appandAll(temp, __VA_ARGS__) + "</value>\n";}
+#define PRINT_COMP_NAME(name, variable) {std::stringstream temp;\
+result += std::string("<value name=\"") + #name + "\" t=\"comp\" d=\"" + variable->GetClassType() + "\">" + ConvertSpaceStr(variable->GetHash()) + "</value>\n";}
+#define PRINT_RES_NAME(name, variable) {std::stringstream temp;\
+result += std::string("<value name=\"") + #name + "\" t=\"res\" d=\"" + variable->GetClassType() + "\">" + ConvertSpaceStr(variable->GetHash()) + "</value>\n";}
+
+#define PRINT_COMP(variable) PRINT_COMP_NAME(variable, variable)
+#define PRINT_RES(variable) PRINT_RES_NAME(variable, variable)
+
 #define PRINT_VALUE_SPREFAB_REF(variable) {const auto& obj = variable->GetGameObject();\
 const auto& ref = dynamic_cast<SGameObjectFromSPrefab*>(variable->GetGameObject());\
 std::stringstream temp;\

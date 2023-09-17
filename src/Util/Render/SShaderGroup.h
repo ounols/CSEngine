@@ -9,7 +9,7 @@ namespace CSE {
 
     class SShaderGroup : public SResource {
     public:
-        SShaderGroup();
+        RESOURCE_DEFINE_CONSTRUCTOR(SShaderGroup);
 
         ~SShaderGroup() override;
 

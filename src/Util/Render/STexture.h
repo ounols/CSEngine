@@ -17,7 +17,7 @@ namespace CSE {
             TEX_2D = 0, TEX_CUBE = 1, TEX_3D = 2
         };
     public:
-        STexture();
+        RESOURCE_DEFINE_CONSTRUCTOR(STexture);
         explicit STexture(Type type);
 
         ~STexture() override;

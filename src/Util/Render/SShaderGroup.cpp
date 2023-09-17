@@ -9,8 +9,7 @@
 
 using namespace CSE;
 
-SShaderGroup::SShaderGroup() {
-}
+RESOURCE_CONSTRUCTOR(SShaderGroup) {}
 
 SShaderGroup::~SShaderGroup() {
 }

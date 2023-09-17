@@ -8,13 +8,15 @@
 #include <utility>
 #include "../Manager/AssetMgr.h"
 #include "../SObject.h"
+#include "Base/ReflectionObject.h"
+#include "../Util/ResourceDef.h"
 
 namespace CSE {
 
-    class SResource : public SObject {
+    class SResource : public SObject, public ReflectionObject {
     public:
-        SResource();
-        explicit SResource(bool isRegister);
+        explicit SResource(std::string classType);
+
         SResource(const SResource* resource, bool isRegister);
 
         ~SResource() override;
@@ -54,6 +56,8 @@ namespace CSE {
             return object;
         }
 
+        static SResource* Create(const std::string& name, const std::string& classType);
+
         template <class T>
         static T* Create(const AssetMgr::AssetReference* asset) {
             if (asset == nullptr) return nullptr;
@@ -68,12 +72,16 @@ namespace CSE {
             return object;
         }
 
+        static SResource* Create(const AssetMgr::AssetReference* asset, const std::string& classType);
+
         template <class T>
         static T* Get(std::string name) {
             SResource* res = GetResource(std::move(name));
             if (res != nullptr) return static_cast<T*>(res);
             return nullptr;
         }
+
+        static SResource* Get(std::string& name);
 
         void SetHash(std::string& hash) override;
 

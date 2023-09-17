@@ -63,7 +63,7 @@ namespace CSE {
         };
 
     public:
-        SFrameBuffer();
+        RESOURCE_DEFINE_CONSTRUCTOR(SFrameBuffer);
 
         ~SFrameBuffer() override;
 

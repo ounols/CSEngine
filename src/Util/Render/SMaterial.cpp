@@ -8,7 +8,7 @@
 
 using namespace CSE;
 
-SMaterial::SMaterial() {
+RESOURCE_CONSTRUCTOR(SMaterial) {
     m_lightMgr = CORE->GetCore(LightMgr);
 }
 

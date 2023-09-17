@@ -43,7 +43,7 @@ AssetMgr::~AssetMgr() {
 void AssetMgr::Exterminate() {
     m_assets.clear();
 
-    for (auto& asset : m_assetsList) {
+    for (auto& asset: m_assetsList) {
         SAFE_DELETE(asset);
     }
 
@@ -71,7 +71,7 @@ AssetMgr::AssetReference* AssetMgr::GetAsset(const std::string& name) const {
 
     std::string lowerName = name;
     make_lower(lowerName);
-    for (const auto& asset : m_assetsList) {
+    for (const auto& asset: m_assetsList) {
         if (make_lower_copy(asset->name) == lowerName) return asset;
         if (make_lower_copy(asset->id) == lowerName) return asset;
         if (make_lower_copy(asset->name_path) == lowerName) return asset;
@@ -238,7 +238,7 @@ AssetMgr::AssetReference* AssetMgr::CreateAssetFolder(const std::string& path, c
 
 void AssetMgr::SetType() {
 
-    for (const auto asset : m_assetsList) {
+    for (const auto asset: m_assetsList) {
         std::string type_str = asset->extension;
         make_lower(type_str);
 
@@ -247,6 +247,7 @@ void AssetMgr::SetType() {
         if (type_str == "jpg" || type_str == "png" || type_str == "dds" || type_str == "hdr") {
             asset->type = TEX_2D;
             asset->name += ".texture";
+            asset->class_type = "STexture";
             continue;
         }
 
@@ -254,6 +255,7 @@ void AssetMgr::SetType() {
         if (type_str == "cbmap") {
             asset->type = TEX_CUBEMAP;
             asset->name += ".textureCubeMap";
+            asset->class_type = "STexture";
             continue;
         }
 
@@ -261,6 +263,7 @@ void AssetMgr::SetType() {
         if (type_str == "framebuffer") {
             asset->type = FRAMEBUFFER;
             asset->name += ".frameBuffer";
+            asset->class_type = "SFrameBuffer";
             continue;
         }
 
@@ -268,6 +271,7 @@ void AssetMgr::SetType() {
         if (type_str == "mat") {
             asset->type = MATERIAL;
             asset->name += ".material";
+            asset->class_type = "SMaterial";
             continue;
         }
 
@@ -275,10 +279,20 @@ void AssetMgr::SetType() {
         if (type_str == "dae") {
             asset->type = DAE;
             asset->name += ".prefab";
+            asset->class_type = "SPrefab";
             {
-                AppendSubName(CreateAsset(asset->name_path, asset->name_full, asset->name), "animation")->type = DAE;
-                AppendSubName(CreateAsset(asset->name_path, asset->name_full, asset->name), "skeleton")->type = DAE;
-                AppendSubName(CreateAsset(asset->name_path, asset->name_full, asset->name), "mesh")->type = DAE;
+                const auto& ani = AppendSubName(CreateAsset(asset->name_path, asset->name_full, asset->name),
+                                                "animation");
+                const auto& ske = AppendSubName(CreateAsset(asset->name_path, asset->name_full, asset->name),
+                                                "skeleton");
+                const auto& mes = AppendSubName(CreateAsset(asset->name_path, asset->name_full, asset->name), "mesh");
+
+                ani->type = DAE;
+                ske->type = DAE;
+                mes->type = DAE;
+                ani->class_type = "Animation";
+                ske->class_type = "Skeleton";
+                mes->class_type = "MeshSurface";
             }
             continue;
         }
@@ -287,6 +301,7 @@ void AssetMgr::SetType() {
         if (type_str == "nut") {
             asset->type = SCRIPT;
             asset->name += ".script";
+            asset->class_type = "SScriptObject";
             continue;
         }
 
@@ -294,11 +309,13 @@ void AssetMgr::SetType() {
         if (type_str == "vert" || type_str == "vs") {
             asset->type = SHADER;
             asset->name += ".vert";
+            asset->class_type = "GLProgramHandle";
             continue;
         }
         if (type_str == "frag" || type_str == "fs") {
             asset->type = SHADER;
             asset->name += ".frag";
+            asset->class_type = "GLProgramHandle";
             continue;
         }
 
@@ -306,6 +323,7 @@ void AssetMgr::SetType() {
         if (type_str == "shader") {
             asset->type = SHADER_HANDLE;
             asset->name += ".shader";
+            asset->class_type = "SShaderGroup";
             continue;
         }
 
@@ -313,6 +331,7 @@ void AssetMgr::SetType() {
         if (type_str == "prefab") {
             asset->type = PREFAB;
             asset->name += ".prefab";
+            asset->class_type = "SPrefab";
             continue;
         }
 
@@ -350,7 +369,7 @@ AssetMgr::AssetReference* AssetMgr::AppendSubName(AssetMgr::AssetReference* asse
 std::list<AssetMgr::AssetReference*> AssetMgr::GetAssets(TYPE type) const {
     std::list<AssetReference*> result;
 
-    for (const auto& asset : m_assetsList) {
+    for (const auto& asset: m_assetsList) {
         if (asset->type == type) {
             result.push_back(asset);
         }
@@ -369,7 +388,7 @@ std::string AssetMgr::LoadAssetFile(const std::string& path) {
     if (path.find("/../") != std::string::npos) {
         auto path_split = split(path, '/');
         std::stack<std::string> path_stack;
-        for (const auto& part : path_split) {
+        for (const auto& part: path_split) {
             if (part == "..") {
                 path_stack.pop();
                 continue;
@@ -381,8 +400,7 @@ std::string AssetMgr::LoadAssetFile(const std::string& path) {
             path_stack.pop();
         }
         path_convert = path_convert.substr(0, path_convert.size() - 1);
-    }
-    else {
+    } else {
         path_convert = path;
     }
     zip_entry_open(zip, path_convert.c_str());

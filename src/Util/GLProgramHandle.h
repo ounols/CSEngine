@@ -64,7 +64,7 @@ namespace CSE {
 
         typedef std::map<std::string, GLProgramHandle::Element*> GLElementList;
     public:
-        GLProgramHandle();
+        RESOURCE_DEFINE_CONSTRUCTOR(GLProgramHandle);
 
         ~GLProgramHandle() override;
 

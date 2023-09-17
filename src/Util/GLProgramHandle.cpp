@@ -9,7 +9,7 @@
 
 using namespace CSE;
 
-GLProgramHandle::GLProgramHandle() : Program(HANDLE_NULL) {
+RESOURCE_CONSTRUCTOR(GLProgramHandle), Program(HANDLE_NULL) {
     SetUndestroyable(true);
 }
 
