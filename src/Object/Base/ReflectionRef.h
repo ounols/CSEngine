@@ -1,6 +1,7 @@
 #pragma once
 
-#include <iostream>
+#include <string>
+#include <cstring>
 #include "ReflectionObject.h"
 
 namespace CSE {
