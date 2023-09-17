@@ -8,6 +8,7 @@
 #include "SISComponent.h"
 #include "../Util/ComponentDef.h"
 #include "../Util/VariableBinder.h"
+#include "../Manager/ReflectionMgr.h"
 #include "../Object/Base/ReflectionObject.h"
 
 
@@ -67,10 +68,6 @@ namespace CSE {
 
         virtual void SetIsEnable(bool is_enable) {
             isEnable = is_enable;
-        }
-
-        ReflectionObject* NewObject(const std::string& name) override {
-            return nullptr;
         }
 
     protected:

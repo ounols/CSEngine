@@ -9,6 +9,7 @@
 #include "Render/RenderMgr.h"
 #include "SceneMgr.h"
 #include "MemoryMgr.h"
+#include "ReflectionMgr.h"
 #include "../Sample/FirstDemoScene.h"
 #include "../Sample/WebDemoScene.h"
 #include "../Util/Loader/SCENE/SSceneLoader.h"
@@ -19,7 +20,7 @@
 #endif
 
 using namespace CSE;
-constexpr short ENGINE_COUNT = 9;
+constexpr short ENGINE_COUNT = 10;
 
 EngineCoreInstance::EngineCoreInstance() {
 
@@ -67,6 +68,11 @@ void EngineCoreInstance::Render() const {
 }
 
 void EngineCoreInstance::Exterminate() {
+    ExterminateWithoutReflectionDefine();
+    CSE::ReflectionMgr::DefineWrapper::ReleaseDefine();
+}
+
+void EngineCoreInstance::ExterminateWithoutReflectionDefine() {
     if(m_memoryMgr != nullptr)
         static_cast<MemoryMgr*>(m_memoryMgr)->ExterminateObjects(true);
     for (auto core : m_cores) {
@@ -81,6 +87,7 @@ void EngineCoreInstance::GenerateCores() {
     m_cores = std::vector<CoreBase*>();
     m_cores.reserve(ENGINE_COUNT);
 
+    m_reflectionMgr = new ReflectionMgr();
     m_resMgr = new ResMgr();
     m_gameObjectMgr = new GameObjectMgr();
     m_oglMgr = new OGLMgr();
@@ -91,6 +98,7 @@ void EngineCoreInstance::GenerateCores() {
     m_memoryMgr = new MemoryMgr();
     m_scriptMgr = new ScriptMgr();
 
+    m_cores.push_back(m_reflectionMgr);
     m_cores.push_back(m_resMgr);
     m_cores.push_back(m_gameObjectMgr);
 //    m_updateCores.push_back(m_gameObjectMgr);

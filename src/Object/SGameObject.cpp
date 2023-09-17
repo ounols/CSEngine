@@ -152,6 +152,15 @@ void SGameObject::DeleteComponent(SComponent* component) {
     m_components.remove(component);
 }
 
+SComponent* SGameObject::CreateComponent(const char* type) {
+    SComponent* component = static_cast<SComponent*>(ReflectionObject::NewObject(type));
+    component->SetGameObject(this);
+    AddComponent(component);
+    if (m_status == IDLE)
+        component->Init();
+    return component;
+}
+
 std::string SGameObject::GetID() const {
     std::string id;
     for (const SGameObject* node = const_cast<SGameObject*>(this);; node = node->GetParent()) {
@@ -296,4 +305,3 @@ void SGameObject::SetHash(std::string& hash) {
     SObject::SetHash(hash);
     CORE->GetCore(GameObjectMgr)->ChangeHash(prevHash, hash);
 }
-

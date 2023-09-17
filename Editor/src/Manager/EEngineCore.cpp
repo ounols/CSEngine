@@ -17,6 +17,7 @@
 #include "../../src/Manager/Render/RenderMgr.h"
 #include "../../src/Manager/SceneMgr.h"
 #include "../../src/Manager/MemoryMgr.h"
+#include "../../src/Manager/ReflectionMgr.h"
 
 using namespace CSE;
 using namespace CSEditor;
@@ -77,7 +78,7 @@ void EEngineCore::StartPreviewCore() {
 }
 
 void EEngineCore::StopPreviewCore() {
-    m_previewCore->Exterminate();
+    m_previewCore->ExterminateWithoutReflectionDefine();
     delete m_previewCore;
     m_previewCore = nullptr;
     m_previewElapsedTime = 0.f;
@@ -122,8 +123,9 @@ void EEngineCore::GenerateCores() {
     if(m_isGenerated) return;
     m_isGenerated = true;
     m_cores = std::vector<CoreBase*>();
-    m_cores.reserve(9);
+    m_cores.reserve(10);
 
+    m_reflectionMgr = new ReflectionMgr();
     m_resMgr = new ResMgr();
     m_gameObjectMgr = new GameObjectMgr();
     m_oglMgr = new OGLMgr();
@@ -134,6 +136,7 @@ void EEngineCore::GenerateCores() {
     m_memoryMgr = new MemoryMgr();
     m_logMgr = new ELogMgr();
 
+    m_cores.push_back(m_reflectionMgr);
     m_cores.push_back(m_resMgr);
     m_cores.push_back(m_gameObjectMgr);
     m_updateCores.push_back(m_gameObjectMgr);

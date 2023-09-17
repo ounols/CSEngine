@@ -14,8 +14,11 @@ auto GetComponent() override
 static const char* GetClassStaticType() { return #CLASSNAME; }  \
 explicit CLASSNAME(CSE::SGameObject* l_gameObject)
 
-#define COMPONENT_CONSTRUCTOR(CLASSNAME)    \
-CLASSNAME::CLASSNAME(CSE::SGameObject* l_gameObject) : CSE::SComponent(#CLASSNAME, l_gameObject)
+#define COMPONENT_CONSTRUCTOR(CLASSNAME) \
+namespace __REFELCTION_DUMP__ { namespace CLASSNAME {                    \
+unsigned char* __CSE_REFLECTION_DUMP__ = \
+CSE::ReflectionMgr::DefineWrapper::SetDefine(#CLASSNAME, []() { return new CSE::CLASSNAME(nullptr); });}} \
+CSE::CLASSNAME::CLASSNAME(CSE::SGameObject* l_gameObject) : CSE::SComponent(#CLASSNAME, l_gameObject)
 
 #define COMPONENT_DERIVED_CLASS_TYPE(CLASSNAME) \
 SetClassType(#CLASSNAME)

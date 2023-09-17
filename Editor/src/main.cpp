@@ -38,6 +38,8 @@ static void MainLoopForEmscripten()     { MainLoopForEmscriptenP(); }
 
 #include "Objects/MainDocker.h"
 #include "Manager/EEngineCore.h"
+#define __CSE_REFLECTION_ENABLE__
+#include "../../src/Manager/ReflectionMgr.h"
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
@@ -79,6 +81,7 @@ int main(int, char**) {
 #if defined(MSVC_CMAKE)
     _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
     _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
+//    _crtBreakAlloc = 124;
 #endif
 #endif
 

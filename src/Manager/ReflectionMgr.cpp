@@ -1,4 +1,5 @@
 #include "ReflectionMgr.h"
+#include "../Object/Base/ReflectionObject.h"
 
 using namespace CSE;
 
@@ -11,36 +12,16 @@ ReflectionMgr::~ReflectionMgr() {
 }
 
 void ReflectionMgr::Init() {
-
-}
-
-void ReflectionMgr::Register(ReflectionObject* object) {
-
-}
-
-void ReflectionMgr::Remove(ReflectionObject* object) {
-    std::string typeName = object->GetClassType();
-    if (m_objects.count(typeName) <= 0) return;
-    for (auto it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (it->second == object) {
-            m_objects.erase(it);
-            break;
-        }
+    for (auto* node = ReflectionMgr::m_defineWrapper.m_defined;;) {
+        if (node == nullptr) break;
+        auto* node_next = node->m_next;
+        m_reflected[node->m_name] = node->m_func;
+        node = node_next;
     }
 }
 
-ReflectionObject* ReflectionMgr::Get(std::string index) const {
-    return m_objects.at(index);
-}
-
-std::unordered_map<std::string, ReflectionObject*> ReflectionMgr::GetAll() const {
-    return m_objects;
-}
-
-std::string ReflectionMgr::GetID(ReflectionObject* object) const {
-    return object->GetClassType();
-}
-
-int ReflectionMgr::GetSize() const {
-    return m_objects.size();
+ReflectionObject* ReflectionMgr::CreateObject(const std::string& type) {
+    const auto& func = m_reflected.find(type);
+    if(func == m_reflected.end()) return nullptr;
+    return func->second();
 }

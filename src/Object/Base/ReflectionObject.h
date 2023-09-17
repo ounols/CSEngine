@@ -2,6 +2,8 @@
 
 #include <string>
 #include <utility>
+#include "../../Manager/EngineCore.h"
+#include "../../Manager/ReflectionMgr.h"
 
 namespace CSE {
     class ReflectionObject {
@@ -21,7 +23,9 @@ namespace CSE {
             return m_class.c_str();
         }
 
-        virtual ReflectionObject* NewObject(const std::string& name) = 0;
+        static ReflectionObject* NewObject(const std::string& name) {
+            return CORE->GetReflectionMgrCore()->CreateObject(name);
+        }
 
     protected:
         std::string m_class;

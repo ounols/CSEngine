@@ -79,6 +79,8 @@ namespace CSE {
         template <class T>
         T* CreateComponent();
 
+        SComponent* CreateComponent(const char* type);
+
         SGameObject* Find(std::string name) const;
 
         SGameObject* FindLocalByID(const std::string& id);
@@ -159,8 +161,6 @@ namespace CSE {
         return static_cast<T*>(GetSComponentByHash(id));
     }
 
-
-
     template <class T>
     T* SGameObject::CreateComponent() {
         T* component = new T(this);
@@ -168,6 +168,5 @@ namespace CSE {
         if (m_status == IDLE)
             component->Init();
         return component;
-
     }
 }

@@ -5,6 +5,9 @@
 
 using namespace CSE;
 
+#define __CSE_REFLECTION_ENABLE__
+#include "ReflectionMgr.h"
+
 MainProc::MainProc() = default;
 
 

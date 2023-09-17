@@ -23,6 +23,7 @@ namespace CSE {
     class MemoryMgr;
     class ScriptMgr;
     class OGLMgr;
+    class ReflectionMgr;
     class CoreBase;
 }
 
@@ -41,12 +42,14 @@ namespace CSE {
         GET_CORE_FUNCTION(SceneMgr, m_sceneMgr);
         GET_CORE_FUNCTION(MemoryMgr, m_memoryMgr);
         GET_CORE_FUNCTION(ScriptMgr, m_scriptMgr);
+        GET_CORE_FUNCTION(ReflectionMgr, m_reflectionMgr);
 
         void Init(unsigned int width, unsigned int height);
         void Update(float elapsedTime);
         void LateUpdate(float elapsedTime);
         void Render() const;
         void Exterminate();
+        void ExterminateWithoutReflectionDefine();
         void ResizeWindow(unsigned int width, unsigned int height);
         void SetDeviceBuffer(unsigned int id);
         virtual void GenerateCores();
@@ -69,6 +72,7 @@ namespace CSE {
         SceneMgr* m_sceneMgr = nullptr;
         MemoryMgr* m_memoryMgr = nullptr;
         ScriptMgr* m_scriptMgr = nullptr;
+        ReflectionMgr* m_reflectionMgr = nullptr;
 
         OGLMgr* m_oglMgr = nullptr;
 

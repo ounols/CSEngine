@@ -176,6 +176,7 @@
     <ClInclude Include="..\..\..\src\Manager\MemoryContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\MemoryMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\OGLMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\ReflectionMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\Render\DeferredRenderGroup.h" />
     <ClInclude Include="..\..\..\src\Manager\Render\DepthOnlyRenderGroup.h" />
     <ClInclude Include="..\..\..\src\Manager\Render\ForwardRenderGroup.h" />
@@ -186,6 +187,8 @@
     <ClInclude Include="..\..\..\src\Manager\SceneMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\SCloneFactory.h" />
     <ClInclude Include="..\..\..\src\Manager\ScriptMgr.h" />
+    <ClInclude Include="..\..\..\src\Object\Base\ReflectionObject.h" />
+    <ClInclude Include="..\..\..\src\Object\Base\ReflectionRef.h" />
     <ClInclude Include="..\..\..\src\Object\SGameObject.h" />
     <ClInclude Include="..\..\..\src\Object\SGameObjectFromSPrefab.h" />
     <ClInclude Include="..\..\..\src\Object\SPrefab.h" />
@@ -269,6 +272,7 @@
     <ClCompile Include="..\..\..\src\Manager\MemoryContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MemoryMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\OGLMgr.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\ReflectionMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Render\DeferredRenderGroup.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Render\DepthOnlyRenderGroup.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Render\ForwardRenderGroup.cpp" />
