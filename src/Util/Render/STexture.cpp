@@ -22,7 +22,7 @@ RESOURCE_CONSTRUCTOR(STexture) {
     }
 }
 
-RESOURCE_SUB_CONSTRUCTOR(STexture, STexture::Type type) {
+CSE::STexture::STexture(STexture::Type type) : SResource("STexture") {
     SetUndestroyable(true);
     SetType(type);
 }

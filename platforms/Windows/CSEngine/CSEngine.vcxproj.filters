@@ -186,6 +186,9 @@
     <ClCompile Include="..\..\..\src\Manager\ReflectionMgr.cpp">
       <Filter>src\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\Util\Animation\Skeleton.cpp">
+      <Filter>src\Util\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Sample\FirstDemoScene.h" />
@@ -483,6 +486,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\Object\Base\ReflectionObject.h">
       <Filter>src\Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\ResourceDef.h">
+      <Filter>src\Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

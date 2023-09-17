@@ -241,6 +241,7 @@
     <ClInclude Include="..\..\..\src\Util\Render\SRenderGroup.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SShaderGroup.h" />
     <ClInclude Include="..\..\..\src\Util\Render\STexture.h" />
+    <ClInclude Include="..\..\..\src\Util\ResourceDef.h" />
     <ClInclude Include="..\..\..\src\Util\SafeLog.h" />
     <ClInclude Include="..\..\..\src\Util\ScriptDef.h" />
     <ClInclude Include="..\..\..\src\Util\Settings.h" />
@@ -291,6 +292,7 @@
     <ClCompile Include="..\..\..\src\Sample\FirstDemoScene.cpp" />
     <ClCompile Include="..\..\..\src\SObject.cpp" />
     <ClCompile Include="..\..\..\src\Util\Animation\Animation.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Animation\Skeleton.cpp" />
     <ClCompile Include="..\..\..\src\Util\GLProgramHandle.cpp" />
     <ClCompile Include="..\..\..\src\Util\Loader\3DTEX\VolumeTextureGenerator.cpp" />
     <ClCompile Include="..\..\..\src\Util\Loader\DAE\DAEAnimationLoader.cpp" />
