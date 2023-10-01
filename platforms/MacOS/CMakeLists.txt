@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
-PROJECT(CSEngine.app)
+PROJECT(CSEngine)
 SET(CMAKE_VERBOSE_MAKEFILE true)
 SET(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_TYPE Debug)
@@ -50,7 +50,7 @@ add_library(SquirrelLib
         ${SQUIRREL_SRC})
 
 
-add_executable(CSEngine.app CSEngine_MacOS.cpp glad/src/glad.c ${CSENGINE_SRC})
+add_executable(CSEngine CSEngine_MacOS.cpp glad/src/glad.c ${CSENGINE_SRC})
 
 #헤더파일 위치
 include_directories(/usr/include)
@@ -59,5 +59,5 @@ include_directories(../../External/Squirrel/include)
 include_directories(glad/include)
 include_directories(${GLEW_INCLUDE_DIRS})
 
-target_link_libraries(CSEngine.app glfw)
-target_link_libraries(CSEngine.app SquirrelLib)
+target_link_libraries(CSEngine glfw)
+target_link_libraries(CSEngine SquirrelLib)

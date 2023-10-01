@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
-PROJECT(CSEditor.app)
+PROJECT(CSEditor)
 SET(CMAKE_VERBOSE_MAKEFILE true)
 SET(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_TYPE Debug)
@@ -63,7 +63,7 @@ add_library( SquirrelLib
 #        ${CSENGINE_SRC})
 
 
-add_executable(CSEditor.app glad/src/glad.c ${CSENGINE_SRC} ${CSENGINE_EDITOR_SRC} ${IMGUI_SRC})
+add_executable(CSEditor glad/src/glad.c ${CSENGINE_SRC} ${CSENGINE_EDITOR_SRC} ${IMGUI_SRC})
 
 #헤더파일 위치
 include_directories(/usr/include)
@@ -74,7 +74,7 @@ include_directories(../../../External/imgui)
 include_directories(glad/include)
 include_directories(${GLEW_INCLUDE_DIRS})
 
-target_link_libraries(CSEditor.app glfw)
-target_link_libraries(CSEditor.app SquirrelLib)
-target_link_libraries(CSEditor.app OpenGL::GL)
-#target_link_libraries(CSEditor.app CSEngineCore)
+target_link_libraries(CSEditor glfw)
+target_link_libraries(CSEditor SquirrelLib)
+target_link_libraries(CSEditor OpenGL::GL)
+#target_link_libraries(CSEditor CSEngineCore)
