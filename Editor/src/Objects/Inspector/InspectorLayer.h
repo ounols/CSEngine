@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "InspectorLayerBase.h"
 
 class XNode;
 
@@ -12,16 +13,16 @@ namespace CSEditor {
 
     class InspectorParam;
 
-    class InspectorLayer {
+    class InspectorLayer : public InspectorLayerBase {
     public:
         explicit InspectorLayer(CSE::SComponent& component);
 
-        ~InspectorLayer();
-        void UpdateParams();
-        void RenderUI();
+        ~InspectorLayer() override;
+        void UpdateParams() override;
+        void RenderUI() override;
 
     private:
-        void InitParams();
+        void InitParams() override;
 
     private:
         std::vector<InspectorParam*> m_params;

@@ -1,5 +1,7 @@
 #include "SMaterial.h"
 
+#include <utility>
+
 #include "../Loader/XML/XML.h"
 #include "../Loader/XML/XMLParser.h"
 #include "ShaderUtil.h"
@@ -107,6 +109,13 @@ void SMaterial::SetTexture(const std::string& name, SResource* texture) {
     auto find_iter = m_elements.find(name);
     if (find_iter == m_elements.end()) return;
     SetTextureFunc(find_iter->second, texture);
+}
+
+void SMaterial::SetRawData(const std::string& name, std::vector<std::string> raw) {
+    auto find_iter = m_elements.find(name);
+    if (find_iter == m_elements.end()) return;
+    find_iter->second->valueStr = std::move(raw);
+    SetBindFuncByType(find_iter->second);
 }
 
 void SMaterial::Init(const AssetMgr::AssetReference* asset) {

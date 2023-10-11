@@ -41,6 +41,10 @@ namespace CSE {
 
         SMaterial::Element* GetElement(const std::string& key) const;
 
+        const ElementsMap& GetElements() const {
+            return m_elements;
+        }
+
 		void InitElements(const ElementsMap& elements, SShaderGroup* shaders);
 
 		void SetInt(const std::string& name, int value);
@@ -50,6 +54,8 @@ namespace CSE {
 		void SetVec3(const std::string& name, const vec3& value);
 
 		void SetTexture(const std::string& name, SResource* texture);
+
+        void SetRawData(const std::string& name, std::vector<std::string> raw);
 
         short GetOrderLayer() const;
 
