@@ -13,7 +13,7 @@ namespace CSE {
 namespace CSEditor {
 
     class EEngineCore;
-    class InspectorLayer;
+    class InspectorLayerBase;
 
     class InspectorWindow : public WindowBase {
     public:
@@ -31,6 +31,6 @@ namespace CSEditor {
     private:
         EEngineCore* m_core = nullptr;
         CSE::SGameObject* m_selectedPrev = nullptr;
-        std::vector<InspectorLayer*> m_layers;
+        std::vector<InspectorLayerBase*> m_layers;
     };
 }

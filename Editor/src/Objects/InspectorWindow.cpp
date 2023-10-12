@@ -4,9 +4,12 @@
 #include "../../src/Object/SGameObject.h"
 #include "../../src/Component/SComponent.h"
 #include "../../src/Util/Loader/XML/XML.h"
+#include "../../src/Util/Render/SMaterial.h"
+#include "../../src/Component/RenderComponent.h"
 #include <regex>
 
 #include "Inspector/InspectorLayer.h"
+#include "Inspector/MaterialLayer.h"
 
 using namespace CSEditor;
 using namespace CSE;
@@ -53,8 +56,17 @@ void InspectorWindow::ReleaseLayers() {
 
 void InspectorWindow::InitLayers(const CSE::SGameObject& object) {
     const auto& components = object.GetComponents();
+    RenderComponent* selected_render = nullptr;
+    const auto& render_ref = ReflectionRef<RenderComponent>();
     m_layers.reserve(components.size());
     for (const auto& component: components) {
         m_layers.push_back(new InspectorLayer(*component));
+        if(render_ref.IsSameClass(component)) {
+            selected_render = static_cast<RenderComponent*>(component);
+        }
+    }
+
+    if(selected_render != nullptr) {
+        m_layers.push_back(new MaterialLayer(*selected_render));
     }
 }

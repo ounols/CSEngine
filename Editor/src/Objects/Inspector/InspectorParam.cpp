@@ -149,13 +149,13 @@ void InspectorParam::GenerateValue(const XNode& node) {
         case InspectorParamType::COMP: {
             const auto& str = node.value.c_str();
             const auto& ptr = CORE->GetGameObjectMgrCore()->FindComponentByHash(str);
+            const auto& type = node.getAttribute("d").value.c_str();
+            m_classType = type;
             m_value = ptr;
             m_deleteFunc = []() {};
             m_updateFunc = [this](const XNode& node) {
                 const auto& str = node.value.c_str();
-                const auto& type = node.getAttribute("d").value.c_str();
                 const auto& ptr = CORE->GetGameObjectMgrCore()->FindComponentByHash(str);
-                this->m_classType = type;
                 this->m_value = ptr;
             };
             break;
@@ -175,13 +175,13 @@ void InspectorParam::GenerateValue(const XNode& node) {
         case InspectorParamType::RES: {
             const auto& str = node.value.c_str();
             const auto& ptr = CSE::SResource::Get<CSE::SResource>(str);
+            const auto& type = node.getAttribute("d").value.c_str();
+            m_classType = type;
             m_value = ptr;
             m_deleteFunc = []() {};
             m_updateFunc = [this](const XNode& node) {
                 const auto& str = node.value.c_str();
-                const auto& type = node.getAttribute("d").value.c_str();
-                const auto& ptr = CSE::SResource::Create(str, type);
-                this->m_classType = type;
+                const auto& ptr = CSE::SResource::Create(str, this->m_classType);
                 this->m_value = ptr;
             };
             break;

@@ -6,6 +6,7 @@
 
 namespace CSE {
     class SMaterial;
+    class RenderComponent;
 }
 
 namespace CSEditor {
@@ -14,7 +15,7 @@ namespace CSEditor {
 
     class MaterialLayer : public InspectorLayerBase {
     public:
-        explicit MaterialLayer(CSE::SMaterial& material);
+        explicit MaterialLayer(CSE::RenderComponent& component);
 
         ~MaterialLayer() override;
 
@@ -31,5 +32,7 @@ namespace CSEditor {
     private:
         std::vector<InspectorParam*> m_params;
         CSE::SMaterial* m_material = nullptr;
+        CSE::SMaterial* m_material_ref = nullptr;
+        CSE::RenderComponent* m_render = nullptr;
     };
 }
