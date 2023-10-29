@@ -36,7 +36,7 @@ void MaterialLayer::RenderUI() {
         MaterialLayer::InitParams();
     }
 
-    if (!ImGui::CollapsingHeader(m_material->GetClassType(), ImGuiTreeNodeFlags_DefaultOpen))
+    if (!ImGui::CollapsingHeader(m_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
         return;
     // When Dragging
     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
@@ -63,6 +63,7 @@ void MaterialLayer::RenderUI() {
 }
 
 void MaterialLayer::InitParams() {
+    m_name = m_material->GetName() + " (Material)";
     for(const auto& element_pair : m_material->GetElements()) {
         const auto& element = element_pair.second;
         const CSE::SType& type = element->type;

@@ -66,7 +66,7 @@ void AssetMgr::LoadAssets(bool isPacked) {
 }
 
 AssetMgr::AssetReference* AssetMgr::GetAsset(const std::string& name) const {
-
+    // Get an asset by hash
     if (m_assets.count(name) > 0) return m_assets.at(name);
 
     std::string lowerName = name;

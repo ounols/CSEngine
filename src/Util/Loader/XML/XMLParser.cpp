@@ -129,6 +129,8 @@ SType XMLParser::GetType(unsigned int type) {
         case GL_BOOL: return SType::BOOL;
         case GL_FLOAT: return SType::FLOAT;
         case GL_INT: return SType::INT;
+        case GL_SAMPLER_3D:
+        case GL_SAMPLER_CUBE:
         case GL_SAMPLER_2D: return SType::TEXTURE;
         case GL_FLOAT_VEC2: return SType::VEC2;
         case GL_FLOAT_VEC3: return SType::VEC3;

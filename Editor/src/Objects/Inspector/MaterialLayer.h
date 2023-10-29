@@ -30,6 +30,7 @@ namespace CSEditor {
         static const char* ConvertSTypeToClassType(CSE::SType type);
 
     private:
+        std::string m_name;
         std::vector<InspectorParam*> m_params;
         CSE::SMaterial* m_material = nullptr;
         CSE::SMaterial* m_material_ref = nullptr;
