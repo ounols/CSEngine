@@ -64,6 +64,10 @@ void MaterialLayer::RenderUI() {
 
 void MaterialLayer::InitParams() {
     m_name = m_material->GetName() + " (Material)";
+    for (auto* param: m_params) {
+        SAFE_DELETE(param);
+    }
+    m_params.clear();
     for(const auto& element_pair : m_material->GetElements()) {
         const auto& element = element_pair.second;
         const CSE::SType& type = element->type;

@@ -66,11 +66,12 @@ void EngineCoreInstance::Render() const {
 void EngineCoreInstance::Exterminate() {
     ExterminateWithoutReflectionDefine();
     CSE::ReflectionMgr::DefineWrapper::ReleaseDefine();
+    CSE::LightMgr::ExterminateGlobalSettings();
 }
 
 void EngineCoreInstance::ExterminateWithoutReflectionDefine() {
     if(m_memoryMgr != nullptr)
-        static_cast<MemoryMgr*>(m_memoryMgr)->ExterminateObjects(true);
+        m_memoryMgr->ExterminateObjects(true);
     for (auto core : m_cores) {
         SAFE_DELETE(core);
     }

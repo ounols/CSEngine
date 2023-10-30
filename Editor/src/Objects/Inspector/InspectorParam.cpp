@@ -372,7 +372,12 @@ void InspectorParam::GenerateFunc() {
                             ImGui::EndDragDropTarget();
                             return false;
                         }
-                        m_value = CSE::SResource::Create(dropObject, dropObject->class_type);
+                        const auto& res = CSE::SResource::Create(dropObject, dropObject->class_type);
+                        if(res == m_value) {
+                            ImGui::EndDragDropTarget();
+                            return false;
+                        }
+                        m_value = res;
                         ImGui::EndDragDropTarget();
                         return true;
                     }

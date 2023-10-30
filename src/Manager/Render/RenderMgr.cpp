@@ -16,9 +16,6 @@
 
 using namespace CSE;
 
-CameraMgr* cameraMgr = nullptr;
-LightMgr* lightMgr = nullptr;
-
 //TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
 GLProgramHandle* postHandle = nullptr;
 
@@ -29,8 +26,8 @@ RenderMgr::~RenderMgr() {
 }
 
 void RenderMgr::Init() {
-    cameraMgr = CORE->GetCore(CameraMgr);
-    lightMgr = CORE->GetCore(LightMgr);
+    m_cameraMgr = CORE->GetCore(CameraMgr);
+    m_lightMgr = CORE->GetCore(LightMgr);
 
     m_width = SEnvironmentMgr::GetPointerWidth();
     m_height = SEnvironmentMgr::GetPointerHeight();
@@ -67,17 +64,17 @@ void RenderMgr::Render() const {
 }
 
 void RenderMgr::RenderShadows() const {
-    const auto& lightObjects = lightMgr->GetAll();
+    const auto& lightObjects = m_lightMgr->GetAll();
     for (const auto& light : lightObjects) {
         if(!light->IsShadow()) continue;
         m_depthOnlyRenderGroup->RenderAll(*light);
     }
-    lightMgr->RefreshShadowCount();
+    m_lightMgr->RefreshShadowCount();
 }
 
 void RenderMgr::RenderSubCameras() const {
-    const auto& cameraObjects = cameraMgr->GetAll();
-    const auto& mainCamera = cameraMgr->GetCurrentCamera();
+    const auto& cameraObjects = m_cameraMgr->GetAll();
+    const auto& mainCamera = m_cameraMgr->GetCurrentCamera();
 
     for (const auto& camera : cameraObjects) {
         if(!camera->GetIsEnable() || camera == mainCamera || camera->GetFrameBuffer() == nullptr) continue;
@@ -88,7 +85,7 @@ void RenderMgr::RenderSubCameras() const {
 }
 
 void RenderMgr::RenderMainCamera() const {
-    const auto& mainCamera = cameraMgr->GetCurrentCamera();
+    const auto& mainCamera = m_cameraMgr->GetCurrentCamera();
     if (mainCamera == nullptr) return;
 
     ResetBuffer(*mainCamera);
@@ -104,7 +101,7 @@ void RenderMgr::RenderMainCamera() const {
 }
 
 void RenderMgr::RenderSdfMap() const {
-    const auto& mainCamera = cameraMgr->GetCurrentCamera();
+    const auto& mainCamera = m_cameraMgr->GetCurrentCamera();
     m_sdfRenderGroup->RenderAll(*mainCamera);
 }
 

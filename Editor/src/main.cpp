@@ -38,7 +38,9 @@ static void MainLoopForEmscripten()     { MainLoopForEmscriptenP(); }
 
 #include "Objects/MainDocker.h"
 #include "Manager/EEngineCore.h"
+
 #define __CSE_REFLECTION_ENABLE__
+
 #include "../../src/Manager/ReflectionMgr.h"
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
@@ -137,8 +139,6 @@ int main(int, char**) {
     //init GLEW
     glewInit();
 #endif
-    CSEditor::EEngineCore::getEditorInstance()->Init(width, height);
-
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -190,6 +190,9 @@ int main(int, char**) {
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     auto* mainDocker = new CSEditor::MainDocker();
+    CSEditor::EEngineCore::getEditorInstance()->Init(width, height);
+    CSEditor::EEngineCore::getEditorInstance()->InitPreviewFramebuffer();
+    CSEditor::EEngineCore::getEditorInstance()->Update(0);
 
     // Main loop
 #ifdef __EMSCRIPTEN__
@@ -288,12 +291,16 @@ int main(int, char**) {
                     break;
                 case CSEditor::EEngineCore::STOP:
                     core->StopPreviewCore();
+                    core->ResizePreviewCore();
                     break;
             }
 
-            if(core->IsPreview()) {
+            if (core->IsPreview()) {
                 core->UpdatePreviewCore();
                 core->RenderPreviewCore();
+            }
+            else if (core->IsRender()) {
+                core->Render();
             }
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -10,6 +10,8 @@ namespace CSE {
     class CameraBase;
     class SGBuffer;
     class GLProgramHandle;
+    class CameraMgr;
+    class LightMgr;
 
     /**
      * @class RenderMgr
@@ -95,5 +97,9 @@ namespace CSE {
          * @brief Render SDF Map
          */
         void RenderSdfMap() const;
+
+    private:
+        CameraMgr* m_cameraMgr = nullptr;
+        LightMgr* m_lightMgr = nullptr;
     };
 }

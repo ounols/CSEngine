@@ -51,13 +51,13 @@ EEngineCore::~EEngineCore() {
 }
 
 void EEngineCore::BindPreviewFramebuffer() const {
-    if (!IsPreview()) return;
     glBindFramebuffer(GL_FRAMEBUFFER, m_previewFbo);
 }
 
 void EEngineCore::InitPreviewFramebuffer() {
     glGenFramebuffers(1, &m_previewFbo);
     glGenTextures(1, &m_previewTextureId);
+    SetDeviceBuffer(m_previewFbo);
 }
 
 void EEngineCore::StartPreviewCore() {
@@ -68,11 +68,11 @@ void EEngineCore::StartPreviewCore() {
     m_startTime = GetCurrentMillis();
 
     m_previewCore = new EPreviewCore();
-    if (m_previewFbo <= 0) {
-        InitPreviewFramebuffer();
-        BindPreviewFramebuffer();
-        ResizePreviewFramebuffer(m_previewWidth, m_previewHeight);
-    }
+//    if (m_previewFbo <= 0) {
+//        InitPreviewFramebuffer();
+//        BindPreviewFramebuffer();
+//        ResizePreviewFramebuffer(m_previewWidth, m_previewHeight);
+//    }
     m_previewCore->Init(m_previewWidth, m_previewHeight);
     m_previewCore->SetDeviceBuffer(m_previewFbo);
 }
@@ -97,7 +97,8 @@ void EEngineCore::RenderPreviewCore() const {
 
 void EEngineCore::ResizePreviewCore() {
     ResizePreviewFramebuffer(m_previewWidth, m_previewHeight);
-    m_previewCore->ResizeWindow(m_previewWidth, m_previewHeight);
+    if(IsPreview()) m_previewCore->ResizeWindow(m_previewWidth, m_previewHeight);
+    else ResizeWindow(m_previewWidth, m_previewHeight);
 }
 
 using std::chrono::duration_cast;

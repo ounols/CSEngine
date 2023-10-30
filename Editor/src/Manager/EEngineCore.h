@@ -60,6 +60,14 @@ namespace CSEditor {
             return m_previewCore != nullptr;
         }
 
+        bool IsRender() {
+            if(m_bIsRender) {
+                m_bIsRender = false;
+                return true;
+            }
+            return false;
+        }
+
         EPreviewCore* GetPreviewCore() const {
             return m_previewCore;
         }
@@ -78,6 +86,10 @@ namespace CSEditor {
 
         void InvokePreviewStop() {
             m_invokeState = InvokeState::STOP;
+        }
+
+        void InvokeEditorRender() {
+            m_bIsRender = true;
         }
 
         InvokeState CheckInvokeState() {
@@ -118,6 +130,7 @@ namespace CSEditor {
         unsigned int m_previewTextureId = 0;
         unsigned int m_previewWidth = 0;
         unsigned int m_previewHeight = 0;
+        bool m_bIsRender = false;
 
         HierarchyData* m_hierarchyData = nullptr;
         ELogMgr* m_logMgr = nullptr;

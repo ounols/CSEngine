@@ -71,6 +71,8 @@ namespace CSE {
          */
         void RefreshShadowCount(int shadowCount = -1) const;
 
+        static void ExterminateGlobalSettings();
+
     private:
         std::list<SIRender*> m_shadowObject;   ///< Objects to be rendered as shadows
         mutable int m_shadowCount = 0;          ///< Count of shadows

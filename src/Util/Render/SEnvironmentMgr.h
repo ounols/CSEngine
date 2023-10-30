@@ -32,7 +32,7 @@ namespace CSE {
         static void RenderPlaneVAO();
         static void RenderCubeVAO();
 
-
+        static void ReleaseVAO();
     private:
         void LoadCubeVAO();
 

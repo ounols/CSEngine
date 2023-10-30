@@ -65,3 +65,7 @@ void LightMgr::RefreshShadowCount(int shadowCount) const {
     }
     m_shadowCount = shadowCount;
 }
+
+void LightMgr::ExterminateGlobalSettings() {
+    SEnvironmentMgr::ReleaseVAO();
+}

@@ -10,13 +10,11 @@
 
 using namespace CSE;
 
-GLProgramHandle* globalSkyboxHandle = nullptr;
-
 COMPONENT_CONSTRUCTOR(CameraComponent), m_eye(nullptr), m_targetObject(nullptr) {
     auto cameraMgr = CORE->GetCore(CameraMgr);
     cameraMgr->Register(this);
     m_pRatio = const_cast<float*>(cameraMgr->GetProjectionRatio());
-    globalSkyboxHandle = cameraMgr->GetSkyboxProgram();
+    m_globalSkyboxHandle = cameraMgr->GetSkyboxProgram();
 }
 
 CameraComponent::~CameraComponent() = default;
@@ -260,10 +258,10 @@ void CameraComponent::RenderBackground() const {
             const auto& mapStruct = m_backgroundMap;
             if (mapStruct->map == nullptr) return;
 
-            glUseProgram(globalSkyboxHandle->Program);
-            globalSkyboxHandle->SetUniformMat4("PROJECTION_MATRIX", m_projectionMatrix);
+            glUseProgram(m_globalSkyboxHandle->Program);
+            m_globalSkyboxHandle->SetUniformMat4("PROJECTION_MATRIX", m_projectionMatrix);
             auto viewMatrix = mat4(m_cameraMatrix.ToMat3());
-            globalSkyboxHandle->SetUniformMat4("VIEW_MATRIX", viewMatrix);
+            m_globalSkyboxHandle->SetUniformMat4("VIEW_MATRIX", viewMatrix);
             mapStruct->map->Bind(mapStruct->mapId, 0);
 
             glDisable(GL_CULL_FACE);
@@ -282,9 +280,9 @@ void CameraComponent::SetBackgroundSkybox(STexture* skyboxTexture) {
     if (m_backgroundMap == nullptr) m_backgroundMap = new BackgroundMapStruct();
 
     m_backgroundMap->map = skyboxTexture;
-    m_backgroundMap->mapId = static_cast<unsigned short>(globalSkyboxHandle->UniformLocation("ENV_MAP")->id);
-    m_backgroundMap->viewId = static_cast<unsigned short>(globalSkyboxHandle->UniformLocation("VIEW_MATRIX")->id);
-    m_backgroundMap->projectionId = static_cast<unsigned short>(globalSkyboxHandle->UniformLocation(
+    m_backgroundMap->mapId = static_cast<unsigned short>(m_globalSkyboxHandle->UniformLocation("ENV_MAP")->id);
+    m_backgroundMap->viewId = static_cast<unsigned short>(m_globalSkyboxHandle->UniformLocation("VIEW_MATRIX")->id);
+    m_backgroundMap->projectionId = static_cast<unsigned short>(m_globalSkyboxHandle->UniformLocation(
             "PROJECTION_MATRIX")->id);
 }
 

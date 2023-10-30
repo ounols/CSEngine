@@ -5,6 +5,7 @@ using namespace CSEditor;
 
 PreviewWindow::PreviewWindow() {
     m_engineCore = EEngineCore::getEditorInstance();
+    m_engineCore->InvokeEditorRender();
 }
 
 PreviewWindow::~PreviewWindow() {
@@ -23,9 +24,18 @@ void PreviewWindow::SetUI() {
         m_prevHeight = height;
     }
 
-    if (m_engineCore->IsPreview()
-        && (m_prevWidth != width || m_prevHeight != height)) {
+    if ((m_prevWidth != width || m_prevHeight != height)) {
         m_engineCore->InvokePreviewResize(width, height);
+        m_engineCore->InvokeEditorRender();
+    }
+
+    if (!m_engineCore->IsPreview() && ImGui::IsWindowHovered()) {
+        for (ImGuiKey key = static_cast<ImGuiKey>(0); key < ImGuiKey_COUNT; key = (ImGuiKey) (key + 1)) {
+            if (ImGui::IsKeyDown(key)) {
+                m_engineCore->InvokeEditorRender();
+                break;
+            }
+        }
     }
 
     ImVec2 pos = ImGui::GetCursorScreenPos();

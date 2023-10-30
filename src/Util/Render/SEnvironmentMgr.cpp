@@ -22,13 +22,10 @@ unsigned int SEnvironmentMgr::m_planeVAO = 0;
 unsigned int SEnvironmentMgr::m_cubeVAO = 0;
 
 SEnvironmentMgr::SEnvironmentMgr() {
-
 }
 
 SEnvironmentMgr::~SEnvironmentMgr() {
-    glDeleteVertexArrays(1, &m_cubeVAO);
     glDeleteBuffers(1, &m_cubeVBO);
-    glDeleteVertexArrays(1, &m_planeVAO);
     glDeleteBuffers(1, &m_planeVBO);
 }
 
@@ -101,7 +98,7 @@ void SEnvironmentMgr::RenderPBREnvironment() {
 
     m_hdrTexture->Bind(hdrTextureLocation, 0);
 
-    LoadCubeVAO();
+    if(m_cubeVAO <= 0) LoadCubeVAO();
     glGetError();
     glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
@@ -224,7 +221,7 @@ void SEnvironmentMgr::RenderPBREnvironment() {
     glViewport(0, 0, 512, 512);
     glUseProgram(m_brdfShader->Program);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    LoadPlaneVAO();
+    if(m_planeVAO <= 0) LoadPlaneVAO();
     RenderPlaneVAO();
 
 //    std::string save_str = CSE::AssetsPath() + "brdf.bmp";
@@ -368,4 +365,9 @@ int SEnvironmentMgr::BindPBREnvironmentMap(const GLProgramHandle* handle, int te
     if(handle->Uniforms.LightBrdfLut != HANDLE_NULL)
         m_brdfMap->Bind(handle->Uniforms.LightBrdfLut, textureLayout + steps++);
     return steps;
+}
+
+void SEnvironmentMgr::ReleaseVAO() {
+    glDeleteVertexArrays(1, &m_cubeVAO);
+    glDeleteVertexArrays(1, &m_planeVAO);
 }

@@ -9,11 +9,8 @@
 
 using namespace CSE;
 
-ResMgr* resMgr = nullptr;
-
-
 SGBuffer::SGBuffer() {
-    resMgr = CORE->GetCore(ResMgr);
+    m_resMgr = CORE->GetCore(ResMgr);
 }
 
 SGBuffer::~SGBuffer() = default;
@@ -34,7 +31,7 @@ void SGBuffer::GenerateGBuffer(int width, int height) {
     m_geometryFrameBuffer->RasterizeFramebuffer();
 
 //    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-//        std::cout << "Framebuffer not complete!" << std::endl;
+//        SafeLog::Log("Framebuffer not complete!");
 }
 
 void SGBuffer::AttachGeometryFrameBuffer() const {
@@ -55,7 +52,7 @@ void SGBuffer::ResizeGBuffer(int width, int height) {
 
 void SGBuffer::ReleaseGBuffer() {
     if(m_geometryFrameBuffer != nullptr) {
-        resMgr->Remove(m_geometryFrameBuffer);
+        m_resMgr->Remove(m_geometryFrameBuffer);
         m_geometryFrameBuffer = nullptr;
     }
 }

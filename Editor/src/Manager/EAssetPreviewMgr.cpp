@@ -22,9 +22,15 @@ void EAssetPreviewMgr::Init() {
 
 CSE::STexture* EAssetPreviewMgr::GetPreview(std::string& hash) {
     const auto& iter = m_previews.find(hash);
-    if (iter != m_previews.end()) return static_cast<STexture*>(iter->second);
+    SResource* res = nullptr;
+    if (iter != m_previews.end()) res = iter->second;
+    else res = GeneratePreview(hash);
 
-    return static_cast<STexture*>(GeneratePreview(hash));
+    if(res->IsSameClass(STexture::GetClassStaticType())) {
+        return static_cast<STexture*>(res);
+    }
+
+    return nullptr;
 }
 
 SResource* EAssetPreviewMgr::GeneratePreview(std::string& hash) {

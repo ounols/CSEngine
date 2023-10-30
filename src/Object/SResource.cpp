@@ -102,7 +102,7 @@ SResource* SResource::Get(std::string& name) {
 SResource* SResource::Create(const AssetMgr::AssetReference* asset, const std::string& classType) {
     if (asset == nullptr) return nullptr;
     {
-        SResource* res = GetResource(asset->name);
+        SResource* res = GetResource(asset->hash);
         if (res != nullptr) return res;
     }
     SResource* res = static_cast<SResource*>(ReflectionObject::NewObject(classType));
