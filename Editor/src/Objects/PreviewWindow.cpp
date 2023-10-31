@@ -29,11 +29,14 @@ void PreviewWindow::SetUI() {
         m_engineCore->InvokeEditorRender();
     }
 
-    if (!m_engineCore->IsPreview() && ImGui::IsWindowHovered()) {
-        for (ImGuiKey key = static_cast<ImGuiKey>(0); key < ImGuiKey_COUNT; key = (ImGuiKey) (key + 1)) {
-            if (ImGui::IsKeyDown(key)) {
-                m_engineCore->InvokeEditorRender();
-                break;
+    if (!m_engineCore->IsPreview()) {
+
+        if(ImGui::IsWindowFocused() || ImGui::IsWindowHovered()) {
+            for (ImGuiKey key = static_cast<ImGuiKey>(0); key < ImGuiKey_COUNT; key = (ImGuiKey) (key + 1)) {
+                if (ImGui::IsKeyDown(key)) {
+                    m_engineCore->InvokeEditorRender();
+                    break;
+                }
             }
         }
     }

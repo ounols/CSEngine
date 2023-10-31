@@ -32,6 +32,15 @@ void InspectorWindow::SetUI() {
         return;
     }
 
+    if(!m_core->IsPreview() && (ImGui::IsWindowFocused() || ImGui::IsWindowHovered())) {
+        for (ImGuiKey key = static_cast<ImGuiKey>(0); key < ImGuiKey_COUNT; key = (ImGuiKey) (key + 1)) {
+            if (ImGui::IsKeyDown(key)) {
+                m_core->InvokeEditorRender();
+                break;
+            }
+        }
+    }
+
     const bool isChange = selected != m_selectedPrev;
     if (isChange) {
         ReleaseLayers();

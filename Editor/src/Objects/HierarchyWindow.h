@@ -6,6 +6,9 @@
 #include "Base/HierarchyData.h"
 
 namespace CSEditor {
+
+    class EEngineCore;
+
     class HierarchyWindow : public WindowBase, public HierarchyData {
     public:
         HierarchyWindow();
@@ -18,5 +21,8 @@ namespace CSEditor {
         void RenderTrees();
 
         void RenderGameObject(CSE::SGameObject& parent);
+
+    private:
+        EEngineCore* m_core = nullptr;
     };
 }

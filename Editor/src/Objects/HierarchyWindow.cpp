@@ -10,7 +10,8 @@
 using namespace CSEditor;
 
 HierarchyWindow::HierarchyWindow() {
-    EEngineCore::getEditorInstance()->SetHierarchyData(this);
+    m_core = EEngineCore::getEditorInstance();
+    m_core->SetHierarchyData(this);
 }
 
 HierarchyWindow::~HierarchyWindow() = default;
@@ -19,6 +20,15 @@ void HierarchyWindow::SetUI() {
     ImGui::Begin("Hierarchy");
 
     RenderTrees();
+
+    if(!m_core->IsPreview() && (ImGui::IsWindowFocused() || ImGui::IsWindowHovered())) {
+        for (ImGuiKey key = static_cast<ImGuiKey>(0); key < ImGuiKey_COUNT; key = (ImGuiKey) (key + 1)) {
+            if (ImGui::IsKeyDown(key)) {
+                m_core->InvokeEditorRender();
+                break;
+            }
+        }
+    }
 
     ImGui::End();
 }
