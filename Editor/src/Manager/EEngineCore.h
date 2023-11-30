@@ -56,6 +56,8 @@ namespace CSEditor {
 
         void ResizePreviewCore();
 
+        void UpdateTransforms();
+
         bool IsPreview() const {
             return m_previewCore != nullptr;
         }

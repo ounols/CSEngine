@@ -301,6 +301,7 @@ int main(int, char**) {
             }
             else if (core->IsRender()) {
                 core->Render();
+                core->UpdateTransforms();
             }
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);

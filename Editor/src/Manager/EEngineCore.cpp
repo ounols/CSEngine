@@ -18,6 +18,7 @@
 #include "../../src/Manager/SceneMgr.h"
 #include "../../src/Manager/MemoryMgr.h"
 #include "../../src/Manager/ReflectionMgr.h"
+#include "../../src/Component/TransformComponent.h"
 
 using namespace CSE;
 using namespace CSEditor;
@@ -97,7 +98,7 @@ void EEngineCore::RenderPreviewCore() const {
 
 void EEngineCore::ResizePreviewCore() {
     ResizePreviewFramebuffer(m_previewWidth, m_previewHeight);
-    if(IsPreview()) m_previewCore->ResizeWindow(m_previewWidth, m_previewHeight);
+    if (IsPreview()) m_previewCore->ResizeWindow(m_previewWidth, m_previewHeight);
     else ResizeWindow(m_previewWidth, m_previewHeight);
 }
 
@@ -121,7 +122,7 @@ void EEngineCore::ResizePreviewFramebuffer(unsigned int width, unsigned int heig
 }
 
 void EEngineCore::GenerateCores() {
-    if(m_isGenerated) return;
+    if (m_isGenerated) return;
     m_isGenerated = true;
     m_cores = std::vector<CoreBase*>();
     m_cores.reserve(10);
@@ -158,4 +159,12 @@ void EEngineCore::GenerateCores() {
 
 void EEngineCore::AddLog(const char* log, int category) {
     m_logMgr->AddLog(log, static_cast<ELogMgr::Category>(category));
+}
+
+void EEngineCore::UpdateTransforms() {
+    const auto& objs = m_gameObjectMgr->GetAll();
+    for (const auto& pair: objs) {
+        const auto& transform = static_cast<TransformComponent*>(pair.second->GetTransform());
+        transform->Tick(0);
+    }
 }
