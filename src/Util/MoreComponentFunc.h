@@ -15,8 +15,6 @@ namespace CSE {
         ~MoreComponentFunc() {}
 
     public:
-        static SComponent* CreateComponent(SGameObject* obj, std::string component_type);
-
         static void BindComponentToSQInstance(SComponent* component, std::string name,
                                               sqext::SQIClassInstance* instance);
     };

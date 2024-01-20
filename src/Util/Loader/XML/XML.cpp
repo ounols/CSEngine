@@ -55,7 +55,8 @@ std::vector<std::string> XValue::toStringVector() const {
 
     for (unsigned int i = 0; i < this->length(); i++) {
         int acsii = (int) this->at(i);
-        buffer += (char) acsii;
+        if(acsii != 32)
+            buffer += (char) acsii;
 
         if (acsii == 32 || i == this->length() - 1) {
             array.push_back(buffer);

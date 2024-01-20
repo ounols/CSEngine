@@ -14,18 +14,15 @@
 
 using namespace CSE;
 
-SResource::SResource() {
+SResource::SResource(std::string classType) : ReflectionObject(std::move(classType)) {
     auto resMgr = CORE->GetCore(ResMgr);
     resMgr->Register(this);
     m_name = "Resource " + std::to_string(resMgr->GetSize());
 }
 
-SResource::SResource(bool isRegister) {
-    m_name = "Unregister Resource";
-}
-
-SResource::SResource(const SResource* resource, bool isRegister) : SObject(isRegister) {
-    if(isRegister) {
+SResource::SResource(const SResource* resource, bool isRegister) : SObject(isRegister),
+                                                                   ReflectionObject(resource->GetClassType()) {
+    if (isRegister) {
         CORE->GetCore(ResMgr)->Register(this);
     }
     m_name = resource->m_name + " (instance)";
@@ -45,25 +42,24 @@ void SResource::SetResource(std::string name, bool isInit) {
     if (m_isInited) return;
 
     auto asset = CORE->GetCore(ResMgr)->GetAssetReference(std::move(name));
-
     SetResource(asset, isInit);
 }
 
-void SResource::SetResource(const AssetMgr::AssetReference* asset, bool isInit) {
+void SResource::SetResource(AssetMgr::AssetReference* asset, bool isInit) {
     if (asset == nullptr) return;
     if (m_isInited) return;
 
+    asset->resource = this;
     m_isInited = true;
     m_absoluteId = asset->id;
-    if(!asset->hash.empty()) {
+    if (!asset->hash.empty()) {
         std::string hash = asset->hash;
         SetHash(hash);
-    }
-    else {
+    } else {
         std::string meta = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
                            "<CSEMETA version=\"1.0.0\">\n"
                            "<hash-data hash=\"" + m_hash + "\">\n"
-                           "\n</hash-data>\n</CSEMETA>";
+                                                           "\n</hash-data>\n</CSEMETA>";
         SaveTxtFile(asset->name_path + ".meta", meta);
     }
 
@@ -83,6 +79,33 @@ void SResource::SetHash(std::string& hash) {
 }
 
 AssetMgr::AssetReference* SResource::GetAssetReference(std::string hash) const {
-    if(hash.empty()) hash = m_hash;
+    if (hash.empty()) hash = m_hash;
     return CORE->GetCore(ResMgr)->GetAssetReference(std::move(hash));
+}
+
+SResource* SResource::Create(const std::string& name, const std::string& classType) {
+    {
+        SResource* res = GetResource(name);
+        if (res != nullptr) return res;
+    }
+    SResource* res = static_cast<SResource*>(ReflectionObject::NewObject(classType));
+    res->SetResource(name);
+    return res;
+}
+
+SResource* SResource::Get(std::string& name) {
+    SResource* res = GetResource(name);
+    if (res != nullptr) return res;
+    return nullptr;
+}
+
+SResource* SResource::Create(const AssetMgr::AssetReference* asset, const std::string& classType) {
+    if (asset == nullptr) return nullptr;
+    {
+        SResource* res = GetResource(asset->hash);
+        if (res != nullptr) return res;
+    }
+    SResource* res = static_cast<SResource*>(ReflectionObject::NewObject(classType));
+    res->SetResource(const_cast<AssetMgr::AssetReference*>(asset));
+    return res;
 }

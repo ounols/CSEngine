@@ -14,10 +14,10 @@ namespace CSE {
     class STexture : public SResource {
     public:
         enum Type {
-            TEX_2D = 0, TEX_CUBE = 1
+            TEX_2D = 0, TEX_CUBE = 1, TEX_3D = 2
         };
     public:
-        STexture();
+        RESOURCE_DEFINE_CONSTRUCTOR(STexture);
         explicit STexture(Type type);
 
         ~STexture() override;
@@ -60,10 +60,6 @@ namespace CSE {
 
         void SetType(Type type);
 
-        int getMWidth() const;
-
-        int getMHeight() const;
-
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 
@@ -77,6 +73,7 @@ namespace CSE {
         int m_targetGL = GL_TEXTURE_2D;
         int m_width = 0;
         int m_height = 0;
+        int m_depth = 0;
         int m_channels = 0;
         int m_internalFormat = 0;
         int m_glType = GL_UNSIGNED_BYTE;

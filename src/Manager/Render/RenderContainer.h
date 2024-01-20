@@ -17,6 +17,7 @@ namespace CSE {
             FORWARD = 0,
             DEFERRED = 1,
             DEPTH_ONLY = 2,
+            SDF = 3,
         };
 
     public:
@@ -34,6 +35,7 @@ namespace CSE {
         SRenderGroup* m_forwardRenderGroup = nullptr;
         SRenderGroup* m_deferredRenderGroup = nullptr;
         SRenderGroup* m_depthOnlyRenderGroup = nullptr;
+        SRenderGroup* m_sdfRenderGroup = nullptr;
 
         unsigned int* m_width = nullptr;
         unsigned int* m_height = nullptr;

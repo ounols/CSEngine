@@ -32,7 +32,6 @@ void RenderComponent::Exterminate() {
 void RenderComponent::Init() {
 
     if (!m_disableShadow) {
-        m_lightMgr = CORE->GetCore(LightMgr);
         m_renderMgr->Register(this, RenderContainer::DEPTH_ONLY);
     }
 
@@ -124,7 +123,7 @@ void RenderComponent::SetValue(std::string name_str, VariableBinder::Arguments v
 std::string RenderComponent::PrintValue() const {
     PRINT_START("component");
 
-    PRINT_VALUE(material, ConvertSpaceStr(material->GetHash()));
+    PRINT_RES(material);
 
     PRINT_END("component");
 }

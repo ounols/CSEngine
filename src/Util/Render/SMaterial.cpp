@@ -1,5 +1,7 @@
 #include "SMaterial.h"
 
+#include <utility>
+
 #include "../Loader/XML/XML.h"
 #include "../Loader/XML/XMLParser.h"
 #include "ShaderUtil.h"
@@ -8,7 +10,7 @@
 
 using namespace CSE;
 
-SMaterial::SMaterial() {
+RESOURCE_CONSTRUCTOR(SMaterial) {
     m_lightMgr = CORE->GetCore(LightMgr);
 }
 
@@ -61,6 +63,12 @@ void SMaterial::AttachElement() const {
     }
 }
 
+SMaterial::Element* SMaterial::GetElement(const std::string& key) const {
+    const auto& result = m_elements.find(key);
+    if(result == m_elements.end()) return nullptr;
+    return result->second;
+}
+
 void SMaterial::InitElements(const ElementsMap& elements, SShaderGroup* shaders) {
     const auto& handle = shaders->GetHandleByMode(m_mode);
     for (const auto& element_pair : elements) {
@@ -101,6 +109,13 @@ void SMaterial::SetTexture(const std::string& name, SResource* texture) {
     auto find_iter = m_elements.find(name);
     if (find_iter == m_elements.end()) return;
     SetTextureFunc(find_iter->second, texture);
+}
+
+void SMaterial::SetRawData(const std::string& name, std::vector<std::string> raw) {
+    auto find_iter = m_elements.find(name);
+    if (find_iter == m_elements.end()) return;
+    find_iter->second->valueStr = std::move(raw);
+    SetBindFuncByType(find_iter->second);
 }
 
 void SMaterial::Init(const AssetMgr::AssetReference* asset) {
@@ -286,7 +301,7 @@ int SMaterial::GetTextureCount() const {
 
 SMaterial* SMaterial::GenerateMaterial(SShaderGroup* shaders) {
     if (shaders == nullptr) return nullptr;
-    const auto& handle = shaders->GetHandleByMode(SMaterialMode::NORMAL);
+    const auto& handle = shaders->GetHandleByMode(SMaterialMode::FORWARD);
 
     const auto& uniformList = handle->GetUniformsList();
     auto material = new SMaterial();

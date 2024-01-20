@@ -174,6 +174,21 @@
     <ClCompile Include="..\..\..\src\Util\Render\SShaderGroup.cpp">
       <Filter>src\Util\Render</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\Manager\EngineCoreInstance.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Manager\Render\SdfRenderGroup.cpp">
+      <Filter>src\Manager\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Util\Loader\3DTEX\VolumeTextureGenerator.cpp">
+      <Filter>src\Util\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Manager\ReflectionMgr.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Util\Animation\Skeleton.cpp">
+      <Filter>src\Util\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Sample\FirstDemoScene.h" />
@@ -454,6 +469,27 @@
     <ClInclude Include="..\..\..\src\Util\Render\SShaderGroup.h">
       <Filter>src\Util\Render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Manager\EngineCoreInstance.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Manager\Render\SdfRenderGroup.h">
+      <Filter>src\Manager\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\Loader\3DTEX\VolumeTextureGenerator.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Manager\ReflectionMgr.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Object\Base\ReflectionRef.h">
+      <Filter>src\Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Object\Base\ReflectionObject.h">
+      <Filter>src\Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Util\ResourceDef.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CSEngine.rc" />
@@ -494,6 +530,9 @@
     </Filter>
     <Filter Include="src\Manager\Render">
       <UniqueIdentifier>{1fa98e1c-2004-497f-8aa6-7a713b7dbc86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Object\Base">
+      <UniqueIdentifier>{22e26fda-af3b-4960-93e7-971d06777c20}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

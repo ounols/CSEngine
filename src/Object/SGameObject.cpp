@@ -27,7 +27,7 @@ SGameObject::SGameObject(std::string name) {
 }
 
 SGameObject::SGameObject(std::string name, std::string hash) {
-    SetHash(hash);
+    SObject::SetHash(hash);
     CORE->GetCore(GameObjectMgr)->Register(this);
     m_name = std::move(name);
     m_transform = CreateComponent<TransformComponent>();
@@ -126,7 +126,6 @@ const std::list<SGameObject*>& SGameObject::GetChildren() const {
 }
 
 void SGameObject::AddComponent(SComponent* component) {
-    auto str_class = component->GetClassType();
     m_components.push_back(component);
 }
 
@@ -151,6 +150,15 @@ HSQOBJECT SGameObject::GetCustomComponent(const char* className) {
 
 void SGameObject::DeleteComponent(SComponent* component) {
     m_components.remove(component);
+}
+
+SComponent* SGameObject::CreateComponent(const char* type) {
+    SComponent* component = static_cast<SComponent*>(ReflectionObject::NewObject(type));
+    component->SetGameObject(this);
+    AddComponent(component);
+    if (m_status == IDLE)
+        component->Init();
+    return component;
 }
 
 std::string SGameObject::GetID() const {
@@ -292,3 +300,8 @@ std::string SGameObject::GenerateMeta() {
     return GetMetaString(*this, startIndex);
 }
 
+void SGameObject::SetHash(std::string& hash) {
+    const std::string prevHash = std::string(m_hash);
+    SObject::SetHash(hash);
+    CORE->GetCore(GameObjectMgr)->ChangeHash(prevHash, hash);
+}

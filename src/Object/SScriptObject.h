@@ -11,8 +11,7 @@ namespace CSE {
 
     class SScriptObject : public SResource {
     public:
-        SScriptObject();
-
+        RESOURCE_DEFINE_CONSTRUCTOR(SScriptObject);
         ~SScriptObject() override;
 
         void Exterminate() override;

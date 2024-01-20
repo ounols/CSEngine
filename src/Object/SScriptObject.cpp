@@ -14,7 +14,7 @@
 using namespace CSE;
 using namespace Sqrat;
 
-SScriptObject::SScriptObject() = default;
+RESOURCE_CONSTRUCTOR(SScriptObject) {}
 
 SScriptObject::~SScriptObject() = default;
 

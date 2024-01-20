@@ -168,6 +168,7 @@
     <ClInclude Include="..\..\..\src\Manager\CameraMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\CoreBufferContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\EngineCore.h" />
+    <ClInclude Include="..\..\..\src\Manager\EngineCoreInstance.h" />
     <ClInclude Include="..\..\..\src\Manager\GameObjectContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\GameObjectMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\LightMgr.h" />
@@ -175,15 +176,19 @@
     <ClInclude Include="..\..\..\src\Manager\MemoryContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\MemoryMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\OGLMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\ReflectionMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\Render\DeferredRenderGroup.h" />
     <ClInclude Include="..\..\..\src\Manager\Render\DepthOnlyRenderGroup.h" />
     <ClInclude Include="..\..\..\src\Manager\Render\ForwardRenderGroup.h" />
     <ClInclude Include="..\..\..\src\Manager\Render\RenderContainer.h" />
     <ClInclude Include="..\..\..\src\Manager\Render\RenderMgr.h" />
+    <ClInclude Include="..\..\..\src\Manager\Render\SdfRenderGroup.h" />
     <ClInclude Include="..\..\..\src\Manager\ResMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\SceneMgr.h" />
     <ClInclude Include="..\..\..\src\Manager\SCloneFactory.h" />
     <ClInclude Include="..\..\..\src\Manager\ScriptMgr.h" />
+    <ClInclude Include="..\..\..\src\Object\Base\ReflectionObject.h" />
+    <ClInclude Include="..\..\..\src\Object\Base\ReflectionRef.h" />
     <ClInclude Include="..\..\..\src\Object\SGameObject.h" />
     <ClInclude Include="..\..\..\src\Object\SGameObjectFromSPrefab.h" />
     <ClInclude Include="..\..\..\src\Object\SPrefab.h" />
@@ -202,6 +207,7 @@
     <ClInclude Include="..\..\..\src\Util\ComponentDef.h" />
     <ClInclude Include="..\..\..\src\Util\GLProgramHandle.h" />
     <ClInclude Include="..\..\..\src\Util\Interface\TransformInterface.h" />
+    <ClInclude Include="..\..\..\src\Util\Loader\3DTEX\VolumeTextureGenerator.h" />
     <ClInclude Include="..\..\..\src\Util\Loader\DAE\DAEAnimationLoader.h" />
     <ClInclude Include="..\..\..\src\Util\Loader\DAE\DAELoader.h" />
     <ClInclude Include="..\..\..\src\Util\Loader\DAE\DAEUtil\DAEConvertSGameObject.h" />
@@ -235,6 +241,7 @@
     <ClInclude Include="..\..\..\src\Util\Render\SRenderGroup.h" />
     <ClInclude Include="..\..\..\src\Util\Render\SShaderGroup.h" />
     <ClInclude Include="..\..\..\src\Util\Render\STexture.h" />
+    <ClInclude Include="..\..\..\src\Util\ResourceDef.h" />
     <ClInclude Include="..\..\..\src\Util\SafeLog.h" />
     <ClInclude Include="..\..\..\src\Util\ScriptDef.h" />
     <ClInclude Include="..\..\..\src\Util\Settings.h" />
@@ -258,6 +265,7 @@
     <ClCompile Include="..\..\..\src\Manager\CameraMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\CoreBufferContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\EngineCore.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\EngineCoreInstance.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\GameObjectMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\LightMgr.cpp" />
@@ -265,11 +273,13 @@
     <ClCompile Include="..\..\..\src\Manager\MemoryContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\MemoryMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\OGLMgr.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\ReflectionMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Render\DeferredRenderGroup.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Render\DepthOnlyRenderGroup.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Render\ForwardRenderGroup.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Render\RenderContainer.cpp" />
     <ClCompile Include="..\..\..\src\Manager\Render\RenderMgr.cpp" />
+    <ClCompile Include="..\..\..\src\Manager\Render\SdfRenderGroup.cpp" />
     <ClCompile Include="..\..\..\src\Manager\ResMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\SceneMgr.cpp" />
     <ClCompile Include="..\..\..\src\Manager\SCloneFactory.cpp" />
@@ -282,7 +292,9 @@
     <ClCompile Include="..\..\..\src\Sample\FirstDemoScene.cpp" />
     <ClCompile Include="..\..\..\src\SObject.cpp" />
     <ClCompile Include="..\..\..\src\Util\Animation\Animation.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Animation\Skeleton.cpp" />
     <ClCompile Include="..\..\..\src\Util\GLProgramHandle.cpp" />
+    <ClCompile Include="..\..\..\src\Util\Loader\3DTEX\VolumeTextureGenerator.cpp" />
     <ClCompile Include="..\..\..\src\Util\Loader\DAE\DAEAnimationLoader.cpp" />
     <ClCompile Include="..\..\..\src\Util\Loader\DAE\DAELoader.cpp" />
     <ClCompile Include="..\..\..\src\Util\Loader\DAE\DAEUtil\DAEConvertSGameObject.cpp" />

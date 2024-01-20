@@ -16,6 +16,8 @@
 
 namespace CSE {
 
+    class SResource;
+
     class AssetMgr {
     public:
         enum TYPE {
@@ -30,7 +32,9 @@ namespace CSE {
             std::string hash;
             std::string name_full;
             std::string extension;
+            std::string class_type;
             TYPE type = NONE;
+            SResource* resource;
         };
     public:
         AssetMgr();
@@ -49,6 +53,12 @@ namespace CSE {
 
         static std::string GetAssetHash(const std::string& path);
 
+#ifdef __CSE_EDITOR__
+        std::list<AssetMgr::AssetReference*> GetAllAssets() const {
+            return m_assetsList;
+        }
+#endif
+
 #ifdef __ANDROID__
         void SetAssetManager(AAssetManager* obj);
         AAssetManager* GetAssetManager();
@@ -61,6 +71,7 @@ namespace CSE {
         void ReadPackage(const std::string& path);
 
         AssetReference* CreateAsset(const std::string& path, const std::string& name_full, std::string name = "");
+        AssetReference* CreateAssetFolder(const std::string& path, const std::string& name_full);
 
         void SetType();
 
@@ -78,5 +89,4 @@ namespace CSE {
         std::string m_package_raw;
 #endif
     };
-
 }

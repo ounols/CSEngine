@@ -1,0 +1,328 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{56BD56F4-9FB9-4F84-8A65-DF988D903B66}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>CSEngine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>../../../External/glew/include;../../../External/Squirrel/include;../../../External/glfw/include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>../../../../External/glew/include;../../../../External/Squirrel/include;../../../../External/glfw/include;../../../../External/imgui;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <PrecompiledHeaderFile />
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\External\Squirrel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\External\imgui\imconfig.h" />
+    <ClInclude Include="..\..\..\..\External\imgui\imgui.h" />
+    <ClInclude Include="..\..\..\..\External\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="..\..\..\..\External\imgui\imgui_impl_opengl2.h" />
+    <ClInclude Include="..\..\..\..\External\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\..\..\..\External\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="..\..\..\..\External\imgui\imgui_internal.h" />
+    <ClInclude Include="..\..\..\..\External\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\..\..\..\External\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\..\..\..\External\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\..\..\..\src\Component\Animation\AnimatorComponent.h" />
+    <ClInclude Include="..\..\..\..\src\Component\Animation\JointComponent.h" />
+    <ClInclude Include="..\..\..\..\src\Component\CameraComponent.h" />
+    <ClInclude Include="..\..\..\..\src\Component\CustomComponent.h" />
+    <ClInclude Include="..\..\..\..\src\Component\DrawableSkinnedMeshComponent.h" />
+    <ClInclude Include="..\..\..\..\src\Component\DrawableStaticMeshComponent.h" />
+    <ClInclude Include="..\..\..\..\src\Component\LightComponent.h" />
+    <ClInclude Include="..\..\..\..\src\Component\RenderComponent.h" />
+    <ClInclude Include="..\..\..\..\src\Component\SComponent.h" />
+    <ClInclude Include="..\..\..\..\src\Component\SISComponent.h" />
+    <ClInclude Include="..\..\..\..\src\Component\TransformComponent.h" />
+    <ClInclude Include="..\..\..\..\src\MacroDef.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\AssetMgr.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\Base\CoreBase.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\Base\RenderCoreBase.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\Base\Scene.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\Base\SContainer.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\CameraMgr.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\CoreBufferContainer.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\EngineCore.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\GameObjectContainer.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\GameObjectMgr.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\LightMgr.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\MainProc.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\MemoryContainer.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\MemoryMgr.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\OGLMgr.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\RenderContainer.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\RenderMgr.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\ResMgr.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\SceneMgr.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\SCloneFactory.h" />
+    <ClInclude Include="..\..\..\..\src\Manager\ScriptMgr.h" />
+    <ClInclude Include="..\..\..\..\src\Object\SGameObject.h" />
+    <ClInclude Include="..\..\..\..\src\Object\SPrefab.h" />
+    <ClInclude Include="..\..\..\..\src\Object\SResource.h" />
+    <ClInclude Include="..\..\..\..\src\Object\SScene.h" />
+    <ClInclude Include="..\..\..\..\src\Object\SScriptObject.h" />
+    <ClInclude Include="..\..\..\..\src\OGLDef.h" />
+    <ClInclude Include="..\..\..\..\src\Sample\FirstDemoScene.h" />
+    <ClInclude Include="..\..\..\..\src\SObject.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Animation\Animation.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Animation\AnimationUtill.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Animation\Joint.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Animation\Skeleton.h" />
+    <ClInclude Include="..\..\..\..\src\Util\AssetsDef.h" />
+    <ClInclude Include="..\..\..\..\src\Util\CaptureDef.h" />
+    <ClInclude Include="..\..\..\..\src\Util\ComponentDef.h" />
+    <ClInclude Include="..\..\..\..\src\Util\GLProgramHandle.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Interface\TransformInterface.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\DAE\DAEAnimationLoader.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\DAE\DAELoader.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\DAE\DAEUtil\DAEConvertSGameObject.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\DAE\DAEUtil\SkinningData.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\DAE\DAEUtil\Vertex.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\DAE\DAEUtil\VertexSkinData.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\SCENE\SSceneLoader.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\STB\stb_image.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\STB\stb_image_write.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\XML\XML.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\XML\XMLParser.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\ZIP\miniz.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Loader\ZIP\zip.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Matrix.h" />
+    <ClInclude Include="..\..\..\..\src\Util\MatrixDef.h" />
+    <ClInclude Include="..\..\..\..\src\Util\MoreComponentFunc.h" />
+    <ClInclude Include="..\..\..\..\src\Util\MoreMath.h" />
+    <ClInclude Include="..\..\..\..\src\Util\MoreString.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Quaternion.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Render\CameraBase.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Render\GLMeshID.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Render\LightHelper.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Render\MeshSurface.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Render\SEnvironmentMgr.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Render\RenderInterfaces.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Render\SFrameBuffer.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Render\SGBuffer.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Render\ShaderUtil.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Render\SkyboxUtil.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Render\SMaterial.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Render\STexture.h" />
+    <ClInclude Include="..\..\..\..\src\Util\SafeLog.h" />
+    <ClInclude Include="..\..\..\..\src\Util\ScriptDef.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Settings.h" />
+    <ClInclude Include="..\..\..\..\src\Util\STypeDef.h" />
+    <ClInclude Include="..\..\..\..\src\Util\VariableBinder.h" />
+    <ClInclude Include="..\..\..\..\src\Util\Vector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\External\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_impl_opengl2.cpp" />
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\..\..\src\Component\Animation\AnimatorComponent.cpp" />
+    <ClCompile Include="..\..\..\..\src\Component\Animation\JointComponent.cpp" />
+    <ClCompile Include="..\..\..\..\src\Component\CameraComponent.cpp" />
+    <ClCompile Include="..\..\..\..\src\Component\CustomComponent.cpp" />
+    <ClCompile Include="..\..\..\..\src\Component\DrawableSkinnedMeshComponent.cpp" />
+    <ClCompile Include="..\..\..\..\src\Component\DrawableStaticMeshComponent.cpp" />
+    <ClCompile Include="..\..\..\..\src\Component\LightComponent.cpp" />
+    <ClCompile Include="..\..\..\..\src\Component\RenderComponent.cpp" />
+    <ClCompile Include="..\..\..\..\src\Component\TransformComponent.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\AssetMgr.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\Base\Scene.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\CameraMgr.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\CoreBufferContainer.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\EngineCore.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\GameObjectContainer.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\GameObjectMgr.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\LightMgr.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\MainProc.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\MemoryContainer.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\MemoryMgr.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\OGLMgr.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\RenderContainer.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\RenderMgr.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\ResMgr.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\SceneMgr.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\SCloneFactory.cpp" />
+    <ClCompile Include="..\..\..\..\src\Manager\ScriptMgr.cpp" />
+    <ClCompile Include="..\..\..\..\src\Object\SGameObject.cpp" />
+    <ClCompile Include="..\..\..\..\src\Object\SPrefab.cpp" />
+    <ClCompile Include="..\..\..\..\src\Object\SResource.cpp" />
+    <ClCompile Include="..\..\..\..\src\Object\SScene.cpp" />
+    <ClCompile Include="..\..\..\..\src\Object\SScriptObject.cpp" />
+    <ClCompile Include="..\..\..\..\src\Sample\FirstDemoScene.cpp" />
+    <ClCompile Include="..\..\..\..\src\SObject.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Animation\Animation.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\GLProgramHandle.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Loader\DAE\DAEAnimationLoader.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Loader\DAE\DAELoader.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Loader\DAE\DAEUtil\DAEConvertSGameObject.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Loader\SCENE\SSceneLoader.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Loader\XML\XML.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Loader\XML\XMLParser.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Loader\ZIP\zip.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\MoreComponentFunc.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Render\MeshSurface.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Render\SEnvironmentMgr.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Render\SFrameBuffer.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Render\SGBuffer.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Render\ShaderUtil.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Render\SMaterial.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Render\STexture.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\SafeLog.cpp" />
+    <ClCompile Include="..\..\..\..\src\Util\Settings.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CSEngine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="CSEngine.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

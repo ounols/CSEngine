@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CSEMAT version="1.0.0">
+<shader id="fDp2P6pqngCX29kE" deferred="1">
+<var name="texture.ao" type="tex" count="1">ZXjaDedlLVCYp4r2</var>
+<var name="texture.metallic" type="tex" count="1">5koBLqacgXSCHIl7</var>
+<var name="texture.roughness" type="tex" count="1">L7jIHarwzCD6WPMQ</var>
+<var name="texture.sdfmap" type="tex" count="1">CSEENV0000000005</var>
+<var name="vec3.albedo" type="vec3" count="1">1.000000 1.000000 1.000000</var>
+<var name="texture.albedo" type="tex" count="1">7UPAAUaIaOc3l5Uo</var>
+<var name="float.metallic" type="float" count="1">-1.000000</var>
+<var name="float.roughness" type="float" count="1">-1.000000</var>
+<var name="float.ao" type="float" count="1">1.000000</var>
+</shader>
+</CSEMAT>

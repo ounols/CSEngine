@@ -8,6 +8,10 @@
 
 using namespace CSE;
 
+RESOURCE_CONSTRUCTOR(Animation) {
+    SetUndestroyable(true);
+}
+
 void Animation::SetKeyframe(float totalTime, std::list<KeyFrame*> keyframes) {
     m_length = totalTime;
     m_keyframes = std::move(keyframes);

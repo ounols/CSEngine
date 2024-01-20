@@ -9,6 +9,7 @@
 #include "../Component/SComponent.h"
 #include "sqrat/sqratUtil.h"
 #include "../Util/MoreString.h"
+#include "Base/ReflectionRef.h"
 
 namespace CSE {
 
@@ -78,6 +79,8 @@ namespace CSE {
         template <class T>
         T* CreateComponent();
 
+        SComponent* CreateComponent(const char* type);
+
         SGameObject* Find(std::string name) const;
 
         SGameObject* FindLocalByID(const std::string& id);
@@ -113,6 +116,8 @@ namespace CSE {
 
         std::string GenerateMeta() override;
 
+        void SetHash(std::string& hash) override;
+
     private:
         void UpdateComponent(float elapsedTime);
 
@@ -140,9 +145,10 @@ namespace CSE {
 
     template <class T>
     T* SGameObject::GetComponent() {
+        const auto& ref = ReflectionRef<T>();
         for (const auto& component : m_components) {
             if (component == nullptr) continue;
-            if (dynamic_cast<T*>(component)) {
+            if (ref.IsSameClass(component)) {
                 return static_cast<T*>(component);
             }
         }
@@ -155,8 +161,6 @@ namespace CSE {
         return static_cast<T*>(GetSComponentByHash(id));
     }
 
-
-
     template <class T>
     T* SGameObject::CreateComponent() {
         T* component = new T(this);
@@ -164,6 +168,5 @@ namespace CSE {
         if (m_status == IDLE)
             component->Init();
         return component;
-
     }
 }

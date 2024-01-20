@@ -34,17 +34,19 @@ void CustomComponent::Init() {
     if (m_funcInit < 0 || m_isError) return;
 
     try {
-        m_classInstance->call(m_funcInit);
+        if(!m_classInstance->call_safe(m_funcInit)) {
+            m_isError = true;
+            SafeLog::Log(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+        }
     } catch (Sqrat::Exception e) {
         m_isError = true;
-		SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+		SafeLog::Log(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
     }
 
 }
 
 
 void CustomComponent::Tick(float elapsedTime) {
-
     if (m_specialization == nullptr) return;
     if (m_classInstance == nullptr) return;
     if (m_funcTick < 0) return;
@@ -55,7 +57,7 @@ void CustomComponent::Tick(float elapsedTime) {
     }
     catch (Sqrat::Exception e) {
         m_isError = true;
-		SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+		SafeLog::Log(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
     }
 
 }
@@ -68,24 +70,39 @@ void CustomComponent::RegisterScript() {
 
     try {
         m_specialization = new sqext::SQIClass(m_className.c_str());
-        m_specialization->bind(m_funcSetCSEngine, "SetCSEngine");
+        if(!m_specialization->bind_safe(m_funcSetCSEngine, "SetCSEngine")) {
+            m_funcSetCSEngine = -1;
+            SafeLog::Log(("[" + m_className + " (SetCSEngine)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+        }
     }
     catch (Sqrat::Exception e) {
         m_funcSetCSEngine = -1;
-		SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+		SafeLog::Log(("[" + m_className + " (SetCSEngine)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
     }
 
     try {
-        m_specialization->bind(m_funcInit, "Init");
+        if(!m_specialization->bind_safe(m_funcInit, "Init")) {
+            m_funcInit = -1;
+            SafeLog::Log(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+
+        }
     }
     catch (Sqrat::Exception e) { m_funcInit = -1; }
     try {
-        m_specialization->bind(m_funcTick, "Tick");
+        if(!m_specialization->bind_safe(m_funcTick, "Tick")) {
+            m_funcTick = -1;
+            SafeLog::Log(("[" + m_className + " (Tick)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+
+        }
     }
     catch (Sqrat::Exception e) { m_funcTick = -1; }
 
     try {
-        m_specialization->bind(m_funcExterminate, "Destroy");
+        if(!m_specialization->bind_safe(m_funcExterminate, "Destroy")){
+            m_funcExterminate = -1;
+            SafeLog::Log(("[" + m_className + " (Destroy)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+
+        }
     }
     catch (Sqrat::Exception e) { m_funcExterminate = -1; }
 
@@ -146,9 +163,9 @@ void CustomComponent::SetValue(std::string name_str, VariableBinder::Arguments v
     //variable : 0.name , 1.value, 2. type
     else if (name_str == "__variable__") {
         for(auto& val : m_variables) {
-            if(val.name == value[0]) {
-				val.value = value[1];
-				val.type = value[2];
+            if(val.name == trim(value[0])) {
+				val.value = trim(value[1]);
+				val.type = trim(value[2]);
                 BindValue(&val, ConvertSpaceStr(value[1], true).c_str());
             }
         }
@@ -158,11 +175,11 @@ void CustomComponent::SetValue(std::string name_str, VariableBinder::Arguments v
 std::string CustomComponent::PrintValue() const {
     PRINT_START("component");
 
-    PRINT_VALUE(m_classID, ConvertSpaceStr(m_classID));
+    PRINT_VALUE("classId", m_classID, ConvertSpaceStr(m_classID));
     for(auto& val : m_variables) {
         std::string value = val.value;
         if(value.empty()) value = "null";
-        PRINT_VALUE(__variable__, val.name, ' ', ConvertSpaceStr(value) , ' ', val.type);
+        PRINT_VALUE("classVal", __variable__, val.name, ' ', ConvertSpaceStr(value) , ' ', val.type);
     }
 
 
@@ -219,14 +236,11 @@ void CustomComponent::CreateClassInstance(const std::vector<std::string>& variab
                 name = "null";
                 break;
         }
-
         m_variables.emplace_back(val, name, value);
     }
-
 }
 
 void CustomComponent::BindValue(CustomComponent::VARIABLE* variable, const char* value) const {
-
     std::string type = variable->type;
     std::string value_str = value;
 
@@ -251,5 +265,4 @@ void CustomComponent::BindValue(CustomComponent::VARIABLE* variable, const char*
             m_classInstance->set(variable->name.c_str(), comp_r->GetClassInstance());
         }
     }
-
 }

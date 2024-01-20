@@ -1,0 +1,522 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\src\Sample\FirstDemoScene.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\..\..\..\src\Component\Animation\AnimatorComponent.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Component\CameraComponent.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Component\CustomComponent.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Component\DrawableSkinnedMeshComponent.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Component\DrawableStaticMeshComponent.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Component\Animation\JointComponent.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Component\LightComponent.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Component\RenderComponent.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Component\TransformComponent.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\AssetMgr.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\CameraMgr.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\GameObjectContainer.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\GameObjectMgr.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\LightMgr.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\MainProc.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\MemoryContainer.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\MemoryMgr.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\OGLMgr.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\RenderContainer.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\RenderMgr.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\ResMgr.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\SceneMgr.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\ScriptMgr.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\Base\Scene.cpp">
+      <Filter>src\Manager\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Object\SGameObject.cpp">
+      <Filter>src\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\SObject.cpp">
+      <Filter>src\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Object\SPrefab.cpp">
+      <Filter>src\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Object\SResource.cpp">
+      <Filter>src\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Object\SScene.cpp">
+      <Filter>src\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Object\SScriptObject.cpp">
+      <Filter>src\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Animation\Animation.cpp">
+      <Filter>src\Util\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Loader\DAE\DAEAnimationLoader.cpp">
+      <Filter>src\Util\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Loader\DAE\DAEUtil\DAEConvertSGameObject.cpp">
+      <Filter>src\Util\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Loader\DAE\DAELoader.cpp">
+      <Filter>src\Util\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\GLProgramHandle.cpp">
+      <Filter>src\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Render\MeshSurface.cpp">
+      <Filter>src\Util\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\MoreComponentFunc.cpp">
+      <Filter>src\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Render\SEnvironmentMgr.cpp">
+      <Filter>src\Util\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\SCloneFactory.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Render\ShaderUtil.cpp">
+      <Filter>src\Util\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Render\SMaterial.cpp">
+      <Filter>src\Util\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Loader\SCENE\SSceneLoader.cpp">
+      <Filter>src\Util\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Render\STexture.cpp">
+      <Filter>src\Util\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Loader\XML\XML.cpp">
+      <Filter>src\Util\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\SafeLog.cpp">
+      <Filter>src\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Loader\XML\XMLParser.cpp">
+      <Filter>src\Util\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\EngineCore.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Loader\ZIP\zip.cpp">
+      <Filter>src\Util\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Render\SFrameBuffer.cpp">
+      <Filter>src\Util\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Render\SGBuffer.cpp">
+      <Filter>src\Util\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Util\Settings.cpp">
+      <Filter>src\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\Manager\CoreBufferContainer.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\External\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_impl_glfw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_impl_opengl2.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\External\imgui\imgui_impl_opengl3.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\src\Sample\FirstDemoScene.h" />
+    <ClInclude Include="..\..\..\..\src\Component\Animation\AnimatorComponent.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Component\CameraComponent.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Component\CustomComponent.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Component\DrawableSkinnedMeshComponent.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Component\DrawableStaticMeshComponent.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Component\Animation\JointComponent.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Component\LightComponent.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Component\RenderComponent.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Component\SISComponent.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Component\SComponent.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Component\TransformComponent.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\AssetMgr.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\CameraMgr.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\GameObjectContainer.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\GameObjectMgr.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\LightMgr.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\MainProc.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\MemoryContainer.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\MemoryMgr.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\OGLMgr.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\RenderContainer.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\RenderMgr.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\ResMgr.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\SceneMgr.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\ScriptMgr.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\Base\Scene.h">
+      <Filter>src\Manager\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\Base\SContainer.h">
+      <Filter>src\Manager\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Object\SGameObject.h">
+      <Filter>src\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\SObject.h">
+      <Filter>src\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Object\SPrefab.h">
+      <Filter>src\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Object\SResource.h">
+      <Filter>src\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Object\SScene.h">
+      <Filter>src\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Object\SScriptObject.h">
+      <Filter>src\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Render\RenderInterfaces.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Animation\Animation.h">
+      <Filter>src\Util\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Animation\AnimationUtill.h">
+      <Filter>src\Util\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\AssetsDef.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\CaptureDef.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\ComponentDef.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\DAE\DAEAnimationLoader.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\DAE\DAEUtil\DAEConvertSGameObject.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\DAE\DAELoader.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\GLProgramHandle.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Animation\Joint.h">
+      <Filter>src\Util\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Render\LightHelper.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\MacroDef.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Matrix.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\MatrixDef.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Render\MeshSurface.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\MoreMath.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\MoreComponentFunc.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\MoreString.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\OGLDef.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Render\SEnvironmentMgr.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Quaternion.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\SCloneFactory.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\ScriptDef.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Render\ShaderUtil.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Animation\Skeleton.h">
+      <Filter>src\Util\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\DAE\DAEUtil\SkinningData.h">
+      <Filter>src\Util\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Render\SMaterial.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\SCENE\SSceneLoader.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Render\SkyboxUtil.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Render\STexture.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Vector.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\DAE\DAEUtil\Vertex.h">
+      <Filter>src\Util\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\DAE\DAEUtil\VertexSkinData.h">
+      <Filter>src\Util\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\XML\XML.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\STB\stb_image.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\STB\stb_image_write.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Interface\TransformInterface.h">
+      <Filter>src\Util\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\VariableBinder.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\SafeLog.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\XML\XMLParser.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\EngineCore.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\Base\RenderCoreBase.h">
+      <Filter>src\Manager\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\Base\CoreBase.h">
+      <Filter>src\Manager\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\ZIP\zip.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Loader\ZIP\miniz.h">
+      <Filter>src\Util\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Render\SFrameBuffer.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Render\CameraBase.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Render\GLMeshID.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Render\SGBuffer.h">
+      <Filter>src\Util\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\Settings.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Util\STypeDef.h">
+      <Filter>src\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\Manager\CoreBufferContainer.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\External\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\External\imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\External\imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\External\imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\External\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\External\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\External\imgui\imgui_impl_glfw.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\External\imgui\imgui_impl_opengl2.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\External\imgui\imgui_impl_opengl3.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\External\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CSEngine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="CSEngine.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{c63ec009-28c0-478d-890c-3cae5adfacc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\component">
+      <UniqueIdentifier>{603fd484-38c5-481b-88f7-7374bc841d4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Manager">
+      <UniqueIdentifier>{4fd4dc7b-cfe8-49fb-825d-daadab723c72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Manager\Base">
+      <UniqueIdentifier>{451d8cd5-081e-4df9-aa66-587b4d17f268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Object">
+      <UniqueIdentifier>{135f6e0c-37d0-4c22-af67-9fdf751c4203}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Util">
+      <UniqueIdentifier>{5bbf7244-8fa3-49dc-bb5b-8fec0c00bc6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Util\Animation">
+      <UniqueIdentifier>{0cdaca6c-eab9-4431-a9d9-0676dd8542a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Util\Interface">
+      <UniqueIdentifier>{58dcf4d0-21e0-40fe-9db4-f1bc2ae0178d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Util\Loader">
+      <UniqueIdentifier>{9deaa983-ee71-4070-8f5d-9aa5415ad7bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Util\Render">
+      <UniqueIdentifier>{99f41871-70c2-4470-9281-b2664237c669}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{237ddce6-7b8d-4083-b432-23e64f033a1d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+</Project>

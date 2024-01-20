@@ -8,23 +8,28 @@
 #include "SISComponent.h"
 #include "../Util/ComponentDef.h"
 #include "../Util/VariableBinder.h"
+#include "../Manager/ReflectionMgr.h"
+#include "../Object/Base/ReflectionObject.h"
 
 
 namespace CSE {
 
     class SGameObject;
 
-    class SComponent : public SObject, public virtual SISComponent, public VariableBinder {
+    class SComponent : public SObject, public virtual SISComponent, public VariableBinder, public ReflectionObject {
     public:
 
-        explicit SComponent(std::string classType, SGameObject* gameObject) : m_classType(std::move(classType)),
+        explicit SComponent(std::string classType, SGameObject* gameObject) : ReflectionObject(std::move(classType)),
                                                                               gameObject(gameObject) {
+        }
+
+        explicit SComponent(SGameObject* gameObject) : gameObject(gameObject) {
         }
 
         SComponent(const SComponent& src) : SISComponent(src) {
             gameObject = src.gameObject;
             isEnable = src.isEnable;
-            m_classType = src.m_classType;
+            SetClassType(src.GetClassType());
         }
 
 
@@ -65,19 +70,9 @@ namespace CSE {
             isEnable = is_enable;
         }
 
-        std::string GetClassType() const {
-            return m_classType;
-        }
-
-        void SetClassType(std::string type) {
-            m_classType = std::move(type);
-        }
-
     protected:
         SGameObject* gameObject = nullptr;
         bool isEnable = true;
-
-        std::string m_classType;
 
     };
 

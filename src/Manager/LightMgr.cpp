@@ -44,8 +44,8 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
     glUniform1i(handle->Uniforms.LightSize, (int)m_objects.size());
 }
 
-void LightMgr::AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const {
-    m_environmentMgr->BindPBREnvironmentMap(handle, textureLayout);
+int LightMgr::AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const {
+    return m_environmentMgr->BindPBREnvironmentMap(handle, textureLayout);
 }
 
 void LightMgr::Init() {
@@ -64,4 +64,8 @@ void LightMgr::RefreshShadowCount(int shadowCount) const {
         return;
     }
     m_shadowCount = shadowCount;
+}
+
+void LightMgr::ExterminateGlobalSettings() {
+    SEnvironmentMgr::ReleaseVAO();
 }

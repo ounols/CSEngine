@@ -94,6 +94,8 @@
 		F200120C2996D374002D59EB /* sqmem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F20011FF2996D374002D59EB /* sqmem.cpp */; };
 		F200120F29975A13002D59EB /* EngineView.mm in Sources */ = {isa = PBXBuildFile; fileRef = F200120E29975A13002D59EB /* EngineView.mm */; };
 		F200121229975EAA002D59EB /* Assets.zip in Resources */ = {isa = PBXBuildFile; fileRef = F200121129975EAA002D59EB /* Assets.zip */; };
+		F25E5D202A3A49720017C853 /* SdfRenderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F25E5D1E2A3A49720017C853 /* SdfRenderGroup.cpp */; };
+		F25E5D232A3A4A000017C853 /* VolumeTextureGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F25E5D222A3A4A000017C853 /* VolumeTextureGenerator.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -303,6 +305,10 @@
 		F200120D299759F4002D59EB /* EngineView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EngineView.h; sourceTree = "<group>"; };
 		F200120E29975A13002D59EB /* EngineView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EngineView.mm; sourceTree = "<group>"; };
 		F200121129975EAA002D59EB /* Assets.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; name = Assets.zip; path = ../../../../Assets/Assets.zip; sourceTree = "<group>"; };
+		F25E5D1E2A3A49720017C853 /* SdfRenderGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SdfRenderGroup.cpp; path = ../../../../../src/Manager/Render/SdfRenderGroup.cpp; sourceTree = "<group>"; };
+		F25E5D1F2A3A49720017C853 /* SdfRenderGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SdfRenderGroup.h; path = ../../../../../src/Manager/Render/SdfRenderGroup.h; sourceTree = "<group>"; };
+		F25E5D212A3A4A000017C853 /* VolumeTextureGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VolumeTextureGenerator.h; path = ../../../../../../src/Util/Loader/3DTEX/VolumeTextureGenerator.h; sourceTree = "<group>"; };
+		F25E5D222A3A4A000017C853 /* VolumeTextureGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VolumeTextureGenerator.cpp; path = ../../../../../../src/Util/Loader/3DTEX/VolumeTextureGenerator.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -399,6 +405,8 @@
 		F20010F22996C5C4002D59EB /* Manager */ = {
 			isa = PBXGroup;
 			children = (
+				F25E5D1E2A3A49720017C853 /* SdfRenderGroup.cpp */,
+				F25E5D1F2A3A49720017C853 /* SdfRenderGroup.h */,
 				F20011042996C63B002D59EB /* AssetMgr.cpp */,
 				F20011022996C63B002D59EB /* AssetMgr.h */,
 				F20011292996C64C002D59EB /* DeferredRenderGroup.cpp */,
@@ -533,6 +541,8 @@
 		F20011762996C773002D59EB /* Loader */ = {
 			isa = PBXGroup;
 			children = (
+				F25E5D222A3A4A000017C853 /* VolumeTextureGenerator.cpp */,
+				F25E5D212A3A4A000017C853 /* VolumeTextureGenerator.h */,
 				F20011B02996C7DA002D59EB /* miniz.h */,
 				F20011AF2996C7DA002D59EB /* zip.cpp */,
 				F20011B12996C7DA002D59EB /* zip.h */,
@@ -727,6 +737,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F25E5D232A3A4A000017C853 /* VolumeTextureGenerator.cpp in Sources */,
 				F20010E72996C596002D59EB /* DrawableStaticMeshComponent.cpp in Sources */,
 				F20010F12996C5B9002D59EB /* JointComponent.cpp in Sources */,
 				F20011DF2996D355002D59EB /* sqstdstring.cpp in Sources */,
@@ -810,6 +821,7 @@
 				F2000F222996066C002D59EB /* AppDelegate.m in Sources */,
 				F20012012996D374002D59EB /* sqbaselib.cpp in Sources */,
 				F200118F2996C78E002D59EB /* SEnvironmentMgr.cpp in Sources */,
+				F25E5D202A3A49720017C853 /* SdfRenderGroup.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

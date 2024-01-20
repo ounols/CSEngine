@@ -47,6 +47,12 @@ namespace CSE {
 
         std::list<AssetMgr::AssetReference*> GetAssetReferences(AssetMgr::TYPE type) const;
 
+#ifdef __CSE_EDITOR__
+        std::list<AssetMgr::AssetReference*> GetAllAssetReferences() const {
+            return m_assetManager->GetAllAssets();
+        }
+#endif
+
 #ifdef __ANDROID__
         void SetAssetManager(AAssetManager* obj);
         AAssetManager* GetAssetManager();

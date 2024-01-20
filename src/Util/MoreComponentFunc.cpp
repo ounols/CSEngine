@@ -10,11 +10,6 @@
 #include "../Component/RenderComponent.h"
 #include "../Component/TransformComponent.h"
 
-#define CREATE_COMPONENT_MACRO(CLASSNAME) \
-if(component_type == #CLASSNAME) { \
-    return obj->CreateComponent<CLASSNAME>(); \
-}
-
 #define BIND_COMPONENT_MACRO(CLASSNAME) \
 if(component_type == #CLASSNAME) { \
     auto comp_r = static_cast<CLASSNAME*>(component);   \
@@ -23,22 +18,6 @@ if(component_type == #CLASSNAME) { \
 }
 
 using namespace CSE;
-
-SComponent* MoreComponentFunc::CreateComponent(SGameObject* obj, std::string component_type) {
-
-    CREATE_COMPONENT_MACRO(AnimatorComponent);
-    CREATE_COMPONENT_MACRO(JointComponent);
-    CREATE_COMPONENT_MACRO(CameraComponent);
-    CREATE_COMPONENT_MACRO(CustomComponent);
-    CREATE_COMPONENT_MACRO(DrawableSkinnedMeshComponent);
-    CREATE_COMPONENT_MACRO(DrawableStaticMeshComponent);
-    CREATE_COMPONENT_MACRO(LightComponent);
-    CREATE_COMPONENT_MACRO(RenderComponent);
-    CREATE_COMPONENT_MACRO(TransformComponent);
-
-    return nullptr;
-
-}
 
 void MoreComponentFunc::BindComponentToSQInstance(SComponent* component, std::string name,
                                                   sqext::SQIClassInstance* instance) {

@@ -10,7 +10,7 @@ namespace CSE {
 
     class SPrefab : public SResource {
     public:
-        SPrefab();
+        RESOURCE_DEFINE_CONSTRUCTOR(SPrefab);
         ~SPrefab() override;
 
         SGameObject* Clone(const vec3& position, SGameObject* parent = nullptr);

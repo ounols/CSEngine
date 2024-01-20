@@ -11,7 +11,7 @@
 
 using namespace CSE;
 
-SPrefab::SPrefab() = default;
+RESOURCE_CONSTRUCTOR(SPrefab) {}
 
 SPrefab::~SPrefab() = default;
 

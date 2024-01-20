@@ -42,7 +42,7 @@ namespace CSE {
          * @param handle Shader handle
          * @param textureLayout Layout of the texture
          */
-        void AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const;
+        int AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const;
 
         /**
          * Initialize the LightMgr.
@@ -70,6 +70,8 @@ namespace CSE {
          * @param shadowCount Shadow count to refresh. Default is -1.
          */
         void RefreshShadowCount(int shadowCount = -1) const;
+
+        static void ExterminateGlobalSettings();
 
     private:
         std::list<SIRender*> m_shadowObject;   ///< Objects to be rendered as shadows

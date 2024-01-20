@@ -8,7 +8,7 @@ namespace CSE {
 
     class MeshSurface : public SISurface {
     public:
-        MeshSurface();
+        RESOURCE_DEFINE_CONSTRUCTOR(MeshSurface);
         MeshSurface(int sizeVert, float* vertices, float* normals);
         MeshSurface(int sizeVert, float* vertices, float* normals, float* texCoords);
 //        MeshSurface(int sizeVert, int sizeIndic, float* vertices, float* normals, float* texCoords, float* indices);
@@ -38,9 +38,9 @@ namespace CSE {
         void Init(const AssetMgr::AssetReference* asset) override;
 
     private:
-        mutable size_t m_faceSize;
-        mutable size_t m_vertexSize;
-        mutable size_t m_indexSize;
+        mutable size_t m_faceSize = 0;
+        mutable size_t m_vertexSize = 0;
+        mutable size_t m_indexSize = 0;
 
         std::vector<float> m_Verts;
         std::vector<unsigned short> m_Indics;

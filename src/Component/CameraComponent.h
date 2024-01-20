@@ -26,6 +26,7 @@ namespace CSE {
 
     class SFrameBuffer;
     class STexture;
+    class GLProgramHandle;
 
     class CameraComponent : public SComponent, public CameraBase {
     public:
@@ -141,5 +142,6 @@ namespace CSE {
         BackgroundType m_backgroundType = SOLID;
         vec3 m_backgroundColor = vec3(0.4f, 0.4f, 0.4f);
         BackgroundMapStruct* m_backgroundMap = nullptr;
+        GLProgramHandle* m_globalSkyboxHandle = nullptr;
     };
 }

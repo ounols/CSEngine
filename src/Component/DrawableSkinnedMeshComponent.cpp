@@ -7,7 +7,7 @@
 using namespace CSE;
 
 MeshComponent::MeshComponent(SGameObject* l_gameObject) : DrawableStaticMeshComponent(l_gameObject) {
-    m_classType = "DrawableSkinnedMeshComponent";
+    COMPONENT_DERIVED_CLASS_TYPE(DrawableSkinnedMeshComponent);
 }
 
 MeshComponent::~MeshComponent() = default;

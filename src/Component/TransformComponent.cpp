@@ -99,9 +99,9 @@ void TransformComponent::SetValue(std::string name_str, Arguments value) {
 std::string TransformComponent::PrintValue() const {
     PRINT_START("component");
 
-    PRINT_VALUE(m_position, m_position.x, ' ', m_position.y, ' ', m_position.z);
-    PRINT_VALUE(m_scale, m_scale.x, ' ', m_scale.y, ' ', m_scale.z);
-    PRINT_VALUE(m_rotation, m_rotation.x, ' ', m_rotation.y, ' ', m_rotation.z, ' ', m_rotation.w);
+    PRINT_VALUE("vec3", m_position, m_position.x, ' ', m_position.y, ' ', m_position.z);
+    PRINT_VALUE("vec3", m_scale, m_scale.x, ' ', m_scale.y, ' ', m_scale.z);
+    PRINT_VALUE("quaternion", m_rotation, m_rotation.x, ' ', m_rotation.y, ' ', m_rotation.z, ' ', m_rotation.w);
 
     PRINT_END("component");
 }

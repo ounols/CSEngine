@@ -12,11 +12,12 @@
 #include "ForwardRenderGroup.h"
 #include "DeferredRenderGroup.h"
 #include "DepthOnlyRenderGroup.h"
+#include "SdfRenderGroup.h"
 
 using namespace CSE;
 
-CameraMgr* cameraMgr = nullptr;
-LightMgr* lightMgr = nullptr;
+//TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
+GLProgramHandle* postHandle = nullptr;
 
 RenderMgr::RenderMgr() = default;
 
@@ -25,8 +26,8 @@ RenderMgr::~RenderMgr() {
 }
 
 void RenderMgr::Init() {
-    cameraMgr = CORE->GetCore(CameraMgr);
-    lightMgr = CORE->GetCore(LightMgr);
+    m_cameraMgr = CORE->GetCore(CameraMgr);
+    m_lightMgr = CORE->GetCore(LightMgr);
 
     m_width = SEnvironmentMgr::GetPointerWidth();
     m_height = SEnvironmentMgr::GetPointerHeight();
@@ -36,6 +37,10 @@ void RenderMgr::Init() {
     m_forwardRenderGroup = new ForwardRenderGroup(*this);
     m_deferredRenderGroup = new DeferredRenderGroup(*this);
     m_depthOnlyRenderGroup = new DepthOnlyRenderGroup(*this);
+    m_sdfRenderGroup = new SdfRenderGroup(*this);
+
+    //TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
+    postHandle = SResource::Create<GLProgramHandle>("File:Shader/Post/dof.post");
 }
 
 void RenderMgr::SetViewport() {
@@ -45,8 +50,11 @@ void RenderMgr::SetViewport() {
 }
 
 void RenderMgr::Render() const {
-    // 1. Render depth buffer for shadows.
+    // 0. Render depth buffer for shadows.
     RenderShadows();
+
+    // 1. Render SDF Map.
+    RenderSdfMap();
 
     // 2. Render active sub cameras.
     RenderSubCameras();
@@ -56,17 +64,17 @@ void RenderMgr::Render() const {
 }
 
 void RenderMgr::RenderShadows() const {
-    const auto& lightObjects = lightMgr->GetAll();
+    const auto& lightObjects = m_lightMgr->GetAll();
     for (const auto& light : lightObjects) {
         if(!light->IsShadow()) continue;
         m_depthOnlyRenderGroup->RenderAll(*light);
     }
-    lightMgr->RefreshShadowCount();
+    m_lightMgr->RefreshShadowCount();
 }
 
 void RenderMgr::RenderSubCameras() const {
-    const auto& cameraObjects = cameraMgr->GetAll();
-    const auto& mainCamera = cameraMgr->GetCurrentCamera();
+    const auto& cameraObjects = m_cameraMgr->GetAll();
+    const auto& mainCamera = m_cameraMgr->GetCurrentCamera();
 
     for (const auto& camera : cameraObjects) {
         if(!camera->GetIsEnable() || camera == mainCamera || camera->GetFrameBuffer() == nullptr) continue;
@@ -77,20 +85,24 @@ void RenderMgr::RenderSubCameras() const {
 }
 
 void RenderMgr::RenderMainCamera() const {
-    const auto& mainCamera = cameraMgr->GetCurrentCamera();
+    const auto& mainCamera = m_cameraMgr->GetCurrentCamera();
     if (mainCamera == nullptr) return;
 
     ResetBuffer(*mainCamera);
     m_deferredRenderGroup->RenderAll(*mainCamera); // Deferred Render
     m_forwardRenderGroup->RenderAll(*mainCamera); // Forward Render
 
-    GetMainBuffer()->AttachFrameBuffer(GL_READ_FRAMEBUFFER);
-#ifdef IOS
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 1);
-#else
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-#endif
+    //TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
+    const auto& mainBuffer = GetMainBuffer();
+//    mainBuffer->PostFrameBuffer(postHandle, *mainCamera);
+    mainBuffer->AttachFrameBuffer(GL_READ_FRAMEBUFFER);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_deviceBuffer);
     glBlitFramebuffer(0, 0, *m_width, *m_height, 0, 0, *m_width, *m_height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+}
+
+void RenderMgr::RenderSdfMap() const {
+    const auto& mainCamera = m_cameraMgr->GetCurrentCamera();
+    m_sdfRenderGroup->RenderAll(*mainCamera);
 }
 
 void RenderMgr::Exterminate() {
@@ -104,4 +116,12 @@ void RenderMgr::ResetBuffer(const CameraBase& camera) const {
     }
     frameBuffer->AttachFrameBuffer();
     camera.RenderBackground();
+}
+
+void RenderMgr::BindSdfMapUniforms(const GLProgramHandle& handle) const {
+    static_cast<SdfRenderGroup*>(m_sdfRenderGroup)->BindShaderUniforms(handle);
+}
+
+int RenderMgr::BindSdfMapTextures(const GLProgramHandle& handle, int textureLayout) const {
+    return static_cast<SdfRenderGroup*>(m_sdfRenderGroup)->BindShaderMap(handle, textureLayout);
 }

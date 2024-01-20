@@ -8,14 +8,16 @@
 using namespace CSE;
 
 void SRenderGroup::BindSourceBuffer(const SFrameBuffer& buffer, const GLProgramHandle& handle, int layout) {
-    const auto& srcBufferTexture = buffer.GetMainColorTexture();
     const auto& uniforms = handle.Uniforms;
     const auto& size = buffer.GetSize();
     const float sizeRaw[2] = { static_cast<float>(size.x), static_cast<float>(size.y) };
-    if(srcBufferTexture == nullptr) return;
 
-    if(uniforms.SourceBuffer >= 0)
-        srcBufferTexture->Bind(uniforms.SourceBuffer, layout);
+    if(uniforms.SourceBuffer >= 0) {
+        const auto& texture = buffer.BlitCopiedFrameBuffer();
+
+        buffer.AttachFrameBuffer();
+        texture->Bind(uniforms.SourceBuffer, layout);
+    }
     if(uniforms.SourceBufferSize >= 0)
         glUniform2fv(uniforms.SourceBufferSize, 1, sizeRaw);
 }

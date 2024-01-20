@@ -35,6 +35,14 @@ namespace CSE {
         // Buffers
         GLint SourceBuffer = HANDLE_NULL;
         GLint SourceBufferSize = HANDLE_NULL;
+        // SDFs
+        GLint SdfEnvSize = HANDLE_NULL;
+        GLint SdfCellSize = HANDLE_NULL;
+        GLint SdfNodeSize = HANDLE_NULL;
+        GLint SdfNodeSpace = HANDLE_NULL;
+        GLint SdfFrameCount = HANDLE_NULL;
+        GLint SdfMap = HANDLE_NULL;
+
     };
 
     struct GLAttributeHandles {
@@ -56,7 +64,7 @@ namespace CSE {
 
         typedef std::map<std::string, GLProgramHandle::Element*> GLElementList;
     public:
-        GLProgramHandle();
+        RESOURCE_DEFINE_CONSTRUCTOR(GLProgramHandle);
 
         ~GLProgramHandle() override;
 

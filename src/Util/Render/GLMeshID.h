@@ -12,5 +12,6 @@ namespace CSE {
         int m_vertexArray = -1;
 
         bool m_hasJoint = false;
+        float m_maxSize = 0.f;
     };
 }
