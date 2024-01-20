@@ -165,7 +165,10 @@ void AssetMgr::ReadPackage(const std::string& path) {
         zip_entry_openbyindex(m_zip, i);
         {
             const char* name = zip_entry_name(m_zip);
+            int isdir = zip_entry_isdir(m_zip);
+
             std::string name_str = name;
+            if(isdir != 0) name_str = name_str.substr(0, name_str.size() - 1);
             auto rFindIndex = name_str.rfind('/');
             std::string name_cropped = name_str;
             std::string path_str = "";
@@ -173,7 +176,6 @@ void AssetMgr::ReadPackage(const std::string& path) {
                 name_cropped = name_str.substr(rFindIndex + 1);
                 path_str = name_str.substr(0, rFindIndex + 1);
             }
-            int isdir = zip_entry_isdir(m_zip);
             if (isdir != 0) {
 #ifdef __CSE_EDITOR__
                 CreateAssetFolder(path_str, name_cropped);

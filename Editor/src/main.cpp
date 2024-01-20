@@ -22,6 +22,8 @@ static void MainLoopForEmscripten()     { MainLoopForEmscriptenP(); }
 #elif defined(_WIN64)
 #include <gl/glew.h>
 #include <crtdbg.h>
+#elif defined(__linux__)
+#include <GL/glew.h>
 #endif
 
 #include "imgui.h"
@@ -135,7 +137,7 @@ int main(int, char**) {
         std::cout << "Failed to initialize OpenGL context\n";
         return -1;
     }
-#elif defined(_WIN64)
+#elif defined(_WIN64) || defined(__linux__)
     //init GLEW
     glewInit();
 #endif
@@ -211,6 +213,7 @@ int main(int, char**) {
         glfwPollEvents();
 
         // Start the Dear ImGui frame
+        if (io.DeltaTime <= 0.0f) io.DeltaTime = 0.00001f;
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
