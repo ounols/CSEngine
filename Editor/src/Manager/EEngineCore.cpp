@@ -1,6 +1,7 @@
 #include "EEngineCore.h"
 #include "EPreviewCore.h"
 #include "ELogMgr.h"
+#include "../Objects/Base/HierarchyData.h"
 #include "../../src/MacroDef.h"
 #include "../../src/OGLDef.h"
 #include "../../src/Util/Render/ShaderUtil.h"
@@ -16,6 +17,7 @@
 #include "../../src/Manager/LightMgr.h"
 #include "../../src/Manager/Render/RenderMgr.h"
 #include "../../src/Manager/SceneMgr.h"
+#include "../../src/Util/Loader/SCENE/SSceneLoader.h"
 #include "../../src/Manager/MemoryMgr.h"
 #include "../../src/Manager/ReflectionMgr.h"
 #include "../../src/Component/TransformComponent.h"
@@ -75,6 +77,11 @@ void EEngineCore::StartPreviewCore() {
 //        ResizePreviewFramebuffer(m_previewWidth, m_previewHeight);
 //    }
     m_previewCore->Init(m_previewWidth, m_previewHeight);
+    if(!m_scenePath.empty()) {
+        SScene* scene = SSceneLoader::LoadScene(m_scenePath);
+        m_previewCore->m_sceneMgr->SetScene(scene);
+    }
+
     m_previewCore->SetDeviceBuffer(m_previewFbo);
 }
 
@@ -167,4 +174,14 @@ void EEngineCore::UpdateTransforms() {
         const auto& transform = static_cast<TransformComponent*>(pair.second->GetTransform());
         transform->Tick(0);
     }
+}
+
+void EEngineCore::Reset() {
+    m_hierarchyData->ClearSelectedObject();
+}
+
+void EEngineCore::SetCurrentScene(std::string path) {
+    m_scenePath = std::move(path);
+    const auto& scene = CSE::SSceneLoader::LoadScene(m_scenePath);
+    m_sceneMgr->SetScene(scene);
 }

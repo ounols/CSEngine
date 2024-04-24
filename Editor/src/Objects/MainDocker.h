@@ -17,6 +17,8 @@ namespace CSEditor {
 
         void SetUI() override;
 
+        void Reset();
+
     private:
         void SetMenuBar() const;
 

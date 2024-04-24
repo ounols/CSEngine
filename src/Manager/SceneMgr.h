@@ -14,6 +14,8 @@ namespace CSE {
 
         void Update(float elapsedTime) override;
 
+        void SetLegacyScene(Scene* scene);
+
         void SetScene(Scene* scene);
 
         Scene* GetCurrentScene() const;

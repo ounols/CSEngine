@@ -19,5 +19,5 @@ void Scene::Exterminate() {
 
 
 void Scene::SetScene(Scene* scene) {
-    CORE->GetCore(SceneMgr)->SetScene(scene);
+    CORE->GetCore(SceneMgr)->SetLegacyScene(scene);
 }

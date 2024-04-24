@@ -53,6 +53,16 @@ void SGameObject::Tick(float elapsedTime) {
 }
 
 void SGameObject::Exterminate() {
+    {
+        auto iter = m_components.begin();
+        while (iter != m_components.end()) {
+            auto component = *iter;
+            m_components.erase(iter++);
+
+            if (component == nullptr) continue;
+            CORE->GetCore(MemoryMgr)->ReleaseObject(component);
+        }
+    }
     CORE->GetCore(GameObjectMgr)->Remove(this);
 }
 

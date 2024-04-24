@@ -38,10 +38,11 @@ void EngineCoreInstance::Init(unsigned int width, unsigned int height) {
 
 
 #ifdef __EMSCRIPTEN__
-    static_cast<SceneMgr*>(m_sceneMgr)->SetScene(new WebDemoScene());
+    static_cast<SceneMgr*>(m_sceneMgr)->SetLegacyScene(new WebDemoScene());
 #else
-//    static_cast<SceneMgr*>(m_sceneMgr)->SetScene(new FirstDemoScene());
-    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/sdfgi.scene");
+//    static_cast<SceneMgr*>(m_sceneMgr)->SetLegacyScene(new FirstDemoScene());
+    SScene* scene = SSceneLoader::LoadScene(CSE::AssetsPath() + "Scene/jack.scene");
+//    SScene* scene = new SScene();
     m_sceneMgr->SetScene(scene);
 #endif
     m_isReady = true;

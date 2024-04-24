@@ -25,6 +25,8 @@ namespace CSEditor {
     private:
         void OnDragDrop(const CSE::AssetMgr::AssetReference& asset);
 
+        bool OnAssetClickEvent(const CSE::AssetMgr::AssetReference& asset);
+
     private:
         std::string m_targetPath;
 

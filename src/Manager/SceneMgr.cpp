@@ -1,6 +1,7 @@
 #include "SceneMgr.h"
 #include "MemoryMgr.h"
 #include "EngineCore.h"
+#include "Render/RenderMgr.h"
 
 using namespace CSE;
 
@@ -27,7 +28,7 @@ void SceneMgr::Update(float elapsedTime) {
 }
 
 
-void SceneMgr::SetScene(Scene* scene) {
+void SceneMgr::SetLegacyScene(Scene* scene) {
 
     if (m_scene != nullptr) {
         m_scene->SetUndestroyable(false);
@@ -39,6 +40,21 @@ void SceneMgr::SetScene(Scene* scene) {
 
     if (m_scene != nullptr)
         m_scene->Init();
+}
+
+void SceneMgr::SetScene(Scene* scene) {
+
+    if (m_scene != nullptr) {
+        m_scene->SetUndestroyable(false);
+        CORE->GetCore(MemoryMgr)->ReleaseObject(m_scene);
+        m_scene = nullptr;
+    }
+
+    m_scene = scene;
+
+    if (m_scene != nullptr)
+        m_scene->Init();
+
 }
 
 Scene* SceneMgr::GetCurrentScene() const {

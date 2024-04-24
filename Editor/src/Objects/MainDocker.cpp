@@ -18,6 +18,7 @@ using namespace CSEditor;
 namespace CSEMainDocker {
     PreviewWindow* previewWindow = nullptr;
     HierarchyWindow* hierarchyWindow = nullptr;
+    InspectorWindow* inspectorWindow = nullptr;
 }
 
 MainDocker::MainDocker() {
@@ -76,13 +77,12 @@ void MainDocker::SetMenuBar() const {
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Debug")) {
-            if(CSEMainDocker::previewWindow->IsPreview()) {
+            if (CSEMainDocker::previewWindow->IsPreview()) {
                 if (ImGui::MenuItem("Stop Preview")) {
                     CSEMainDocker::hierarchyWindow->ClearSelectedObject();
                     CSEMainDocker::previewWindow->ReleasePreview();
                 }
-            }
-            else {
+            } else {
                 if (ImGui::MenuItem("Start Preview")) {
                     CSEMainDocker::hierarchyWindow->ClearSelectedObject();
                     CSEMainDocker::previewWindow->InitPreview();
@@ -114,17 +114,27 @@ void MainDocker::SetDockerNodes() {
 void MainDocker::GenerateWindows() {
     CSEMainDocker::previewWindow = new PreviewWindow();
     CSEMainDocker::hierarchyWindow = new HierarchyWindow();
+    CSEMainDocker::inspectorWindow = new InspectorWindow();
 
     m_windows.reserve(4);
-    m_windows.push_back(new InspectorWindow());
+    m_windows.push_back(CSEMainDocker::inspectorWindow);
     m_windows.push_back(CSEMainDocker::previewWindow);
     m_windows.push_back(CSEMainDocker::hierarchyWindow);
     m_windows.push_back(new ConsoleWindow());
     m_windows.push_back(new AssetWindow());
+
+    for (const auto& window: m_windows) {
+        window->Register(this);
+    }
 }
 
 void MainDocker::SetWindowsUI() {
     for (const auto& window: m_windows) {
         window->SetUI();
     }
+}
+
+void MainDocker::Reset() {
+    CSEMainDocker::hierarchyWindow->ClearSelectedObject();
+    CSEMainDocker::inspectorWindow->ReleaseLayers();
 }

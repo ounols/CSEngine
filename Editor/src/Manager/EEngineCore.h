@@ -116,6 +116,10 @@ namespace CSEditor {
 
         void AddLog(const char* log, int category = 1);
 
+        void Reset();
+
+        void SetCurrentScene(std::string path);
+
     private:
         static long long int GetCurrentMillis();
 
@@ -133,6 +137,7 @@ namespace CSEditor {
         unsigned int m_previewWidth = 0;
         unsigned int m_previewHeight = 0;
         bool m_bIsRender = false;
+        std::string m_scenePath;
 
         HierarchyData* m_hierarchyData = nullptr;
         ELogMgr* m_logMgr = nullptr;

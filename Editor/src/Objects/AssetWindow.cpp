@@ -2,9 +2,12 @@
 
 #include <utility>
 #include "../Manager/EEngineCore.h"
+#include "../Objects/MainDocker.h"
 #include "../../src/Manager/ResMgr.h"
+#include "../../src/Manager/SceneMgr.h"
 #include "../../src/Util/AssetsDef.h"
 #include "../../src/Util/MoreString.h"
+#include "../../src/Util/Loader/SCENE/SSceneLoader.h"
 
 using namespace CSEditor;
 
@@ -37,7 +40,7 @@ void AssetWindow::SetUI() {
         ImGui::Text(">");
         ImGui::SameLine();
         for (const auto& pathNode: m_pathSelector) {
-            if(pathNode.empty()) continue;
+            if (pathNode.empty()) continue;
             targetPath += pathNode + '/';
             if (ImGui::Button(pathNode.c_str())) {
                 ChangeCurrentPath(targetPath);
@@ -70,12 +73,9 @@ void AssetWindow::SetUI() {
             ImGui::PopTextWrapPos();
             ImGui::EndGroup();
         }
-        if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0) && asset->extension == "/\\?folder") {
-            ChangeCurrentPath(asset->name_path + '/');
-            RefreshExplorer();
-            ImGui::PopID();
-            ImGui::EndChild();
-            ImGui::End();
+        if (ImGui::IsItemHovered() &&
+            ImGui::IsMouseDoubleClicked(0) &&
+            OnAssetClickEvent(*asset)) {
             return;
         }
         // When Dragging
@@ -117,4 +117,27 @@ void AssetWindow::OnDragDrop(const CSE::AssetMgr::AssetReference& asset) {
         ImGui::SetDragDropPayload("AW_RES", &asset, sizeof(CSE::AssetMgr::AssetReference));
         ImGui::EndDragDropSource();
     }
+}
+
+bool AssetWindow::OnAssetClickEvent(const CSE::AssetMgr::AssetReference& asset) {
+    if (asset.extension == "/\\?folder") {
+        ChangeCurrentPath(asset.name_path + '/');
+        RefreshExplorer();
+    }
+    else if (asset.extension == "scene" && !EEngineCore::getEditorInstance()->IsPreview()) {
+        m_mainDocker->Reset();
+        const auto& editorCore = EEngineCore::getEditorInstance();
+        editorCore->SetCurrentScene(asset.name_path);
+        editorCore->ResizePreviewCore();
+        editorCore->InvokeEditorRender();
+
+    }
+    else {
+        return false;
+    }
+
+    ImGui::PopID();
+    ImGui::EndChild();
+    ImGui::End();
+    return true;
 }
