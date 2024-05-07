@@ -2,8 +2,13 @@
 
 #include <vector>
 #include <unordered_map>
+#include <queue>
 #include "Base/WindowBase.h"
 #include "../../src/Manager/AssetMgr.h"
+
+namespace CSE {
+    class STexture;
+}
 
 namespace CSEditor {
     class AssetWindow : public WindowBase {
@@ -27,12 +32,15 @@ namespace CSEditor {
 
         bool OnAssetClickEvent(const CSE::AssetMgr::AssetReference& asset);
 
+        void ReleasePreviewQueue();
+
     private:
         std::string m_targetPath;
 
         std::unordered_map<std::string, AssetsVector> m_assets;
         AssetsVector* m_selectedFolder = nullptr;
         std::string m_currentPath;
+        std::queue<void*> m_previewAssetQueue;
 
         std::vector<std::string> m_pathSelector;
     };

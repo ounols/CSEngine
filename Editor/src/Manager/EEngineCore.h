@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../src/Manager/EngineCoreInstance.h"
+#include <string>
 
 #define CORE CSEditor::EEngineCore::getInstance()
 

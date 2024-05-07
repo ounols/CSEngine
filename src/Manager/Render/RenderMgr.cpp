@@ -32,29 +32,38 @@ void RenderMgr::Init() {
     m_width = SEnvironmentMgr::GetPointerWidth();
     m_height = SEnvironmentMgr::GetPointerHeight();
 
-    InitBuffers((int)*m_width, (int)*m_height);
-
+    InitBuffers((int) *m_width, (int) *m_height);
+#ifdef CSE_SETTINGS_RENDER_FORWARD_SUPPORT
     m_forwardRenderGroup = new ForwardRenderGroup(*this);
+#endif
+#ifdef CSE_SETTINGS_RENDER_DEFERRED_SUPPORT
     m_deferredRenderGroup = new DeferredRenderGroup(*this);
+#endif
     m_depthOnlyRenderGroup = new DepthOnlyRenderGroup(*this);
+#ifdef CSE_SETTINGS_RENDER_SDFGI_SUPPORT
     m_sdfRenderGroup = new SdfRenderGroup(*this);
+#endif
 
     //TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
-    postHandle = SResource::Create<GLProgramHandle>("File:Shader/Post/dof.post");
+//    postHandle = SResource::Create<GLProgramHandle>("File:Shader/Post/dof.post");
 }
 
 void RenderMgr::SetViewport() {
-    if(m_deferredRenderGroup != nullptr)
+#ifdef CSE_SETTINGS_RENDER_DEFERRED_SUPPORT
+    if (m_deferredRenderGroup != nullptr)
         static_cast<DeferredRenderGroup*>(m_deferredRenderGroup)->SetViewport();
-    ResizeBuffers((int)*m_width, (int)*m_height);
+#endif
+    ResizeBuffers((int) *m_width, (int) *m_height);
 }
 
 void RenderMgr::Render() const {
     // 0. Render depth buffer for shadows.
     RenderShadows();
 
+#ifdef CSE_SETTINGS_RENDER_SDFGI_SUPPORT
     // 1. Render SDF Map.
     RenderSdfMap();
+#endif
 
     // 2. Render active sub cameras.
     RenderSubCameras();
@@ -65,8 +74,8 @@ void RenderMgr::Render() const {
 
 void RenderMgr::RenderShadows() const {
     const auto& lightObjects = m_lightMgr->GetAll();
-    for (const auto& light : lightObjects) {
-        if(!light->IsShadow()) continue;
+    for (const auto& light: lightObjects) {
+        if (!light->IsShadow()) continue;
         m_depthOnlyRenderGroup->RenderAll(*light);
     }
     m_lightMgr->RefreshShadowCount();
@@ -76,11 +85,10 @@ void RenderMgr::RenderSubCameras() const {
     const auto& cameraObjects = m_cameraMgr->GetAll();
     const auto& mainCamera = m_cameraMgr->GetCurrentCamera();
 
-    for (const auto& camera : cameraObjects) {
-        if(!camera->GetIsEnable() || camera == mainCamera || camera->GetFrameBuffer() == nullptr) continue;
+    for (const auto& camera: cameraObjects) {
+        if (!camera->GetIsEnable() || camera == mainCamera || camera->GetFrameBuffer() == nullptr) continue;
         ResetBuffer(*camera);
-        m_deferredRenderGroup->RenderAll(*camera); // Deferred Render
-        m_forwardRenderGroup->RenderAll(*camera); // Forward Render
+        RenderAllGroup(*camera);
     }
 }
 
@@ -89,8 +97,7 @@ void RenderMgr::RenderMainCamera() const {
     if (mainCamera == nullptr) return;
 
     ResetBuffer(*mainCamera);
-    m_deferredRenderGroup->RenderAll(*mainCamera); // Deferred Render
-    m_forwardRenderGroup->RenderAll(*mainCamera); // Forward Render
+    RenderAllGroup(*mainCamera);
 
     //TODO: 포스트 프로세싱 테스트용 코드 반드시 제거 요망!
     const auto& mainBuffer = GetMainBuffer();
@@ -102,6 +109,7 @@ void RenderMgr::RenderMainCamera() const {
 
 void RenderMgr::RenderSdfMap() const {
     const auto& mainCamera = m_cameraMgr->GetCurrentCamera();
+    if (mainCamera == nullptr) return;
     m_sdfRenderGroup->RenderAll(*mainCamera);
 }
 
@@ -111,7 +119,7 @@ void RenderMgr::Exterminate() {
 
 void RenderMgr::ResetBuffer(const CameraBase& camera) const {
     auto frameBuffer = camera.GetFrameBuffer();
-    if(frameBuffer == nullptr) {
+    if (frameBuffer == nullptr) {
         frameBuffer = GetMainBuffer();
     }
     frameBuffer->AttachFrameBuffer();
@@ -124,4 +132,13 @@ void RenderMgr::BindSdfMapUniforms(const GLProgramHandle& handle) const {
 
 int RenderMgr::BindSdfMapTextures(const GLProgramHandle& handle, int textureLayout) const {
     return static_cast<SdfRenderGroup*>(m_sdfRenderGroup)->BindShaderMap(handle, textureLayout);
+}
+
+void RenderMgr::RenderAllGroup(const CameraBase& camera) const {
+#ifdef CSE_SETTINGS_RENDER_DEFERRED_SUPPORT
+    m_deferredRenderGroup->RenderAll(camera); // Deferred Render
+#endif
+#ifdef CSE_SETTINGS_RENDER_FORWARD_SUPPORT
+    m_forwardRenderGroup->RenderAll(camera); // Forward Render
+#endif
 }

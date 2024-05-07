@@ -3,6 +3,7 @@
 #include "../../Util/Render/SMaterial.h"
 #include "../../Util/Render/SShaderGroup.h"
 #include "../../Util/Render/SFrameBuffer.h"
+#include "../../Util/Settings.h"
 #include "../../Component/CameraComponent.h"
 #include "RenderMgr.h"
 #include "../LightMgr.h"
@@ -75,7 +76,9 @@ void ForwardRenderGroup::RenderAll(const CameraBase& camera) const {
             glUseProgram(handler.Program);
             //Attach Light
             m_lightMgr->AttachLightToShader(&handler);
-            m_renderMgr->BindSdfMapUniforms(handler); //TODO: SDF렌더링 효과 켜고 끄기 적용 반드시 하기 바람!
+#ifdef CSE_SETTINGS_RENDER_SDFGI_SUPPORT
+            m_renderMgr->BindSdfMapUniforms(handler);
+#endif
             const auto layoutBegin = m_lightMgr->GetShadowCount() + m_lightMgr->GetLightMapCount();
 
             for (const auto& render : renderComp) {

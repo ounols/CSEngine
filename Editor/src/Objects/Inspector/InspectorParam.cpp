@@ -345,8 +345,8 @@ void InspectorParam::GenerateFunc() {
         case InspectorParamType::RES: {
             m_paramFunc = [this]() {
                 auto* value = static_cast<CSE::SResource*>(m_value);
-                const auto& name = ((value == nullptr) ? std::string("None") : value->GetName())
-                                   + " (" + value->GetClassType() + ")";
+                const auto& name = ((value == nullptr) ? std::string("None") : (value->GetName())
+                                   + " (" + value->GetClassType() + ")");
                 ImGui::Button(name.c_str());
                 // When Dragging
                 if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {

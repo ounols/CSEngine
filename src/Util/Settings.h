@@ -1,5 +1,9 @@
 #pragma once
 
+#define CSE_SETTINGS_RENDER_DEFERRED_SUPPORT
+#define CSE_SETTINGS_RENDER_FORWARD_SUPPORT
+#define CSE_SETTINGS_RENDER_SDFGI_SUPPORT
+
 namespace CSE {
     class Settings {
     public:

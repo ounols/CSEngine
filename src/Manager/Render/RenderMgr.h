@@ -98,6 +98,8 @@ namespace CSE {
          */
         void RenderSdfMap() const;
 
+        void RenderAllGroup(const CameraBase& camera) const;
+
     private:
         CameraMgr* m_cameraMgr = nullptr;
         LightMgr* m_lightMgr = nullptr;

@@ -29,7 +29,8 @@ EEngineCore* EEngineCore::sInstance = nullptr;
 
 EngineCoreInstance* EEngineCore::getInstance() {
     if (sInstance == nullptr) sInstance = new EEngineCore;
-    if (sInstance->IsPreview()) return sInstance->m_previewCore;
+    if (sInstance->IsPreview())
+        return sInstance->m_previewCore;
     return sInstance;
 }
 

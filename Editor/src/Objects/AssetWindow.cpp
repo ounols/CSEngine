@@ -8,6 +8,7 @@
 #include "../../src/Util/AssetsDef.h"
 #include "../../src/Util/MoreString.h"
 #include "../../src/Util/Loader/SCENE/SSceneLoader.h"
+#include "../../src/Util/Render/STexture.h"
 
 using namespace CSEditor;
 
@@ -58,16 +59,39 @@ void AssetWindow::SetUI() {
 
     ImGui::Separator();
     ImGui::BeginChild("aw_scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+
+    // for base of button
     ImVec2 button_sz(70, 70);
     ImGuiStyle& style = ImGui::GetStyle();
     int size = m_selectedFolder->size();
     float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
+
+    // for preview size
+    ImVec2 button_img_sz(65, 65);
+    bool isPreviewLoaded = false;
+
     for (int n = 0; n < size; n++) {
         const auto& asset = m_selectedFolder->at(n);
+
+        // Detecting preview
+        void* preview = nullptr;
+        if (dynamic_cast<CSE::STexture*>(asset->resource)) {
+            preview = (void*) static_cast<CSE::STexture*>(asset->resource)->GetTextureID();
+        }
+        else if(!isPreviewLoaded && asset->class_type == "STexture") {
+            asset->resource = CSE::SResource::Create<CSE::STexture>(asset);
+            m_previewAssetQueue.push(asset);
+            isPreviewLoaded = true;
+        }
+
         ImGui::PushID(n);
         {
             ImGui::BeginGroup();
-            ImGui::Button(asset->extension.c_str(), button_sz);
+            if (preview) {
+                ImGui::ImageButton(asset->extension.c_str(), preview, button_img_sz);
+            } else {
+                ImGui::Button(asset->extension.c_str(), button_sz);
+            }
             ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + button_sz.x);
             ImGui::Text("%s", asset->name_full.c_str());
             ImGui::PopTextWrapPos();
@@ -123,16 +147,16 @@ bool AssetWindow::OnAssetClickEvent(const CSE::AssetMgr::AssetReference& asset) 
     if (asset.extension == "/\\?folder") {
         ChangeCurrentPath(asset.name_path + '/');
         RefreshExplorer();
-    }
-    else if (asset.extension == "scene" && !EEngineCore::getEditorInstance()->IsPreview()) {
+    } else if (asset.extension == "scene" && !EEngineCore::getEditorInstance()->IsPreview()) {
         m_mainDocker->Reset();
         const auto& editorCore = EEngineCore::getEditorInstance();
+        ReleasePreviewQueue();
         editorCore->SetCurrentScene(asset.name_path);
         editorCore->ResizePreviewCore();
+        editorCore->Update(0);
         editorCore->InvokeEditorRender();
 
-    }
-    else {
+    } else {
         return false;
     }
 
@@ -140,4 +164,12 @@ bool AssetWindow::OnAssetClickEvent(const CSE::AssetMgr::AssetReference& asset) 
     ImGui::EndChild();
     ImGui::End();
     return true;
+}
+
+void AssetWindow::ReleasePreviewQueue() {
+    for (; !m_previewAssetQueue.empty(); m_previewAssetQueue.pop()) {
+        const auto& texture = static_cast<CSE::AssetMgr::AssetReference*>(m_previewAssetQueue.front());
+        CORE->GetCore(ResMgr)->Remove(texture->resource);
+        texture->resource = nullptr;
+    }
 }
