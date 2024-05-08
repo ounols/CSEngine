@@ -5,6 +5,7 @@
 #include "Animation.h"
 #include "../Loader/DAE/DAELoader.h"
 #include "../../Manager/EngineCore.h"
+#include "../MoreString.h"
 
 using namespace CSE;
 

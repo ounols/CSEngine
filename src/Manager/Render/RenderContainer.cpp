@@ -14,7 +14,7 @@ RenderContainer::~RenderContainer() {}
 void RenderContainer::Register(SIRender* object, RenderGroupMode groupMode) {
     switch (groupMode) {
         case FORWARD: {
-            const auto& group = m_forwardRenderGroup;
+            SRenderGroup* group = m_forwardRenderGroup;
 #ifndef CSE_SETTINGS_RENDER_FORWARD_SUPPORT
             group = m_deferredRenderGroup;
 #endif
@@ -22,7 +22,7 @@ void RenderContainer::Register(SIRender* object, RenderGroupMode groupMode) {
             break;
         }
         case DEFERRED: {
-            const auto& group = m_deferredRenderGroup;
+            SRenderGroup* group = m_deferredRenderGroup;
 #ifndef CSE_SETTINGS_RENDER_DEFERRED_SUPPORT
             group = m_forwardRenderGroup;
 #endif
@@ -43,7 +43,7 @@ void RenderContainer::Register(SIRender* object, RenderGroupMode groupMode) {
 void RenderContainer::Remove(SIRender* object, RenderContainer::RenderGroupMode groupFlag) {
     switch (groupFlag) {
         case FORWARD: {
-            const auto& group = m_forwardRenderGroup;
+            SRenderGroup* group = m_forwardRenderGroup;
 #ifndef CSE_SETTINGS_RENDER_FORWARD_SUPPORT
             group = m_deferredRenderGroup;
 #endif
@@ -51,7 +51,7 @@ void RenderContainer::Remove(SIRender* object, RenderContainer::RenderGroupMode 
             break;
         }
         case DEFERRED: {
-            const auto& group = m_deferredRenderGroup;
+            SRenderGroup* group = m_deferredRenderGroup;
 #ifndef CSE_SETTINGS_RENDER_DEFERRED_SUPPORT
             group = m_forwardRenderGroup;
 #endif

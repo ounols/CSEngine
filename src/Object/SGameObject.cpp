@@ -292,24 +292,6 @@ SComponent* SGameObject::GetSComponentByHash(const std::string& hash) const {
     return nullptr;
 }
 
-std::string GetMetaString(const SGameObject& object, unsigned int startIndex) {
-    std::string&& id = object.GetID().substr(startIndex);
-    std::string&& hash = object.GetHash();
-
-    std::string result = "<hash id=\"" + std::move(id) + "\">" + std::move(hash) + "</hash>";
-
-    const auto& children = object.GetChildren();
-    for (const auto& child: children) {
-        result += '\n' + GetMetaString(*child, startIndex);
-    }
-    return result;
-}
-
-std::string SGameObject::GenerateMeta() {
-    unsigned int startIndex = GetID().size() - GetName().size();
-    return GetMetaString(*this, startIndex);
-}
-
 void SGameObject::SetHash(std::string& hash) {
     const std::string prevHash = std::string(m_hash);
     SObject::SetHash(hash);

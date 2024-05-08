@@ -114,8 +114,6 @@ namespace CSE {
 
         void SetIsEnable(bool is_enable);
 
-        std::string GenerateMeta() override;
-
         void SetHash(std::string& hash) override;
 
     private:

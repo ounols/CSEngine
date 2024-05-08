@@ -2,12 +2,14 @@
 
 namespace CSE {
     class SGameObject;
+    class SScene;
 }
 
 namespace CSEditor {
     class HierarchyData {
     public:
         HierarchyData() = default;
+
         virtual ~HierarchyData() = default;
 
         CSE::SGameObject* GetSelectedObject() const {
@@ -20,5 +22,6 @@ namespace CSEditor {
 
     protected:
         CSE::SGameObject* m_selected = nullptr;
+        CSE::SScene* m_currentScene = nullptr;
     };
 }

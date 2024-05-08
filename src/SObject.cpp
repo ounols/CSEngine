@@ -11,33 +11,25 @@ MemoryMgr* memoryMgr = nullptr;
 SObject::SObject() {
     memoryMgr = CORE->GetCore(MemoryMgr);
     GenerateHashString();
-	// register this object to MemoryContainer class
+    // register this object to MemoryContainer class
     memoryMgr->Register(this);
 }
 
 SObject::SObject(bool isRegister) {
     GenerateHashString();
-    if(isRegister) memoryMgr->Register(this);
+    if (isRegister) memoryMgr->Register(this);
 }
 
 SObject::~SObject() = default;
 
 
 void SObject::SetUndestroyable(bool enable) {
-	isUndestroyable = enable;
+    isUndestroyable = enable;
 }
 
 void SObject::Destroy() {
     memoryMgr->ReleaseObject(this);
 
-}
-
-void SObject::__FORCE_DESTROY__() {
-    memoryMgr->ReleaseObject(this, true);
-}
-
-std::string SObject::GenerateMeta() {
-    return nullptr;
 }
 
 void SObject::GenerateHashString() {
@@ -55,7 +47,7 @@ void SObject::GenerateHashString() {
 
 void SObject::SetHash(std::string& hash) {
     const std::string prevHash = std::string(m_hash);
-    if(hash.empty()) {
+    if (hash.empty()) {
         GenerateHashString();
         memoryMgr->ChangeHash(prevHash, m_hash);
         return;

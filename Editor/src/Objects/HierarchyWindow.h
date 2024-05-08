@@ -22,6 +22,8 @@ namespace CSEditor {
 
         void RenderGameObject(CSE::SGameObject& parent);
 
+        void UpdateGameObject(CSE::SGameObject& parent);
+
     private:
         EEngineCore* m_core = nullptr;
     };

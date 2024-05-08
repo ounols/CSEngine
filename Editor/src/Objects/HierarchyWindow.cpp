@@ -6,6 +6,8 @@
 #include "../Manager/EEngineCore.h"
 #include "../../src/Manager/SceneMgr.h"
 #include "../../src/Object/SScene.h"
+#include "../../src/Object/SPrefab.h"
+#include "../../../src/Manager/ResMgr.h"
 
 using namespace CSEditor;
 
@@ -21,7 +23,7 @@ void HierarchyWindow::SetUI() {
 
     RenderTrees();
 
-    if(!m_core->IsPreview() && (ImGui::IsWindowFocused() || ImGui::IsWindowHovered())) {
+    if (!m_core->IsPreview() && (ImGui::IsWindowFocused() || ImGui::IsWindowHovered())) {
         for (ImGuiKey key = static_cast<ImGuiKey>(0); key < ImGuiKey_COUNT; key = (ImGuiKey) (key + 1)) {
             if (ImGui::IsKeyDown(key)) {
                 m_core->InvokeEditorRender();
@@ -74,6 +76,25 @@ void HierarchyWindow::RenderGameObject(CSE::SGameObject& parent) {
         ImGui::SetDragDropPayload("INSP_GOBJ", &parent, sizeof(CSE::SGameObject));
         ImGui::EndDragDropSource();
     }
+    // When Dropped
+    if (ImGui::BeginDragDropTarget()) {
+        if (const auto& payload = ImGui::AcceptDragDropPayload("INSP_RES")) {
+            const auto& dropObject = static_cast<CSE::SResource*>(payload->Data);
+            if (dropObject->IsSameClass("SPrefab")) {
+                const auto& obj = static_cast<CSE::SPrefab*>(dropObject)->Clone(CSE::vec3::Zero, &parent);
+                UpdateGameObject(*obj);
+            }
+        }
+        if (const auto& payload = ImGui::AcceptDragDropPayload("AW_RES")) {
+            const auto& dropObject = static_cast<CSE::AssetMgr::AssetReference*>(payload->Data);
+            if ("SPrefab" == dropObject->class_type) {
+                const auto& res = CSE::SResource::Create<CSE::SPrefab>(dropObject);
+                const auto& obj = res->Clone(CSE::vec3::Zero, &parent);
+                UpdateGameObject(*obj);
+            }
+        }
+        ImGui::EndDragDropTarget();
+    }
 
     if (isOpen) {
         for (const auto& child: children) {
@@ -82,5 +103,12 @@ void HierarchyWindow::RenderGameObject(CSE::SGameObject& parent) {
         if (!children.empty()) {
             ImGui::TreePop();
         }
+    }
+}
+
+void HierarchyWindow::UpdateGameObject(CSE::SGameObject& parent) {
+    parent.Tick(0);
+    for (const auto& child : parent.GetChildren()) {
+        UpdateGameObject(*child);
     }
 }
