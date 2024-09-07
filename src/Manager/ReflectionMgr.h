@@ -39,8 +39,8 @@ namespace CSE {
                 auto& src = ReflectionMgr::m_defineWrapper.m_node;
                 auto* new_obj = new DefineWrapperNode(type, func);
                 src->m_next = new_obj;
-                ReflectionMgr::m_defineWrapper_prev = m_defineWrapper;
                 ReflectionMgr::m_defineWrapper.m_node = new_obj;
+                ReflectionMgr::m_defineWrapper_prev = m_defineWrapper;
                 return nullptr;
             }
 
