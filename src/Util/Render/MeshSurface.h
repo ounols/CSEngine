@@ -34,6 +34,10 @@ namespace CSE {
         MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords, float* weights, short* jointIds);
         bool MakeIndices(int sizeIndic, int* indices);
 
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
+
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 

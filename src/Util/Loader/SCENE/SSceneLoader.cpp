@@ -48,7 +48,7 @@ bool SSceneLoader::SaveScene(SScene* scene, std::string path) {
 
     std::stringstream value;
     value << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-    value << "<CSESCENE version = \"" << "1.0.0" << "\">\n";
+    value << "<CSESCENE version=\"" << "1.0.0" << "\">\n";
 
     value << GetGameObjectValue(scene->GetRoot());
 

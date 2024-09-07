@@ -27,6 +27,10 @@ namespace CSE {
             return m_depthOnlyHandle;
         }
 
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
+
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 

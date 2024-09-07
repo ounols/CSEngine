@@ -384,3 +384,11 @@ unsigned int SFrameBuffer::GetRenderbufferID(int index) const {
     auto id = m_buffers[index]->renderbufferId;
     return id;
 }
+
+void SFrameBuffer::SetValue(std::string name_str, VariableBinder::Arguments value) {
+
+}
+
+std::string SFrameBuffer::PrintValue() const {
+    return {};
+}

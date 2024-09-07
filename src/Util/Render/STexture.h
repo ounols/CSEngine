@@ -60,6 +60,10 @@ namespace CSE {
 
         void SetType(Type type);
 
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
+
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 

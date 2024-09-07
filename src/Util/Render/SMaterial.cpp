@@ -345,3 +345,11 @@ std::string SMaterial::PrintMaterial() const {
     result += "</shader>\n</CSEMAT>";
     return result;
 }
+
+void SMaterial::SetValue(std::string name_str, VariableBinder::Arguments value) {
+
+}
+
+std::string SMaterial::PrintValue() const {
+    return {};
+}

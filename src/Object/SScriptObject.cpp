@@ -137,3 +137,11 @@ void SScriptObject::GetVariables(const std::string& str) {
 std::vector<std::string> SScriptObject::GetVariables() const {
     return m_variables;
 }
+
+void SScriptObject::SetValue(std::string name_str, VariableBinder::Arguments value) {
+
+}
+
+string SScriptObject::PrintValue() const {
+    return {};
+}

@@ -106,6 +106,10 @@ namespace CSE {
 
         void SaveShader(const std::string& path);
 
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
+
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 

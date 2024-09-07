@@ -9,11 +9,12 @@
 #include "../Manager/AssetMgr.h"
 #include "../SObject.h"
 #include "Base/ReflectionObject.h"
+#include "../Util/VariableBinder.h"
 #include "../Util/ResourceDef.h"
 
 namespace CSE {
 
-    class SResource : public SObject, public ReflectionObject {
+    class SResource : public SObject, public VariableBinder, public ReflectionObject {
     public:
         explicit SResource(std::string classType);
 

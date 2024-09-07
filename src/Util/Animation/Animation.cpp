@@ -30,3 +30,11 @@ void Animation::Init(const AssetMgr::AssetReference* asset) {
     CORE->GetCore(ResMgr)->GetAssetReference(parent_id);
 
 }
+
+void Animation::SetValue(std::string name_str, VariableBinder::Arguments value) {
+
+}
+
+std::string Animation::PrintValue() const {
+    return {};
+}

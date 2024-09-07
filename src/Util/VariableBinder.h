@@ -18,6 +18,12 @@ namespace CSE {
         virtual ~VariableBinder() = default;
 
     public:
+        /**
+         * Used to get serialized values.
+         * All classes that inherit from VariableBinder will unconditionally call this function first during initialization.
+         * @param name_str Name of values
+         * @param value Serialized values
+         */
         virtual void SetValue(std::string name_str, Arguments value) = 0;
 
         virtual std::string PrintValue() const = 0;
