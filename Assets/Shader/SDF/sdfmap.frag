@@ -1,40 +1,6 @@
 precision highp float;
 precision mediump sampler3D;
 
-const float c_p_d = 1.00000036;
-
-const mat3 c_pv_m0 = mat3(
-vec3(0., 0., 1.),
-vec3(0., -1., 0.),
-vec3(1., 0., 0.)
-);
-const mat3 c_pv_m1 = mat3(
-vec3(0., 0., -1.),
-vec3(0., -1., 0.),
-vec3(-1., 0., 0.)
-);
-const mat3 c_pv_m2 = mat3(
-vec3(-1., 0., 0.),
-vec3(0., 0., 1.),
-vec3(0., 1., 0.)
-);
-const mat3 c_pv_m3 = mat3(
-vec3(-1., 0., 0.),
-vec3(0., 0., -1.),
-vec3(0., -1., 0.)
-);
-const mat3 c_pv_m4 = mat3(
-vec3(-1., 0., 0.),
-vec3(0., -1., 0.),
-vec3(0., 0., 1.)
-);
-const mat3 c_pv_m5 = mat3(
-vec3(1., 0., 0.),
-vec3(0., -1., 0.),
-vec3(0., 0., -1.)
-);
-
-
 //Uniforms
 //[sdf.tex]//
 uniform sampler3D u_sdf_tex;
@@ -189,7 +155,7 @@ void main(void) {
     float index_pos_y = u_node_size.x * u_node_size.y * u_node_size.z;
     float node_index = floor(mod(v_textureCoordOut.x * u_cell_size.x, u_cell_size.x))
                     + floor(mod(v_textureCoordOut.y * u_cell_size.y, u_cell_size.y)) * u_cell_size.x;
-    float pos_index = floor(node_index / 6.);
+    float pos_index = node_index;
     if(pos_index > index_pos_y) discard;
 
 
@@ -205,23 +171,18 @@ void main(void) {
     {
         // camera
         vec3 ro = vec3(0, -0.2, 0) - pos * u_node_space + u_node_size * u_node_space * 0.5;
-
         vec2 p = vec2(2. * (new_uv - 0.5));
 
-        // Setting View Matrix
-        mat3 viewMat = mat3(0.);
-        {
-            int i = int(floor(mod(node_index, 6.)));
-            if(i == 0) viewMat = c_pv_m0;
-            if(i == 1) viewMat = c_pv_m1;
-            if(i == 2) viewMat = c_pv_m2;
-            if(i == 3) viewMat = c_pv_m3;
-            if(i == 4) viewMat = c_pv_m4;
-            if(i == 5) viewMat = c_pv_m5;
-        }
+        // 구면 좌표계 계산
+        // 각 셀 크기에 맞게 텍스처 좌표를 조정합니다.
+        float phi = new_uv.x * 2.0 * 3.14159265359; // 방위각
+        float theta = new_uv.y * 3.14159265359; // 고도각
+
+        // 방위각과 고도각을 사용하여 레이 방향을 계산합니다.
+        vec3 direction = normalize(vec3(sin(theta) * cos(phi), cos(theta), sin(theta) * sin(phi)));
 
         // ray direction
-        vec3 rd = viewMat * normalize(vec3(p.xy, c_p_d));
+        vec3 rd = direction;
 
         // render
         color = renderTexture(ro, rd).rgb;

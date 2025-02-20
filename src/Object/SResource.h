@@ -63,7 +63,7 @@ namespace CSE {
         static T* Create(const AssetMgr::AssetReference* asset) {
             if (asset == nullptr) return nullptr;
             {
-                SResource* res = GetResource(asset->name);
+                SResource* res = GetResource(asset->hash);
                 if (res != nullptr) return static_cast<T*>(res);
             }
             T* object = new T();

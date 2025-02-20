@@ -17,7 +17,7 @@ SdfRenderGroup::SdfRenderGroup(const RenderMgr& renderMgr) : SRenderGroup(render
 
     m_sdfMapBuffer = new SFrameBuffer();
     m_sdfMapBuffer->SetName("SDF Render Group Texture");
-    float wh = 6.f * m_nodeSize.x * m_nodeSize.y * m_nodeSize.z;
+    float wh = m_nodeSize.x * m_nodeSize.y * m_nodeSize.z;
     float wh_sqrt = sqrtf(wh);
     m_cellSize = vec2{ ceilf(wh_sqrt), floorf(wh_sqrt) };
     m_mapSize = vec2{ m_envSize * m_cellSize.x,  m_envSize * m_cellSize.y };
