@@ -119,32 +119,41 @@ void main(void) {
 			shadow = ShadowCalculation(index_shadow, fragPosLightSpace, N, L);
 			++index_shadow;
 		}
+		// Cook-Torrance BRDF 모델을 사용합니다.
+		// 빛의 색상(u_lightColor[i])과 거리에 따른 감쇠(attenuation)로 radiance를 계산합니다.
+		// shadow는 그림자(shadow)의 영향을 고려한 값입니다.
+
 		vec3 radiance = (u_lightColor[i] * attenuation) * (1.0 - shadow);
-		// Cook-Torrance BRDF
+
+		// DistributionGGX 함수를 이용하여, 빛의 입사 각도(V)와 노말(N) 사이의 거리 분포 함수값(NDF)을 계산합니다.
+		// GeometrySmith 함수를 이용하여, 양방향 반사 분포 함수(BRDF)에 대한 가중치값(G)을 계산합니다.
+		// fresnelSchlick 함수를 이용하여, 빛이 입사한 각도와 물체의 입사각에 대한 Schlick 근사(F) 값을 계산합니다.
+
 		float NDF = DistributionGGX(N, H, roughness);
-		float G   = GeometrySmith(N, V, L, roughness);
-		vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
+		float G = GeometrySmith(N, V, L, roughness);
+		vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
 
-		vec3 nominator    = NDF * G * F;
+		// nominator는 BRDF의 분자를 나타내며, NDF, G, F 값들의 곱으로 이루어져 있습니다.
+		// denominator는 BRDF의 분모를 나타내며, NdotV와 NdotL 값의 곱에 4를 곱한 값과 0.001을 더한 값입니다.
+		// nominator와 denominator를 이용하여 specular 값을 계산합니다.
+
+		vec3 nominator = NDF * G * F;
 		float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;
-		vec3 specular = nominator / denominator; // prevent divide by zero for NdotV=0.0 or NdotL=0.0
+		vec3 specular = nominator / denominator; // NdotV=0.0 or NdotL=0.0일 경우 분모가 0이 되는 것을 방지합니다.
 
-		// kS is equal to Fresnel
+		// kS는 Fresnel 값을 나타냅니다.
 		vec3 kS = F;
 
-		// for energy conservation, the diffuse and specular light can't
-		// be above 1.0 (unless the surface emits light); to preserve this
-		// relationship the diffuse component (kD) should equal 1.0 - kS.
+		// 물체의 diffuse한 성질을 나타내는 kD는 1-kS 값입니다.
+		// kD값을 linear blend로 계산하면서, metallic 값에 따라 non-metal 또는 partly-metal인 경우에만 diffuse lighting을 사용합니다.
 		vec3 kD = vec3(1.0) - kS;
-		// multiply kD by the inverse metalness such that only non-metals
-		// have diffuse lighting, or a linear blend if partly metal (pure metals
-		// have no diffuse light).
 		kD *= 1.0f - metallic;
 
-		// scale light by NdotL
+		// NdotL 값과 kD 값을 이용하여, diffuse한 빛의 반사도를 계산합니다.
 		float NdotL = max(dot(N, L), 0.0);
 
-		// add to outgoing radiance Lo
+		// 이제 BRDF의 값에 색상과 NdotL값을 곱한 후, Lo(최종 렌더링 결과)에 더합니다.
+		// 이 때, specular 값은 이미 kS 값과 BRDF의 곱으로 계산되었기 때문에 kS값과 다시 곱하지 않습니다.
 		Lo += (kD * albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 
 	}
