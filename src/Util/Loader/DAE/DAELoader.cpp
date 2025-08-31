@@ -171,10 +171,7 @@ bool DAELoader::LoadGeometry(const XNode& root_g, DAEMeshData* meshData) {
     std::string normalsId;
     std::string texCoordsId;
 
-    try {
-#ifdef __EMSCRIPTEN__
-        if(!root_m.hasChild("polylist")) return false;
-#endif
+    if (root_m.hasChild("polylist")) {
         const XNode& polylist = root_m.getChild("polylist");
 
         normalsId = polylist.getNodeByAttribute("input", "semantic", "NORMAL")
@@ -183,17 +180,14 @@ bool DAELoader::LoadGeometry(const XNode& root_g, DAEMeshData* meshData) {
         texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
         m_polygonType = POLYGON_TYPE::POLYLIST;
     }
-    catch (int error) {
-        try {
-            const XNode& triangles = root_m.getChild("triangles");
+    else if (root_m.hasChild("triangles")) {
+        const XNode& triangles = root_m.getChild("triangles");
 
-            const XNode& normals = triangles.getNodeByAttribute("input", "semantic", "NORMAL");
-            normalsId = normals.getAttribute("source").value.substr(1);
-            const XNode& childWithAttribute = triangles.getNodeByAttribute("input", "semantic", "TEXCOORD");
-            texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
-            m_polygonType = POLYGON_TYPE::TRIANGLES;
-        }
-        catch (int error) {}
+        const XNode& normals = triangles.getNodeByAttribute("input", "semantic", "NORMAL");
+        normalsId = normals.getAttribute("source").value.substr(1);
+        const XNode& childWithAttribute = triangles.getNodeByAttribute("input", "semantic", "TEXCOORD");
+        texCoordsId = childWithAttribute.getAttribute("source").value.substr(1);
+        m_polygonType = POLYGON_TYPE::TRIANGLES;
     }
 
     ReadNormals(root_m, normalsId, meshData);
