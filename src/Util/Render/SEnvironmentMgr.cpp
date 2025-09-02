@@ -35,30 +35,23 @@ void SEnvironmentMgr::RenderPBREnvironment() {
     std::string etc_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/equirectangular_to_cubemap.frag");
     std::string irr_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/irradiance_convolution.frag");
     std::string pre_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/prefilter.frag");
-    std::string brdf_v_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/brdf.vert");
-    std::string brdf_f_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shader/PBR/IBL/brdf.frag");
 
     m_equirectangularToCubemapShader = ShaderUtil::CreateProgramHandle(cubemap_str.c_str(), etc_str.c_str());
     m_irradianceShader = ShaderUtil::CreateProgramHandle(cubemap_str.c_str(), irr_str.c_str());
     m_prefilterShader = ShaderUtil::CreateProgramHandle(cubemap_str.c_str(), pre_str.c_str());
-    m_brdfShader = ShaderUtil::CreateProgramHandle(brdf_v_str.c_str(), brdf_f_str.c_str());
-
 
     // pbr: setup framebuffer
     // ----------------------
-    unsigned int captureFBO;
-    unsigned int captureRBO;
-
     glDisable(GL_CULL_FACE);
 
-    glGenRenderbuffers(1, &captureRBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    glGenRenderbuffers(1, &m_captureRBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 512, 512);
 
-    glGenFramebuffers(1, &captureFBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glGenFramebuffers(1, &m_captureFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_captureFBO);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                              GL_RENDERBUFFER, captureRBO);
+                              GL_RENDERBUFFER, m_captureRBO);
 
     // pbr: load the HDR environment map
     // ---------------------------------
@@ -101,7 +94,7 @@ void SEnvironmentMgr::RenderPBREnvironment() {
     if(m_cubeVAO <= 0) LoadCubeVAO();
     glGetError();
     glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_captureFBO);
     std::cout << "[PBR] Generating Environment Cubemap...";
     for (unsigned int i = 0; i < 6; ++i) {
         m_equirectangularToCubemapShader->SetUniformMat4("VIEW_MATRIX", captureViews[i]);
@@ -127,8 +120,8 @@ void SEnvironmentMgr::RenderPBREnvironment() {
     m_irradianceMap->SetHash(hash);
     m_irradianceMap->InitTexture(32, 32);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 32, 32);
 
     // pbr: solve diffuse integral by convolution to create an irradiance (cube)map.
@@ -139,7 +132,7 @@ void SEnvironmentMgr::RenderPBREnvironment() {
     m_envCubemap->Bind(envTextureLocation, 0);
 
     glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_captureFBO);
     std::cout << "[PBR] Generating Irradiance Cubemap...";
     for (unsigned int i = 0; i < 6; ++i) {
         m_irradianceShader->SetUniformMat4("VIEW_MATRIX", captureViews[i]);
@@ -173,7 +166,7 @@ void SEnvironmentMgr::RenderPBREnvironment() {
     m_envCubemap->Bind(envTextureLocation, 0);
 
 
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_captureFBO);
     unsigned int maxMipLevels = 5;
 
     std::cout << "[PBR] Backing Prefiltering Textures...";
@@ -181,7 +174,7 @@ void SEnvironmentMgr::RenderPBREnvironment() {
         // reisze framebuffer according to mip-level size.
         unsigned int mipWidth = 128 * std::pow(0.5, mip);
         unsigned int mipHeight = 128 * std::pow(0.5, mip);
-        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, m_captureRBO);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, mipWidth, mipHeight);
         glViewport(0, 0, mipWidth, mipHeight);
 
@@ -201,39 +194,6 @@ void SEnvironmentMgr::RenderPBREnvironment() {
         std::cout << "Level " << mip << "..";
     }
     std::cout << " finished!\n";
-
-    // pbr: generate a 2D LUT from the BRDF equations used.
-    // ----------------------------------------------------
-    std::cout << "[PBR] Backing a 2D LUT from the BRDF equations used...";
-    m_brdfMap = new STexture();
-    m_brdfMap->SetName("brdfLUT.texture");
-    m_brdfMap->SetAbsoluteID("brdfLUT.texture");
-    hash = "CSEENV0000000004";
-    m_brdfMap->SetHash(hash);
-    m_brdfMap->InitTexture(512, 512, GL_RG, GL_RG16F, GL_FLOAT);
-
-    // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 512, 512);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_brdfMap->GetTextureID(), 0);
-
-    glViewport(0, 0, 512, 512);
-    glUseProgram(m_brdfShader->Program);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    if(m_planeVAO <= 0) LoadPlaneVAO();
-    RenderPlaneVAO();
-
-//    std::string save_str = CSE::AssetsPath() + "brdf.bmp";
-//    saveScreenshot(save_str.c_str());
-    std::cout << " finished!\n";
-
-    //release fbo, rbo
-    glDeleteFramebuffers(1, &captureFBO);
-    glDeleteRenderbuffers(1, &captureRBO);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glEnable(GL_CULL_FACE);
 }
 
 void SEnvironmentMgr::LoadCubeVAO() {
@@ -362,9 +322,61 @@ int SEnvironmentMgr::BindPBREnvironmentMap(const GLProgramHandle* handle, int te
         m_irradianceMap->Bind(handle->Uniforms.LightIrradiance, textureLayout + steps++);
     if(handle->Uniforms.LightPrefilter != HANDLE_NULL)
         m_prefilterMap->Bind(handle->Uniforms.LightPrefilter, textureLayout + steps++);
-    if(handle->Uniforms.LightBrdfLut != HANDLE_NULL)
-        m_brdfMap->Bind(handle->Uniforms.LightBrdfLut, textureLayout + steps++);
     return steps;
+}
+
+int SEnvironmentMgr::BindBRDFLUT(const GLProgramHandle* handle, int textureLayout) const {
+    if(handle == nullptr) return 0;
+    if(handle->Uniforms.LightBrdfLut != HANDLE_NULL) {
+        m_brdfMap->Bind(handle->Uniforms.LightBrdfLut, textureLayout + 1);
+        return 1;
+    }
+    return 0;
+}
+
+void SEnvironmentMgr::RenderBRDFLUT() {
+    std::cout << "[PBR] Backing a 2D LUT from the BRDF equations used...";
+
+    std::string brdf_v_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shaders/IBL/brdf.vert");
+    std::string brdf_f_str = CSE::AssetMgr::LoadAssetFile(CSE::AssetsPath() + "Shaders/IBL/brdf.frag");
+
+    m_brdfShader = ShaderUtil::CreateProgramHandle(brdf_v_str.c_str(), brdf_f_str.c_str());
+
+
+    // Create BRDF LUT texture
+    m_brdfMap = new STexture();
+    m_brdfMap->SetName("brdfLUT.texture");
+    m_brdfMap->SetAbsoluteID("brdfLUT.texture");
+    std::string hash = "CSEENV0000000004";
+    m_brdfMap->SetHash(hash);
+    m_brdfMap->InitTexture(512, 512, GL_RG, GL_RG16F, GL_FLOAT);
+
+    // Configure capture framebuffer for BRDF LUT rendering
+    glBindFramebuffer(GL_FRAMEBUFFER, m_captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_captureRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 512, 512);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_brdfMap->GetTextureID(), 0);
+
+    // Render screen-space quad with BRDF shader
+    glViewport(0, 0, 512, 512);
+    glUseProgram(m_brdfShader->Program);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if(m_planeVAO <= 0) LoadPlaneVAO();
+    RenderPlaneVAO();
+
+    std::cout << " finished!\n";
+}
+
+void SEnvironmentMgr::ReleaseRenderingResources() {
+    //release fbo, rbo
+    glDeleteFramebuffers(1, &m_captureFBO);
+    glDeleteRenderbuffers(1, &m_captureRBO);
+
+    m_captureFBO = 0;
+    m_captureRBO = 0;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glEnable(GL_CULL_FACE);
 }
 
 void SEnvironmentMgr::ReleaseVAO() {

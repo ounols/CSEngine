@@ -37,7 +37,7 @@ namespace CSE {
 
         void Exterminate() override;
 
-        void AttachElement() const;
+        int AttachElement(int textureLayout) const;
 
         SMaterial::Element* GetElement(const std::string& key) const;
 

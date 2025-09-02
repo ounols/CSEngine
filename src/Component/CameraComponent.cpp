@@ -253,6 +253,7 @@ void CameraComponent::RenderBackground() const {
     switch (m_backgroundType) {
         case SOLID:
             glClearColor(m_backgroundColor.x, m_backgroundColor.y, m_backgroundColor.z, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
             break;
         case SKYBOX:
             const auto& mapStruct = m_backgroundMap;

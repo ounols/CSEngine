@@ -191,17 +191,24 @@ const mat4& LightComponent::GetLightViewMatrix() const {
     return m_lightViewMatrix;
 }
 
-void LightComponent::BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const {
-    if(m_frameBuffer == nullptr || m_disableShadow) return;
+int LightComponent::BindShadow(const GLProgramHandle& handle, int handleIndex, int layout) const {
+    if(m_frameBuffer == nullptr || m_disableShadow) return 0;
 
-    m_depthTexture->Bind(handle.Uniforms.LightShadowMap + index, index);
+    int bind_count = 0;
+
+    if (handle.Uniforms.LightShadowMap != HANDLE_NULL) {
+        m_depthTexture->Bind(handle.Uniforms.LightShadowMap + layout, layout);
+        bind_count++;
+    }
     auto matrix = m_lightViewMatrix * m_lightProjectionMatrix;
     glUniformMatrix4fv(handle.Uniforms.LightMatrix + handleIndex, 1, 0, matrix.Pointer());
+    return bind_count;
 }
 
 CameraMatrixStruct LightComponent::GetCameraMatrixStruct() const {
-    const auto& position = gameObject->GetTransform();
-    return { m_lightViewMatrix, m_lightProjectionMatrix, position->m_position };
+    vec4&& dir =  m_light->direction * m_light->radius;
+    return { m_lightViewMatrix, m_lightProjectionMatrix,
+        -vec3{dir.x, dir.y, dir.z} };
 }
 
 SFrameBuffer* LightComponent::GetFrameBuffer() const {

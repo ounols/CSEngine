@@ -63,7 +63,7 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
 
     glUseProgram(handle->Program);
 
-    material.AttachElement();
+    material.AttachElement(0);
     {
         auto albedo_tex = handle->UniformLocation("texture.albedo");
         if(albedo_tex != nullptr && albedo_tex->id >= 0) {

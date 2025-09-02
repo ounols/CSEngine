@@ -68,7 +68,7 @@ void SdfRenderGroup::RenderAll(const CameraBase& camera) const {
     glViewport(0, 0, (int)m_mapSize.x, (int)m_mapSize.y);
     glUseProgram(m_sdfHandle->Program);
     m_testTexture->Bind(m_testTextureId, 0);
-    m_lightMgr->AttachLightToShader(m_sdfHandle);
+    int layoutBegin = m_lightMgr->AttachLightToShader(m_sdfHandle);
     ShaderUtil::BindCameraToShader(*m_sdfHandle, cameraStruct.camera, cameraStruct.cameraPosition,
                                    cameraStruct.projection, mat4::Identity());
     glUniform2fv(uniforms.SourceBufferSize, 1, m_mapSize.Pointer());

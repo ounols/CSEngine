@@ -168,6 +168,7 @@ void AssetMgr::ReadPackage(const std::string& path) {
             int isdir = zip_entry_isdir(m_zip);
 
             std::string name_str = name;
+            if(name_str.find("__MACOSX/") != std::string::npos) continue;
             if(isdir != 0) name_str = name_str.substr(0, name_str.size() - 1);
             auto rFindIndex = name_str.rfind('/');
             std::string name_cropped = name_str;

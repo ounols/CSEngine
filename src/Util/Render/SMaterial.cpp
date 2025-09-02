@@ -53,14 +53,15 @@ void SMaterial::ReleaseElements() {
     m_elements.clear();
 }
 
-void SMaterial::AttachElement() const {
-    m_textureLayout = m_lightMgr->GetShadowCount();
+int SMaterial::AttachElement(int textureLayout) const {
+    m_textureLayout = textureLayout;
 
     for (const auto& element_pair : m_elements) {
         const auto& element = element_pair.second;
         if (element->id < 0) continue;
         element->attachFunc();
     }
+    return m_textureLayout - textureLayout;
 }
 
 SMaterial::Element* SMaterial::GetElement(const std::string& key) const {
@@ -267,11 +268,11 @@ void SMaterial::SetTextureFunc(Element* element, SResource* texture) {
     auto value = static_cast<STexture*>(texture);
     //    element->count = m_textureLayout++;
     auto* texture_layout = &m_textureLayout;
-    ++m_textureCount;
+    // auto texture_layout = m_textureLayout++;
     element->raw = texture->GetHash();
     element->attachFunc = [element, value, texture_layout]() {
-        value->Bind(element->id, *texture_layout);
         ++(*texture_layout);
+        value->Bind(element->id, *texture_layout);
     };
 }
 
