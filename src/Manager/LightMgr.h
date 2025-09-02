@@ -35,7 +35,7 @@ namespace CSE {
          * Attach the light components to the shader.
          * @param handle Shader handle
          */
-        void AttachLightToShader(const GLProgramHandle* handle) const;
+        int AttachLightToShader(const GLProgramHandle* handle) const;
 
         /**
          * Attach the light map to the shader.
