@@ -78,6 +78,13 @@ DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbu
     const auto& handle = shaders.GetGeometryHandle();
     glUseProgram(handle->Program);
 
+    if (handle->CullFace == 0) {
+        glDisable(GL_CULL_FACE);
+    }else {
+        glEnable(GL_CULL_FACE);
+        glCullFace(handle->CullFace);
+    }
+
     for (const auto& render : renderLayer) {
         if (render == nullptr) continue;
         if (!render->isRenderActive) continue;
@@ -104,6 +111,13 @@ DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbu
         layoutBegin += m_renderMgr->BindSdfMapTextures(*lightPassHandle, layoutBegin);
     }
 #endif
+    if (lightPassHandle->CullFace == 0) {
+        glDisable(GL_CULL_FACE);
+    }else {
+        glEnable(GL_CULL_FACE);
+        glCullFace(lightPassHandle->CullFace);
+    }
+
     gbuffer.AttachLightPassTexture(layoutBegin);
     BindSourceBuffer(*deferredBuffer, *lightPassHandle, layoutBegin + 3);
 

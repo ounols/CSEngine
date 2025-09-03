@@ -11,9 +11,9 @@
 using namespace CSE;
 
 #if defined(__CSE_DESKTOP__)
-char* ShaderUtil::m_defineVersion = "#version 330 core\n";
+const char *ShaderUtil::m_defineVersion = "#version 330 core\n";
 #elif defined(__CSE_ES__)
-char* ShaderUtil::m_defineVersion = "#version 300 es\n";
+const char* ShaderUtil::m_defineVersion = "#version 300 es\n";
 #endif
 
 ShaderUtil::ShaderUtil() = default;

@@ -123,6 +123,8 @@ namespace CSE {
 
         GLElementList AttributesList;
         GLElementList UniformsList;
+
+        GLuint CullFace = GL_BACK;
     private:
         std::string m_fragShaderName;
         std::string m_vertShaderName;

@@ -67,6 +67,20 @@ void SShaderGroup::Init(const AssetMgr::AssetReference* asset) {
         } else {
             handle = existHandle;
         }
+
+        if (shader.hasAttribute("cullFace")) {
+            const char value = shader.getAttribute("cullFace").value[0];
+            if (value == 'F' || value == 'f') {
+                handle->CullFace = GL_FRONT;
+            }
+            else if (value == 'B' || value == 'b') {
+                handle->CullFace = GL_BACK;
+            }
+            else {
+                handle->CullFace = 0;
+            }
+        }
+
         m_handles.insert(std::pair<std::string, GLProgramHandle*>(pass, handle));
         if(pass == "geometry") m_geometryHandle = handle;
         if(pass == "forward") m_forwardHandle = handle;

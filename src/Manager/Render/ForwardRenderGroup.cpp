@@ -79,8 +79,14 @@ void ForwardRenderGroup::RenderAll(const CameraBase& camera) const {
             layoutBegin += m_lightMgr->AttachLightMapToShader(&handler, layoutBegin);
 #ifdef CSE_SETTINGS_RENDER_SDFGI_SUPPORT
             m_renderMgr->BindSdfMapUniforms(handler);
-            layoutBegin += m_renderMgr->BindSdfMapTextures(*lightPassHandle, layoutBegin);
+            layoutBegin += m_renderMgr->BindSdfMapTextures(handler, layoutBegin);
 #endif
+            if (handler.CullFace == 0) {
+                glDisable(GL_CULL_FACE);
+            }else {
+                glEnable(GL_CULL_FACE);
+                glCullFace(handler.CullFace);
+            }
 
             for (const auto& render : renderComp) {
                 if (render == nullptr) continue;

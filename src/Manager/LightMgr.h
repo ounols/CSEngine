@@ -18,7 +18,7 @@ namespace CSE {
     public:
         const int SHADOW_WIDTH = 1024;     ///< Width of the shadow map
         const int SHADOW_HEIGHT = 1024;    ///< Height of the shadow map
-        constexpr static float SHADOW_DISTANCE = 10.f;   ///< Distance of the shadow map
+        constexpr static float SHADOW_DISTANCE = 100.f;   ///< Distance of the shadow map
 
     public:
         /**
