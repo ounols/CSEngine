@@ -1,0 +1,132 @@
+name: Build All Platforms
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  linux:
+    name: Linux (gcc)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Install packages
+        run: |
+          sudo apt-get update -y
+          sudo apt-get -y install cmake build-essential mesa-common-dev libglfw3 libglfw3-dev libglew-dev
+          
+      - name: Ready for build
+        run: |
+          export CXXFLAGS="-DBUILD_TEST_MODE"
+          mkdir build
+        working-directory: ./platforms/Linux
+        
+      - name: Configure Cmake
+        env:
+          CC: gcc
+          CXX: g++
+        run: cmake -DCMAKE_BUILD_TYPE=Debug ../
+        working-directory: ./platforms/Linux/build
+        
+      - name: Build
+        run: cmake --build .
+        working-directory: ./platforms/Linux/build
+
+  macos:
+    name: macOS
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Install packages
+        run: |
+          brew install cmake ninja glfw
+          ninja --version
+          cmake --version
+          
+      - name: Ready for build
+        run: |
+          export CXXFLAGS="-DBUILD_TEST_MODE"
+          mkdir build
+        working-directory: ./platforms/MacOS
+        
+      - name: Configure Cmake
+        env:
+          CC: clang
+          CXX: clang++
+        run: cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug ../
+        working-directory: ./platforms/MacOS/build
+        
+      - name: Build
+        run: cmake --build .
+        working-directory: ./platforms/MacOS/build
+
+  windows:
+    name: Windows (x64)
+    runs-on: windows-latest
+    env:
+      SOLUTION_FILE_PATH: ./platforms/Windows/
+      BUILD_CONFIGURATION: Debug
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
+
+      - name: Restore NuGet packages
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+
+      - name: Build
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=x64 ${{env.SOLUTION_FILE_PATH}}
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-windows-x64
+          path: ./platforms/Windows/x64/Debug/*.exe
+
+  web:
+    name: Web (Emscripten)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup emsdk
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.50
+          actions-cache-folder: 'emsdk-cache'
+
+      - name: Verify
+        run: emcc -v
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: renderer
+
+      - name: Set permissions
+        working-directory: renderer/platforms/Web
+        run: chmod +x ./ci-build-test.sh
+
+      - name: Build
+        working-directory: renderer/platforms/Web
+        run: ./ci-build-test.sh
+
+      - name: Upload Web
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-web
+          path: renderer/platforms/Web/build/result
