@@ -3,6 +3,7 @@
 #include "../../Util/Render/SMaterial.h"
 #include "../../Util/Render/SShaderGroup.h"
 #include "../../Util/Render/SFrameBuffer.h"
+#include "../../Util/Settings.h"
 #include "../../Component/CameraComponent.h"
 #include "RenderMgr.h"
 #include "../LightMgr.h"
@@ -74,17 +75,27 @@ void ForwardRenderGroup::RenderAll(const CameraBase& camera) const {
 
             glUseProgram(handler.Program);
             //Attach Light
-            m_lightMgr->AttachLightToShader(&handler);
-            const auto layoutBegin = m_lightMgr->GetShadowCount() + m_lightMgr->GetLightMapCount();
+            int layoutBegin = m_lightMgr->AttachLightToShader(&handler);
+            layoutBegin += m_lightMgr->AttachLightMapToShader(&handler, layoutBegin);
+#ifdef CSE_SETTINGS_RENDER_SDFGI_SUPPORT
+            m_renderMgr->BindSdfMapUniforms(handler);
+            layoutBegin += m_renderMgr->BindSdfMapTextures(handler, layoutBegin);
+#endif
+            if (handler.CullFace == 0) {
+                glDisable(GL_CULL_FACE);
+            }else {
+                glEnable(GL_CULL_FACE);
+                glCullFace(handler.CullFace);
+            }
 
             for (const auto& render : renderComp) {
                 if (render == nullptr) continue;
                 if (!render->isRenderActive) continue;
 
                 const auto& material = render->GetMaterial();
-                material->AttachElement();
+                int materialLayout = material->AttachElement(layoutBegin);
                 render->SetMatrix(cameraMatrix, &handler);
-                BindSourceBuffer(*frameBuffer, handler, layoutBegin + material->GetTextureCount() + 1);
+                BindSourceBuffer(*frameBuffer, handler, layoutBegin + materialLayout + 1);
                 render->Render(&handler);
             }
         }

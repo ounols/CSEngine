@@ -9,7 +9,7 @@
 
 #define DECLARE_SINGLETON(CLASSNAME)                                       \
         MAKE_NO_COPY(CLASSNAME)                                             \
-        private:                                                            \
+        protected:                                                            \
                explicit CLASSNAME();                                               \
                static CLASSNAME* sInstance;                                 \
         public:                                                             \

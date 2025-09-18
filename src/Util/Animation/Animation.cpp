@@ -5,8 +5,13 @@
 #include "Animation.h"
 #include "../Loader/DAE/DAELoader.h"
 #include "../../Manager/EngineCore.h"
+#include "../MoreString.h"
 
 using namespace CSE;
+
+RESOURCE_CONSTRUCTOR(Animation) {
+    SetUndestroyable(true);
+}
 
 void Animation::SetKeyframe(float totalTime, std::list<KeyFrame*> keyframes) {
     m_length = totalTime;
@@ -23,5 +28,11 @@ void Animation::Exterminate() {
 void Animation::Init(const AssetMgr::AssetReference* asset) {
     std::string parent_id = split(asset->id, '?')[0];
     CORE->GetCore(ResMgr)->GetAssetReference(parent_id);
+}
 
+void Animation::SetValue(std::string name_str, VariableBinder::Arguments value) {
+}
+
+std::string Animation::PrintValue() const {
+    return {};
 }

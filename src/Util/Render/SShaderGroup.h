@@ -9,7 +9,7 @@ namespace CSE {
 
     class SShaderGroup : public SResource {
     public:
-        SShaderGroup();
+        RESOURCE_DEFINE_CONSTRUCTOR(SShaderGroup);
 
         ~SShaderGroup() override;
 
@@ -26,6 +26,10 @@ namespace CSE {
         const GLProgramHandle* GetDepthOnlyHandle() const {
             return m_depthOnlyHandle;
         }
+
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;

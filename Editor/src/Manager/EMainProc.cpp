@@ -6,10 +6,10 @@
 
 using namespace CSEditor;
 
-EMainProc::EMainProc() {
+EMainProc::EMainProc() = default;
 
-}
+EMainProc::~EMainProc() = default;
 
-EMainProc::~EMainProc() {
+void EMainProc::Update() {}
 
-}
+void EMainProc::Render() const {}

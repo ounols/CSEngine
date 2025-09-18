@@ -7,19 +7,22 @@
 #include "STexture.h"
 
 #include "../Loader/STB/stb_image.h"
+#include "../Loader/XML/XML.h"
+#include "../../MacroDef.h"
+#include "../AssetsDef.h"
 
 using namespace CSE;
 
 unsigned int STexture::m_emptyTextureId = 0;
 
-STexture::STexture() {
+RESOURCE_CONSTRUCTOR(STexture) {
     SetUndestroyable(true);
     if(m_emptyTextureId == 0) {
         LoadEmpty();
     }
 }
 
-STexture::STexture(STexture::Type type) {
+CSE::STexture::STexture(STexture::Type type) : SResource("STexture") {
     SetUndestroyable(true);
     SetType(type);
 }
@@ -37,7 +40,13 @@ bool STexture::LoadFile(const char* path) {
 }
 
 bool STexture::LoadFromMemory(const unsigned char* rawData, int length) {
-    auto data = stbi_load_from_memory(rawData, length, &m_width, &m_height, &m_channels, 0);
+    unsigned char* data;
+    if(m_type == TEX_3D) {
+        int w, h;
+        data = stbi_load_from_memory(rawData, length, &w, &h, &m_channels, 0);
+    }
+    else
+        data = stbi_load_from_memory(rawData, length, &m_width, &m_height, &m_channels, 0);
     return Load(data);
 }
 
@@ -64,10 +73,21 @@ bool STexture::Load(unsigned char* data) {
             break;
     }
 
-    glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_internalFormat, m_glType, data);
+    switch (m_type) {
+        case TEX_2D:
+            glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_internalFormat, m_glType, data);
+            break;
+        case TEX_CUBE:
+            glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_internalFormat, m_glType, data);
+            break;
+        case TEX_3D:
+            glTexImage3D(m_targetGL, 0, m_internalFormat, m_width, m_height, m_depth, 0, m_internalFormat, m_glType, data);
+            break;
+    }
 
     glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_R, GL_REPEAT);
     glTexParameteri(m_targetGL, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(m_targetGL, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -142,6 +162,11 @@ bool STexture::InitTexture(int width, int height, int channel, int internalForma
 
         case TEX_2D:
             glTexImage2D(m_targetGL, 0, m_internalFormat, m_width, m_height, 0, m_channels, m_glType, nullptr);
+            break;
+
+        case TEX_3D:
+            glTexImage3D(m_targetGL, 0, m_internalFormat, m_width, m_height, m_depth, 0, m_channels, m_glType, nullptr);
+            break;
     }
 
     glTexParameteri(m_targetGL, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -161,17 +186,52 @@ bool STexture::InitTextureMipmap(int width, int height, int channel, int interna
 }
 
 void STexture::SetParameteri(int targetName, int value) const {
-    glBindTexture(GL_TEXTURE_2D, m_texId);
-    glTexParameteri(GL_TEXTURE_2D, targetName, value);
+    glBindTexture(m_targetGL, m_texId);
+    glTexParameteri(m_targetGL, targetName, value);
 }
 
 void STexture::SetParameterfv(int targetName, float* value) const {
-    glBindTexture(GL_TEXTURE_2D, m_texId);
-    glTexParameterfv(GL_TEXTURE_2D, targetName, value);
+    glBindTexture(m_targetGL, m_texId);
+    glTexParameterfv(m_targetGL, targetName, value);
 }
 
 void STexture::Init(const AssetMgr::AssetReference* asset) {
 	const std::string img_str = CSE::AssetMgr::LoadAssetFile(asset->name_path);
+
+    std::string hashRaw = AssetMgr::LoadAssetFile(asset->name_path + ".meta");
+    if(!hashRaw.empty()) {
+        const XNode* root = XFILE().loadBuffer(hashRaw);
+        const auto& hashData = root->getNode("hash-data");
+        std::string hash = hashData.getAttribute("hash").value;
+        SetHash(hash);
+        const auto& hashChildren = hashData.children;
+
+        if(hashData.children.size() <= 0) {
+            hashRaw = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                      "<CSEMETA version=\"1.0.0\">\n"
+                      "<hash-data hash=\"" + m_hash + "\">\n"
+                      + "<tex type=\"" + std::to_string(TEX_2D) + "\" depth=\"" + std::to_string(m_depth) + "\"></tex>" +
+                      "\n</hash-data>\n</CSEMETA>";
+            if (!Settings::IsAssetsPacked())
+                SaveTxtFile(asset->name_path + ".meta", hashRaw);
+        }
+        else {
+            for(const auto& child : hashChildren) {
+                const auto& type_str = child.getAttribute("type").value;
+                if(!type_str.empty())
+                    SetType(static_cast<Type>(std::stoi(type_str)));
+                if(m_type == TEX_3D) {
+                    const auto& depth_str = child.getAttribute("depth").value;
+                    const auto& width_str = child.getAttribute("width").value;
+                    const auto& height_str = child.getAttribute("height").value;
+                    m_depth = std::stoi(depth_str);
+                    m_width = std::stoi(width_str);
+                    m_height = std::stoi(height_str);
+                }
+            }
+        }
+        SAFE_DELETE(root);
+    }
 
     LoadFromMemory(reinterpret_cast<const unsigned char*>(img_str.c_str()), img_str.length());
 }
@@ -203,9 +263,18 @@ int STexture::GetTypeToTargetGL(STexture::Type type) {
             return GL_TEXTURE_2D;
         case TEX_CUBE:
             return GL_TEXTURE_CUBE_MAP;
+        case TEX_3D:
+            return GL_TEXTURE_3D;
         default:
             return GL_TEXTURE_2D;
     }
+}
+
+void STexture::SetValue(std::string name_str, VariableBinder::Arguments value) {
+}
+
+std::string STexture::PrintValue() const {
+    return {};
 }
 
 

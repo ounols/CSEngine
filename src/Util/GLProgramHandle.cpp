@@ -9,7 +9,7 @@
 
 using namespace CSE;
 
-GLProgramHandle::GLProgramHandle() : Program(HANDLE_NULL) {
+RESOURCE_CONSTRUCTOR(GLProgramHandle), Program(HANDLE_NULL) {
     SetUndestroyable(true);
 }
 
@@ -207,4 +207,11 @@ void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
     if (ShaderUtil::CreateProgramHandle(vert_str.c_str(), frag_str.c_str(), this) == nullptr) {
         return;
     }
+}
+
+void GLProgramHandle::SetValue(std::string name_str, VariableBinder::Arguments value) {
+}
+
+std::string GLProgramHandle::PrintValue() const {
+    return {};
 }

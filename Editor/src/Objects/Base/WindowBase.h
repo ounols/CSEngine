@@ -8,21 +8,27 @@
 
 namespace CSEditor {
 
+    class MainDocker;
+
     class WindowBase {
     public:
         WindowBase() {
-
+            m_mainViewport = ImGui::GetMainViewport();
         }
 
-        virtual ~WindowBase() {
-
+        void Register(MainDocker* mainDocker) {
+            m_mainDocker = mainDocker;
         }
+
+        virtual ~WindowBase() = default;
 
         virtual void SetUI() = 0;
 
 
     protected:
-        bool isClosed = true;
+        bool m_isClosed = true;
+        ImGuiViewport* m_mainViewport = nullptr;
+        MainDocker* m_mainDocker = nullptr;
     };
 
 

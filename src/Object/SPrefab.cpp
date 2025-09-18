@@ -5,13 +5,14 @@
 #include "../Manager/SCloneFactory.h"
 #include "../Manager/ResMgr.h"
 #include "SPrefab.h"
+#include "SGameObject.h"
 #include "../Util/Loader/DAE/DAELoader.h"
 #include "../Util/AssetsDef.h"
 #include "SGameObjectFromSPrefab.h"
 
 using namespace CSE;
 
-SPrefab::SPrefab() = default;
+RESOURCE_CONSTRUCTOR(SPrefab) {}
 
 SPrefab::~SPrefab() = default;
 
@@ -74,7 +75,7 @@ void SPrefab::Init(const AssetMgr::AssetReference* asset) {
             hashRaw = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
                       "<CSEMETA version=\"1.0.0\">\n"
                       "<hash-data hash=\"" + m_hash + "\">\n"
-                      + m_root->GenerateMeta() +
+                      + GenerateObjectMeta(*m_root) +
                       "\n</hash-data>\n</CSEMETA>";
             SaveTxtFile(path + ".meta", hashRaw);
         }
@@ -106,4 +107,30 @@ void SPrefab::GenerateResourceID(SGameObject* obj) {
     for (auto child : obj->GetChildren()) {
         GenerateResourceID(child);
     }
+}
+
+std::string SPrefab::GetMetaString(const SGameObject& object, unsigned int startIndex) {
+    std::string&& id = object.GetID().substr(startIndex);
+    std::string&& hash = object.GetHash();
+
+    std::string result = "<hash id=\"" + std::move(id) + "\">" + std::move(hash) + "</hash>";
+
+    const auto& children = object.GetChildren();
+    for (const auto& child: children) {
+        result += '\n' + GetMetaString(*child, startIndex);
+    }
+    return result;
+}
+
+std::string SPrefab::GenerateObjectMeta(const SGameObject& obj) {
+    unsigned int startIndex = obj.GetID().size() - obj.GetName().size();
+    return GetMetaString(obj, startIndex);
+}
+
+void SPrefab::SetValue(std::string name_str, VariableBinder::Arguments value) {
+
+}
+
+std::string SPrefab::PrintValue() const {
+    return {};
 }

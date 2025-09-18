@@ -1,5 +1,7 @@
 #include "SMaterial.h"
 
+#include <utility>
+
 #include "../Loader/XML/XML.h"
 #include "../Loader/XML/XMLParser.h"
 #include "ShaderUtil.h"
@@ -8,7 +10,7 @@
 
 using namespace CSE;
 
-SMaterial::SMaterial() {
+RESOURCE_CONSTRUCTOR(SMaterial) {
     m_lightMgr = CORE->GetCore(LightMgr);
 }
 
@@ -51,14 +53,21 @@ void SMaterial::ReleaseElements() {
     m_elements.clear();
 }
 
-void SMaterial::AttachElement() const {
-    m_textureLayout = m_lightMgr->GetShadowCount();
+int SMaterial::AttachElement(int textureLayout) const {
+    m_textureLayout = textureLayout;
 
     for (const auto& element_pair : m_elements) {
         const auto& element = element_pair.second;
         if (element->id < 0) continue;
         element->attachFunc();
     }
+    return m_textureLayout - textureLayout;
+}
+
+SMaterial::Element* SMaterial::GetElement(const std::string& key) const {
+    const auto& result = m_elements.find(key);
+    if(result == m_elements.end()) return nullptr;
+    return result->second;
 }
 
 void SMaterial::InitElements(const ElementsMap& elements, SShaderGroup* shaders) {
@@ -101,6 +110,13 @@ void SMaterial::SetTexture(const std::string& name, SResource* texture) {
     auto find_iter = m_elements.find(name);
     if (find_iter == m_elements.end()) return;
     SetTextureFunc(find_iter->second, texture);
+}
+
+void SMaterial::SetRawData(const std::string& name, std::vector<std::string> raw) {
+    auto find_iter = m_elements.find(name);
+    if (find_iter == m_elements.end()) return;
+    find_iter->second->valueStr = std::move(raw);
+    SetBindFuncByType(find_iter->second);
 }
 
 void SMaterial::Init(const AssetMgr::AssetReference* asset) {
@@ -252,7 +268,7 @@ void SMaterial::SetTextureFunc(Element* element, SResource* texture) {
     auto value = static_cast<STexture*>(texture);
     //    element->count = m_textureLayout++;
     auto* texture_layout = &m_textureLayout;
-    ++m_textureCount;
+    // auto texture_layout = m_textureLayout++;
     element->raw = texture->GetHash();
     element->attachFunc = [element, value, texture_layout]() {
         value->Bind(element->id, *texture_layout);
@@ -286,7 +302,7 @@ int SMaterial::GetTextureCount() const {
 
 SMaterial* SMaterial::GenerateMaterial(SShaderGroup* shaders) {
     if (shaders == nullptr) return nullptr;
-    const auto& handle = shaders->GetHandleByMode(SMaterialMode::NORMAL);
+    const auto& handle = shaders->GetHandleByMode(SMaterialMode::FORWARD);
 
     const auto& uniformList = handle->GetUniformsList();
     auto material = new SMaterial();
@@ -329,4 +345,12 @@ std::string SMaterial::PrintMaterial() const {
     }
     result += "</shader>\n</CSEMAT>";
     return result;
+}
+
+void SMaterial::SetValue(std::string name_str, VariableBinder::Arguments value) {
+
+}
+
+std::string SMaterial::PrintValue() const {
+    return {};
 }

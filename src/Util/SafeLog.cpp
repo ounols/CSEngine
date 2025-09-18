@@ -1,6 +1,7 @@
 #include "SafeLog.h"
 
 #ifdef _WIN32
+
 #include <Windows.h>
 #include <cstdio>
 
@@ -14,19 +15,27 @@
 #include <cstdio>
 #endif
 
-void SafeLog::Log(const char* log) {
+#ifdef __CSE_EDITOR__
 
-#ifdef _WIN32
-	OutputDebugStringA(log);
+#include "../../Editor/src/Manager/EEngineCore.h"
+
+#endif
+
+void SafeLog::Log(const char* log) {
+#ifdef __CSE_EDITOR__
+    const auto& editorCore = CSEditor::EEngineCore::getEditorInstance();
+    if(editorCore->IsReady()) editorCore->AddLog(log);
+    else puts(log);
+#elif _WIN32
+    OutputDebugStringA(log);
     puts(log);
 #elif __ANDROID__
-	LOGE(log, 0);
+    LOGE(log, 0);
 #elif __linux__
-	puts(log);
+    puts(log);
 #elif __EMSCRIPTEN__
     puts(log);
 #elif __APPLE_CC__
     puts(log);
 #endif
-	
 }

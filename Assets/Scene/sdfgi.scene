@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CSESCENE version="1.0.0">
+<gameobject name="root" hash="VV6ou5P3CmZHrRy0">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</gameobject><prefab name="room" fileid="uNGRjCUSofcbx9Jf" hash="0PjNGoj0w3B1f0Ir">
+<changegameobject name="room" hash="0PjNGoj0w3B1f0Ir" fileid="uNGRjCUSofcbx9Jf" ref="vTinSVtoJVHgX62k">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0.2 0</value>
+<value name="m_scale">4 4 4</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<parent>VV6ou5P3CmZHrRy0</parent>
+</changegameobject><changegameobject name="meshId1_name-mesh" hash="48D8shqQEMlezUwZ" fileid="uNGRjCUSofcbx9Jf*meshId1_name-mesh" ref="dUMA9KyGqh3YoCyc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">rHPb3Z1DjE38Z75i</value>
+</component>
+<parent>0PjNGoj0w3B1f0Ir</parent>
+</changegameobject></prefab><gameobject name="" hash="QZkZzFCaxb7d5ZkQ">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<parent>VV6ou5P3CmZHrRy0</parent>
+</gameobject><gameobject name="root$nbsp:of$nbsp:mesh" hash="DA496Q5DwISXv1cc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<parent>VV6ou5P3CmZHrRy0</parent>
+</gameobject><gameobject name="ct" hash="9QQXqR9N7l6ZUFib">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 -0.3 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</gameobject><gameobject name="camera" hash="zXfdi3oi9sBFeC5d">
+<component type="TransformComponent" enable="1">
+<value name="m_position">1.3 0.8 0.8</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CameraComponent" enable="1">
+<value name="m_eye">zXfdi3oi9sBFeC5d?TransformComponent</value>
+<value name="m_target">0 0 -1</value>
+<value name="m_up">0 1 0</value>
+<value name="m_targetObject">QHyZwBDHTdgfURo0</value>
+<value name="m_cameraMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
+<value name="m_projectionMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
+<value name="m_type">1</value>
+<value name="m_pFov">45</value>
+<value name="m_orthoValue">-1 1 -1 1</value>
+<value name="m_distance">0.1 100</value>
+<value name="m_backgroundType">1</value>
+<value name="m_backgroundColor">0.4 0.4 0.4</value>
+</component>
+<parent>9QQXqR9N7l6ZUFib</parent>
+</gameobject><gameobject name="lt" hash="6pfYpXtFzdGRzQqe">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</gameobject><gameobject name="" hash="QHyZwBDHTdgfURo0">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.1 -0.2 -0.3</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID">RgP5QloSNonIJVx4</value>
+<value name="__variable__">center_object null null</value>
+<value name="__variable__">y_up null null</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</gameobject><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="JcqHfdXZ6SW0YXzl">
+<changegameobject name="teapot2" hash="JcqHfdXZ6SW0YXzl" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-2 0.3 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="5lal7bCp4JPsb8eB" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>JcqHfdXZ6SW0YXzl</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="AJmrA5TETXkME0KD">
+<changegameobject name="teapot2" hash="AJmrA5TETXkME0KD" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-2 0 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="aqA8Zc3SFdVV6lUw" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>AJmrA5TETXkME0KD</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="qTc9PpyjST3laV4Y">
+<changegameobject name="teapot2" hash="qTc9PpyjST3laV4Y" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-2 -0.3 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="mhHz6FxG7VrC8mHk" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>qTc9PpyjST3laV4Y</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="7G8NqXWgJXsQpOoM">
+<changegameobject name="teapot2" hash="7G8NqXWgJXsQpOoM" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-2 -0.6 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="altMmR1D3pdufGfD" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>7G8NqXWgJXsQpOoM</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="9gL7zE8mDrMuUMwM">
+<changegameobject name="teapot2" hash="9gL7zE8mDrMuUMwM" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-2 -0.9 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="Hy9kQ1OQLlJ0VJWZ" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>9gL7zE8mDrMuUMwM</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="l7GB7bPXh54rHqxR">
+<changegameobject name="teapot2" hash="l7GB7bPXh54rHqxR" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-1.3 0.3 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="tKT20w9NqvjIfDrV" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>l7GB7bPXh54rHqxR</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="KsKWyuqZ9WMYhbM2">
+<changegameobject name="teapot2" hash="KsKWyuqZ9WMYhbM2" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-1.3 0 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="mRicU4g4ntKIrlfU" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>KsKWyuqZ9WMYhbM2</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="0turA2uzR1TFHn0v">
+<changegameobject name="teapot2" hash="0turA2uzR1TFHn0v" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-1.3 -0.3 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="kkL6vSWd6nnAAobp" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>0turA2uzR1TFHn0v</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="TbwOYC2eNZQ91sEb">
+<changegameobject name="teapot2" hash="TbwOYC2eNZQ91sEb" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-1.3 -0.6 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="Xoxyu9jTApBrey15" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>TbwOYC2eNZQ91sEb</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="JUFjKlCNRUxyXZfM">
+<changegameobject name="teapot2" hash="JUFjKlCNRUxyXZfM" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-1.3 -0.9 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="lQcRg0EjXAjCCv6q" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>JUFjKlCNRUxyXZfM</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="MS3nXwLaknNbZhMx">
+<changegameobject name="teapot2" hash="MS3nXwLaknNbZhMx" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-0.6 0.3 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="Xi1MGoinl4bFRs8Q" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>MS3nXwLaknNbZhMx</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="VPvmMHB9efgpBSaF">
+<changegameobject name="teapot2" hash="VPvmMHB9efgpBSaF" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-0.6 0 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="1UmJEMBQCr4hmS6d" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>VPvmMHB9efgpBSaF</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="ilCc0WI6gCbYM8Ru">
+<changegameobject name="teapot2" hash="ilCc0WI6gCbYM8Ru" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-0.6 -0.3 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="kBGAjeQsyf99rLa1" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>ilCc0WI6gCbYM8Ru</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="b4dFZyugkYxrwfkT">
+<changegameobject name="teapot2" hash="b4dFZyugkYxrwfkT" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-0.6 -0.6 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="XtIHnd2K8LqskSbh" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>b4dFZyugkYxrwfkT</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="nWKZIRxVWcPwaVRO">
+<changegameobject name="teapot2" hash="nWKZIRxVWcPwaVRO" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-0.6 -0.9 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="Z5tRxJAtBaQ34JM9" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>nWKZIRxVWcPwaVRO</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="KchpEzP7Vj31yli9">
+<changegameobject name="teapot2" hash="KchpEzP7Vj31yli9" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.0999999 0.3 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="pSnVqvW5zMxruYgR" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>KchpEzP7Vj31yli9</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="wTjB23IbhitYFkbg">
+<changegameobject name="teapot2" hash="wTjB23IbhitYFkbg" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.0999999 0 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="YuFXBKtYBtxRO9KG" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>wTjB23IbhitYFkbg</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="BlY6eS3Zc3y7KxuA">
+<changegameobject name="teapot2" hash="BlY6eS3Zc3y7KxuA" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.0999999 -0.3 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="IOXtXs6BqkXa1gDb" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>BlY6eS3Zc3y7KxuA</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="WjXV20IbTUMvl0k9">
+<changegameobject name="teapot2" hash="WjXV20IbTUMvl0k9" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.0999999 -0.6 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="KLyegUDcDmbjZN2S" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>WjXV20IbTUMvl0k9</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="F8cE1KdnuDzuBuad">
+<changegameobject name="teapot2" hash="F8cE1KdnuDzuBuad" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.0999999 -0.9 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="yto9kQH4KqxRfyxm" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>F8cE1KdnuDzuBuad</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="TKcQEkm2MXFIjGlo">
+<changegameobject name="teapot2" hash="TKcQEkm2MXFIjGlo" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.8 0.3 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="S5VmwnokpeSAALLv" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>TKcQEkm2MXFIjGlo</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="V4ihQz0v0lTd7YZN">
+<changegameobject name="teapot2" hash="V4ihQz0v0lTd7YZN" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.8 0 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="bEtFO1azZpAQ6pVl" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>V4ihQz0v0lTd7YZN</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="lTKnt7Nb2D7o44n2">
+<changegameobject name="teapot2" hash="lTKnt7Nb2D7o44n2" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.8 -0.3 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="HuVQnQDKbmO3lykO" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>lTKnt7Nb2D7o44n2</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="AatSOJrbIsrVFAl4">
+<changegameobject name="teapot2" hash="AatSOJrbIsrVFAl4" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.8 -0.6 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="gB1BEWHxkHfBIYjx" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>AatSOJrbIsrVFAl4</parent>
+</changegameobject></prefab><prefab name="teapot2" fileid="iTTAi2EEVqw7BhmW" hash="dHcaYexkJRDgIx99">
+<changegameobject name="teapot2" hash="dHcaYexkJRDgIx99" fileid="iTTAi2EEVqw7BhmW" ref="3Bo8jaQoUnxfI5Wc">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0.8 -0.9 -0.2</value>
+<value name="m_scale">0.2 0.2 0.2</value>
+<value name="m_rotation">0.353553 0.707107 0 0.707107</value>
+</component>
+<parent>DA496Q5DwISXv1cc</parent>
+</changegameobject><changegameobject name="meshId0_name-mesh" hash="2V37Qqwnk7uUMdvS" fileid="iTTAi2EEVqw7BhmW*meshId0_name-mesh" ref="qTtgn7ZVHUl2Mf5g">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 0 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material">a8meSbyJKwnXrzLW</value>
+</component>
+<parent>dHcaYexkJRDgIx99</parent>
+</changegameobject></prefab><gameobject name="testscript2$nbsp:object" hash="8CqUZBjHDg4jFC9X">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 -0.7 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID">OR7wHU8BrNtyjDsn</value>
+<value name="__variable__">meshObj null null</value>
+<value name="__variable__">materialComp null null</value>
+<value name="__variable__">testScript null null</value>
+<value name="__variable__">count 3 int</value>
+<value name="__variable__">test_int this$nbsp:is$nbsp:test$nbsp:string!!$nbsp:문자열이다$nbsp:이거슨 str</value>
+</component>
+<parent>VV6ou5P3CmZHrRy0</parent>
+</gameobject><gameobject name="testscript2$nbsp:object" hash="mGNUpQp6AA6RjKhW">
+<component type="TransformComponent" enable="1">
+<value name="m_position">-2 -0.1 0</value>
+<value name="m_scale">0.5 0.5 0.5</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="CameraComponent" enable="1">
+<value name="m_eye">mGNUpQp6AA6RjKhW?TransformComponent</value>
+<value name="m_target">0 0 -1</value>
+<value name="m_up">0 1 0</value>
+<value name="m_targetObject">QZkZzFCaxb7d5ZkQ</value>
+<value name="m_cameraMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
+<value name="m_projectionMatrix">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</value>
+<value name="m_type">1</value>
+<value name="m_pFov">45</value>
+<value name="m_orthoValue">-1 1 -1 1</value>
+<value name="m_distance">0.1 100</value>
+<value name="m_frameBuffer">uKj1kg1mt9jn3MaK</value>
+<value name="m_backgroundType">2</value>
+<value name="m_backgroundColor">0.4 0.4 0.4</value>
+<value name="m_backgroundMap.map">CSEENV0000000001</value>
+</component>
+<parent>8CqUZBjHDg4jFC9X</parent>
+</gameobject><gameobject name="directional" hash="oE759ck9wXlI9E7y">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 1 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="LightComponent" enable="1">
+<value name="m_type">1</value>
+<value name="m_disableShadow">0</value>
+<value name="m_near">-10</value>
+<value name="m_far">10</value>
+<value name="m_direction">0 1 1 0</value>
+<value name="m_color">1 0.3 0.3</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID">luawJV0wvg14EcZP</value>
+<value name="__variable__">lightComp null null</value>
+<value name="__variable__">startAngle 0.0 float</value>
+</component>
+<parent>VV6ou5P3CmZHrRy0</parent>
+</gameobject><gameobject name="directional2" hash="QCW9fqVD1w7VefC9">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 1 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="LightComponent" enable="1">
+<value name="m_type">1</value>
+<value name="m_disableShadow">0</value>
+<value name="m_near">-10</value>
+<value name="m_far">10</value>
+<value name="m_direction">1 1 0 0</value>
+<value name="m_color">0.3 0.3 1</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID">luawJV0wvg14EcZP</value>
+<value name="__variable__">lightComp null null</value>
+<value name="__variable__">startAngle 3.141592 float</value>
+</component>
+<parent>VV6ou5P3CmZHrRy0</parent>
+</gameobject><gameobject name="directional3" hash="VeVqmgp4l74tKaGg">
+<component type="TransformComponent" enable="1">
+<value name="m_position">0 1 0</value>
+<value name="m_scale">1 1 1</value>
+<value name="m_rotation">0 0 0 1</value>
+</component>
+<component type="LightComponent" enable="1">
+<value name="m_type">1</value>
+<value name="m_disableShadow">0</value>
+<value name="m_near">-10</value>
+<value name="m_far">10</value>
+<value name="m_direction">0 0.99 0.01 0</value>
+<value name="m_color">0.3 0.3 0.3</value>
+</component>
+<parent>VV6ou5P3CmZHrRy0</parent>
+</gameobject></CSESCENE>

@@ -143,7 +143,7 @@ namespace CSE {
          *
          * The version of the shader define.
          */
-        static std::string m_defineVersion;
+        static const char *m_defineVersion;
     };
 
 }

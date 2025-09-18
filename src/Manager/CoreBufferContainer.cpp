@@ -5,8 +5,10 @@
 using namespace CSE;
 
 void CoreBufferContainer::InitBuffers(int width, int height) {
-    if (m_mainBuffer != nullptr)
+    if (m_mainBuffer != nullptr) {
         ResizeBuffers(width, height);
+        return;
+    }
 
     m_mainBuffer = new SFrameBuffer();
     m_mainBuffer->GenerateFramebuffer(SFrameBuffer::PLANE, width, height);

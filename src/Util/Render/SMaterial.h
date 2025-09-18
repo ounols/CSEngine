@@ -15,7 +15,7 @@ namespace CSE {
 
     class SMaterial : public SResource {
     public:
-        enum SMaterialMode { NORMAL = 0, DEFERRED = 1, DEPTH_ONLY = 2 };
+        enum SMaterialMode { FORWARD = 0, DEFERRED = 1, DEPTH_ONLY = 2 };
     private:
         struct Element {
             int id = HANDLE_NULL;
@@ -29,7 +29,7 @@ namespace CSE {
 
         typedef std::unordered_map<std::string, Element*> ElementsMap;
     public:
-        SMaterial();
+        RESOURCE_DEFINE_CONSTRUCTOR(SMaterial);
 
         explicit SMaterial(const SMaterial* material);
 
@@ -37,7 +37,13 @@ namespace CSE {
 
         void Exterminate() override;
 
-        void AttachElement() const;
+        int AttachElement(int textureLayout) const;
+
+        SMaterial::Element* GetElement(const std::string& key) const;
+
+        const ElementsMap& GetElements() const {
+            return m_elements;
+        }
 
 		void InitElements(const ElementsMap& elements, SShaderGroup* shaders);
 
@@ -48,6 +54,8 @@ namespace CSE {
 		void SetVec3(const std::string& name, const vec3& value);
 
 		void SetTexture(const std::string& name, SResource* texture);
+
+        void SetRawData(const std::string& name, std::vector<std::string> raw);
 
         short GetOrderLayer() const;
 
@@ -64,6 +72,10 @@ namespace CSE {
         std::string PrintMaterial() const;
 
         static SMaterial* GenerateMaterial(SShaderGroup* shaders);
+
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
@@ -93,7 +105,7 @@ namespace CSE {
 		ElementsMap m_elements;
 		mutable int m_textureLayout = 0;
         int m_textureCount = 0;
-        SMaterialMode m_mode = NORMAL;
+        SMaterialMode m_mode = FORWARD;
 
         LightMgr* m_lightMgr = nullptr;
 

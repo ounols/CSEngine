@@ -8,17 +8,17 @@
 
 using namespace CSE;
 
-MeshSurface::MeshSurface() = default;
+SURFACE_CONSTRUCTOR(MeshSurface) {}
 
-MeshSurface::MeshSurface(int sizeVert, float* vertices, float* normals) : m_faceSize(0), m_vertexSize(0),
-                                                                          m_indexSize(-1) {
+SURFACE_SUB_CONSTRUCTOR(MeshSurface, int sizeVert, float* vertices, float* normals), m_faceSize(0), m_vertexSize(0),
+                                                                                     m_indexSize(-1) {
     MakeVertices(sizeVert, vertices, normals, nullptr, nullptr, nullptr);
 }
 
 
-MeshSurface::MeshSurface(int sizeVert, float* vertices, float* normals, float* texCoords) : m_faceSize(0),
-                                                                                            m_vertexSize(0),
-                                                                                            m_indexSize(-1) {
+SURFACE_SUB_CONSTRUCTOR(MeshSurface, int sizeVert, float* vertices, float* normals, float* texCoords), m_faceSize(0),
+                                                                                                       m_vertexSize(0),
+                                                                                                       m_indexSize(-1) {
     MakeVertices(sizeVert, vertices, normals, texCoords, nullptr, nullptr);
 }
 
@@ -37,7 +37,7 @@ bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, fl
         vec3 JointId;
     };
 
-    if(jointIds != nullptr) m_meshId.m_hasJoint = true;
+    if (jointIds != nullptr) m_meshId.m_hasJoint = true;
     m_Verts.resize(sizeVert * 14);
 
     auto vertex_tmp = reinterpret_cast<Vertex*>(&m_Verts[0]);
@@ -46,6 +46,10 @@ bool MeshSurface::MakeVertices(int sizeVert, float* vertices, float* normals, fl
         vertex_tmp->Position.x = *(vertices)++;
         vertex_tmp->Position.y = *(vertices)++;
         vertex_tmp->Position.z = *(vertices)++;
+
+        const auto d = vec3::Distance(vec3::Zero, vertex_tmp->Position);
+        if (d > m_meshId.m_maxSize)
+            m_meshId.m_maxSize = d;
 
         if (normals == nullptr) {
             vertex_tmp->Normal.Set(0, 0, 0);
@@ -139,8 +143,8 @@ vec3 MeshSurface::GenerateTopTriangle(const vec3& v0, const vec3& v1, const vec3
     vec3 E;
     vec3 N;
 
-    for (int i = 0; i < (int)height; ++i) {
-        float kCoff = (float)i / height;
+    for (int i = 0; i < (int) height; ++i) {
+        float kCoff = (float) i / height;
 
         S = LerpFilter(v0, v1, kCoff);
         E = LerpFilter(v0, v2, kCoff);
@@ -157,8 +161,8 @@ vec3 MeshSurface::GenerateBottomTriangle(const vec3& v0, const vec3& v1, const v
     vec3 E;
     vec3 N;
 
-    for (int i = 0; i < (int)height; ++i) {
-        float kCoff = (float)i / height;
+    for (int i = 0; i < (int) height; ++i) {
+        float kCoff = (float) i / height;
 
         S = LerpFilter(v0, v2, kCoff);
         E = LerpFilter(v1, v2, kCoff);
@@ -203,4 +207,11 @@ void MeshSurface::Init(const AssetMgr::AssetReference* asset) {
 //        default:
 //            break;
 //    }
+}
+
+void MeshSurface::SetValue(std::string name_str, VariableBinder::Arguments value) {
+}
+
+std::string MeshSurface::PrintValue() const {
+    return {};
 }

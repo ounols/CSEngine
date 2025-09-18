@@ -9,8 +9,7 @@
 
 using namespace CSE;
 
-SShaderGroup::SShaderGroup() {
-}
+RESOURCE_CONSTRUCTOR(SShaderGroup) {}
 
 SShaderGroup::~SShaderGroup() {
 }
@@ -68,6 +67,20 @@ void SShaderGroup::Init(const AssetMgr::AssetReference* asset) {
         } else {
             handle = existHandle;
         }
+
+        if (shader.hasAttribute("cullFace")) {
+            const char value = shader.getAttribute("cullFace").value[0];
+            if (value == 'F' || value == 'f') {
+                handle->CullFace = GL_FRONT;
+            }
+            else if (value == 'B' || value == 'b') {
+                handle->CullFace = GL_BACK;
+            }
+            else {
+                handle->CullFace = 0;
+            }
+        }
+
         m_handles.insert(std::pair<std::string, GLProgramHandle*>(pass, handle));
         if(pass == "geometry") m_geometryHandle = handle;
         if(pass == "forward") m_forwardHandle = handle;
@@ -87,10 +100,17 @@ const GLProgramHandle* SShaderGroup::GetHandle(const std::string& pass) const {
 
 const GLProgramHandle* SShaderGroup::GetHandleByMode(int mode) const {
     const std::unordered_map<SMaterial::SMaterialMode, std::string> pass_map = {
-            {SMaterial::NORMAL,     "forward"},
+            {SMaterial::FORWARD,    "forward"},
             {SMaterial::DEFERRED,   "geometry"},
             {SMaterial::DEPTH_ONLY, "depthOnly"}
     };
 
     return m_handles.at(pass_map.at(static_cast<SMaterial::SMaterialMode>(mode)));
+}
+
+void SShaderGroup::SetValue(std::string name_str, VariableBinder::Arguments value) {
+}
+
+std::string SShaderGroup::PrintValue() const {
+    return {};
 }

@@ -11,8 +11,7 @@ namespace CSE {
 
     class SScriptObject : public SResource {
     public:
-        SScriptObject();
-
+        RESOURCE_DEFINE_CONSTRUCTOR(SScriptObject);
         ~SScriptObject() override;
 
         void Exterminate() override;
@@ -22,6 +21,10 @@ namespace CSE {
         std::string GetScriptClassName() const {
             return m_className;
         }
+
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;

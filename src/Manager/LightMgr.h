@@ -18,7 +18,7 @@ namespace CSE {
     public:
         const int SHADOW_WIDTH = 1024;     ///< Width of the shadow map
         const int SHADOW_HEIGHT = 1024;    ///< Height of the shadow map
-        constexpr static float SHADOW_DISTANCE = 10.f;   ///< Distance of the shadow map
+        constexpr static float SHADOW_DISTANCE = 100.f;   ///< Distance of the shadow map
 
     public:
         /**
@@ -35,14 +35,14 @@ namespace CSE {
          * Attach the light components to the shader.
          * @param handle Shader handle
          */
-        void AttachLightToShader(const GLProgramHandle* handle) const;
+        int AttachLightToShader(const GLProgramHandle* handle) const;
 
         /**
          * Attach the light map to the shader.
          * @param handle Shader handle
          * @param textureLayout Layout of the texture
          */
-        void AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const;
+        int AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const;
 
         /**
          * Initialize the LightMgr.
@@ -70,6 +70,8 @@ namespace CSE {
          * @param shadowCount Shadow count to refresh. Default is -1.
          */
         void RefreshShadowCount(int shadowCount = -1) const;
+
+        static void ExterminateGlobalSettings();
 
     private:
         std::list<SIRender*> m_shadowObject;   ///< Objects to be rendered as shadows

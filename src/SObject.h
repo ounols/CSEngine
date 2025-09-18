@@ -18,10 +18,6 @@ namespace CSE {
 
         virtual void Destroy();
 
-        virtual void __FORCE_DESTROY__();
-
-        virtual std::string GenerateMeta();
-
         std::string GetHash() const {
             return m_hash;
         }

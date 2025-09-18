@@ -53,6 +53,7 @@ void DepthOnlyRenderGroup::RenderAll(const CameraBase& camera) const {
     glClear(GL_DEPTH_BUFFER_BIT);
     for (const auto& shadowObject : m_depthObjects) {
         const auto& handle = shadowObject.first->GetDepthOnlyHandle();
+        if (handle == nullptr) continue;
         glUseProgram(handle->Program);
         for(const auto& render : shadowObject.second) {
             if (!render->isRenderActive) continue;

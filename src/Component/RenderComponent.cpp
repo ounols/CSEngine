@@ -32,11 +32,12 @@ void RenderComponent::Exterminate() {
 void RenderComponent::Init() {
 
     if (!m_disableShadow) {
-        m_lightMgr = CORE->GetCore(LightMgr);
         m_renderMgr->Register(this, RenderContainer::DEPTH_ONLY);
     }
 
     m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
+    //TODO: 반드시 리플렉션 시스템에서 상속 문제도 해결할 수 있도록! 2222
+    if (m_mesh == nullptr) m_mesh = gameObject->GetComponent<DrawableSkinnedMeshComponent>();
     if (m_mesh != nullptr) {
         m_skinningMesh = dynamic_cast<DrawableSkinnedMeshComponent*>(m_mesh);
     }
@@ -52,6 +53,8 @@ void RenderComponent::Tick(float elapsedTime) {
 
     if (m_mesh == nullptr) {
         m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
+        //TODO: 반드시 리플렉션 시스템에서 상속 문제도 해결할 수 있도록!
+        if (m_mesh == nullptr) m_mesh = gameObject->GetComponent<DrawableSkinnedMeshComponent>();
         if (m_mesh != nullptr) {
             m_skinningMesh = dynamic_cast<DrawableSkinnedMeshComponent*>(m_mesh);
         }
@@ -124,7 +127,7 @@ void RenderComponent::SetValue(std::string name_str, VariableBinder::Arguments v
 std::string RenderComponent::PrintValue() const {
     PRINT_START("component");
 
-    PRINT_VALUE(material, ConvertSpaceStr(material->GetHash()));
+    PRINT_RES(material);
 
     PRINT_END("component");
 }

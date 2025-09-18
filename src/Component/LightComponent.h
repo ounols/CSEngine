@@ -73,7 +73,7 @@ namespace CSE {
 
         bool IsShadow() const;
 
-        void BindShadow(const GLProgramHandle& handle, int handleIndex, int index) const;
+        int BindShadow(const GLProgramHandle& handle, int handleIndex, int layout) const;
 
         void RenderBackground() const override {};
 
@@ -92,8 +92,8 @@ namespace CSE {
         STexture* m_depthTexture = nullptr;
         mat4 m_lightProjectionMatrix;
         mat4 m_lightViewMatrix;
-        float m_near = -10.f;
-        float m_far = 10.f;
+        float m_near = -100.f;
+        float m_far = 100.f;
     };
 
 }

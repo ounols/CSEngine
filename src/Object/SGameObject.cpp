@@ -27,7 +27,7 @@ SGameObject::SGameObject(std::string name) {
 }
 
 SGameObject::SGameObject(std::string name, std::string hash) {
-    SetHash(hash);
+    SObject::SetHash(hash);
     CORE->GetCore(GameObjectMgr)->Register(this);
     m_name = std::move(name);
     m_transform = CreateComponent<TransformComponent>();
@@ -53,6 +53,16 @@ void SGameObject::Tick(float elapsedTime) {
 }
 
 void SGameObject::Exterminate() {
+    {
+        auto iter = m_components.begin();
+        while (iter != m_components.end()) {
+            auto component = *iter;
+            m_components.erase(iter++);
+
+            if (component == nullptr) continue;
+            CORE->GetCore(MemoryMgr)->ReleaseObject(component);
+        }
+    }
     CORE->GetCore(GameObjectMgr)->Remove(this);
 }
 
@@ -126,7 +136,6 @@ const std::list<SGameObject*>& SGameObject::GetChildren() const {
 }
 
 void SGameObject::AddComponent(SComponent* component) {
-    auto str_class = component->GetClassType();
     m_components.push_back(component);
 }
 
@@ -151,6 +160,15 @@ HSQOBJECT SGameObject::GetCustomComponent(const char* className) {
 
 void SGameObject::DeleteComponent(SComponent* component) {
     m_components.remove(component);
+}
+
+SComponent* SGameObject::CreateComponent(const char* type) {
+    SComponent* component = static_cast<SComponent*>(ReflectionObject::NewObject(type));
+    component->SetGameObject(this);
+    AddComponent(component);
+    if (m_status == IDLE)
+        component->Init();
+    return component;
 }
 
 std::string SGameObject::GetID() const {
@@ -274,21 +292,8 @@ SComponent* SGameObject::GetSComponentByHash(const std::string& hash) const {
     return nullptr;
 }
 
-std::string GetMetaString(const SGameObject& object, unsigned int startIndex) {
-    std::string&& id = object.GetID().substr(startIndex);
-    std::string&& hash = object.GetHash();
-
-    std::string result = "<hash id=\"" + std::move(id) + "\">" + std::move(hash) + "</hash>";
-
-    const auto& children = object.GetChildren();
-    for (const auto& child: children) {
-        result += '\n' + GetMetaString(*child, startIndex);
-    }
-    return result;
+void SGameObject::SetHash(std::string& hash) {
+    const std::string prevHash = std::string(m_hash);
+    SObject::SetHash(hash);
+    CORE->GetCore(GameObjectMgr)->ChangeHash(prevHash, hash);
 }
-
-std::string SGameObject::GenerateMeta() {
-    unsigned int startIndex = GetID().size() - GetName().size();
-    return GetMetaString(*this, startIndex);
-}
-

@@ -11,13 +11,11 @@ namespace CSE {
 
     class Skeleton : public SResource {
     public:
-        Skeleton() {
-            SetUndestroyable(true);
-        }
+        RESOURCE_DEFINE_CONSTRUCTOR(Skeleton);
 
-        Skeleton(int jointCount, Joint* headJoint) : m_jointCount(jointCount), m_headJoint(headJoint) {
+        Skeleton(int jointCount, Joint* headJoint) : m_jointCount(jointCount), m_headJoint(headJoint),
+                                                     SResource("Skeleton") {
             SetUndestroyable(true);
-
         }
 
         ~Skeleton() override {
@@ -51,6 +49,10 @@ namespace CSE {
         void Exterminate() override {
             SAFE_DELETE(m_headJoint);
         }
+
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override {

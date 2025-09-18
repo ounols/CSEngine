@@ -17,7 +17,12 @@ namespace CSE {
 
         void RenderPBREnvironment();
 
-        void BindPBREnvironmentMap(const GLProgramHandle* handle, int textureLayout) const;
+        void RenderBRDFLUT();
+
+        void ReleaseRenderingResources();
+
+        int BindPBREnvironmentMap(const GLProgramHandle* handle, int textureLayout) const;
+        int BindBRDFLUT(const GLProgramHandle* handle, int textureLayout) const;
 
         static unsigned int GetWidth();
         static unsigned int* GetPointerWidth();
@@ -32,11 +37,13 @@ namespace CSE {
         static void RenderPlaneVAO();
         static void RenderCubeVAO();
 
-
+        static void ReleaseVAO();
+        
     private:
         void LoadCubeVAO();
 
         void LoadPlaneVAO();
+
 
 
     private:
@@ -58,5 +65,8 @@ namespace CSE {
         static unsigned int m_cubeVAO;
         unsigned int m_planeVBO;
         static unsigned int m_planeVAO;
+
+        unsigned int m_captureFBO = 0;
+        unsigned int m_captureRBO = 0;
     };
 }

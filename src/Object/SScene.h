@@ -29,6 +29,8 @@ namespace CSE {
 
         void TickGameObject(SGameObject* obj, float elapsedTime);
 
+        void DestroyGameObjects(SGameObject* obj);
+
     private:
         SGameObject* m_root = nullptr;
     };

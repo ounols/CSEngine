@@ -8,6 +8,7 @@ namespace CSE {
     class GLProgramHandle;
     class SFrameBuffer;
     class SIRender;
+    class ResMgr;
 
     class SGBuffer {
     public:
@@ -47,5 +48,7 @@ namespace CSE {
 
         int m_width = -1;
         int m_height = -1;
+
+        ResMgr* m_resMgr = nullptr;
     };
 }

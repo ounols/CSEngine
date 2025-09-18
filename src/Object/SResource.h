@@ -8,13 +8,16 @@
 #include <utility>
 #include "../Manager/AssetMgr.h"
 #include "../SObject.h"
+#include "Base/ReflectionObject.h"
+#include "../Util/VariableBinder.h"
+#include "../Util/ResourceDef.h"
 
 namespace CSE {
 
-    class SResource : public SObject {
+    class SResource : public SObject, public VariableBinder, public ReflectionObject {
     public:
-        SResource();
-        explicit SResource(bool isRegister);
+        explicit SResource(std::string classType);
+
         SResource(const SResource* resource, bool isRegister);
 
         ~SResource() override;
@@ -54,19 +57,23 @@ namespace CSE {
             return object;
         }
 
+        static SResource* Create(const std::string& name, const std::string& classType);
+
         template <class T>
         static T* Create(const AssetMgr::AssetReference* asset) {
             if (asset == nullptr) return nullptr;
             {
-                SResource* res = GetResource(asset->name);
+                SResource* res = GetResource(asset->hash);
                 if (res != nullptr) return static_cast<T*>(res);
             }
             T* object = new T();
             SResource* res = object;
 
-            res->SetResource(asset);
+            res->SetResource(const_cast<AssetMgr::AssetReference*>(asset));
             return object;
         }
+
+        static SResource* Create(const AssetMgr::AssetReference* asset, const std::string& classType);
 
         template <class T>
         static T* Get(std::string name) {
@@ -74,6 +81,8 @@ namespace CSE {
             if (res != nullptr) return static_cast<T*>(res);
             return nullptr;
         }
+
+        static SResource* Get(std::string& name);
 
         void SetHash(std::string& hash) override;
 
@@ -83,7 +92,7 @@ namespace CSE {
     private:
         void SetResource(std::string name, bool isInit = true);
 
-        void SetResource(const AssetMgr::AssetReference* asset, bool isInit = true);
+        void SetResource(AssetMgr::AssetReference* asset, bool isInit = true);
 
         static SResource* GetResource(std::string name);
 

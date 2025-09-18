@@ -19,11 +19,9 @@ namespace CSE {
 
     class Animation : public SResource {
     public:
-        Animation() {
-            SetUndestroyable(true);
-        }
+        RESOURCE_DEFINE_CONSTRUCTOR(Animation);
 
-        Animation(float totalTime, std::list<KeyFrame*> keyframes) {
+        Animation(float totalTime, std::list<KeyFrame*> keyframes) : CSE::SResource("Animation") {
             SetUndestroyable(true);
             m_length = totalTime;
             m_keyframes = std::move(keyframes);
@@ -42,6 +40,10 @@ namespace CSE {
         std::list<KeyFrame*> GetKeyFrames() const {
             return m_keyframes;
         }
+
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
 
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;

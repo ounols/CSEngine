@@ -116,6 +116,8 @@ namespace CSE {
 
     template <typename T>
     class Vector3 {
+    public:
+        static Vector3<T> Zero;
 
     public:
         Vector3() : x(0.0f), y(0.0f), z(0.0f) {}
@@ -300,4 +302,6 @@ namespace CSE {
     typedef Vector2<float> vec2;
     typedef Vector3<float> vec3;
     typedef Vector4<float> vec4;
+
+    template<class T> Vector3<T> Vector3<T>::Zero = Vector3<T>{0, 0, 0};
 }

@@ -3,6 +3,8 @@
 //
 
 #include "SScene.h"
+#include "../Manager/GameObjectMgr.h"
+#include "../Manager/MemoryMgr.h"
 
 using namespace CSE;
 
@@ -21,7 +23,7 @@ void SScene::Tick(float elapsedTime) {
 }
 
 void SScene::Destroy() {
-
+    DestroyGameObjects(m_root);
 }
 
 void SScene::InitGameObject(SGameObject* obj) {
@@ -38,4 +40,13 @@ void SScene::TickGameObject(SGameObject* obj, float elapsedTime) {
     for (const auto& child : children) {
         TickGameObject(child, elapsedTime);
     }
+}
+
+void SScene::DestroyGameObjects(SGameObject* obj) {
+    const auto& children = obj->GetChildren();
+    for (const auto& child : children) {
+        DestroyGameObjects(child);
+    }
+
+    CORE->GetCore(MemoryMgr)->ReleaseObject(obj);
 }

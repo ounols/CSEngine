@@ -35,6 +35,13 @@ namespace CSE {
         // Buffers
         GLint SourceBuffer = HANDLE_NULL;
         GLint SourceBufferSize = HANDLE_NULL;
+        // SDFs
+        GLint SdfEnvSize = HANDLE_NULL;
+        GLint SdfCellSize = HANDLE_NULL;
+        GLint SdfNodeSize = HANDLE_NULL;
+        GLint SdfNodeSpace = HANDLE_NULL;
+        GLint SdfFrameCount = HANDLE_NULL;
+        GLint SdfMap = HANDLE_NULL;
     };
 
     struct GLAttributeHandles {
@@ -56,7 +63,7 @@ namespace CSE {
 
         typedef std::map<std::string, GLProgramHandle::Element*> GLElementList;
     public:
-        GLProgramHandle();
+        RESOURCE_DEFINE_CONSTRUCTOR(GLProgramHandle);
 
         ~GLProgramHandle() override;
 
@@ -98,6 +105,10 @@ namespace CSE {
 
         void SaveShader(const std::string& path);
 
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
+
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 
@@ -111,6 +122,8 @@ namespace CSE {
 
         GLElementList AttributesList;
         GLElementList UniformsList;
+
+        GLuint CullFace = GL_BACK;
     private:
         std::string m_fragShaderName;
         std::string m_vertShaderName;

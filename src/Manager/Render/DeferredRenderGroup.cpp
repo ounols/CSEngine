@@ -78,12 +78,19 @@ DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbu
     const auto& handle = shaders.GetGeometryHandle();
     glUseProgram(handle->Program);
 
+    if (handle->CullFace == 0) {
+        glDisable(GL_CULL_FACE);
+    }else {
+        glEnable(GL_CULL_FACE);
+        glCullFace(handle->CullFace);
+    }
+
     for (const auto& render : renderLayer) {
         if (render == nullptr) continue;
         if (!render->isRenderActive) continue;
 
         const auto& material = render->GetMaterial();
-        material->AttachElement();
+        material->AttachElement(0);
         render->SetMatrix(cameraMatrix, handle);
         render->Render(handle);
     }
@@ -96,15 +103,26 @@ DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbu
     deferredBuffer->AttachFrameBuffer();
     gbuffer.AttachLightPass();
     //Attach Light
-    m_lightMgr->AttachLightToShader(lightPassHandle);
-    m_lightMgr->AttachLightMapToShader(lightPassHandle, m_lightMgr->GetShadowCount());
-    const auto layoutBegin = m_lightMgr->GetShadowCount() + m_lightMgr->GetLightMapCount();
+    int layoutBegin =  m_lightMgr->AttachLightToShader(lightPassHandle);
+    layoutBegin += m_lightMgr->AttachLightMapToShader(lightPassHandle, layoutBegin);
+#ifdef CSE_SETTINGS_RENDER_SDFGI_SUPPORT
+    {
+        m_renderMgr->BindSdfMapUniforms(*lightPassHandle);
+        layoutBegin += m_renderMgr->BindSdfMapTextures(*lightPassHandle, layoutBegin);
+    }
+#endif
+    if (lightPassHandle->CullFace == 0) {
+        glDisable(GL_CULL_FACE);
+    }else {
+        glEnable(GL_CULL_FACE);
+        glCullFace(lightPassHandle->CullFace);
+    }
+
     gbuffer.AttachLightPassTexture(layoutBegin);
     BindSourceBuffer(*deferredBuffer, *lightPassHandle, layoutBegin + 3);
 
     ShaderUtil::BindCameraToShader(*lightPassHandle, cameraMatrix.camera, cameraMatrix.cameraPosition,
                                    cameraMatrix.projection, cameraMatrix.camera);
-
     gbuffer.RenderLightPass();
 
     /** ======================

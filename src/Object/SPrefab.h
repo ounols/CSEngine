@@ -3,14 +3,19 @@
 //
 
 #pragma once
+
 #include "../Object/SResource.h"
-#include "SGameObject.h"
+#include "../Util/Quaternion.h"
+#include <string>
 
 namespace CSE {
 
+    class SGameObject;
+
     class SPrefab : public SResource {
     public:
-        SPrefab();
+        RESOURCE_DEFINE_CONSTRUCTOR(SPrefab);
+
         ~SPrefab() override;
 
         SGameObject* Clone(const vec3& position, SGameObject* parent = nullptr);
@@ -25,10 +30,18 @@ namespace CSE {
             return m_root;
         }
 
+        void SetValue(std::string name_str, Arguments value) override;
+
+        std::string PrintValue() const override;
+
     protected:
         void Init(const AssetMgr::AssetReference* asset) override;
 
         void GenerateResourceID(SGameObject* obj = nullptr);
+
+    private:
+        std::string GetMetaString(const SGameObject& object, unsigned int startIndex);
+        std::string GenerateObjectMeta(const SGameObject& obj);
 
     private:
         SGameObject* m_root = nullptr;

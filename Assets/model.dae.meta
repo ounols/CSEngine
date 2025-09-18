@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CSEMETA version="1.0.0">
 <hash-data hash="xKxvniiAiInPB73q">
-
+<hash id="model">dH1YiyHrekEdvcyE</hash>
+<hash id="model/Armature">8LYlIUwYBQq5QNy9</hash>
+<hash id="model/Armature/Torso">mDstuyTPIdIIZKIa</hash>
+<hash id="model/Armature/Torso/Chest">hmS6RLR9dICPsA1H</hash>
+<hash id="model/Armature/Torso/Chest/Neck">O4ke8JvuZuaeXKWu</hash>
+<hash id="model/Armature/Torso/Chest/Neck/Head">NWYxqRS1nbDGHoyd</hash>
+<hash id="model/Armature/Torso/Chest/Upper_Arm_L">HOHujVkQcxidYFUF</hash>
+<hash id="model/Armature/Torso/Chest/Upper_Arm_L/Lower_Arm_L">vVw7ecmQb7K0SBCh</hash>
+<hash id="model/Armature/Torso/Chest/Upper_Arm_L/Lower_Arm_L/Hand_L">tA4iiw8R0U4OKFrG</hash>
+<hash id="model/Armature/Torso/Chest/Upper_Arm_R">EMdpiKkJxp28wAOu</hash>
+<hash id="model/Armature/Torso/Chest/Upper_Arm_R/Lower_Arm_R">FRzf3A56u04XSJxc</hash>
+<hash id="model/Armature/Torso/Chest/Upper_Arm_R/Lower_Arm_R/Hand_R">HJLPcBjPjA5RxacS</hash>
+<hash id="model/Armature/Torso/Upper_Leg_L">7IPPW5RF0wLHQZIt</hash>
+<hash id="model/Armature/Torso/Upper_Leg_L/Lower_Leg_L">zgtmfh6K5b8Cd3HJ</hash>
+<hash id="model/Armature/Torso/Upper_Leg_L/Lower_Leg_L/Foot_L">XZURXKMpCZoqWBvQ</hash>
+<hash id="model/Armature/Torso/Upper_Leg_R">LjclY7C0YHddxWZr</hash>
+<hash id="model/Armature/Torso/Upper_Leg_R/Lower_Leg_R">2KCV5zhYZnRZnKOT</hash>
+<hash id="model/Armature/Torso/Upper_Leg_R/Lower_Leg_R/Foot_R">5PXmEIOX1n52D1l0</hash>
+<hash id="model/Cube-mesh">UzA25qw5jRQg88hA</hash>
+<hash id="model/model_animation">7RBxwoBC0Zz5ZEsw</hash>
 </hash-data>
 </CSEMETA>

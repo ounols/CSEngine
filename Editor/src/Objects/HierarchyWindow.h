@@ -1,0 +1,30 @@
+
+
+#pragma once
+
+#include "Base/WindowBase.h"
+#include "Base/HierarchyData.h"
+
+namespace CSEditor {
+
+    class EEngineCore;
+
+    class HierarchyWindow : public WindowBase, public HierarchyData {
+    public:
+        HierarchyWindow();
+
+        ~HierarchyWindow() override;
+
+        void SetUI() override;
+
+    private:
+        void RenderTrees();
+
+        void RenderGameObject(CSE::SGameObject& parent);
+
+        void UpdateGameObject(CSE::SGameObject& parent);
+
+    private:
+        EEngineCore* m_core = nullptr;
+    };
+}

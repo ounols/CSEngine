@@ -47,13 +47,11 @@ namespace CSE {
         void SetJointMatrix(const GLProgramHandle* handle) const;
 
     private:
-        LightMgr* m_lightMgr = nullptr;
         RenderMgr* m_renderMgr = nullptr;
         DrawableStaticMeshComponent* m_mesh = nullptr;
         DrawableSkinnedMeshComponent* m_skinningMesh = nullptr;
         SMaterial* m_material_clone = nullptr;
         // SMaterial* material (Override)
         bool m_disableShadow = false;
-        bool m_isPrefab = false;
     };
 }

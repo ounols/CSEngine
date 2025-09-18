@@ -48,7 +48,7 @@ bool SSceneLoader::SaveScene(SScene* scene, std::string path) {
 
     std::stringstream value;
     value << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-    value << "<CSESCENE version = \"" << "1.0.0" << "\">\n";
+    value << "<CSESCENE version=\"" << "1.0.0" << "\">\n";
 
     value << GetGameObjectValue(scene->GetRoot());
 
@@ -164,7 +164,7 @@ void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs
         bool comp_enable = comp.getAttribute("enable").value == "1";
         SComponent* component = (comp_type == "TransformComponent")
                                 ? static_cast<TransformComponent*>(obj_new->GetTransform())
-                                : MoreComponentFunc::CreateComponent(obj_new, comp_type);
+                                : obj_new->CreateComponent(comp_type.c_str());
 
         auto comp_val = new ComponentValue();
         comp_val->id = hash + "?" + comp_type;
@@ -309,7 +309,7 @@ void SSceneLoader::LinkingResourceID(const XNode& node, SGameObject* root, std::
             }
 
             if (component == nullptr)
-                component = MoreComponentFunc::CreateComponent(root, comp_type);
+                component = root->CreateComponent(comp_type.c_str());
 
             auto comp_val = new ComponentValue();
             comp_val->id = obj_hash + "?" + comp_type;

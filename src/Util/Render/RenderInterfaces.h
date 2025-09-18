@@ -5,6 +5,15 @@
 #include "../Matrix.h"
 #include "GLMeshID.h"
 
+#define SURFACE_CONSTRUCTOR(CLASSNAME) \
+namespace __REFELCTION_DUMP__ { namespace CLASSNAME {                    \
+unsigned char* __CSE_REFLECTION_DUMP__ = \
+CSE::ReflectionMgr::DefineWrapper::SetDefine(#CLASSNAME, []() { return new CSE::CLASSNAME(); });}} \
+CSE::CLASSNAME::CLASSNAME() : CSE::SISurface(#CLASSNAME)
+
+#define SURFACE_SUB_CONSTRUCTOR(CLASSNAME, ...) \
+CSE::CLASSNAME::CLASSNAME(__VA_ARGS__) : CSE::SISurface(#CLASSNAME)
+
 namespace CSE {
     struct CameraMatrixStruct;
     class SMaterial;
@@ -14,7 +23,7 @@ namespace CSE {
     class SISurface : public SResource {
     public:
 
-        SISurface() {
+        explicit SISurface(std::string&& classType) : SResource(classType) {
             SetUndestroyable(true);
         }
 

@@ -12,8 +12,8 @@ LightMgr::~LightMgr() {
 }
 
 
-void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
-    if (handle == nullptr) return;
+int LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
+    if (handle == nullptr) return 0;
 
     int index = 0;
     int shadow_index = 0;
@@ -34,24 +34,28 @@ void LightMgr::AttachLightToShader(const GLProgramHandle* handle) const {
         // Shadow
         auto isShadow = light->IsShadow();
         glUniform1i(handle->Uniforms.LightShadowMode + index, isShadow ? 1 : 0);
-        light->BindShadow(*handle, index, shadow_index);
-        if (isShadow) ++shadow_index;
+        shadow_index += light->BindShadow(*handle, index, shadow_index);
         ++index;
     }
 
-    if (index <= 0) return;
+    if (index <= 0) return shadow_index;
 
     glUniform1i(handle->Uniforms.LightSize, (int)m_objects.size());
+    return shadow_index;
 }
 
-void LightMgr::AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const {
-    m_environmentMgr->BindPBREnvironmentMap(handle, textureLayout);
+int LightMgr::AttachLightMapToShader(const GLProgramHandle* handle, int textureLayout) const {
+    int layout = m_environmentMgr->BindPBREnvironmentMap(handle, textureLayout);
+    layout += m_environmentMgr->BindBRDFLUT(handle, textureLayout + layout);
+    return layout;
 }
 
 void LightMgr::Init() {
     // Setting PBS Environment
     m_environmentMgr = new SEnvironmentMgr();
     m_environmentMgr->RenderPBREnvironment();
+    m_environmentMgr->RenderBRDFLUT();
+    m_environmentMgr->ReleaseRenderingResources();
 }
 
 void LightMgr::RefreshShadowCount(int shadowCount) const {
@@ -64,4 +68,8 @@ void LightMgr::RefreshShadowCount(int shadowCount) const {
         return;
     }
     m_shadowCount = shadowCount;
+}
+
+void LightMgr::ExterminateGlobalSettings() {
+    SEnvironmentMgr::ReleaseVAO();
 }
