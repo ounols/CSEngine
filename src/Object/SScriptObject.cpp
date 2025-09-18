@@ -139,7 +139,6 @@ std::vector<std::string> SScriptObject::GetVariables() const {
 }
 
 void SScriptObject::SetValue(std::string name_str, VariableBinder::Arguments value) {
-
 }
 
 string SScriptObject::PrintValue() const {

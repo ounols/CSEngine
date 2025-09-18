@@ -42,7 +42,6 @@ namespace CSE {
         GLint SdfNodeSpace = HANDLE_NULL;
         GLint SdfFrameCount = HANDLE_NULL;
         GLint SdfMap = HANDLE_NULL;
-
     };
 
     struct GLAttributeHandles {

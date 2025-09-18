@@ -40,6 +40,12 @@ namespace CSEditor {
 
         void ReleasePreviewQueue();
 
+        bool RenderBreadcrumbNavigation();
+
+        void* GetAssetPreview(CSE::AssetMgr::AssetReference *asset, bool& isPreviewLoaded);
+
+        bool RenderAssetGrid();
+
     private:
         std::string m_targetPath;
 

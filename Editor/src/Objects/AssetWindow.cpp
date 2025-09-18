@@ -27,91 +27,11 @@ void AssetWindow::SetUI() {
         m_targetPath = CSE::AssetsPath();
     }
 
-    {
-        ImGui::BeginGroup();
-        std::string targetPath = m_targetPath;
-        if (ImGui::Button("Assets")) {
-            ChangeCurrentPath(targetPath);
-            RefreshExplorer();
-            ImGui::EndGroup();
-            ImGui::End();
-            return;
-        }
-        ImGui::SameLine();
-        ImGui::Text(">");
-        ImGui::SameLine();
-        for (const auto& pathNode: m_pathSelector) {
-            if (pathNode.empty()) continue;
-            targetPath += pathNode + '/';
-            if (ImGui::Button(pathNode.c_str())) {
-                ChangeCurrentPath(targetPath);
-                RefreshExplorer();
-                ImGui::EndGroup();
-                ImGui::End();
-                return;
-            }
-            ImGui::SameLine();
-            ImGui::Text(">");
-            ImGui::SameLine();
-        }
-        ImGui::EndGroup();
-    }
+    if (!RenderBreadcrumbNavigation()) return;
 
     ImGui::Separator();
-    ImGui::BeginChild("aw_scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+    if (!RenderAssetGrid()) return;
 
-    // for base of button
-    ImVec2 button_sz(70, 70);
-    ImGuiStyle& style = ImGui::GetStyle();
-    int size = m_selectedFolder->size();
-    float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
-
-    // for preview size
-    ImVec2 button_img_sz(65, 65);
-    bool isPreviewLoaded = false;
-
-    for (int n = 0; n < size; n++) {
-        const auto& asset = m_selectedFolder->at(n);
-
-        // Detecting preview
-        void* preview = nullptr;
-        if (dynamic_cast<CSE::STexture*>(asset->resource)) {
-            preview = (void*) static_cast<CSE::STexture*>(asset->resource)->GetTextureID();
-        }
-        else if(!isPreviewLoaded && asset->class_type == "STexture") {
-            asset->resource = CSE::SResource::Create<CSE::STexture>(asset);
-            m_previewAssetQueue.push(asset);
-            isPreviewLoaded = true;
-        }
-
-        ImGui::PushID(n);
-        {
-            ImGui::BeginGroup();
-            if (preview) {
-                ImGui::ImageButton(asset->extension.c_str(), preview, button_img_sz);
-            } else {
-                ImGui::Button(asset->extension.c_str(), button_sz);
-            }
-            ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + button_sz.x);
-            ImGui::Text("%s", asset->name_full.c_str());
-            ImGui::PopTextWrapPos();
-            ImGui::EndGroup();
-        }
-        if (ImGui::IsItemHovered() &&
-            ImGui::IsMouseDoubleClicked(0) &&
-            OnAssetClickEvent(*asset)) {
-            return;
-        }
-        // When Dragging
-        OnDragDrop(*asset);
-        float last_button_x2 = ImGui::GetItemRectMax().x;
-        float next_button_x2 =
-                last_button_x2 + style.ItemSpacing.x + button_sz.x; // Expected position if next button was on same line
-        if (n + 1 < size && next_button_x2 < window_visible_x2)
-            ImGui::SameLine();
-        ImGui::PopID();
-    }
-    ImGui::EndChild();
     ImGui::End();
 }
 
@@ -178,4 +98,94 @@ void AssetWindow::ReleasePreviewQueue() {
 void AssetWindow::SaveCurrentScene() {
     const auto& scene = EEngineCore::getEditorInstance()->GetCore(SceneMgr)->GetCurrentScene();
     CSE::SSceneLoader::SaveScene(static_cast<CSE::SScene*>(scene), m_currentSceneAsset->name_path);
+}
+
+bool AssetWindow::RenderBreadcrumbNavigation() {
+    ImGui::BeginGroup();
+    std::string targetPath = m_targetPath;
+    if (ImGui::Button("Assets")) {
+        ChangeCurrentPath(targetPath);
+        RefreshExplorer();
+        ImGui::EndGroup();
+        ImGui::End();
+        return false;
+    }
+    ImGui::SameLine();
+    ImGui::Text(">");
+    ImGui::SameLine();
+    for (const auto& pathNode: m_pathSelector) {
+        if (pathNode.empty()) continue;
+        targetPath += pathNode + '/';
+        if (ImGui::Button(pathNode.c_str())) {
+            ChangeCurrentPath(targetPath);
+            RefreshExplorer();
+            ImGui::EndGroup();
+            ImGui::End();
+            return false;
+        }
+        ImGui::SameLine();
+        ImGui::Text(">");
+        ImGui::SameLine();
+    }
+    ImGui::EndGroup();
+    return true;
+}
+
+void* AssetWindow::GetAssetPreview(CSE::AssetMgr::AssetReference *asset, bool& isPreviewLoaded) {
+    void* preview = nullptr;
+    if (dynamic_cast<CSE::STexture*>(asset->resource)) {
+        preview = (void*) static_cast<CSE::STexture*>(asset->resource)->GetTextureID();
+    }
+    else if(!isPreviewLoaded && asset->class_type == "STexture") {
+        asset->resource = CSE::SResource::Create<CSE::STexture>(asset);
+        m_previewAssetQueue.push(asset);
+        isPreviewLoaded = true;
+    }
+    return preview;
+}
+
+bool AssetWindow::RenderAssetGrid() {
+    ImGui::BeginChild("aw_scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+
+    ImVec2 button_sz(70, 70);
+    ImGuiStyle& style = ImGui::GetStyle();
+    int size = m_selectedFolder->size();
+    float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
+
+    ImVec2 button_img_sz(65, 65);
+    bool isPreviewLoaded = false;
+
+    for (int n = 0; n < size; n++) {
+        const auto& asset = m_selectedFolder->at(n);
+
+        void* preview = GetAssetPreview(asset, isPreviewLoaded);
+
+        ImGui::PushID(n);
+        {
+            ImGui::BeginGroup();
+            if (preview) {
+                ImGui::ImageButton(asset->extension.c_str(), preview, button_img_sz);
+            } else {
+                ImGui::Button(asset->extension.c_str(), button_sz);
+            }
+            ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + button_sz.x);
+            ImGui::Text("%s", asset->name_full.c_str());
+            ImGui::PopTextWrapPos();
+            ImGui::EndGroup();
+        }
+        if (ImGui::IsItemHovered() &&
+            ImGui::IsMouseDoubleClicked(0) &&
+            OnAssetClickEvent(*asset)) {
+            return false;
+        }
+        OnDragDrop(*asset);
+        float last_button_x2 = ImGui::GetItemRectMax().x;
+        float next_button_x2 =
+                last_button_x2 + style.ItemSpacing.x + button_sz.x;
+        if (n + 1 < size && next_button_x2 < window_visible_x2)
+            ImGui::SameLine();
+        ImGui::PopID();
+    }
+    ImGui::EndChild();
+    return true;
 }

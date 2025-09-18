@@ -109,7 +109,6 @@ const GLProgramHandle* SShaderGroup::GetHandleByMode(int mode) const {
 }
 
 void SShaderGroup::SetValue(std::string name_str, VariableBinder::Arguments value) {
-
 }
 
 std::string SShaderGroup::PrintValue() const {

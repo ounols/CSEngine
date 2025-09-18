@@ -9,11 +9,9 @@ using namespace CSEditor;
 using namespace CSE;
 
 EAssetPreviewMgr::EAssetPreviewMgr() {
-
 }
 
 EAssetPreviewMgr::~EAssetPreviewMgr() {
-
 }
 
 void EAssetPreviewMgr::Init() {
@@ -26,7 +24,7 @@ CSE::STexture* EAssetPreviewMgr::GetPreview(std::string& hash) {
     if (iter != m_previews.end()) res = iter->second;
     else res = GeneratePreview(hash);
 
-    if(res->IsSameClass(STexture::GetClassStaticType())) {
+    if (res->IsSameClass(STexture::GetClassStaticType())) {
         return static_cast<STexture*>(res);
     }
 

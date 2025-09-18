@@ -26,7 +26,6 @@ MaterialLayer::~MaterialLayer() {
 }
 
 void MaterialLayer::UpdateParams() {
-
 }
 
 void MaterialLayer::RenderUI() {

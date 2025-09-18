@@ -49,11 +49,9 @@ SdfRenderGroup::SdfRenderGroup(const RenderMgr& renderMgr) : SRenderGroup(render
 SdfRenderGroup::~SdfRenderGroup() = default;
 
 void SdfRenderGroup::RegisterObject(SIRender* object) {
-
 }
 
 void SdfRenderGroup::RemoveObjects(SIRender* object) {
-
 }
 
 #include "../../Util/CaptureDef.h"
@@ -84,7 +82,6 @@ void SdfRenderGroup::RenderAll(const CameraBase& camera) const {
 }
 
 void SdfRenderGroup::Exterminate() {
-
 }
 
 void SdfRenderGroup::BindShaderUniforms(const GLProgramHandle& handle) const {

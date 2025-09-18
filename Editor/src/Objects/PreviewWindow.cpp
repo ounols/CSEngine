@@ -30,7 +30,6 @@ void PreviewWindow::SetUI() {
     }
 
     if (!m_engineCore->IsPreview()) {
-
         if(ImGui::IsWindowFocused() || ImGui::IsWindowHovered()) {
             for (ImGuiKey key = static_cast<ImGuiKey>(0); key < ImGuiKey_COUNT; key = (ImGuiKey) (key + 1)) {
                 if (ImGui::IsKeyDown(key)) {
