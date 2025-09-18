@@ -271,8 +271,8 @@ void SMaterial::SetTextureFunc(Element* element, SResource* texture) {
     // auto texture_layout = m_textureLayout++;
     element->raw = texture->GetHash();
     element->attachFunc = [element, value, texture_layout]() {
-        ++(*texture_layout);
         value->Bind(element->id, *texture_layout);
+        ++(*texture_layout);
     };
 }
 

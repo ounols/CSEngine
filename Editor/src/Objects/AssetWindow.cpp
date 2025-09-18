@@ -150,7 +150,8 @@ bool AssetWindow::OnAssetClickEvent(const CSE::AssetMgr::AssetReference& asset) 
     } else if (asset.extension == "scene" && !EEngineCore::getEditorInstance()->IsPreview()) {
         m_mainDocker->Reset();
         const auto& editorCore = EEngineCore::getEditorInstance();
-        ReleasePreviewQueue();
+        m_currentSceneAsset = const_cast<CSE::AssetMgr::AssetReference*>(&asset);
+//        ReleasePreviewQueue();
         editorCore->SetCurrentScene(asset.name_path);
         editorCore->ResizePreviewCore();
         editorCore->Update(0);
@@ -172,4 +173,9 @@ void AssetWindow::ReleasePreviewQueue() {
         CORE->GetCore(ResMgr)->Remove(texture->resource);
         texture->resource = nullptr;
     }
+}
+
+void AssetWindow::SaveCurrentScene() {
+    const auto& scene = EEngineCore::getEditorInstance()->GetCore(SceneMgr)->GetCurrentScene();
+    CSE::SSceneLoader::SaveScene(static_cast<CSE::SScene*>(scene), m_currentSceneAsset->name_path);
 }

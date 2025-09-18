@@ -328,7 +328,7 @@ int SEnvironmentMgr::BindPBREnvironmentMap(const GLProgramHandle* handle, int te
 int SEnvironmentMgr::BindBRDFLUT(const GLProgramHandle* handle, int textureLayout) const {
     if(handle == nullptr) return 0;
     if(handle->Uniforms.LightBrdfLut != HANDLE_NULL) {
-        m_brdfMap->Bind(handle->Uniforms.LightBrdfLut, textureLayout + 1);
+        m_brdfMap->Bind(handle->Uniforms.LightBrdfLut, textureLayout);
         return 1;
     }
     return 0;

@@ -22,27 +22,14 @@ CSE::VolumeTextureGenerator::VolumeTextureGenerator() {
 CSE::VolumeTextureGenerator::~VolumeTextureGenerator() {
 }
 
-void
-CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLMeshID& mesh, const SMaterial& material) {
-
-    unsigned int captureFBO;
-    unsigned int captureRBO;
-    unsigned int tex;
-    int size = level * level;
-    unsigned int tex2d_size = size * level;
-
-    glDisable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+void CSE::VolumeTextureGenerator::SetupFramebuffer(unsigned int& captureFBO, unsigned int& captureRBO, unsigned int& tex, unsigned int tex2d_size) {
     glGenRenderbuffers(1, &captureRBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, tex2d_size, tex2d_size);
 
     glGenFramebuffers(1, &captureFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                              GL_RENDERBUFFER, captureRBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
@@ -56,135 +43,97 @@ CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLM
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, tex2d_size, tex2d_size);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+}
+
+void CSE::VolumeTextureGenerator::ProcessAxisRender(unsigned int level, const GLMeshID& mesh, GLProgramHandle* handle, unsigned char* data, const CSE::mat4& view, const std::function<int(int, int, int, int)>& indexCalculator) {
+    int size = level * level;
+    unsigned int tex2d_size = size * level;
+    
+    if(handle->Uniforms.ViewMatrix >= 0)
+        glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Render(level, mesh, handle);
+
+    glViewport(0, 0, tex2d_size, tex2d_size);
+    auto data_y = CaptureBuffer();
+    const int file_size = tex2d_size * tex2d_size * 4;
+    
+    for (int i = 0; i < file_size; i += 4) {
+        unsigned char cur_alpha = data_y[i + 3];
+        int index = i / 4;
+        int x = index % size;
+        int y = (index / tex2d_size) % size;
+        int z = (int)(index / size) % level + (index / (tex2d_size * size)) * level;
+
+        int data_index = indexCalculator(level, x, y, z);
+        data_index *= 4;
+
+        if(data[data_index] <= 0)     data[data_index] = data_y[i];
+        if(data[data_index + 1] <= 0) data[data_index + 1] = data_y[i + 1];
+        if(data[data_index + 2] <= 0) data[data_index + 2] = data_y[i + 2];
+        if(data[data_index + 3] <= 0) data[data_index + 3] = data_y[i + 3];
+    }
+
+    delete[] data_y;
+}
+
+void CSE::VolumeTextureGenerator::GenerateVolumeTexture(unsigned int level, const GLMeshID& mesh, const SMaterial& material) {
+    unsigned int captureFBO, captureRBO, tex;
+    int size = level * level;
+    unsigned int tex2d_size = size * level;
+
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    SetupFramebuffer(captureFBO, captureRBO, tex, tex2d_size);
 
     const auto& handle = m_handle;
-    mat4 identity = mat4::Identity();
     mat4 view = mat4::Identity();
-
     glUseProgram(handle->Program);
 
     material.AttachElement(0);
-    {
-        auto albedo_tex = handle->UniformLocation("texture.albedo");
-        if(albedo_tex != nullptr && albedo_tex->id >= 0) {
-            const auto& e = material.GetElement("texture.albedo");
-            if(e != nullptr) {
-                STexture* tex = SResource::Get<STexture>(e->valueStr[0]);
-                tex->Bind(albedo_tex->id, 0);
-            }
+    auto albedo_tex = handle->UniformLocation("texture.albedo");
+    if(albedo_tex != nullptr && albedo_tex->id >= 0) {
+        const auto& e = material.GetElement("texture.albedo");
+        if(e != nullptr) {
+            STexture* tex_resource = SResource::Get<STexture>(e->valueStr[0]);
+            tex_resource->Bind(albedo_tex->id, 0);
         }
-
-        if(handle->Uniforms.ViewMatrix >= 0)
-            glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
     }
+
+    if(handle->Uniforms.ViewMatrix >= 0)
+        glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
+    
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // X axis Render
     Render(level, mesh, handle);
 
     unsigned char* data = new unsigned char[tex2d_size * tex2d_size * 4] {0};
 
     // X axis Render
-    {
-        view = mat4::RotateY(180.f);
-        if(handle->Uniforms.ViewMatrix >= 0)
-            glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Render(level, mesh, handle);
+    view = mat4::RotateY(180.f);
+    ProcessAxisRender(level, mesh, handle, data, view, [=](int level, int x, int y, int z) {
+        return GetIndex(level, size - x, y, z / 2 + size / 4);
+    });
 
-        glViewport(0, 0, tex2d_size, tex2d_size);
-        auto data_y = CaptureBuffer();
-        const int file_size = tex2d_size * tex2d_size * 4;
-        for (int i = 0; i < file_size; i += 4) {
-            unsigned char cur_alpha = data_y[i + 3];
-            if(cur_alpha <= 0) continue;
-            int index = i / 4;
-            int x = size - index % size;
-            int y = (index / tex2d_size) % size;
-            int z = (int)(index / size) % level + (index / (tex2d_size * size)) * level;
-
-            int data_index = GetIndex(level, x, y, z / 2 + size / 4);
-
-            data_index *= 4;
-
-            if(data[data_index] <= 0)     data[data_index] = data_y[i];
-            if(data[data_index + 1] <= 0) data[data_index + 1] = data_y[i + 1];
-            if(data[data_index + 2] <= 0) data[data_index + 2] = data_y[i + 2];
-            if(data[data_index + 3] <= 0) data[data_index + 3] = data_y[i + 3];
-        }
-
-        delete[] data_y;
-    }
-
-    // Y axis Render
-    {
-        view = mat4::RotateX(90.f);
-        if(handle->Uniforms.ViewMatrix >= 0)
-            glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Render(level, mesh, handle);
-
-        glViewport(0, 0, tex2d_size, tex2d_size);
-        auto data_y = CaptureBuffer();
-        const int file_size = tex2d_size * tex2d_size * 4;
-        for (int i = 0; i < file_size; i += 4) {
-            unsigned char cur_alpha = data_y[i + 3];
-//            if(cur_alpha <= 0) continue;
-            int index = i / 4;
-            int x = index % size;
-            int y = (index / tex2d_size) % size;
-            int z = (int)(index / size) % level + (index / (tex2d_size * size)) * level;
-
-            int data_index = GetIndex(level, x, z / 2 + size / 4, y);
-            data_index *= 4;
-
-            if(data[data_index] <= 0)     data[data_index] = data_y[i];
-            if(data[data_index + 1] <= 0) data[data_index + 1] = data_y[i + 1];
-            if(data[data_index + 2] <= 0) data[data_index + 2] = data_y[i + 2];
-            if(data[data_index + 3] <= 0) data[data_index + 3] = data_y[i + 3];
-        }
-
-        delete[] data_y;
-    }
+    // Y axis Render  
+    view = mat4::RotateX(90.f);
+    ProcessAxisRender(level, mesh, handle, data, view, [=](int level, int x, int y, int z) {
+        return GetIndex(level, x, z / 2 + size / 4, y);
+    });
 
     // Z axis Render
-    {
-//        view = mat4::RotateZ(180.f);
-        view = mat4::RotateY(-90.f);
-        if(handle->Uniforms.ViewMatrix >= 0)
-            glUniformMatrix4fv(handle->Uniforms.ViewMatrix, 1, 0, view.Pointer());
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Render(level, mesh, handle);
-
-        glViewport(0, 0, tex2d_size, tex2d_size);
-        auto data_y = CaptureBuffer();
-        const int file_size = tex2d_size * tex2d_size * 4;
-        for (int i = 0; i < file_size; i += 4) {
-            unsigned char cur_alpha = data_y[i + 3];
-//            if(cur_alpha <= 0) continue;
-            int index = i / 4;
-            int x = index % size;
-            int y = (index / tex2d_size) % size;
-            int z = (int)(index / size) % level + (index / (tex2d_size * size)) * level;
-
-            int data_index = GetIndex(level, z / 2 + size / 4, y, x);
-            data_index *= 4;
-
-            if(data[data_index] <= 0)     data[data_index] = data_y[i];
-            if(data[data_index + 1] <= 0) data[data_index + 1] = data_y[i + 1];
-            if(data[data_index + 2] <= 0) data[data_index + 2] = data_y[i + 2];
-            if(data[data_index + 3] <= 0) data[data_index + 3] = data_y[i + 3];
-        }
-
-        delete[] data_y;
-    }
-
+    view = mat4::RotateY(-90.f);
+    ProcessAxisRender(level, mesh, handle, data, view, [=](int level, int x, int y, int z) {
+        return GetIndex(level, z / 2 + size / 4, y, x);
+    });
 
     std::string save_str = CSE::AssetsPath() + "test" + ".png";
     SavePng(save_str.c_str(), tex2d_size, tex2d_size, 4, data);
+    
     glEnable(GL_CULL_FACE);
     glDisable(GL_BLEND);
-
     glDeleteFramebuffers(1, &captureFBO);
     glDeleteRenderbuffers(1, &captureRBO);
     delete[] data;
@@ -215,7 +164,6 @@ void CSE::VolumeTextureGenerator::Render(int level, const GLMeshID& mesh, GLProg
             glUniformMatrix4fv(handle->Uniforms.ProjectionMatrix, 1, 0, projection.Pointer());
 
         ShaderUtil::BindAttributeToShader(*handle, mesh);
-
     }
 }
 

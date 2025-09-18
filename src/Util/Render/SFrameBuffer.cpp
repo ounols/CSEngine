@@ -386,7 +386,6 @@ unsigned int SFrameBuffer::GetRenderbufferID(int index) const {
 }
 
 void SFrameBuffer::SetValue(std::string name_str, VariableBinder::Arguments value) {
-
 }
 
 std::string SFrameBuffer::PrintValue() const {

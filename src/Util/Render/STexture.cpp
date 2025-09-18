@@ -271,7 +271,6 @@ int STexture::GetTypeToTargetGL(STexture::Type type) {
 }
 
 void STexture::SetValue(std::string name_str, VariableBinder::Arguments value) {
-
 }
 
 std::string STexture::PrintValue() const {

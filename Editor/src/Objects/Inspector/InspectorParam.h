@@ -24,6 +24,19 @@ namespace CSEditor {
         void GenerateValue(const XNode& node);
         void GenerateFunc();
         void ReplaceValueString(const char* str, const int size);
+        
+        void GenerateIntFunc(const char* name);
+        void GenerateFloatFunc(const char* name);
+        void GenerateVec2Func(const char* name);
+        void GenerateVec3Func(const char* name);
+        void GenerateColor3Func(const char* name);
+        void GenerateVec4Func(const char* name);
+        void GenerateColor4Func(const char* name);
+        void GenerateStringFunc(const char* name);
+        void GenerateBoolFunc(const char* name);
+        void GenerateResourceFunc();
+        void GenerateObjectFunc();
+        void GenerateComponentFunc();
 
     private:
         std::string m_name;

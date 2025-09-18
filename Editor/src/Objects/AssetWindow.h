@@ -27,6 +27,12 @@ namespace CSEditor {
 
         void ChangeCurrentPath(std::string path);
 
+        const std::string& GetCurrentPath() const {
+            return m_currentPath;
+        }
+
+        void SaveCurrentScene();
+
     private:
         void OnDragDrop(const CSE::AssetMgr::AssetReference& asset);
 
@@ -40,6 +46,7 @@ namespace CSEditor {
         std::unordered_map<std::string, AssetsVector> m_assets;
         AssetsVector* m_selectedFolder = nullptr;
         std::string m_currentPath;
+        CSE::AssetMgr::AssetReference* m_currentSceneAsset = nullptr;
         std::queue<void*> m_previewAssetQueue;
 
         std::vector<std::string> m_pathSelector;

@@ -284,11 +284,11 @@ void AssetMgr::SetType() {
             asset->name += ".prefab";
             asset->class_type = "SPrefab";
             {
-                const auto& ani = AppendSubName(CreateAsset(asset->name_path, asset->name_full, asset->name),
+                const auto& ani = AppendSubName(CreateAsset(asset->path, asset->name_full, asset->name),
                                                 "animation");
-                const auto& ske = AppendSubName(CreateAsset(asset->name_path, asset->name_full, asset->name),
+                const auto& ske = AppendSubName(CreateAsset(asset->path, asset->name_full, asset->name),
                                                 "skeleton");
-                const auto& mes = AppendSubName(CreateAsset(asset->name_path, asset->name_full, asset->name), "mesh");
+                const auto& mes = AppendSubName(CreateAsset(asset->path, asset->name_full, asset->name), "mesh");
 
                 ani->type = DAE;
                 ske->type = DAE;

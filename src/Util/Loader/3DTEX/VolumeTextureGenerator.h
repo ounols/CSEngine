@@ -1,4 +1,6 @@
 #pragma once
+#include <functional>
+#include "../../Matrix.h"
 
 namespace CSE {
 
@@ -24,6 +26,13 @@ namespace CSE {
         static unsigned char* CaptureBuffer();
 
         static int SavePng(const char* filename, int width, int height, int chennel, void* data);
+
+        void ProcessAxisRender(unsigned int level, const GLMeshID& mesh, GLProgramHandle* handle,
+                              unsigned char* data, const CSE::mat4& view,
+                              const std::function<int(int, int, int, int)>& indexCalculator);
+
+        void SetupFramebuffer(unsigned int& captureFBO, unsigned int& captureRBO,
+                             unsigned int& tex, unsigned int tex2d_size);
 
     private:
         GLProgramHandle* m_handle = nullptr;

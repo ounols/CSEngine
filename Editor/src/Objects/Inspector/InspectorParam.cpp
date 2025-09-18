@@ -211,270 +211,44 @@ void InspectorParam::GenerateValue(const XNode& node) {
 void InspectorParam::GenerateFunc() {
     m_nameId = CSE::GetRandomHash(6);
     auto name = m_nameId.c_str();
+    
     switch (m_type) {
-        case InspectorParamType::INT: {
-            auto* value = static_cast<int*>(m_value);
-            m_paramFunc = [value, name]() {
-                return ImGui::DragInt(name, value);
-            };
-            m_getFunc = [value]() {
-                std::vector<std::string> result;
-                result.reserve(1);
-                result.emplace_back(std::to_string(*value));
-                return result;
-            };
+        case InspectorParamType::INT:
+            GenerateIntFunc(name);
             break;
-        }
-        case InspectorParamType::FLOAT: {
-            auto* value = static_cast<float*>(m_value);
-            m_paramFunc = [value, name]() {
-                return ImGui::DragFloat(name, value, 0.005f);
-            };
-            m_getFunc = [value]() {
-                std::vector<std::string> result;
-                result.reserve(1);
-                result.emplace_back(std::to_string(*value));
-                return result;
-            };
+        case InspectorParamType::FLOAT:
+            GenerateFloatFunc(name);
             break;
-        }
-        case InspectorParamType::VEC2: {
-            auto* value = static_cast<CSE::vec2*>(m_value);
-            m_paramFunc = [value, name]() {
-                return ImGui::InputFloat2(name, const_cast<float*>(value->Pointer()));
-            };
-            m_getFunc = [value]() {
-                std::vector<std::string> result;
-                result.reserve(2);
-                result.emplace_back(std::to_string(value->x));
-                result.emplace_back(std::to_string(value->y));
-                return result;
-            };
+        case InspectorParamType::VEC2:
+            GenerateVec2Func(name);
             break;
-        }
-        case InspectorParamType::VEC3: {
-            auto* value = static_cast<CSE::vec3*>(m_value);
-            m_paramFunc = [value, name]() {
-                return ImGui::DragFloat3(name, const_cast<float*>(value->Pointer()), 0.005f);
-            };
-            m_getFunc = [value]() {
-                std::vector<std::string> result;
-                result.reserve(3);
-                result.emplace_back(std::to_string(value->x));
-                result.emplace_back(std::to_string(value->y));
-                result.emplace_back(std::to_string(value->z));
-                return result;
-            };
+        case InspectorParamType::VEC3:
+            GenerateVec3Func(name);
             break;
-        }
-        case InspectorParamType::COLOR3: {
-            auto* value = static_cast<CSE::vec3*>(m_value);
-            m_paramFunc = [value, name]() {
-                return ImGui::ColorEdit3(name, const_cast<float*>(value->Pointer()),
-                                         ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_NoOptions);
-            };
-            m_getFunc = [value]() {
-                std::vector<std::string> result;
-                result.reserve(3);
-                result.emplace_back(std::to_string(value->x));
-                result.emplace_back(std::to_string(value->y));
-                result.emplace_back(std::to_string(value->z));
-                return result;
-            };
+        case InspectorParamType::COLOR3:
+            GenerateColor3Func(name);
             break;
-        }
-        case InspectorParamType::VEC4: {
-            auto* value = static_cast<CSE::vec4*>(m_value);
-            m_paramFunc = [value, name]() {
-                return ImGui::DragFloat4(name, const_cast<float*>(value->Pointer()), 0.005f);
-            };
-            m_getFunc = [value]() {
-                std::vector<std::string> result;
-                result.reserve(4);
-                result.emplace_back(std::to_string(value->x));
-                result.emplace_back(std::to_string(value->y));
-                result.emplace_back(std::to_string(value->z));
-                result.emplace_back(std::to_string(value->w));
-                return result;
-            };
+        case InspectorParamType::VEC4:
+            GenerateVec4Func(name);
             break;
-        }
-        case InspectorParamType::COLOR4: {
-            auto* value = static_cast<CSE::vec4*>(m_value);
-            m_paramFunc = [value, name]() {
-                return ImGui::ColorEdit4(name, const_cast<float*>(value->Pointer()),
-                                         ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_NoOptions);
-            };
-            m_getFunc = [value]() {
-                std::vector<std::string> result;
-                result.reserve(4);
-                result.emplace_back(std::to_string(value->x));
-                result.emplace_back(std::to_string(value->y));
-                result.emplace_back(std::to_string(value->z));
-                result.emplace_back(std::to_string(value->w));
-                return result;
-            };
+        case InspectorParamType::COLOR4:
+            GenerateColor4Func(name);
             break;
-        }
-        case InspectorParamType::STRING: {
-            auto* value = static_cast<char*>(m_value);
-            m_paramFunc = [value, name]() {
-                return ImGui::InputText(name, value, 128);
-            };
-            m_getFunc = [value]() {
-                std::vector<std::string> result;
-                result.reserve(1);
-                result.emplace_back(value);
-                return result;
-            };
+        case InspectorParamType::STRING:
+            GenerateStringFunc(name);
             break;
-        }
-        case InspectorParamType::BOOL: {
-            auto* value = static_cast<bool*>(m_value);
-            m_paramFunc = [value, name]() {
-                return ImGui::Checkbox(name, value);
-            };
-            m_getFunc = [value]() {
-                std::vector<std::string> result;
-                result.reserve(1);
-                result.emplace_back(std::to_string(static_cast<int>(*value)));
-                return result;
-            };
+        case InspectorParamType::BOOL:
+            GenerateBoolFunc(name);
             break;
-        }
-        case InspectorParamType::RES: {
-            m_paramFunc = [this]() {
-                auto* value = static_cast<CSE::SResource*>(m_value);
-                const auto& name = ((value == nullptr) ? std::string("None") : (value->GetName())
-                                   + " (" + value->GetClassType() + ")");
-                ImGui::Button(name.c_str());
-                // When Dragging
-                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
-                    ImGui::SetDragDropPayload("INSP_RES", value, sizeof(CSE::SResource));
-                    ImGui::EndDragDropSource();
-                }
-                // When Dropped
-                if (ImGui::BeginDragDropTarget()) {
-                    if (const auto& payload = ImGui::AcceptDragDropPayload("INSP_RES")) {
-                        const auto& dropObject = static_cast<CSE::SResource*>(payload->Data);
-                        if (m_classType != dropObject->GetClassType()) {
-                            ImGui::EndDragDropTarget();
-                            return false;
-                        }
-                        const auto& str = dropObject->GetHash();
-                        ReplaceValueString(str.c_str(), str.size());
-                        ImGui::EndDragDropTarget();
-                        return true;
-                    }
-                    if (const auto& payload = ImGui::AcceptDragDropPayload("AW_RES")) {
-                        const auto& dropObject = static_cast<CSE::AssetMgr::AssetReference*>(payload->Data);
-                        if (m_classType != dropObject->class_type) {
-                            ImGui::EndDragDropTarget();
-                            return false;
-                        }
-                        const auto& res = CSE::SResource::Create(dropObject, dropObject->class_type);
-                        if(res == m_value) {
-                            ImGui::EndDragDropTarget();
-                            return false;
-                        }
-                        m_value = res;
-                        ImGui::EndDragDropTarget();
-                        return true;
-                    }
-                    ImGui::EndDragDropTarget();
-                }
-                return false;
-            };
-            m_getFunc = [this]() {
-                std::vector<std::string> result;
-                const auto& value = static_cast<CSE::SResource*>(m_value);
-                result.reserve(1);
-                result.emplace_back(value->GetHash());
-                return result;
-            };
+        case InspectorParamType::RES:
+            GenerateResourceFunc();
             break;
-        }
-        case InspectorParamType::OBJ: {
-            m_paramFunc = [this]() {
-                auto* value = static_cast<CSE::SGameObject*>(m_value);
-                const auto& name =  ((value == nullptr) ? std::string("null") : value->GetName())
-                                    + " (GameObject)";
-                ImGui::Button(name.c_str());
-                // When Dragging
-                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
-                    ImGui::SetDragDropPayload("INSP_GOBJ", value, sizeof(CSE::SGameObject));
-                    ImGui::EndDragDropSource();
-                }
-                // When Dropped
-                if (ImGui::BeginDragDropTarget()) {
-                    if (const auto& payload = ImGui::AcceptDragDropPayload("INSP_GOBJ")) {
-                        const auto& dropObject = static_cast<CSE::SGameObject*>(payload->Data);
-                        m_value = dropObject;
-                        ImGui::EndDragDropTarget();
-                        return true;
-                    }
-                    ImGui::EndDragDropTarget();
-                }
-                return false;
-            };
-            m_getFunc = [this]() {
-                std::vector<std::string> result;
-                const auto& value = static_cast<CSE::SGameObject*>(m_value);
-                result.reserve(1);
-                result.emplace_back(value->GetHash());
-                return result;
-            };
+        case InspectorParamType::OBJ:
+            GenerateObjectFunc();
             break;
-        }
-        case InspectorParamType::COMP: {
-            m_paramFunc = [this]() {
-                auto* value = static_cast<CSE::SComponent*>(m_value);
-                const auto& name =  ((value == nullptr) ? std::string("null") : value->GetGameObject()->GetName())
-                                    + " (" + value->GetClassType() + ")";
-                ImGui::Button(name.c_str());
-                // When Dragging
-                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
-                    ImGui::SetDragDropPayload("INSP_COMP", value, sizeof(CSE::SComponent));
-                    ImGui::EndDragDropSource();
-                }
-                // When Dropped
-                if (ImGui::BeginDragDropTarget()) {
-                    if (const auto& payload = ImGui::AcceptDragDropPayload("INSP_COMP")) {
-                        const auto& dropComponent = static_cast<CSE::SComponent*>(payload->Data);
-                        if (m_classType != dropComponent->GetClassType()) {
-                            ImGui::EndDragDropTarget();
-                            return false;
-                        }
-                        m_value = dropComponent;
-                        ImGui::EndDragDropTarget();
-                        return true;
-                    }
-                    if (const auto& payload = ImGui::AcceptDragDropPayload("INSP_GOBJ")) {
-                        const auto& dropObject = static_cast<CSE::SGameObject*>(payload->Data);
-                        const auto& dropComponents = dropObject->GetComponents();
-                        CSE::SComponent* target = nullptr;
-                        for (const auto& component: dropComponents) {
-                            if (m_classType != component->GetClassType()) continue;
-                            target = component;
-                            break;
-                        }
-                        m_value = target;
-                        ImGui::EndDragDropTarget();
-                        return target != nullptr;
-                    }
-                    ImGui::EndDragDropTarget();
-                }
-                return false;
-            };
-            m_getFunc = [this]() {
-                std::vector<std::string> result;
-                const auto& value = static_cast<CSE::SComponent*>(m_value);
-                result.reserve(1);
-                result.emplace_back(value->GetGameObject()->GetHash() + '?' + value->GetClassType());
-                return result;
-            };
+        case InspectorParamType::COMP:
+            GenerateComponentFunc();
             break;
-        }
         default:
             break;
     }
@@ -486,4 +260,267 @@ void InspectorParam::ReplaceValueString(const char* str, const int size) {
     for (int i = 0; i < size; ++i) {
         ptr[i] = str[i];
     }
+}
+
+void InspectorParam::GenerateIntFunc(const char* name) {
+    auto* value = static_cast<int*>(m_value);
+    m_paramFunc = [value, name]() {
+        return ImGui::DragInt(name, value);
+    };
+    m_getFunc = [value]() {
+        std::vector<std::string> result;
+        result.reserve(1);
+        result.emplace_back(std::to_string(*value));
+        return result;
+    };
+}
+
+void InspectorParam::GenerateFloatFunc(const char* name) {
+    auto* value = static_cast<float*>(m_value);
+    m_paramFunc = [value, name]() {
+        return ImGui::DragFloat(name, value, 0.005f);
+    };
+    m_getFunc = [value]() {
+        std::vector<std::string> result;
+        result.reserve(1);
+        result.emplace_back(std::to_string(*value));
+        return result;
+    };
+}
+
+void InspectorParam::GenerateVec2Func(const char* name) {
+    auto* value = static_cast<CSE::vec2*>(m_value);
+    m_paramFunc = [value, name]() {
+        return ImGui::InputFloat2(name, const_cast<float*>(value->Pointer()));
+    };
+    m_getFunc = [value]() {
+        std::vector<std::string> result;
+        result.reserve(2);
+        result.emplace_back(std::to_string(value->x));
+        result.emplace_back(std::to_string(value->y));
+        return result;
+    };
+}
+
+void InspectorParam::GenerateVec3Func(const char* name) {
+    auto* value = static_cast<CSE::vec3*>(m_value);
+    m_paramFunc = [value, name]() {
+        return ImGui::DragFloat3(name, const_cast<float*>(value->Pointer()), 0.005f);
+    };
+    m_getFunc = [value]() {
+        std::vector<std::string> result;
+        result.reserve(3);
+        result.emplace_back(std::to_string(value->x));
+        result.emplace_back(std::to_string(value->y));
+        result.emplace_back(std::to_string(value->z));
+        return result;
+    };
+}
+
+void InspectorParam::GenerateColor3Func(const char* name) {
+    auto* value = static_cast<CSE::vec3*>(m_value);
+    m_paramFunc = [value, name]() {
+        return ImGui::ColorEdit3(name, const_cast<float*>(value->Pointer()),
+                                 ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_NoOptions);
+    };
+    m_getFunc = [value]() {
+        std::vector<std::string> result;
+        result.reserve(3);
+        result.emplace_back(std::to_string(value->x));
+        result.emplace_back(std::to_string(value->y));
+        result.emplace_back(std::to_string(value->z));
+        return result;
+    };
+}
+
+void InspectorParam::GenerateVec4Func(const char* name) {
+    auto* value = static_cast<CSE::vec4*>(m_value);
+    m_paramFunc = [value, name]() {
+        return ImGui::DragFloat4(name, const_cast<float*>(value->Pointer()), 0.005f);
+    };
+    m_getFunc = [value]() {
+        std::vector<std::string> result;
+        result.reserve(4);
+        result.emplace_back(std::to_string(value->x));
+        result.emplace_back(std::to_string(value->y));
+        result.emplace_back(std::to_string(value->z));
+        result.emplace_back(std::to_string(value->w));
+        return result;
+    };
+}
+
+void InspectorParam::GenerateColor4Func(const char* name) {
+    auto* value = static_cast<CSE::vec4*>(m_value);
+    m_paramFunc = [value, name]() {
+        return ImGui::ColorEdit4(name, const_cast<float*>(value->Pointer()),
+                                 ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_NoOptions);
+    };
+    m_getFunc = [value]() {
+        std::vector<std::string> result;
+        result.reserve(4);
+        result.emplace_back(std::to_string(value->x));
+        result.emplace_back(std::to_string(value->y));
+        result.emplace_back(std::to_string(value->z));
+        result.emplace_back(std::to_string(value->w));
+        return result;
+    };
+}
+
+void InspectorParam::GenerateStringFunc(const char* name) {
+    auto* value = static_cast<char*>(m_value);
+    m_paramFunc = [value, name]() {
+        return ImGui::InputText(name, value, 128);
+    };
+    m_getFunc = [value]() {
+        std::vector<std::string> result;
+        result.reserve(1);
+        result.emplace_back(value);
+        return result;
+    };
+}
+
+void InspectorParam::GenerateBoolFunc(const char* name) {
+    auto* value = static_cast<bool*>(m_value);
+    m_paramFunc = [value, name]() {
+        return ImGui::Checkbox(name, value);
+    };
+    m_getFunc = [value]() {
+        std::vector<std::string> result;
+        result.reserve(1);
+        result.emplace_back(std::to_string(static_cast<int>(*value)));
+        return result;
+    };
+}
+
+void InspectorParam::GenerateResourceFunc() {
+    m_paramFunc = [this]() {
+        auto* value = static_cast<CSE::SResource*>(m_value);
+        const auto& name = ((value == nullptr) ? std::string("None") : (value->GetName())
+                           + " (" + value->GetClassType() + ")");
+        ImGui::Button(name.c_str());
+        
+        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+            ImGui::SetDragDropPayload("INSP_RES", value, sizeof(CSE::SResource));
+            ImGui::EndDragDropSource();
+        }
+        
+        if (ImGui::BeginDragDropTarget()) {
+            if (const auto& payload = ImGui::AcceptDragDropPayload("INSP_RES")) {
+                const auto& dropObject = static_cast<CSE::SResource*>(payload->Data);
+                if (m_classType != dropObject->GetClassType()) {
+                    ImGui::EndDragDropTarget();
+                    return false;
+                }
+                const auto& str = dropObject->GetHash();
+                ReplaceValueString(str.c_str(), str.size());
+                ImGui::EndDragDropTarget();
+                return true;
+            }
+            if (const auto& payload = ImGui::AcceptDragDropPayload("AW_RES")) {
+                const auto& dropObject = static_cast<CSE::AssetMgr::AssetReference*>(payload->Data);
+                if (m_classType != dropObject->class_type) {
+                    ImGui::EndDragDropTarget();
+                    return false;
+                }
+                const auto& res = CSE::SResource::Create(dropObject, dropObject->class_type);
+                if(res == m_value) {
+                    ImGui::EndDragDropTarget();
+                    return false;
+                }
+                m_value = res;
+                ImGui::EndDragDropTarget();
+                return true;
+            }
+            ImGui::EndDragDropTarget();
+        }
+        return false;
+    };
+    m_getFunc = [this]() {
+        std::vector<std::string> result;
+        const auto& value = static_cast<CSE::SResource*>(m_value);
+        result.reserve(1);
+        result.emplace_back(value->GetHash());
+        return result;
+    };
+}
+
+void InspectorParam::GenerateObjectFunc() {
+    m_paramFunc = [this]() {
+        auto* value = static_cast<CSE::SGameObject*>(m_value);
+        const auto& name =  ((value == nullptr) ? std::string("null") : value->GetName())
+                            + " (GameObject)";
+        ImGui::Button(name.c_str());
+        
+        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+            ImGui::SetDragDropPayload("INSP_GOBJ", value, sizeof(CSE::SGameObject));
+            ImGui::EndDragDropSource();
+        }
+        
+        if (ImGui::BeginDragDropTarget()) {
+            if (const auto& payload = ImGui::AcceptDragDropPayload("INSP_GOBJ")) {
+                const auto& dropObject = static_cast<CSE::SGameObject*>(payload->Data);
+                m_value = dropObject;
+                ImGui::EndDragDropTarget();
+                return true;
+            }
+            ImGui::EndDragDropTarget();
+        }
+        return false;
+    };
+    m_getFunc = [this]() {
+        std::vector<std::string> result;
+        const auto& value = static_cast<CSE::SGameObject*>(m_value);
+        result.reserve(1);
+        result.emplace_back(value->GetHash());
+        return result;
+    };
+}
+
+void InspectorParam::GenerateComponentFunc() {
+    m_paramFunc = [this]() {
+        auto* value = static_cast<CSE::SComponent*>(m_value);
+        const auto& name =  ((value == nullptr) ? std::string("null") : value->GetGameObject()->GetName())
+                            + " (" + value->GetClassType() + ")";
+        ImGui::Button(name.c_str());
+        
+        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+            ImGui::SetDragDropPayload("INSP_COMP", value, sizeof(CSE::SComponent));
+            ImGui::EndDragDropSource();
+        }
+        
+        if (ImGui::BeginDragDropTarget()) {
+            if (const auto& payload = ImGui::AcceptDragDropPayload("INSP_COMP")) {
+                const auto& dropComponent = static_cast<CSE::SComponent*>(payload->Data);
+                if (m_classType != dropComponent->GetClassType()) {
+                    ImGui::EndDragDropTarget();
+                    return false;
+                }
+                m_value = dropComponent;
+                ImGui::EndDragDropTarget();
+                return true;
+            }
+            if (const auto& payload = ImGui::AcceptDragDropPayload("INSP_GOBJ")) {
+                const auto& dropObject = static_cast<CSE::SGameObject*>(payload->Data);
+                const auto& dropComponents = dropObject->GetComponents();
+                CSE::SComponent* target = nullptr;
+                for (const auto& component: dropComponents) {
+                    if (m_classType != component->GetClassType()) continue;
+                    target = component;
+                    break;
+                }
+                m_value = target;
+                ImGui::EndDragDropTarget();
+                return target != nullptr;
+            }
+            ImGui::EndDragDropTarget();
+        }
+        return false;
+    };
+    m_getFunc = [this]() {
+        std::vector<std::string> result;
+        const auto& value = static_cast<CSE::SComponent*>(m_value);
+        result.reserve(1);
+        result.emplace_back(value->GetGameObject()->GetHash() + '?' + value->GetClassType());
+        return result;
+    };
 }

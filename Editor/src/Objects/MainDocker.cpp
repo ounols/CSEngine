@@ -6,6 +6,8 @@
 #include "imgui_internal.h"
 #include "../../src/MacroDef.h"
 #include "../Manager/EEngineCore.h"
+#include "../../src/Util/Loader/SCENE/SSceneLoader.h"
+#include "../../src/Manager/SceneMgr.h"
 
 #include "InspectorWindow.h"
 #include "PreviewWindow.h"
@@ -19,6 +21,7 @@ namespace CSEMainDocker {
     PreviewWindow* previewWindow = nullptr;
     HierarchyWindow* hierarchyWindow = nullptr;
     InspectorWindow* inspectorWindow = nullptr;
+    AssetWindow* assetWindow = nullptr;
 }
 
 MainDocker::MainDocker() {
@@ -65,6 +68,9 @@ void MainDocker::SetUI() {
 void MainDocker::SetMenuBar() const {
     if (ImGui::BeginMenuBar()) {
         if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("Save Scene")) {
+                CSEMainDocker::assetWindow->SaveCurrentScene();
+            }
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Edit")) {
@@ -115,13 +121,14 @@ void MainDocker::GenerateWindows() {
     CSEMainDocker::previewWindow = new PreviewWindow();
     CSEMainDocker::hierarchyWindow = new HierarchyWindow();
     CSEMainDocker::inspectorWindow = new InspectorWindow();
+    CSEMainDocker::assetWindow = new AssetWindow();
 
     m_windows.reserve(4);
     m_windows.push_back(CSEMainDocker::inspectorWindow);
     m_windows.push_back(CSEMainDocker::previewWindow);
     m_windows.push_back(CSEMainDocker::hierarchyWindow);
+    m_windows.push_back(CSEMainDocker::assetWindow);
     m_windows.push_back(new ConsoleWindow());
-    m_windows.push_back(new AssetWindow());
 
     for (const auto& window: m_windows) {
         window->Register(this);
