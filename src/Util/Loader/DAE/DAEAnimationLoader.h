@@ -17,8 +17,8 @@ namespace CSE {
 		int jointId;
 		mat4 jointLocalTransform;
 
-		JointTransformData(int jointId, std::string jointNameId, const mat4& jointLocalTransform) :
-			jointNameId(std::move(jointNameId)),
+		JointTransformData(int jointId, const std::string& jointNameId, const mat4& jointLocalTransform) :
+			jointNameId(jointNameId),
 			jointId(jointId),
 			jointLocalTransform(jointLocalTransform) {
 		}
@@ -48,7 +48,7 @@ namespace CSE {
 
 		~DAEAnimationLoader();
 
-		bool Load(const char* path, std::string name);
+		bool Load(const char* path, const std::string& name);
 
 		AnimationData* GetAnimation() const {
 			return m_animationData;

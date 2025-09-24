@@ -19,7 +19,7 @@ namespace CSE {
     class SComponent : public SObject, public virtual SISComponent, public VariableBinder, public ReflectionObject {
     public:
 
-        explicit SComponent(std::string classType, SGameObject* gameObject) : ReflectionObject(std::move(classType)),
+        explicit SComponent(const std::string& classType, SGameObject* gameObject) : ReflectionObject(classType),
                                                                               gameObject(gameObject) {
         }
 
@@ -41,14 +41,14 @@ namespace CSE {
             return nullptr;
         }
 
-        virtual void CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
-                                   std::map<SComponent*, SComponent*> lists_comp) {}
+        virtual void CopyReference(const SComponent& src, const std::map<SGameObject*, SGameObject*>& lists_obj,
+                                   const std::map<SComponent*, SComponent*>& lists_comp) {}
 
         virtual auto GetComponent() -> SObject* {
             return this;
         }
 
-        void SetValue(std::string name_str, Arguments value) override {}
+        void SetValue(const std::string& name_str, const Arguments& value) override {}
 
         std::string PrintValue() const override { return {}; }
 

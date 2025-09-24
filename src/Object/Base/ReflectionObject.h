@@ -10,12 +10,12 @@ namespace CSE {
     public:
         ReflectionObject() = default;
 
-        explicit ReflectionObject(std::string type) : m_class(std::move(type)) {}
+        explicit ReflectionObject(const std::string& type) : m_class(type) {}
 
         virtual ~ReflectionObject() = default;
 
-        void SetClassType(std::string type) {
-            m_class = std::move(type);
+        void SetClassType(const std::string& type) {
+            m_class = type;
         }
 
         const char* GetClassType() const {

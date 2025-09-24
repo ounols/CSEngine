@@ -23,9 +23,9 @@ namespace CSE {
     public:
         SGameObject();
 
-        explicit SGameObject(std::string name);
+        explicit SGameObject(const std::string& name);
 
-        explicit SGameObject(std::string name, std::string hash);
+        explicit SGameObject(const std::string& name, const std::string& hash);
 
         ~SGameObject() override;
 
@@ -81,11 +81,11 @@ namespace CSE {
 
         SComponent* CreateComponent(const char* type);
 
-        SGameObject* Find(std::string name) const;
+        SGameObject* Find(const std::string& name) const;
 
         SGameObject* FindLocalByID(const std::string& id);
 
-        static SGameObject* FindByID(std::string id);
+        static SGameObject* FindByID(const std::string& id);
 
         static SGameObject* FindByHash(const std::string& hash);
 
@@ -98,8 +98,8 @@ namespace CSE {
 
         std::string GetID(const SComponent* component) const;
 
-        void SetName(std::string name) {
-            m_name = std::move(name);
+        void SetName(const std::string& name) {
+            m_name = name;
         }
 
         TransformInterface* GetTransform() const {
@@ -114,7 +114,7 @@ namespace CSE {
 
         void SetIsEnable(bool is_enable);
 
-        void SetHash(std::string& hash) override;
+        void SetHash(const std::string& hash) override;
 
     private:
         void UpdateComponent(float elapsedTime);

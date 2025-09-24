@@ -41,7 +41,7 @@ namespace CSE {
             return m_keyframes;
         }
 
-        void SetValue(std::string name_str, Arguments value) override;
+        void SetValue(const std::string& name_str, const Arguments& value) override;
 
         std::string PrintValue() const override;
 

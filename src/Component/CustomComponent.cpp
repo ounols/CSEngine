@@ -109,8 +109,8 @@ void CustomComponent::RegisterScript() {
 }
 
 
-void CustomComponent::SetClassName(std::string name) {
-    auto asset = SResource::Get<SScriptObject>(std::move(name));
+void CustomComponent::SetClassName(const std::string& name) {
+    auto asset = SResource::Get<SScriptObject>(name);
     if (asset == nullptr) return;
 
     m_classID = asset->GetHash();
@@ -156,7 +156,7 @@ SComponent* CustomComponent::Clone(SGameObject* object) {
     return clone;
 }
 
-void CustomComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
+void CustomComponent::SetValue(const std::string& name_str, const Arguments& value) {
     if (name_str == "m_classID") {
         SetClassName(ConvertSpaceStr(value[0], true));
     }

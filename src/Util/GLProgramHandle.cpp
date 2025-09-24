@@ -209,7 +209,7 @@ void GLProgramHandle::Init(const AssetMgr::AssetReference* asset) {
     }
 }
 
-void GLProgramHandle::SetValue(std::string name_str, VariableBinder::Arguments value) {
+void GLProgramHandle::SetValue(const std::string& name_str, const Arguments& value) {
 }
 
 std::string GLProgramHandle::PrintValue() const {

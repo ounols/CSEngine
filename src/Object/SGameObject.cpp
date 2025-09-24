@@ -18,18 +18,18 @@ SGameObject::SGameObject() {
     SGameObject::Init();
 }
 
-SGameObject::SGameObject(std::string name) {
+SGameObject::SGameObject(const std::string& name) {
     CORE->GetCore(GameObjectMgr)->Register(this);
-    m_name = std::move(name);
+    m_name = name;
     m_transform = CreateComponent<TransformComponent>();
 
     SGameObject::Init();
 }
 
-SGameObject::SGameObject(std::string name, std::string hash) {
+SGameObject::SGameObject(const std::string& name, const std::string& hash) {
     SObject::SetHash(hash);
     CORE->GetCore(GameObjectMgr)->Register(this);
-    m_name = std::move(name);
+    m_name = name;
     m_transform = CreateComponent<TransformComponent>();
 
     SGameObject::Init();
@@ -189,8 +189,8 @@ std::string SGameObject::GetID(const SComponent* component) const {
     return object->m_hash + "?" + component->GetClassType();
 }
 
-SGameObject* SGameObject::Find(std::string name) const {
-    return CORE->GetCore(GameObjectMgr)->Find(ConvertSpaceStr(std::move(name), true));
+SGameObject* SGameObject::Find(const std::string& name) const {
+    return CORE->GetCore(GameObjectMgr)->Find(ConvertSpaceStr(name, true));
 }
 
 
@@ -205,8 +205,8 @@ SGameObject* SGameObject::FindLocalByID(const std::string& id) {
     return nullptr;
 }
 
-SGameObject* SGameObject::FindByID(std::string id) {
-    return CORE->GetCore(GameObjectMgr)->FindByID(ConvertSpaceStr(std::move(id), true));
+SGameObject* SGameObject::FindByID(const std::string& id) {
+    return CORE->GetCore(GameObjectMgr)->FindByID(ConvertSpaceStr(id, true));
 }
 
 SGameObject* SGameObject::FindByHash(const std::string& hash) {
@@ -292,7 +292,7 @@ SComponent* SGameObject::GetSComponentByHash(const std::string& hash) const {
     return nullptr;
 }
 
-void SGameObject::SetHash(std::string& hash) {
+void SGameObject::SetHash(const std::string& hash) {
     const std::string prevHash = std::string(m_hash);
     SObject::SetHash(hash);
     CORE->GetCore(GameObjectMgr)->ChangeHash(prevHash, hash);

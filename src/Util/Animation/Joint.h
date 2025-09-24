@@ -14,7 +14,7 @@ namespace CSE {
 
     class Joint {
     public:
-        Joint(int m_index, std::string m_nameID, mat4 m_bindLocalTransform)
+        Joint(int m_index, const std::string& m_nameID, const mat4& m_bindLocalTransform)
                 : m_index(m_index), m_nameID(m_nameID), m_bindLocalTransform(m_bindLocalTransform) {
 
         }

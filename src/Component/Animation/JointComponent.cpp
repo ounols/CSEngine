@@ -63,7 +63,7 @@ void JointComponent::SetBindLocalMatrix(const mat4& mat) {
     m_localBindMatrix = mat;
 }
 
-void JointComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
+void JointComponent::SetValue(const std::string& name_str, const Arguments& value) {
     if(name_str == "m_inverseTransformMatrix") {
         SET_MAT4(m_inverseTransformMatrix)
     }

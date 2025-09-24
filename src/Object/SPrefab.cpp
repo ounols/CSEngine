@@ -127,7 +127,7 @@ std::string SPrefab::GenerateObjectMeta(const SGameObject& obj) {
     return GetMetaString(obj, startIndex);
 }
 
-void SPrefab::SetValue(std::string name_str, VariableBinder::Arguments value) {
+void SPrefab::SetValue(const std::string& name_str, const Arguments& value) {
 
 }
 

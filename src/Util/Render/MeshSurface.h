@@ -34,7 +34,7 @@ namespace CSE {
         MakeVertices(int sizeVert, float* vertices, float* normals, float* texCoords, float* weights, short* jointIds);
         bool MakeIndices(int sizeIndic, int* indices);
 
-        void SetValue(std::string name_str, Arguments value) override;
+        void SetValue(const std::string& name_str, const Arguments& value) override;
 
         std::string PrintValue() const override;
 

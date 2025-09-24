@@ -131,17 +131,17 @@ SComponent* AnimatorComponent::Clone(SGameObject* object) {
     return clone;
 }
 
-void AnimatorComponent::CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
-                                      std::map<SComponent*, SComponent*> lists_comp) {
-    if (src == nullptr) return;
-    auto convert = static_cast<AnimatorComponent*>(src);
+void AnimatorComponent::CopyReference(const SComponent& src, const std::map<SGameObject*, SGameObject*>& lists_obj,
+                                      const std::map<SComponent*, SComponent*>& lists_comp) {
+    if (&src == nullptr) return;
+    const auto& convert = static_cast<const AnimatorComponent*>(&src);
 
     //Copy Components
     FIND_COMP_REFERENCE(m_rootJoint, convert, JointComponent);
 
 }
 
-void AnimatorComponent::SetValue(std::string name_str, Arguments value) {
+void AnimatorComponent::SetValue(const std::string& name_str, const Arguments& value) {
     if (name_str == "m_animationTime") {
         m_animationTime = std::stof(value[0]);
     } else if (name_str == "m_startTime") {

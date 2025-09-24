@@ -47,18 +47,19 @@ int ResMgr::GetStringHash(const std::string& str) {
 	return m_stringIds.size() - 1;
 }
 
-AssetMgr::AssetReference* ResMgr::GetAssetReference(std::string name) const {
+AssetMgr::AssetReference* ResMgr::GetAssetReference(const std::string& name) const {
     return m_assetManager->GetAsset(name);
 }
 
-SResource* ResMgr::GetSResource(std::string name) const {
+SResource* ResMgr::GetSResource(const std::string& name) const {
     if(m_objects.count(name) > 0) return Get(name);
-    make_lower(name);
+    std::string nameLower = name;
+    make_lower(nameLower);
     for (const auto& pair : m_objects) {
         const auto& res = pair.second;
-        if (make_lower_copy(res->GetName()) == name)
+        if (make_lower_copy(res->GetName()) == nameLower)
             return res;
-        if (make_lower_copy(res->GetAbsoluteID()) == name)
+        if (make_lower_copy(res->GetAbsoluteID()) == nameLower)
             return res;
     }
     return nullptr;

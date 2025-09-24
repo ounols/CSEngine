@@ -347,7 +347,7 @@ std::string SMaterial::PrintMaterial() const {
     return result;
 }
 
-void SMaterial::SetValue(std::string name_str, VariableBinder::Arguments value) {
+void SMaterial::SetValue(const std::string& name_str, const Arguments& value) {
 
 }
 

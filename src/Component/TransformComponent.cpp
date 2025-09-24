@@ -86,7 +86,7 @@ SComponent* TransformComponent::Clone(SGameObject* object) {
     return clone;
 }
 
-void TransformComponent::SetValue(std::string name_str, Arguments value) {
+void TransformComponent::SetValue(const std::string& name_str, const Arguments& value) {
     if (name_str == "m_position") {
         m_position = vec3(std::stof(value[0]), std::stof(value[1]), std::stof(value[2]));
     } else if (name_str == "m_scale") {

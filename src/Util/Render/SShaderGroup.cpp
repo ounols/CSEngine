@@ -108,7 +108,7 @@ const GLProgramHandle* SShaderGroup::GetHandleByMode(int mode) const {
     return m_handles.at(pass_map.at(static_cast<SMaterial::SMaterialMode>(mode)));
 }
 
-void SShaderGroup::SetValue(std::string name_str, VariableBinder::Arguments value) {
+void SShaderGroup::SetValue(const std::string& name_str, const Arguments& value) {
 }
 
 std::string SShaderGroup::PrintValue() const {

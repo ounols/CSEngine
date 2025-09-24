@@ -30,7 +30,7 @@ SComponent* SCloneFactory::Clone(SComponent* component, SGameObject* parent) {
     }
 
     SComponent* clone_component = component->Clone(parent);
-    clone_component->CopyReference(component, std::map<SGameObject*, SGameObject*>(), std::map<SComponent*, SComponent*>());
+    clone_component->CopyReference(*component, std::map<SGameObject*, SGameObject*>(), std::map<SComponent*, SComponent*>());
 
     return clone_component;
 }
@@ -54,7 +54,7 @@ SGameObject* SCloneFactory::Clone(SGameObject* object, SGameObject* parent) {
 
     for(const auto& component_pair : clone_component) {
         SComponent* component = component_pair.second;
-        component->CopyReference(component_pair.first, clone_object, clone_component);
+        component->CopyReference(*component_pair.first, clone_object, clone_component);
     }
 
     return cloneObject_root;

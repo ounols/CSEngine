@@ -31,9 +31,9 @@ namespace CSE {
 
         static SScene* LoadScene(const std::string& path);
 
-        static bool SaveScene(SScene* scene, std::string path);
+        static bool SaveScene(SScene* scene, const std::string& path);
 
-        static bool SavePrefab(SGameObject* root, std::string path);
+        static bool SavePrefab(SGameObject* root, const std::string& path);
 
     private:
         static void ExploringScene(const XNode& node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps);

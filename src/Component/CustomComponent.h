@@ -13,10 +13,10 @@ namespace CSE {
     private:
         struct VARIABLE {
 
-            VARIABLE(std::string name, const char* type, std::string value) {
-                this->name = std::move(name);
+            VARIABLE(const std::string& name, const char* type, const std::string& value) {
+                this->name = name;
                 this->type = type;
-                this->value = std::move(value);
+                this->value = value;
             }
 
             std::string name;
@@ -37,7 +37,7 @@ namespace CSE {
 
         SComponent* Clone(SGameObject* object) override;
 
-        void SetClassName(std::string name);
+        void SetClassName(const std::string& name);
 
         std::string SGetClassName() const;
 
@@ -48,7 +48,7 @@ namespace CSE {
 
         void Log(const char* log);
 
-        void SetValue(std::string name_str, Arguments value) override;
+        void SetValue(const std::string& name_str, const Arguments& value) override;
 
         std::string PrintValue() const override;
 

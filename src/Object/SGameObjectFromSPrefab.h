@@ -9,13 +9,13 @@ namespace CSE {
     class SGameObjectFromSPrefab : public SGameObject {
     public:
         SGameObjectFromSPrefab() : SGameObject() {}
-        explicit SGameObjectFromSPrefab(std::string name) : SGameObject(std::move(name)) {}
-        explicit SGameObjectFromSPrefab(std::string name, std::string hash)
-            : SGameObject(std::move(name), std::move(hash)) {}
+        explicit SGameObjectFromSPrefab(const std::string& name) : SGameObject(name) {}
+        explicit SGameObjectFromSPrefab(const std::string& name, const std::string& hash)
+            : SGameObject(name, hash) {}
         ~SGameObjectFromSPrefab() override = default;
 
-        void SetRefHash(std::string hash) {
-            m_refHash = std::move(hash);
+        void SetRefHash(const std::string& hash) {
+            m_refHash = hash;
         }
 
         std::string GetRefHash() const {

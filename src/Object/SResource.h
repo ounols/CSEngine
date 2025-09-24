@@ -16,15 +16,15 @@ namespace CSE {
 
     class SResource : public SObject, public VariableBinder, public ReflectionObject {
     public:
-        explicit SResource(std::string classType);
+        explicit SResource(const std::string& classType);
 
         SResource(const SResource* resource, bool isRegister);
 
         ~SResource() override;
 
-        void SetName(std::string name);
+        void SetName(const std::string& name);
 
-        void SetAbsoluteID(std::string id);
+        void SetAbsoluteID(const std::string& id);
 
         std::string GetName() const {
             return m_name;
@@ -34,14 +34,14 @@ namespace CSE {
             return m_absoluteId;
         }
 
-        AssetMgr::AssetReference* GetAssetReference(std::string hash = "") const;
+        AssetMgr::AssetReference* GetAssetReference(const std::string& hash = "") const;
 
         void LinkResource(AssetMgr::AssetReference* asset) {
             SetResource(asset, false);
         }
 
-        void LinkResource(std::string name) {
-            SetResource(std::move(name), false);
+        void LinkResource(const std::string& name) {
+            SetResource(name, false);
         }
 
         template <class T>
@@ -76,25 +76,25 @@ namespace CSE {
         static SResource* Create(const AssetMgr::AssetReference* asset, const std::string& classType);
 
         template <class T>
-        static T* Get(std::string name) {
-            SResource* res = GetResource(std::move(name));
+        static T* Get(const std::string& name) {
+            SResource* res = GetResource(name);
             if (res != nullptr) return static_cast<T*>(res);
             return nullptr;
         }
 
-        static SResource* Get(std::string& name);
+        static SResource* Get(const std::string& name);
 
-        void SetHash(std::string& hash) override;
+        void SetHash(const std::string& hash) override;
 
     protected:
         virtual void Init(const AssetMgr::AssetReference* asset) = 0;
 
     private:
-        void SetResource(std::string name, bool isInit = true);
+        void SetResource(const std::string& name, bool isInit = true);
 
         void SetResource(AssetMgr::AssetReference* asset, bool isInit = true);
 
-        static SResource* GetResource(std::string name);
+        static SResource* GetResource(const std::string& name);
 
     private:
         std::string m_name;

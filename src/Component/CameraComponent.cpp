@@ -83,10 +83,10 @@ SComponent* CameraComponent::Clone(SGameObject* object) {
     return comp;
 }
 
-void CameraComponent::CopyReference(SComponent* src, std::map<SGameObject*, SGameObject*> lists_obj,
-                                    std::map<SComponent*, SComponent*> lists_comp) {
-    if (src == nullptr) return;
-    auto convert = static_cast<CameraComponent*>(src);
+void CameraComponent::CopyReference(const SComponent& src, const std::map<SGameObject*, SGameObject*>& lists_obj,
+                                    const std::map<SComponent*, SComponent*>& lists_comp) {
+    if (&src == nullptr) return;
+    const auto& convert = static_cast<const CameraComponent*>(&src);
 
     //Copy GameObjects
     FIND_OBJ_REFERENCE(m_targetObject, convert);
@@ -172,7 +172,7 @@ void CameraComponent::SetProjectionMatrix() const {
 	mutex.unlock();
 }
 
-void CameraComponent::SetValue(std::string name_str, VariableBinder::Arguments value) {
+void CameraComponent::SetValue(const std::string& name_str, const Arguments& value) {
     if (name_str == "m_target") {
         SET_VEC3(m_target);
     } else if (name_str == "m_up") {

@@ -22,7 +22,7 @@ namespace CSE {
             return m_hash;
         }
 
-        virtual void SetHash(std::string& hash);
+        virtual void SetHash(const std::string& hash);
 
     private:
         void GenerateHashString();

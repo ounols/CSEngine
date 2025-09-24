@@ -150,7 +150,7 @@ SComponent* LightComponent::Clone(SGameObject* object) {
 	return clone;
 }
 
-void LightComponent::SetValue(std::string name_str, Arguments value) {
+void LightComponent::SetValue(const std::string& name_str, const Arguments& value) {
     if (name_str == "m_type") {
         m_type = static_cast<LIGHT>(std::stoi(value[0]));
     } else if (name_str == "m_disableShadow") {

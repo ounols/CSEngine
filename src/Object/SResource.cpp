@@ -14,7 +14,7 @@
 
 using namespace CSE;
 
-SResource::SResource(std::string classType) : ReflectionObject(std::move(classType)) {
+SResource::SResource(const std::string& classType) : ReflectionObject(classType) {
     auto resMgr = CORE->GetCore(ResMgr);
     resMgr->Register(this);
     m_name = "Resource " + std::to_string(resMgr->GetSize());
@@ -30,18 +30,18 @@ SResource::SResource(const SResource* resource, bool isRegister) : SObject(isReg
 
 SResource::~SResource() = default;
 
-void SResource::SetName(std::string name) {
-    m_name = std::move(name);
+void SResource::SetName(const std::string& name) {
+    m_name = name;
 }
 
-void SResource::SetAbsoluteID(std::string id) {
-    m_absoluteId = std::move(id);
+void SResource::SetAbsoluteID(const std::string& id) {
+    m_absoluteId = id;
 }
 
-void SResource::SetResource(std::string name, bool isInit) {
+void SResource::SetResource(const std::string& name, bool isInit) {
     if (m_isInited) return;
 
-    auto asset = CORE->GetCore(ResMgr)->GetAssetReference(std::move(name));
+    auto asset = CORE->GetCore(ResMgr)->GetAssetReference(name);
     SetResource(asset, isInit);
 }
 
@@ -68,19 +68,19 @@ void SResource::SetResource(AssetMgr::AssetReference* asset, bool isInit) {
         Init(asset);
 }
 
-SResource* SResource::GetResource(std::string name) {
-    return CORE->GetCore(ResMgr)->GetSResource(std::move(name));
+SResource* SResource::GetResource(const std::string& name) {
+    return CORE->GetCore(ResMgr)->GetSResource(name);
 }
 
-void SResource::SetHash(std::string& hash) {
+void SResource::SetHash(const std::string& hash) {
     std::string srcHash = m_hash;
     SObject::SetHash(hash);
     CORE->GetCore(ResMgr)->ChangeHash(srcHash, hash);
 }
 
-AssetMgr::AssetReference* SResource::GetAssetReference(std::string hash) const {
-    if (hash.empty()) hash = m_hash;
-    return CORE->GetCore(ResMgr)->GetAssetReference(std::move(hash));
+AssetMgr::AssetReference* SResource::GetAssetReference(const std::string& hash) const {
+    std::string hashCopy = hash.empty() ? m_hash : hash;
+    return CORE->GetCore(ResMgr)->GetAssetReference(hashCopy);
 }
 
 SResource* SResource::Create(const std::string& name, const std::string& classType) {
@@ -93,7 +93,7 @@ SResource* SResource::Create(const std::string& name, const std::string& classTy
     return res;
 }
 
-SResource* SResource::Get(std::string& name) {
+SResource* SResource::Get(const std::string& name) {
     SResource* res = GetResource(name);
     if (res != nullptr) return res;
     return nullptr;

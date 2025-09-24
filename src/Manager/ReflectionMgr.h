@@ -19,7 +19,7 @@ namespace CSE {
                 std::function<ReflectionObject*()> m_func;
                 DefineWrapperNode* m_next = nullptr;
 
-                DefineWrapperNode(std::string name, std::function<ReflectionObject*()> func) : m_name(std::move(name)),
+                DefineWrapperNode(const std::string& name, std::function<ReflectionObject*()> func) : m_name(name),
 	                m_func(std::move(func)) {}
             };
 

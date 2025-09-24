@@ -8,7 +8,7 @@ namespace CSE {
     template<class T>
     class ReflectionRef {
     public:
-        explicit ReflectionRef(std::string type) : m_class(std::move(type)) {}
+        explicit ReflectionRef(const std::string& type) : m_class(type) {}
         explicit ReflectionRef() {
             const char* type = T::GetClassStaticType();
             m_class = type;

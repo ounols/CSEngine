@@ -70,7 +70,7 @@ namespace CSE {
         void ReadDirectory(const std::string& path);
         void ReadPackage(const std::string& path);
 
-        AssetReference* CreateAsset(const std::string& path, const std::string& name_full, std::string name = "");
+        AssetReference* CreateAsset(const std::string& path, const std::string& name_full, const std::string& name = "");
         AssetReference* CreateAssetFolder(const std::string& path, const std::string& name_full);
 
         void SetType();

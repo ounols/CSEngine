@@ -209,7 +209,7 @@ void MeshSurface::Init(const AssetMgr::AssetReference* asset) {
 //    }
 }
 
-void MeshSurface::SetValue(std::string name_str, VariableBinder::Arguments value) {
+void MeshSurface::SetValue(const std::string& name_str, const Arguments& value) {
 }
 
 std::string MeshSurface::PrintValue() const {

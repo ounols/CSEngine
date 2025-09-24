@@ -192,7 +192,7 @@ void AssetMgr::ReadPackage(const std::string& path) {
 }
 
 AssetMgr::AssetReference*
-AssetMgr::CreateAsset(const std::string& path, const std::string& name_full, std::string name) {
+AssetMgr::CreateAsset(const std::string& path, const std::string& name_full, const std::string& name) {
     auto asset = new AssetReference();
     asset->path = path;
     asset->name_path = path + name_full;
@@ -200,10 +200,9 @@ AssetMgr::CreateAsset(const std::string& path, const std::string& name_full, std
     asset->name_full = name_full;
 
     if (name.empty()) {
-        name = name_full;
-        auto name_strs = split(name, '.');
-        asset->extension = name_strs[name_strs.size() - 1];
-        asset->name = name.substr(0, name.rfind('.'));
+        auto name_strs = split(name_full, '.');
+        asset->extension = std::move(name_strs[name_strs.size() - 1]);
+        asset->name = std::move(name_full.substr(0, name_full.rfind('.')));
     } else {
         asset->name = name;
     }

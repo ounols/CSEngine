@@ -32,8 +32,8 @@ DAEAnimationLoader::~DAEAnimationLoader() {
     SAFE_DELETE(m_animationData);
 }
 
-bool DAEAnimationLoader::Load(const char* path, std::string name) {
-    m_name = std::move(name);
+bool DAEAnimationLoader::Load(const char* path, const std::string& name) {
+    m_name = name;
 
     m_root = XFILE(path).getRoot();
     XNode collada = m_root->getChild("COLLADA");

@@ -39,11 +39,11 @@ namespace CSE {
     	template <class TYPE>
 		TYPE* GetObjectByHash(const std::string& hash) const;
 
-        SResource* GetSResource(std::string name) const;
+        SResource* GetSResource(const std::string& name) const;
 
 		int GetStringHash(const std::string& str);
 
-        AssetMgr::AssetReference* GetAssetReference(std::string name) const;
+        AssetMgr::AssetReference* GetAssetReference(const std::string& name) const;
 
         std::list<AssetMgr::AssetReference*> GetAssetReferences(AssetMgr::TYPE type) const;
 

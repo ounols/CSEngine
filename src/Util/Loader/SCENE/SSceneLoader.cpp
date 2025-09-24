@@ -44,7 +44,7 @@ SSceneLoader::SSceneLoader() = default;
 
 SSceneLoader::~SSceneLoader() = default;
 
-bool SSceneLoader::SaveScene(SScene* scene, std::string path) {
+bool SSceneLoader::SaveScene(SScene* scene, const std::string& path) {
 
     std::stringstream value;
     value << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
@@ -82,7 +82,7 @@ std::string SSceneLoader::GetGameObjectValue(SGameObject* obj, bool ignorePrefab
     return values;
 }
 
-bool SSceneLoader::SavePrefab(SGameObject* root, std::string path) {
+bool SSceneLoader::SavePrefab(SGameObject* root, const std::string& path) {
     std::stringstream value;
 
     value << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
