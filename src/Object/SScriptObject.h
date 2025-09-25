@@ -18,7 +18,7 @@ namespace CSE {
 
         std::vector<std::string> GetVariables() const;
 
-        std::string GetScriptClassName() const {
+        const std::string& GetScriptClassName() const {
             return m_className;
         }
 

@@ -54,7 +54,7 @@ bool SSceneLoader::SaveScene(SScene* scene, const std::string& path) {
 
     value << "</CSESCENE>";
 
-    return Save(value.str(), std::move(path));
+    return Save(value.str(), path);
 }
 
 std::string SSceneLoader::GetGameObjectValue(SGameObject* obj, bool ignorePrefab) {
@@ -92,7 +92,7 @@ bool SSceneLoader::SavePrefab(SGameObject* root, const std::string& path) {
 
     value << "</CSEPREFAB>";
 
-    return Save(value.str(), std::move(path));
+    return Save(value.str(), path);
 }
 
 bool SSceneLoader::Save(const std::string& buf, const std::string& path) {
@@ -187,7 +187,7 @@ void SSceneLoader::LinkingID(std::vector<NodeKey*>& objs, SGameObject* root) {
     std::vector<NodeKey*> remain;
 
     for (auto node_obj: objs) {
-        auto obj = node_obj->obj;
+        const auto& obj = node_obj->obj;
         std::string parent_hash = ConvertSpaceStr(node_obj->node.getChild("parent").value);
         obj->RemoveParent();
         //parent_hash = parent_hash.substr(1, parent_hash.size() - 2);

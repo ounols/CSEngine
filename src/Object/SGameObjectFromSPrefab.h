@@ -18,7 +18,7 @@ namespace CSE {
             m_refHash = hash;
         }
 
-        std::string GetRefHash() const {
+        const std::string& GetRefHash() const {
             return m_refHash;
         }
 

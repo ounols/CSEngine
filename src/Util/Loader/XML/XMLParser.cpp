@@ -97,7 +97,7 @@ SGameObject* XMLParser::parseGameObject(const char* value) {
     return obj;
 }
 
-SType XMLParser::GetType(std::string type) {
+SType XMLParser::GetType(const std::string& type) {
     static const std::unordered_map<std::string, SType> typeMap = {
             {"str", SType::STRING},
             {"bool", SType::BOOL},

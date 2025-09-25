@@ -87,7 +87,7 @@ public:
     XFILE(){}
     XFILE(const char* str); // read the file into the node heirchy
     const XNode* getRoot();
-    const XNode* loadBuffer(std::string buffer);
+    const XNode* loadBuffer(const std::string& buffer);
 
     ~XFILE();
 };

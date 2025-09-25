@@ -224,7 +224,7 @@ int XFILE::read(std::string& buffer) {
     return XML_EOF; // if we have reached here then the file is done being read
 }
 
-const XNode* XFILE::loadBuffer(std::string buffer) {
+const XNode* XFILE::loadBuffer(const std::string& buffer) {
     this->file = buffer;
     if (file.empty()) {
         throw -1;

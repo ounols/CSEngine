@@ -8,7 +8,7 @@
 namespace CSE {
 
     template <class T>
-    class SContainerHash : public SIContainer<std::unordered_map<std::string, T>, T, std::string> {
+    class SContainerHash : public SIContainer<std::unordered_map<std::string, T>, T, const std::string&> {
     public:
         SContainerHash() = default;
 
@@ -37,10 +37,10 @@ namespace CSE {
         }
 
         bool HasHash(const std::string& hash) const {
-            return m_objects.count(hash) > 0;
+            return m_objects.contains(hash);
         }
 
-        T Get(std::string index) const override {
+        T Get(const std::string& index) const override {
             return m_objects.at(index);
         }
 
@@ -48,7 +48,7 @@ namespace CSE {
             return m_objects;
         }
 
-        std::string GetID(T object) const override {
+        const std::string& GetID(T object) const override {
             return object->GetHash();
         }
 

@@ -18,7 +18,7 @@ namespace CSE {
 
         virtual void Destroy();
 
-        std::string GetHash() const {
+        const std::string& GetHash() const {
             return m_hash;
         }
 

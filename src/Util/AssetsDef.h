@@ -106,7 +106,7 @@ namespace CSE {
         return buf;
     }
 
-    static bool SaveTxtFile(const std::string& path, std::string data) {
+    static bool SaveTxtFile(const std::string& path, const std::string& data) {
 #if defined(__ANDROID__) || defined(IOS) || defined(__EMSCRIPTEN__)
         return true;
 #endif

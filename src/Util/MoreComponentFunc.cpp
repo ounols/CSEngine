@@ -19,7 +19,7 @@ if(component_type == #CLASSNAME) { \
 
 using namespace CSE;
 
-void MoreComponentFunc::BindComponentToSQInstance(SComponent* component, std::string name,
+void MoreComponentFunc::BindComponentToSQInstance(SComponent* component, const std::string& name,
                                                   sqext::SQIClassInstance* instance) {
     std::string component_type = component->GetClassType();
 

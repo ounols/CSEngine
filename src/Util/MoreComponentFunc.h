@@ -15,7 +15,7 @@ namespace CSE {
         ~MoreComponentFunc() {}
 
     public:
-        static void BindComponentToSQInstance(SComponent* component, std::string name,
+        static void BindComponentToSQInstance(SComponent* component, const std::string& name,
                                               sqext::SQIClassInstance* instance);
     };
 }

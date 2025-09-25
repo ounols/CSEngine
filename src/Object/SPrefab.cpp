@@ -111,9 +111,9 @@ void SPrefab::GenerateResourceID(SGameObject* obj) {
 
 std::string SPrefab::GetMetaString(const SGameObject& object, unsigned int startIndex) {
     std::string&& id = object.GetID().substr(startIndex);
-    std::string&& hash = object.GetHash();
+    const std::string& hash = object.GetHash();
 
-    std::string result = "<hash id=\"" + std::move(id) + "\">" + std::move(hash) + "</hash>";
+    std::string result = "<hash id=\"" + std::move(id) + "\">" + hash + "</hash>";
 
     const auto& children = object.GetChildren();
     for (const auto& child: children) {

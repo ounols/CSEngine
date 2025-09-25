@@ -90,7 +90,7 @@ namespace CSE {
         static SGameObject* FindByHash(const std::string& hash);
 
 
-        std::string GetName() const {
+        const std::string& GetName() const {
             return m_name;
         }
 

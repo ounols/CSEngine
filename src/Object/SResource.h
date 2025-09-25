@@ -26,11 +26,11 @@ namespace CSE {
 
         void SetAbsoluteID(const std::string& id);
 
-        std::string GetName() const {
+        const std::string& GetName() const {
             return m_name;
         }
 
-        std::string GetAbsoluteID() const {
+        const std::string& GetAbsoluteID() const {
             return m_absoluteId;
         }
 

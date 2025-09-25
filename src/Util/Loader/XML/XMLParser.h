@@ -45,7 +45,7 @@ namespace CSE {
 		static SComponent* parseComponent(const char* value);
 		static SGameObject* parseGameObject(const char* value);
 
-		static SType GetType(std::string type);
+		static SType GetType(const std::string& type);
 		static SType GetType(unsigned int type);
 
         static std::string ToString(SType type);

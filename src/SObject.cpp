@@ -46,7 +46,7 @@ void SObject::GenerateHashString() {
 }
 
 void SObject::SetHash(const std::string& hash) {
-    const std::string prevHash = std::string(m_hash);
+    const std::string prevHash = m_hash;
     if (hash.empty()) {
         GenerateHashString();
         memoryMgr->ChangeHash(prevHash, m_hash);
