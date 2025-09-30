@@ -81,13 +81,13 @@ SGameObject* GameObjectMgr::FindByHash(const std::string& hash) const {
 }
 
 SComponent* GameObjectMgr::FindComponentByID(const std::string& id) const {
-    auto object = FindByID(id);
+    const auto& object = FindByID(id);
     if (object == nullptr) return nullptr;
 
-    auto components = object->GetComponents();
+    const auto& components = object->GetComponents();
     auto split_str = split(id, '?');
 
-    for (auto component : components) {
+    for (const auto& component : components) {
         if (split_str[1] == component->GetClassType()) {
             return component;
         }
@@ -96,13 +96,13 @@ SComponent* GameObjectMgr::FindComponentByID(const std::string& id) const {
 }
 
 SComponent* GameObjectMgr::FindComponentByHash(const std::string& hash) const {
-    auto object = FindByHash(hash);
+    const auto& object = FindByHash(hash);
     if (object == nullptr) return nullptr;
 
-    auto components = object->GetComponents();
+    const auto& components = object->GetComponents();
     auto split_str = split(hash, '?');
 
-    for (auto component : components) {
+    for (const auto& component : components) {
         if (split_str[1] == component->GetClassType()) {
             return component;
         }

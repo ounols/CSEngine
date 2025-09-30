@@ -264,7 +264,7 @@ void SGameObject::SetIsPrefab(bool m_isPrefab) {
     SGameObject::m_isPrefab = m_isPrefab;
 }
 
-std::string SGameObject::GetResourceID() const {
+const std::string& SGameObject::GetResourceID() const {
     return m_resourceID;
 }
 

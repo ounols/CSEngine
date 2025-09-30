@@ -38,8 +38,8 @@ namespace CSE {
         return str;
     }
 
-    static std::string trim(std::string str) {
-        std::string r = str.erase(str.find_last_not_of(" \n\t\r") + 1);
+    static std::string trim(const std::string& str) {
+        std::string r = std::string(str).erase(str.find_last_not_of(" \n\t\r") + 1);
         return r.erase(0, r.find_first_not_of(" \n\t\r"));
     }
 
@@ -74,8 +74,8 @@ namespace CSE {
         std::transform(str.begin(), str.end(), str.begin(), tolower);
     }
 
-    static std::string make_lower_copy(std::string _str) {
-        std::string str(std::move(_str));
+    static std::string make_lower_copy(const std::string& _str) {
+        std::string str(_str);
         std::transform(str.begin(), str.end(), str.begin(), tolower);
         return str;
     }

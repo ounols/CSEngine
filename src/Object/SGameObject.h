@@ -135,7 +135,7 @@ namespace CSE {
 
         void SetIsPrefab(bool m_isPrefab);
 
-        std::string GetResourceID() const;
+        const std::string& GetResourceID() const;
 
         void SetResourceID(const std::string& resID, bool setChildren = false);
     };

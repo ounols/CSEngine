@@ -75,8 +75,8 @@ void SScriptObject::GetVariables(const std::string& str) {
     bool isComment = false;
 
     //split line
-    for(auto line : split_line) {
-		line = trim(line);
+    for(const auto& line_raw : split_line) {
+		std::string line = trim(line_raw);
         if(line.find("//") != std::string::npos) continue;
         if(isComment && line.find("*/") != std::string::npos) {
             isComment = false;

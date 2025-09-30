@@ -68,7 +68,7 @@ void AnimatorComponent::applyPoseToJoints(std::vector<mat4>& currentPose, JointC
     const int jointId = joint->GetAnimationJointId();
     const mat4& currentLocalTransform = currentPose[jointId];
     mat4&& currentTransform = currentLocalTransform * parentTransform;
-    auto children = object->GetChildren();
+    const auto& children = object->GetChildren();
     for (const auto& child : children) {
 	    const auto& joint_component = child->GetComponent<JointComponent>();
         if (joint_component != nullptr)
@@ -79,7 +79,7 @@ void AnimatorComponent::applyPoseToJoints(std::vector<mat4>& currentPose, JointC
 }
 
 std::vector<KeyFrame*> AnimatorComponent::getPreviousAndNextFrames() const {
-    auto allFrames = m_currentAnimation->GetKeyFrames();
+    const auto& allFrames = m_currentAnimation->GetKeyFrames();
     KeyFrame* previousFrame = allFrames.front();
     KeyFrame* nextFrame = allFrames.front();
 

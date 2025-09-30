@@ -418,7 +418,7 @@ Joint* DAELoader::extractMainJointData(const XNode& jointNode, bool isRoot) {
         matrix *= CORRECTION;
     }
     m_jointSize++;
-    return new Joint(index, nameId, matrix);
+    return new Joint(index, std::move(nameId), std::move(matrix));
 }
 
 Joint* DAELoader::loadJointData(const XNode& jointNode, bool isRoot) {

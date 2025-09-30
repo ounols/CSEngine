@@ -52,7 +52,7 @@ void DrawableSkinnedMeshComponent::addJointsToVector(JointComponent* headJoint, 
 void DrawableSkinnedMeshComponent::SetJointSize(SGameObject* joint_object) {
     if (joint_object->GetComponent<JointComponent>() == nullptr) return;
     m_jointSize++;
-    auto children = joint_object->GetChildren();
+    const auto& children = joint_object->GetChildren();
     for (const auto& childJoint : children) {
         SetJointSize(childJoint);
     }

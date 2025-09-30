@@ -54,7 +54,7 @@ namespace CSE {
         }
 
         ~KeyFrame() {
-            for (auto pair : m_pose) {
+            for (auto* pair : m_pose) {
                 SAFE_DELETE(pair);
             }
 
@@ -65,7 +65,7 @@ namespace CSE {
             return m_timeStamp;
         }
 
-        std::vector<JointTransform*> GetJointKeyFrames() const {
+        const std::vector<JointTransform*>& GetJointKeyFrames() const {
             return m_pose;
         }
 

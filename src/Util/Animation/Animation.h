@@ -37,7 +37,7 @@ namespace CSE {
             return m_length;
         }
 
-        std::list<KeyFrame*> GetKeyFrames() const {
+        const std::list<KeyFrame*>& GetKeyFrames() const {
             return m_keyframes;
         }
 

@@ -104,7 +104,7 @@ void SPrefab::GenerateResourceID(SGameObject* obj) {
         obj->SetResourceID(std::string(GetHash()) + "*" + resultID);
     }
 
-    for (auto child : obj->GetChildren()) {
+    for (const auto& child : obj->GetChildren()) {
         GenerateResourceID(child);
     }
 }

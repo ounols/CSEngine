@@ -14,13 +14,13 @@ namespace CSE {
 
     class Joint {
     public:
-        Joint(int m_index, const std::string& m_nameID, const mat4& m_bindLocalTransform)
+        Joint(int m_index, std::string&& m_nameID, mat4&& m_bindLocalTransform)
                 : m_index(m_index), m_nameID(m_nameID), m_bindLocalTransform(m_bindLocalTransform) {
 
         }
 
         ~Joint() {
-            for (auto child : m_children) {
+            for (auto* child : m_children) {
                 SAFE_DELETE(child);
             }
 
@@ -40,7 +40,7 @@ namespace CSE {
             return m_index;
         }
 
-        const mat4 GetBindLocalTransform() const {
+        const mat4& GetBindLocalTransform() const {
             return m_bindLocalTransform;
         }
 
