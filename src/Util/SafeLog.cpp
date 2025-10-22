@@ -1,4 +1,6 @@
 #include "SafeLog.h"
+#include <memory>
+#include <cstdarg>
 
 #ifdef _WIN32
 
@@ -38,4 +40,36 @@ void SafeLog::Log(const char* log) {
 #elif __APPLE_CC__
     puts(log);
 #endif
+}
+
+void SafeLog::LogF(const char* format, ...) {
+    char buffer[256];
+    va_list args;
+    va_start(args, format);
+#ifdef _WIN32
+    _vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, args);
+#else
+    vsnprintf(buffer, sizeof(buffer), format, args);
+#endif
+    va_end(args);
+
+    Log(buffer);
+}
+
+void SafeLog::LogF(int size, const char *format, ...) {
+    if (size <= 0) size = 256;
+    if (size > 8192) size = 8192;
+
+    auto buffer = std::make_unique<char[]>(size);
+
+    va_list args;
+    va_start(args, format);
+#ifdef _WIN32
+    _vsnprintf_s(buffer.get(), size, _TRUNCATE, format, args);
+#else
+    vsnprintf(buffer.get(), size, format, args);
+#endif
+    va_end(args);
+
+    Log(buffer.get());
 }

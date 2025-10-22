@@ -1,5 +1,5 @@
 #pragma once
-
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include "../../SObject.h"
 #include "../Matrix.h"
 #include "../Quaternion.h"
@@ -74,3 +74,4 @@ namespace CSE {
         std::vector<JointTransform*> m_pose;
     };
 }
+#endif

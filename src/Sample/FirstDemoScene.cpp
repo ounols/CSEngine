@@ -103,16 +103,20 @@ void FirstDemoScene::Init() {
     camera_gm->SetParent(testing);
     camera_gm->GetTransform()->m_position = vec3{ 0, -0.3f, 0 };
     {
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
         const auto& sc = camera_gm->CreateComponent<CustomComponent>();
         sc->SetClassName("testScript.script");
+#endif
     }
 
     auto* light_gm = new SGameObject("lt");
     light_gm->SetParent(testing);
     light_gm->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
     {
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
         const auto& sc = light_gm->CreateComponent<CustomComponent>();
         sc->SetClassName("testScriptFast.script");
+#endif
     }
 
     SGameObject* a = new SGameObject("camera");
@@ -183,9 +187,10 @@ void FirstDemoScene::Init() {
     c3 = new SGameObject("testscript2 object");
     c3->SetParent(root);
     c3->GetTransform()->m_position.y = -0.7f;
-
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
     c3->CreateComponent<CustomComponent>();
     c3->GetComponent<CustomComponent>()->SetClassName("testScript2.script");
+#endif
 //    {
 //		std::vector<std::string> variable = {
 //		"materialComp", c3->GetID(c3->GetComponent<MaterialComponent>()), "comp"
@@ -208,7 +213,9 @@ void FirstDemoScene::Init() {
     c4->GetTransform()->m_position.y = -0.1f;
     c4->GetTransform()->m_position.x = -2.f;
     c4->GetTransform()->m_scale.Set(0.5, 0.5, 0.5);
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
     c4->DeleteComponent(c4->GetComponent<CustomComponent>());
+#endif
 
 
     SGameObject* direction = new SGameObject();
@@ -223,8 +230,10 @@ void FirstDemoScene::Init() {
     direction->GetComponent<LightComponent>()->SetDirection(vec4{ 0.0f, 1.0f, 1, 0 });
     direction->GetComponent<LightComponent>()->SetShadow(true);
 
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
     direction->CreateComponent<CustomComponent>();
     direction->GetComponent<CustomComponent>()->SetClassName("directionalLight.script");
+#endif
 //
 //
 //    SComponent* test_comp = direction->GetComponent<CustomComponent>();

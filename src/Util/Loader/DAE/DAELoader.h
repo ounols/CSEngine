@@ -12,8 +12,12 @@
 #include "../../Animation/Animation.h"
 
 namespace CSE {
-
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
     class Animation;
+#else
+    struct Animation{};
+    struct Skeleton{};
+#endif
 
     class DAELoader {
     public:
@@ -53,9 +57,11 @@ namespace CSE {
 
         void LoadTexture(const AssetMgr::AssetReference* asset);
 
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
         Skeleton* getSkeleton() const {
             return m_skeletonData;
         }
+#endif
 
         SPrefab* GeneratePrefab(Animation* animation, SPrefab* prefab = nullptr);
 
@@ -105,10 +111,11 @@ namespace CSE {
 // SkeletonLoader Functions
 //===================================================================
 
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
         Joint* loadJointData(const XNode& jointNode, bool isRoot);
 
         Joint* extractMainJointData(const XNode& jointNode, bool isRoot);
-
+#endif
         void LoadTexturePath(const XNode& imageNode);
 
 

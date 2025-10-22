@@ -3,7 +3,11 @@
 //
 #ifndef CSE_GLOBAL_SCRIPT_DISABLED
 #include "MoreComponentFunc.h"
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include "../Component/Animation/AnimatorComponent.h"
+#else
+#include "../Component/DrawableStaticMeshComponent.h"
+#endif
 #include "../Component/CameraComponent.h"
 #include "../Component/CustomComponent.h"
 #include "../Component/LightComponent.h"
@@ -23,11 +27,15 @@ void MoreComponentFunc::BindComponentToSQInstance(SComponent* component, const s
                                                   sqext::SQIClassInstance* instance) {
     std::string component_type = component->GetClassType();
 
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
     BIND_COMPONENT_MACRO(AnimatorComponent);
     BIND_COMPONENT_MACRO(JointComponent);
+#endif
     BIND_COMPONENT_MACRO(CameraComponent);
     BIND_COMPONENT_MACRO(CustomComponent);
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
     BIND_COMPONENT_MACRO(DrawableSkinnedMeshComponent);
+#endif
     BIND_COMPONENT_MACRO(DrawableStaticMeshComponent);
     BIND_COMPONENT_MACRO(LightComponent);
     BIND_COMPONENT_MACRO(RenderComponent);

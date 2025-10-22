@@ -1,7 +1,7 @@
 //
 // Created by ounols on 19. 9. 15.
 //
-
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include "Animation.h"
 #include "../Loader/DAE/DAELoader.h"
 #include "../../Manager/EngineCore.h"
@@ -36,3 +36,4 @@ void Animation::SetValue(const std::string& name_str, const Arguments& value) {
 std::string Animation::PrintValue() const {
     return {};
 }
+#endif

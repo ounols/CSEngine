@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include <string>
 #include <vector>
 
@@ -58,3 +58,4 @@ namespace CSE {
     };
 
 }
+#endif

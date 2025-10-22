@@ -153,7 +153,7 @@ SScene* SSceneLoader::LoadScene(const std::string& path) {
 
 void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps) {
     std::string name = ConvertSpaceStr(node.getAttribute("name").value, true);
-    auto node_components = node.children;
+    const auto& node_components = node.children;
     std::string hash = node.getAttribute("hash").value;
     auto obj_new = new SGameObject(name, hash);
 
@@ -165,7 +165,10 @@ void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs
         SComponent* component = (comp_type == "TransformComponent")
                                 ? static_cast<TransformComponent*>(obj_new->GetTransform())
                                 : obj_new->CreateComponent(comp_type.c_str());
-
+        if (component == nullptr) {
+            SafeLog::LogF("ERROR: \'%s\' is undefined.", comp_type.c_str());
+            continue;
+        }
         auto comp_val = new ComponentValue();
         comp_val->id = hash + "?" + comp_type;
         comp_val->node = comp;
@@ -175,10 +178,10 @@ void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs
         comps.push_back(comp_val);
     }
 
-    auto key = new NodeKey();
+    const auto key = new NodeKey();
     key->node = node;
     key->obj = obj_new;
-    key->hash = hash;
+    key->hash = std::move(hash);
 
     objs.push_back(key);
 }
@@ -186,7 +189,7 @@ void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs
 void SSceneLoader::LinkingID(std::vector<NodeKey*>& objs, SGameObject* root) {
     std::vector<NodeKey*> remain;
 
-    for (auto node_obj: objs) {
+    for (const auto& node_obj: objs) {
         const auto& obj = node_obj->obj;
         std::string parent_hash = ConvertSpaceStr(node_obj->node.getChild("parent").value);
         obj->RemoveParent();
@@ -201,7 +204,7 @@ void SSceneLoader::LinkingID(std::vector<NodeKey*>& objs, SGameObject* root) {
         }
 
         SGameObject* target = nullptr;
-        for (auto temp: objs) {
+        for (const auto& temp: objs) {
             if (parent_hash == temp->hash) {
                 target = temp->obj;
                 break;
@@ -223,27 +226,28 @@ void SSceneLoader::LinkingID(std::vector<NodeKey*>& objs, SGameObject* root) {
         obj->SetParent(target);
     }
 
-    for (auto node_obj: remain) {
-        auto obj = node_obj->obj;
+    for (const auto& node_obj: remain) {
+        const auto& obj = node_obj->obj;
         obj->RemoveParent();
         std::string parent_hash = ConvertSpaceStr(node_obj->node.getChild("parent").value);
 
-        auto parent = SGameObject::FindByHash(parent_hash);
+        const auto& parent = SGameObject::FindByHash(parent_hash);
         obj->SetParent(parent);
     }
 }
 
 void SSceneLoader::LinkingReference(std::vector<ComponentValue*>& comps) {
-    for (auto comp: comps) {
-        auto node = comp->node;
+    for (const auto& comp: comps) {
+        if (comp->comp == nullptr) continue;
+        const auto& node = comp->node;
         for (const auto& value: node.children) {
             if (value.name != "value") continue;
 
             std::string v_name = value.getAttribute("name").value;
             auto v_values = value.value.toStringVector();
 
-            for (int i = 0; i < v_values.size(); ++i) {
-                v_values[i] = ConvertSpaceStr(v_values[i], true);
+            for (auto& v_value : v_values) {
+                v_value = ConvertSpaceStr(v_value, true);
             }
 
             comp->comp->SetValue(v_name, v_values);
@@ -254,13 +258,13 @@ void SSceneLoader::LinkingReference(std::vector<ComponentValue*>& comps) {
 void SSceneLoader::ExploringPrefab(const XNode& node, std::vector<NodeKey*>& objs, std::vector<ComponentValue*>& comps,
                                    SScene* scene) {
     std::string name = ConvertSpaceStr(node.getAttribute("name").value, true);
-    auto node_values = node.children;
+    const auto& node_values = node.children;
     std::string file_id = ConvertSpaceStr(node.getAttribute("fileid").value, true);
     std::string hash = ConvertSpaceStr(node.getAttribute("hash").value, true);
 
     //Create!
-    auto prefab = SResource::Create<SPrefab>(file_id);
-    SGameObject* root = prefab->Clone(vec3(), scene->GetRoot());
+    const auto prefab = SResource::Create<SPrefab>(file_id);
+    const auto& root = prefab->Clone(vec3(), scene->GetRoot());
     root->SetHash(hash);
 
     //Change objects value
@@ -301,16 +305,21 @@ void SSceneLoader::LinkingResourceID(const XNode& node, SGameObject* root, std::
             std::string comp_type = comp.getAttribute("type").value;
             SComponent* component = nullptr;
 
-            for (auto comp_obj: root->GetComponents()) {
+            for (const auto& comp_obj: root->GetComponents()) {
                 if (comp_type == comp_obj->GetClassType()) {
                     component = comp_obj;
                     break;
                 }
             }
 
+            const auto& comp_type_cstr = comp_type.c_str();
             if (component == nullptr)
-                component = root->CreateComponent(comp_type.c_str());
+                component = root->CreateComponent(comp_type_cstr);
 
+            if (component == nullptr) {
+                SafeLog::LogF("ERROR: \'%s\' is undefined.", comp_type_cstr);
+                continue;
+            }
             auto comp_val = new ComponentValue();
             comp_val->id = obj_hash + "?" + comp_type;
             comp_val->node = comp;
@@ -320,7 +329,7 @@ void SSceneLoader::LinkingResourceID(const XNode& node, SGameObject* root, std::
         }
     }
 
-    auto children = root->GetChildren();
+    const auto& children = root->GetChildren();
     for (const auto& child: children) {
         LinkingResourceID(node, child, objs, comps);
     }

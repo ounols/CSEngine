@@ -1,6 +1,8 @@
 set(PROJECT_NAME CSEditor)
 
 add_compile_definitions(__CSE_EDITOR__)
+#add_compile_definitions(CSE_GLOBAL_SKINNED_ANIMATION_DISABLED)
+#add_compile_definitions(CSE_GLOBAL_SCRIPT_DISABLED)
 
 ################################################################################
 # Source groups

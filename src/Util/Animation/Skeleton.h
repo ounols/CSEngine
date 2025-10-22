@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include "../../Manager/ResMgr.h"
 #include "Joint.h"
 
@@ -70,3 +70,4 @@ namespace CSE {
     };
 
 }
+#endif

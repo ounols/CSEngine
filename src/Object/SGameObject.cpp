@@ -8,6 +8,7 @@
 #include "../Component/CustomComponent.h"
 #include "../Manager/EngineCore.h"
 #include "../Util/Loader/XML/XML.h"
+#include "../Util/SafeLog.h"
 
 using namespace CSE;
 
@@ -167,6 +168,10 @@ void SGameObject::DeleteComponent(SComponent* component) {
 
 SComponent* SGameObject::CreateComponent(const char* type) {
     SComponent* component = static_cast<SComponent*>(ReflectionObject::NewObject(type));
+    if (component == nullptr) {
+        SafeLog::LogF("ERROR: \'%s\' is undefined.", type);
+        return nullptr;
+    }
     component->SetGameObject(this);
     AddComponent(component);
     if (m_status == IDLE)

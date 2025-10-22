@@ -1,3 +1,4 @@
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include "Skeleton.h"
 
 RESOURCE_CONSTRUCTOR(Skeleton), m_jointCount(0) {
@@ -10,3 +11,4 @@ void CSE::Skeleton::SetValue(const std::string& name_str, const Arguments& value
 std::string CSE::Skeleton::PrintValue() const {
     return {};
 }
+#endif

@@ -136,6 +136,7 @@ bool DAELoader::LoadSkin(const XNode& root_s) {
 }
 
 bool DAELoader::LoadSkeleton(const XNode& root_s) {
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #ifdef __EMSCRIPTEN__
     if(!root_s.hasChild("visual_scene")) return false;
     if(!root_s.getChild("visual_scene").hasNodeByAttribute("node", "id", "Armature")) return false;
@@ -151,7 +152,7 @@ bool DAELoader::LoadSkeleton(const XNode& root_s) {
         m_skeletonData = new Skeleton(m_jointSize, headJoint);
     else
         m_skeletonData->SetJoint(m_jointSize, headJoint);
-
+#endif
     return true;
 }
 
@@ -376,8 +377,8 @@ std::vector<int> DAELoader::getEffectiveJointsCounts(const XNode& node) {
 
 std::vector<VertexSkinData*>
 DAELoader::getSkinData(const XNode& weightsDataNode, const std::vector<int>& counts, std::vector<float> weights) const {
-    auto rawData = weightsDataNode.getChild("v").value.toIntegerVector();
-    auto weightsCount = std::stoi(weightsDataNode.getAttribute("count").value);
+    const auto rawData = weightsDataNode.getChild("v").value.toIntegerVector();
+    const auto weightsCount = std::stoi(weightsDataNode.getAttribute("count").value);
     std::vector<VertexSkinData*> skinningData;
     int pointer = 0;
     for (int index = 0; index < weightsCount; ++index) {
@@ -397,7 +398,7 @@ DAELoader::getSkinData(const XNode& weightsDataNode, const std::vector<int>& cou
 //===================================================================
 // SkeletonLoader Functions
 //===================================================================
-
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 Joint* DAELoader::extractMainJointData(const XNode& jointNode, bool isRoot) {
     std::string nameId = jointNode.getAttribute("id").value;
     int index = -1;
@@ -436,6 +437,7 @@ Joint* DAELoader::loadJointData(const XNode& jointNode, bool isRoot) {
 
     return joint;
 }
+#endif
 
 void DAELoader::LoadTexturePath(const XNode& imageNode) {
 #ifdef __EMSCRIPTEN__
@@ -577,17 +579,21 @@ SPrefab* DAELoader::GeneratePrefab(const char* path, Skeleton* skeleton, MeshSur
     std::string prefab_id = asset->id;
 
     loader->m_resource_id = asset->id;
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
     loader->m_skeletonData = skeleton;
 
     if (loader->m_skeletonData == nullptr) {
         loader->m_skeletonData = new Skeleton();
     }
+#endif
 
     const auto& meshData = loader->m_meshList;
     for (const auto& mesh : meshData) {
         mesh->meshSurface->LinkResource(prefab_id + "." + mesh->meshName +"?mesh");
     }
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
     loader->m_skeletonData->LinkResource(prefab_id + "?skeleton");
+#endif
 
     loader->Load(path, AUTO);
     prefab = loader->GeneratePrefab(animation, prefab);
