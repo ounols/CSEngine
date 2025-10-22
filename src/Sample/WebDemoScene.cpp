@@ -19,8 +19,10 @@ void WebDemoScene::Init() {
 //    ab->GetTransform()->m_scale = vec3{ 0.2f, 0.2f, 0.2f };
     ab->GetTransform()->m_scale = vec3{ 0.08f, 0.08f, 0.08f };
     ab->GetTransform()->m_rotation = Quaternion::AngleAxis(vec3{1, 0, 0}, Pi/2.f);
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
     ab->CreateComponent<CustomComponent>();
     ab->GetComponent<CustomComponent>()->SetClassName("Stormtrooper.script");
+#endif
 
     auto camera = new SGameObject("camera");
     const auto& camera_comp = camera->CreateComponent<CameraComponent>();

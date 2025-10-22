@@ -1,3 +1,4 @@
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include "JointComponent.h"
 #include "../TransformComponent.h"
 #include "../../Object/SResource.h"
@@ -84,3 +85,4 @@ std::string JointComponent::PrintValue() const {
 
     PRINT_END("component");
 }
+#endif

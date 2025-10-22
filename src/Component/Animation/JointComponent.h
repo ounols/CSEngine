@@ -1,5 +1,5 @@
 #pragma once
-
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include "../SComponent.h"
 #include "../../Util/Matrix.h"
 
@@ -63,3 +63,4 @@ namespace CSE {
         mat4 m_localBindMatrix;
     };
 }
+#endif

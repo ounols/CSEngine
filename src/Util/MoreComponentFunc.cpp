@@ -1,7 +1,7 @@
 //
 // Created by ounols on 19. 8. 31.
 //
-
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
 #include "MoreComponentFunc.h"
 #include "../Component/Animation/AnimatorComponent.h"
 #include "../Component/CameraComponent.h"
@@ -34,3 +34,4 @@ void MoreComponentFunc::BindComponentToSQInstance(SComponent* component, const s
     BIND_COMPONENT_MACRO(TransformComponent);
 }
 
+#endif

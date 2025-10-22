@@ -1,10 +1,10 @@
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include "AnimatorComponent.h"
 #include "../../Object/SGameObjectFromSPrefab.h"
 
 using namespace CSE;
 
 COMPONENT_CONSTRUCTOR(AnimatorComponent) {
-
 }
 
 
@@ -24,7 +24,6 @@ void AnimatorComponent::Tick(float elapsedTime) {
 
     std::vector<mat4> currentPose = calculateCurrentAnimationPose();
     applyPoseToJoints(currentPose, m_rootJoint, mat4::Identity());
-
 }
 
 
@@ -58,8 +57,8 @@ void AnimatorComponent::UpdateAnimationTime(float elapsedTime) {
 
 std::vector<mat4> AnimatorComponent::calculateCurrentAnimationPose() const {
     std::vector<KeyFrame*> frames = getPreviousAndNextFrames();
-    const float progression = CalculateProgression(frames[0], frames[1]);
-    return InterpolatePoses(frames[0], frames[1], progression);
+    const float progression = CalculateProgression(*frames[0], *frames[1]);
+    return InterpolatePoses(*frames[0], *frames[1], progression);
 }
 
 void AnimatorComponent::applyPoseToJoints(std::vector<mat4>& currentPose, JointComponent* joint,
@@ -99,15 +98,15 @@ std::vector<KeyFrame*> AnimatorComponent::getPreviousAndNextFrames() const {
     return result;
 }
 
-float AnimatorComponent::CalculateProgression(KeyFrame* previous, KeyFrame* next) const {
-    float totalTime = next->GetTimeStamp() - previous->GetTimeStamp();
-    float currentTime = m_animationTime - previous->GetTimeStamp();
+float AnimatorComponent::CalculateProgression(const KeyFrame& previous, const KeyFrame& next) const {
+    const float totalTime = next.GetTimeStamp() - previous.GetTimeStamp();
+    const float currentTime = m_animationTime - previous.GetTimeStamp();
     return currentTime / totalTime;
 }
 
-std::vector<mat4> AnimatorComponent::InterpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float t) {
-    const auto& jointKeyFrames_prev = previousFrame->GetJointKeyFrames();
-    const auto& jointKeyFrames_next = nextFrame->GetJointKeyFrames();
+std::vector<mat4> AnimatorComponent::InterpolatePoses(const KeyFrame& previousFrame, const KeyFrame& nextFrame, float t) {
+    const auto& jointKeyFrames_prev = previousFrame.GetJointKeyFrames();
+    const auto& jointKeyFrames_next = nextFrame.GetJointKeyFrames();
     const auto jointSize = jointKeyFrames_prev.size();
     std::vector<mat4> currentPose;
     currentPose.reserve(jointSize);
@@ -115,8 +114,8 @@ std::vector<mat4> AnimatorComponent::InterpolatePoses(KeyFrame* previousFrame, K
     for (unsigned short i = 0; i < jointSize; ++i) {
         const auto& prevTransform = jointKeyFrames_prev[i];
         const auto& nextTransform = jointKeyFrames_next[i];
-        JointTransform&& currentTransform = JointTransform::Interpolate(t, *prevTransform, *nextTransform);
-        currentPose.emplace_back(std::move(currentTransform).GetLocalMatrix());
+        auto&& jointMatrix = JointTransform::Interpolate(t, *prevTransform, *nextTransform).GetLocalMatrix();
+        currentPose.emplace_back(std::move(jointMatrix));
     }
     return currentPose;
 }
@@ -138,17 +137,19 @@ void AnimatorComponent::CopyReference(const SComponent& src, const std::map<SGam
 
     //Copy Components
     FIND_COMP_REFERENCE(m_rootJoint, convert, JointComponent);
-
 }
 
 void AnimatorComponent::SetValue(const std::string& name_str, const Arguments& value) {
     if (name_str == "m_animationTime") {
         m_animationTime = std::stof(value[0]);
-    } else if (name_str == "m_startTime") {
+    }
+    else if (name_str == "m_startTime") {
         m_startTime = std::stof(value[0]);
-    } else if (name_str == "m_currentAnimation") {
+    }
+    else if (name_str == "m_currentAnimation") {
         m_currentAnimation = SResource::Create<Animation>(value[0]);
-    } else if (name_str == "m_rootJoint") {
+    }
+    else if (name_str == "m_rootJoint") {
         SET_SPREFAB_REF(m_rootJoint, JointComponent);
     }
 }
@@ -166,3 +167,4 @@ std::string AnimatorComponent::PrintValue() const {
     PRINT_END("component");
 }
 
+#endif

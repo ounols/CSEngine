@@ -1,3 +1,4 @@
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
 #include "ScriptMgr.h"
 
 #include <sstream>
@@ -237,3 +238,4 @@ void ScriptMgr::ReadScriptList() {
     }
 
 }
+#endif

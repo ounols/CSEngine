@@ -7,7 +7,9 @@
 
 #include "../Util/Interface/TransformInterface.h"
 #include "../Component/SComponent.h"
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
 #include "sqrat/sqratUtil.h"
+#endif
 #include "../Util/MoreString.h"
 #include "Base/ReflectionRef.h"
 
@@ -72,7 +74,9 @@ namespace CSE {
 
         const std::list<SComponent*>& GetComponents() const;
 
-        HSQOBJECT GetCustomComponent(const char* className);
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
+        HSQOBJECT GetCustomComponent(const char* className) const;
+#endif
 
         void DeleteComponent(SComponent* component);
 

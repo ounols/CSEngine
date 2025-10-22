@@ -143,11 +143,13 @@ const std::list<SComponent*>& SGameObject::GetComponents() const {
     return m_components;
 }
 
-HSQOBJECT SGameObject::GetCustomComponent(const char* className) {
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
+HSQOBJECT SGameObject::GetCustomComponent(const char* className) const {
+    const auto& customComponentRef = ReflectionRef<CustomComponent>();
     for (const auto& component: m_components) {
         if (component == nullptr) continue;
-        if (dynamic_cast<CustomComponent*>(component)) {
-            auto customComponent = static_cast<CustomComponent*>(component);
+        if (customComponentRef.IsSameClass(component)) {
+            const auto& customComponent = static_cast<CustomComponent*>(component);
             if (customComponent->SGetClassName() != className) continue;
             return customComponent->GetClassInstance().GetObject();
         }
@@ -157,6 +159,7 @@ HSQOBJECT SGameObject::GetCustomComponent(const char* className) {
 
     return obj;
 }
+#endif
 
 void SGameObject::DeleteComponent(SComponent* component) {
     m_components.remove(component);

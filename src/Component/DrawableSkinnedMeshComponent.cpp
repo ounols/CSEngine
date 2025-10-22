@@ -1,3 +1,5 @@
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
+
 #include "../Util/GLProgramHandle.h"
 #include "DrawableSkinnedMeshComponent.h"
 #include "../OGLDef.h"
@@ -79,3 +81,5 @@ void DrawableSkinnedMeshComponent::CopyReference(const SComponent& src, const st
     //Copy Components
     FIND_COMP_REFERENCE(m_jointRoot, convert, JointComponent);
 }
+
+#endif

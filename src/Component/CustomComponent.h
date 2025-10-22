@@ -1,4 +1,5 @@
 #pragma once
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
 
 #include "SComponent.h"
 #include "sqext.h"
@@ -84,3 +85,5 @@ namespace CSE {
         bool m_isError = false;
     };
 }
+
+#endif

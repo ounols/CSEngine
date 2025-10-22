@@ -21,7 +21,9 @@ namespace CSE {
     class LightMgr;
     class SceneMgr;
     class MemoryMgr;
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
     class ScriptMgr;
+#endif
     class OGLMgr;
     class ReflectionMgr;
     class CoreBase;
@@ -41,7 +43,9 @@ namespace CSE {
         GET_CORE_FUNCTION(LightMgr, m_lightMgr);
         GET_CORE_FUNCTION(SceneMgr, m_sceneMgr);
         GET_CORE_FUNCTION(MemoryMgr, m_memoryMgr);
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
         GET_CORE_FUNCTION(ScriptMgr, m_scriptMgr);
+#endif
         GET_CORE_FUNCTION(ReflectionMgr, m_reflectionMgr);
 
         void Init(unsigned int width, unsigned int height);
@@ -71,7 +75,9 @@ namespace CSE {
         LightMgr* m_lightMgr = nullptr;
         SceneMgr* m_sceneMgr = nullptr;
         MemoryMgr* m_memoryMgr = nullptr;
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
         ScriptMgr* m_scriptMgr = nullptr;
+#endif
         ReflectionMgr* m_reflectionMgr = nullptr;
 
         OGLMgr* m_oglMgr = nullptr;

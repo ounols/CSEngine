@@ -1,4 +1,5 @@
 #pragma once
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
 #include "../Component/CustomComponent.h"
 #include "../Util/Matrix.h"
 #include "Base/SContainerList.h"
@@ -6,7 +7,7 @@
 
 namespace CSE {
 
-    class ScriptMgr : public SContainerList<Sqrat::Object*>, public CoreBase {
+    class ScriptMgr final : public SContainerList<Sqrat::Object*>, public CoreBase {
     public:
         ScriptMgr();
 
@@ -64,3 +65,4 @@ namespace CSE {
     }
 
 }
+#endif

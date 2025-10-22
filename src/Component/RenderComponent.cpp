@@ -36,11 +36,13 @@ void RenderComponent::Init() {
     }
 
     m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
     //TODO: 반드시 리플렉션 시스템에서 상속 문제도 해결할 수 있도록! 2222
     if (m_mesh == nullptr) m_mesh = gameObject->GetComponent<DrawableSkinnedMeshComponent>();
     if (m_mesh != nullptr) {
         m_skinningMesh = dynamic_cast<DrawableSkinnedMeshComponent*>(m_mesh);
     }
+#endif
 
     if (material == nullptr) {
         isEnable = isRenderActive = false;
@@ -53,11 +55,13 @@ void RenderComponent::Tick(float elapsedTime) {
 
     if (m_mesh == nullptr) {
         m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
         //TODO: 반드시 리플렉션 시스템에서 상속 문제도 해결할 수 있도록!
         if (m_mesh == nullptr) m_mesh = gameObject->GetComponent<DrawableSkinnedMeshComponent>();
         if (m_mesh != nullptr) {
             m_skinningMesh = dynamic_cast<DrawableSkinnedMeshComponent*>(m_mesh);
         }
+#endif
     }
 }
 
@@ -92,9 +96,11 @@ SComponent* RenderComponent::Clone(SGameObject* object) {
 }
 
 void RenderComponent::SetJointMatrix(const GLProgramHandle* handle) const {
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
     ShaderUtil::BindSkinningDataToShader(*handle, m_mesh->GetMeshID(),
                                          m_skinningMesh != nullptr ?
                                          m_skinningMesh->GetJointMatrix() : std::vector<mat4>());
+#endif
 }
 
 SMaterial* RenderComponent::GetMaterial() const {

@@ -1,6 +1,8 @@
 #include "DAELoader.h"
 #include "../../MoreString.h"
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include "DAEUtil/DAEConvertSGameObject.h"
+#endif
 #include "../../../Object/SGameObjectFromSPrefab.h"
 #include <iostream>
 #include "../../../Component/DrawableSkinnedMeshComponent.h"
@@ -516,42 +518,50 @@ SPrefab* DAELoader::GeneratePrefab(Animation* animation, SPrefab* prefab) {
     auto* root = new SGameObjectFromSPrefab(m_name);
     prefab->SetGameObject(root);
 
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
     SGameObject* joint_root = nullptr;
 
     if (m_isSkinning) {
         joint_root = new SGameObjectFromSPrefab("Armature");
         root->AddChild(joint_root);
-        DAEConvertSGameObject::CreateJoints(joint_root, m_skeletonData->getHeadJoint());
+        DAEConvertSGameObject::CreateJoints(joint_root, *m_skeletonData->getHeadJoint());
     }
 
     JointComponent* joint_root_component = m_isSkinning ? joint_root->GetChildren().front()->GetComponent<JointComponent>() : nullptr;
+#endif
     for (const auto& mesh : m_meshList) {
         auto* mesh_root = new SGameObjectFromSPrefab(mesh->meshName);
         root->AddChild(mesh_root);
         DrawableStaticMeshComponent* mesh_component = nullptr;
-
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
         if (m_isSkinning) {
             mesh_component = mesh_root->CreateComponent<DrawableSkinnedMeshComponent>();
         } else {
             mesh_component = mesh_root->CreateComponent<DrawableStaticMeshComponent>();
         }
+#else
+            mesh_component = mesh_root->CreateComponent<DrawableStaticMeshComponent>();
+#endif
 
         mesh_component->SetMesh(*mesh->meshSurface);
 
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
         if (m_isSkinning)
             dynamic_cast<DrawableSkinnedMeshComponent*>(mesh_component)->SetRootJoint(
                     joint_root_component->GetGameObject(),
                     m_skeletonData->getJointCount());
+#endif
 
         auto renderComponent = mesh_root->CreateComponent<RenderComponent>();
 //    mesh_root->GetComponent<RenderComponent>()->SetShaderHandle("PBR.shader");
     }
-
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
     if (m_isSkinning) {
         SGameObject* animationObj = DAEConvertSGameObject::CreateAnimation(root, joint_root_component,
-                                                                           m_animationLoader->GetAnimation(),
+                                                                           *m_animationLoader->GetAnimation(),
                                                                            m_name, animation);
     }
+#endif
 
     return prefab;
 }

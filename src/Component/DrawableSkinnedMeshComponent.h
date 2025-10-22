@@ -1,6 +1,6 @@
 #pragma once
-
 #include "DrawableStaticMeshComponent.h"
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include "Animation/JointComponent.h"
 
 namespace CSE {
@@ -37,3 +37,4 @@ namespace CSE {
 
     };
 }
+#endif

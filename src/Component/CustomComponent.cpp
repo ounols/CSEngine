@@ -1,3 +1,4 @@
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
 #include "CustomComponent.h"
 
 #include <utility>
@@ -266,3 +267,5 @@ void CustomComponent::BindValue(CustomComponent::VARIABLE* variable, const char*
         }
     }
 }
+
+#endif

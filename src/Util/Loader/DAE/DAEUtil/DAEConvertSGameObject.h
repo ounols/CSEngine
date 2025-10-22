@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include "../../../Animation/Joint.h"
 #include "../DAEAnimationLoader.h"
 #include "../../../../Object/SGameObject.h"
@@ -23,14 +23,15 @@ namespace CSE {
 
         ~DAEConvertSGameObject();
 
-        static SGameObject* CreateJoints(SGameObject* parent, Joint* data);
+        static SGameObject* CreateJoints(SGameObject* parent, const Joint& data);
 
-        static SGameObject* CreateAnimation(SGameObject* parent, JointComponent* rootJoint, AnimationData* animationData,
+        static SGameObject* CreateAnimation(SGameObject* parent, JointComponent* rootJoint, const AnimationData& animationData,
                                             const std::string& name, Animation* animation = nullptr);
 
     private:
-        static KeyFrame* CreateKeyFrame(KeyFrameData* data);
+        static KeyFrame* CreateKeyFrame(const KeyFrameData& data);
 
-        static JointTransform* CreateTransform(JointTransformData* data);
+        static JointTransform* CreateTransform(const JointTransformData& data);
     };
 }
+#endif

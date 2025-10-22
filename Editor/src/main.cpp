@@ -20,7 +20,11 @@ static void MainLoopForEmscripten()     { MainLoopForEmscriptenP(); }
 #include <glad/glad.h>
 #include <iostream>
 #elif defined(_WIN64)
-#include <gl/glew.h>
+#if defined(MSVC_CMAKE)
+#include <glad/glad.h>
+#else
+#include <GL/glew.h>
+#endif
 #include <crtdbg.h>
 #elif defined(__linux__)
 #include <GL/glew.h>
@@ -125,7 +129,11 @@ bool initializeOpenGL() {
         return false;
     }
 #elif defined(_WIN64) || defined(__linux__)
+#if defined(MSVC_CMAKE)
+    gladLoadGL();
+#else
     glewInit();
+#endif
 #endif
     return true;
 }

@@ -12,8 +12,16 @@
 //#include <gl/GL.h>
 //#include <gl/GLU.h>
 //#include <gl/glut.h>
+
+#if defined(MSVC_CMAKE)
+#include <glad/glad.h>
+#else
 #include <GL/glew.h>
+#endif
+
+#if defined(_DEBUG)
 #include <crtdbg.h>
+#endif
 #include "../../../src/Manager/MainProc.h"
 #include "../../../src/MacroDef.h"
 
@@ -69,12 +77,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ LPWSTR lpCmdLine,
 	_In_ int nCmdShow) {
 
+#if defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #if defined(MSVC_CMAKE)
     _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
     _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
 #endif
-
+#endif
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -94,8 +103,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	MainProc* mainProc = new MainProc();
 
+#if defined(MSVC_CMAKE)
+	gladLoadGL();
+#else
 	//init GLEW
 	glewInit();
+#endif
 
 	char* GL_version = (char*)glGetString(GL_VERSION);
 	char* GL_vendor = (char*)glGetString(GL_VENDOR);

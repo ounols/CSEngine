@@ -2,7 +2,11 @@
 #ifdef _WIN32
 //windows include
 
+#if defined(MSVC_CMAKE)
+#include <glad/glad.h>
+#else
 #include <gl/glew.h>
+#endif
 #include <iostream>
 
 

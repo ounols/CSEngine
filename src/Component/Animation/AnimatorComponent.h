@@ -1,5 +1,5 @@
 #pragma once
-
+#ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
 #include "../SComponent.h"
 #include "../DrawableSkinnedMeshComponent.h"
 #include "../../Util/Animation/AnimationUtil.h"
@@ -43,9 +43,9 @@ namespace CSE {
 
         std::vector<KeyFrame*> getPreviousAndNextFrames() const;
 
-        float CalculateProgression(KeyFrame* previous, KeyFrame* next) const;
+        float CalculateProgression(const KeyFrame& previous, const KeyFrame& next) const;
 
-        static std::vector<mat4> InterpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float t);
+        static std::vector<mat4> InterpolatePoses(const KeyFrame& previousFrame, const KeyFrame& nextFrame, float t);
 
     private:
 
@@ -59,3 +59,4 @@ namespace CSE {
     };
 
 }
+#endif
