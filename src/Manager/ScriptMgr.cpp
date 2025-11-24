@@ -11,6 +11,7 @@
 #include "../Object/SScriptObject.h"
 #include "../Component/RenderComponent.h"
 #include "EngineCore.h"
+#include "InputMgr.h"
 
 using namespace Sqrat;
 using namespace CSE;
@@ -54,40 +55,42 @@ ScriptMgr::ScriptMgr() = default;
 
 ScriptMgr::~ScriptMgr() {
     ReleaseSqratObject();
-    sq_close(DefaultVM::Get());
+    if (m_vm != nullptr) {
+        sq_close(m_vm);
+        m_vm = nullptr;
+    }
 }
 
 
 void ScriptMgr::Init() {
-    HSQUIRRELVM vm;
+    if (m_vm != nullptr) {
+        return;
+    }
 //	Sqrat::SqratVM vm = Sqrat::SqratVM();
-    vm = sq_open(1024);
-    Sqrat::DefaultVM::Set(vm);
+    m_vm = sq_open(1024);
+    Sqrat::DefaultVM::Set(m_vm);
 //	Sqrat::DefaultVM::Set(vm.GetVM());
-    sq_pushroottable(vm);
-    sqstd_register_mathlib(vm);
-    sq_pop(vm, 1);
+    sq_pushroottable(m_vm);
+    sqstd_register_mathlib(m_vm);
+    sq_pop(m_vm, 1);
     //SquirrelVM::Init();
-    DefineClasses();
-    ReadScriptList();
+    DefineClasses(m_vm);
+    ReadScriptList(m_vm);
 }
 
 
-void ScriptMgr::RegisterScript(const std::string& script) {
-
-    HSQUIRRELVM vm = DefaultVM::Get();
-
+void ScriptMgr::RegisterScript(const std::string& script, HSQUIRRELVM vm) {
     //register script
     if (!script.empty()) {
         Script compiledScript;
         compiledScript.CompileString(script);
         if (Sqrat::Error::Occurred(vm)) {
-            SafeLog::Log((_SC("Compile Failed: ") + Error::Message(vm)).c_str());
+            SafeLog::LogErr((_SC("Compile Failed: ") + Error::Message(vm)).c_str());
         }
 
         compiledScript.Run();
         if (Sqrat::Error::Occurred(vm)) {
-            SafeLog::Log((_SC("Run Failed: ") + Error::Message(vm)).c_str());
+            SafeLog::LogErr((_SC("Run Failed: ") + Error::Message(vm)).c_str());
         }
 
         compiledScript.Release();
@@ -117,9 +120,6 @@ SQInteger GetCustomComponentFunc(HSQUIRRELVM v) {
 
 
 void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
-
-
-
     //GameObject
     SQRClassDef<SGameObject>(_SC("GameObject"), vm)
             .Func(_SC("Find"), &SGameObject::Find)
@@ -188,7 +188,9 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
             .Var(_SC("z"), &vec3::z)
             .Func(_SC("Cross"), &vec3::Cross)
             .Func(_SC("Dot"), &vec3::Dot)
-            .Func(_SC("Set"), &vec3::Set);
+            .Func(_SC("Set"), &vec3::Set)
+            .Func(_SC("Distance"), static_cast<float(vec3::*)(const vec3&) const>(&vec3::Distance))
+            .Func(_SC("DistanceSquared"), &vec3::DistanceSquared);
 
     SQRClassDef<vec4>(_SC("vec4"))
             .Var(_SC("x"), &vec4::x)
@@ -214,6 +216,37 @@ void ScriptMgr::DefineClasses(HSQUIRRELVM vm) {
             .Func(_SC("SetFloat"), &SMaterial::SetFloat)
             .Func(_SC("SetVec3"), &SMaterial::SetVec3)
             .Func(_SC("SetTexture"), &SMaterial::SetTexture);
+
+    //InputMgr - Input system for keyboard and mouse
+    SQRClassDef<InputMgr>(_SC("Input"), vm)
+            .StaticFunc(_SC("GetKey"), &InputMgr::GetKey)
+            .StaticFunc(_SC("GetKeyDown"), &InputMgr::GetKeyDown)
+            .StaticFunc(_SC("GetKeyUp"), &InputMgr::GetKeyUp)
+            .StaticFunc(_SC("GetMouseButton"), &InputMgr::GetMouseButton)
+            .StaticFunc(_SC("GetMouseButtonDown"), &InputMgr::GetMouseButtonDown)
+            .StaticFunc(_SC("GetMouseButtonUp"), &InputMgr::GetMouseButtonUp)
+            .StaticFunc(_SC("GetMousePosition"), &InputMgr::GetMousePosition);
+
+    // KeyCode enum
+    Enumeration keyCodeEnum(vm);
+    keyCodeEnum.Const(_SC("A"), static_cast<int>(KeyCode::A));
+    keyCodeEnum.Const(_SC("D"), static_cast<int>(KeyCode::D));
+    keyCodeEnum.Const(_SC("W"), static_cast<int>(KeyCode::W));
+    keyCodeEnum.Const(_SC("S"), static_cast<int>(KeyCode::S));
+    keyCodeEnum.Const(_SC("Left"), static_cast<int>(KeyCode::Left));
+    keyCodeEnum.Const(_SC("Right"), static_cast<int>(KeyCode::Right));
+    keyCodeEnum.Const(_SC("Up"), static_cast<int>(KeyCode::Up));
+    keyCodeEnum.Const(_SC("Down"), static_cast<int>(KeyCode::Down));
+    keyCodeEnum.Const(_SC("Space"), static_cast<int>(KeyCode::Space));
+    keyCodeEnum.Const(_SC("Escape"), static_cast<int>(KeyCode::Escape));
+    RootTable(vm).Bind(_SC("KeyCode"), keyCodeEnum);
+
+    // MouseButton enum
+    Enumeration mouseButtonEnum(vm);
+    mouseButtonEnum.Const(_SC("Left"), static_cast<int>(MouseButton::Left));
+    mouseButtonEnum.Const(_SC("Right"), static_cast<int>(MouseButton::Right));
+    mouseButtonEnum.Const(_SC("Middle"), static_cast<int>(MouseButton::Middle));
+    RootTable(vm).Bind(_SC("MouseButton"), mouseButtonEnum);
 }
 
 
@@ -227,11 +260,11 @@ void ScriptMgr::ReleaseSqratObject() {
 }
 
 
-void ScriptMgr::ReadScriptList() {
+void ScriptMgr::ReadScriptList(HSQUIRRELVM vm) {
     auto assets = CORE->GetCore(ResMgr)->GetAssetReferences(AssetMgr::TYPE::SCRIPT);
 
     //compile base script class
-    RegisterScript(CSEngineScript);
+    RegisterScript(CSEngineScript, vm);
 
     for (const auto& asset : assets) {
         SResource::Create<SScriptObject>(asset);

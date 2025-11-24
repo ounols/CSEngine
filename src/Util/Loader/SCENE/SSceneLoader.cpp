@@ -33,7 +33,7 @@ void Exploring(SGameObject* obj, int level = 0) {
     }
 
     str += "ㄴ " + obj->GetName() + '\n';
-    SafeLog::Log(str.c_str());
+    SafeLog::LogInfof(str.c_str());
 
     for (auto child: obj->GetChildren()) {
         Exploring(child, level + 1);
@@ -166,7 +166,7 @@ void SSceneLoader::ExploringScene(const XNode& node, std::vector<NodeKey*>& objs
                                 ? static_cast<TransformComponent*>(obj_new->GetTransform())
                                 : obj_new->CreateComponent(comp_type.c_str());
         if (component == nullptr) {
-            SafeLog::LogF("ERROR: \'%s\' is undefined.", comp_type.c_str());
+            SafeLog::LogErrf("ERROR: \'%s\' is undefined.", comp_type.c_str());
             continue;
         }
         auto comp_val = new ComponentValue();
@@ -317,7 +317,7 @@ void SSceneLoader::LinkingResourceID(const XNode& node, SGameObject* root, std::
                 component = root->CreateComponent(comp_type_cstr);
 
             if (component == nullptr) {
-                SafeLog::LogF("ERROR: \'%s\' is undefined.", comp_type_cstr);
+                SafeLog::LogErrf("ERROR: \'%s\' is undefined.", comp_type_cstr);
                 continue;
             }
             auto comp_val = new ComponentValue();

@@ -19,7 +19,7 @@ MaterialLayer::MaterialLayer(CSE::RenderComponent& component) {
 }
 
 MaterialLayer::~MaterialLayer() {
-    for (auto* param: m_params) {
+    for (const auto* param: m_params) {
         SAFE_DELETE(param);
     }
     m_params.clear();

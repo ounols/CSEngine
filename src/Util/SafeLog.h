@@ -1,12 +1,34 @@
 #pragma once
+#include <cstdarg>
 
 class SafeLog {
 private:
 	SafeLog() = default;
 	~SafeLog() = default;
 
+	enum class LogLevel {
+		DEBUG = 0,      // Detailed debug information
+		INFO = 1,       // Normal information
+		WARNING = 2,    // Warning messages
+		ERR = 3,        // Error messages (renamed from ERROR to avoid Windows macro conflict)
+		CRITICAL = 4    // Critical errors / crashes
+	};
+
+private:
+	static void Log(LogLevel level, const char* log);
+	static void LogF(LogLevel level, const char* format, ...);
+	static void LogFS(LogLevel level, int size, const char* format, ...);
+
 public:
-	static void Log(const char* log);
-	static void LogF(const char* format, ...);
-	static void LogF(int size, const char* format, ...);
+	static void LogInfo(const char* log);
+	static void LogWarn(const char* log);
+	static void LogErr(const char* log);
+
+	static void LogInfof(const char* format, ...);
+	static void LogWarnf(const char* format, ...);
+	static void LogErrf(const char* format, ...);
+
+	static void LogInfof(int size, const char* format, ...);
+	static void LogWarnf(int size, const char* format, ...);
+	static void LogErrf(int size, const char* format, ...);
 };

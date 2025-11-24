@@ -84,7 +84,7 @@ GLuint ShaderUtil::createProgram(GLuint vertexShader, GLuint fragmentShader, con
                 if (buf) {
                     glGetProgramInfoLog(program, bufLength, nullptr, buf);
                     auto errorLog = std::string("[") + handle.GetName() + "] Could not link program:" + buf;
-                    SafeLog::Log(errorLog.c_str());
+                    SafeLog::LogErr(errorLog.c_str());
                     free(buf);
 
                 }
@@ -129,7 +129,7 @@ GLuint ShaderUtil::loadShader(GLenum shaderType, const char* pSource, const GLPr
                     glGetShaderInfoLog(shader, infoLen, nullptr, buf);
                     //LOGE("Could not compile shader %d:\n%s\n", shaderType, buf);
                     auto errorLog = std::string("[") + handle.GetName() + "] Could not compile shader:" + buf;
-                    SafeLog::Log(errorLog.c_str());
+                    SafeLog::LogErr(errorLog.c_str());
                     free(buf);
                 }
                 glDeleteShader(shader);

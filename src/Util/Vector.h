@@ -213,6 +213,21 @@ namespace CSE {
             return sqrtf(powf(a.x - b.x, 2) + powf(a.y - b.y, 2) + powf(a.z - b.z, 2));
         }
 
+        // Instance methods for distance calculation (for script usage)
+        float Distance(const Vector3& other) const {
+            float dx = x - other.x;
+            float dy = y - other.y;
+            float dz = z - other.z;
+            return std::sqrt(dx*dx + dy*dy + dz*dz);
+        }
+
+        float DistanceSquared(const Vector3& other) const {
+            float dx = x - other.x;
+            float dy = y - other.y;
+            float dz = z - other.z;
+            return dx*dx + dy*dy + dz*dz;
+        }
+
         const T* Pointer() const {
             return &x;
         }

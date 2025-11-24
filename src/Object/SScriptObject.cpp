@@ -10,6 +10,7 @@
 #include "sqrat/sqratVM.h"
 #include "../Util/AssetsDef.h"
 #include "../Util/MoreString.h"
+#include "../Util/SafeLog.h"
 
 using namespace CSE;
 using namespace Sqrat;
@@ -34,30 +35,62 @@ void SScriptObject::RegisterScript(const std::string& script) {
         Script compiledScript;
         compiledScript.CompileString(script);
         if (Sqrat::Error::Occurred(vm)) {
+            const auto& errorMsg = Error::Message(vm);
+            SafeLog::LogErrf(512, "[SScriptObject] Compile Failed - Script: %s, Error: %s",
+                         m_className.empty() ? "Unknown" : m_className.c_str(),
+                         errorMsg.c_str());
 #ifdef __ANDROID__
 //            LOGE("Compile Failed : %s", Error::Message(vm).c_str());
 #else
             std::cout << "Compile Failed : " << Error::Message(vm) << '\n';
 #endif
+            return; // Don't try to run if compilation failed
         }
 
         compiledScript.Run();
         if (Sqrat::Error::Occurred(vm)) {
+            const auto& errorMsg = Error::Message(vm);
+            SafeLog::LogErrf(512, "[SScriptObject] Run Failed - Script: %s, Error: %s",
+                         m_className.empty() ? "Unknown" : m_className.c_str(),
+                         errorMsg.c_str());
 #ifdef __ANDROID__
 //            LOGE("Run Failed : %s", Error::Message(vm).c_str());
 #else
             std::cout << "Run Failed : " << Error::Message(vm) << '\n';
 #endif
+            return;
         }
 
         compiledScript.Release();
+        SafeLog::LogInfof("[SScriptObject] Script registered successfully - Class: %s",
+                     m_className.c_str());
+    } else {
+        SafeLog::LogWarn("[SScriptObject] RegisterScript called with empty script content");
     }
 }
 
 void SScriptObject::RemakeScript(const std::string& path) {
+    SafeLog::LogInfof("[SScriptObject] Loading script from path: %s", path.c_str());
+    
     std::string script_str = AssetMgr::LoadAssetFile(path);
+    
+    if (script_str.empty()) {
+        SafeLog::LogErrf(512, "[SScriptObject] ERROR: Script file is empty or failed to load - Path: %s",
+                     path.c_str());
+        return;
+    }
+    
+    SafeLog::LogInfof("[SScriptObject] Script loaded successfully - Size: %zu bytes",
+                 script_str.size());
 
     GetVariables(script_str);
+    
+    if (!m_className.empty()) {
+        SafeLog::LogInfof("[SScriptObject] Class name extracted: %s", m_className.c_str());
+    } else {
+        SafeLog::LogWarnf(512, "[SScriptObject] WARNING: Could not extract class name from script - Path: %s",
+                     path.c_str());
+    }
 
     //replace GetComponent function
     script_str = ReplaceFunction(script_str, "GetComponent<", ">()", "GetComponent_", "_()");

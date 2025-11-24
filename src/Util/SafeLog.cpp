@@ -20,43 +20,61 @@
 #ifdef __CSE_EDITOR__
 
 #include "../../Editor/src/Manager/EEngineCore.h"
+#include "../../Editor/src/Manager/EditorActionLogger.h"
 
 #endif
 
-void SafeLog::Log(const char* log) {
+void SafeLog::Log(LogLevel level, const char* log) {
+    // Prepare level prefix
+    const char* levelPrefix = "";
+    switch(level) {
+        case LogLevel::DEBUG:    levelPrefix = "[DEBUG] "; break;
+        case LogLevel::INFO:     levelPrefix = "[INFO] "; break;
+        case LogLevel::WARNING:  levelPrefix = "[WARNING] "; break;
+        case LogLevel::ERR:      levelPrefix = "[ERROR] "; break;
+        case LogLevel::CRITICAL: levelPrefix = "[CRITICAL] "; break;
+    }
+    
+    // Create formatted message with level
+    std::string formattedLog = std::string(levelPrefix) + log;
+    const char* finalLog = formattedLog.c_str();
+
 #ifdef __CSE_EDITOR__
     const auto& editorCore = CSEditor::EEngineCore::getEditorInstance();
-    if(editorCore->IsReady()) editorCore->AddLog(log);
-    else puts(log);
+    if(editorCore->IsReady()) {
+        editorCore->AddLog(finalLog);
+        // Also log to EditorActionLogger for API access
+        CSEditor::EditorActionLogger::GetInstance().Log(
+            CSEditor::ActionCategory::SYSTEM,
+            static_cast<CSEditor::ActionSeverity>(level),
+            "SafeLog",
+            log // Original log without prefix for structured logging
+        );
+    } else {
+        puts(finalLog);
+    }
 #elif _WIN32
-    OutputDebugStringA(log);
-    puts(log);
+    OutputDebugStringA(finalLog);
+    puts(finalLog);
 #elif __ANDROID__
-    LOGE(log, 0);
+    LOGE(finalLog, 0);
 #elif __linux__
-    puts(log);
+    puts(finalLog);
 #elif __EMSCRIPTEN__
-    puts(log);
+    puts(finalLog);
 #elif __APPLE_CC__
-    puts(log);
+    puts(finalLog);
 #endif
 }
 
-void SafeLog::LogF(const char* format, ...) {
-    char buffer[256];
+void SafeLog::LogF(LogLevel level, const char* format, ...) {
     va_list args;
     va_start(args, format);
-#ifdef _WIN32
-    _vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, args);
-#else
-    vsnprintf(buffer, sizeof(buffer), format, args);
-#endif
+    LogFS(level, 256, format, args);
     va_end(args);
-
-    Log(buffer);
 }
 
-void SafeLog::LogF(int size, const char *format, ...) {
+void SafeLog::LogFS(LogLevel level, int size, const char *format, ...) {
     if (size <= 0) size = 256;
     if (size > 8192) size = 8192;
 
@@ -71,5 +89,59 @@ void SafeLog::LogF(int size, const char *format, ...) {
 #endif
     va_end(args);
 
-    Log(buffer.get());
+    Log(level, buffer.get()); // This will automatically log to both console and EditorActionLogger
+}
+
+void SafeLog::LogInfo(const char* log) {
+    Log(LogLevel::INFO, log);
+}
+
+void SafeLog::LogWarn(const char* log) {
+    Log(LogLevel::WARNING, log);
+}
+
+void SafeLog::LogErr(const char* log) {
+    Log(LogLevel::ERR, log);
+}
+
+void SafeLog::LogInfof(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    LogF(LogLevel::INFO, format, args);
+    va_end(args);
+}
+
+void SafeLog::LogWarnf(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    LogF(LogLevel::WARNING, format, args);
+    va_end(args);
+}
+
+void SafeLog::LogErrf(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    LogF(LogLevel::ERR, format, args);
+    va_end(args);
+}
+
+void SafeLog::LogInfof(int size, const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    LogFS(LogLevel::INFO, size, format, args);
+    va_end(args);
+}
+
+void SafeLog::LogWarnf(int size, const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    LogFS(LogLevel::WARNING, size, format, args);
+    va_end(args);
+}
+
+void SafeLog::LogErrf(int size, const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    LogFS(LogLevel::ERR, size, format, args);
+    va_end(args);
 }

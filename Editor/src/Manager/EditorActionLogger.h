@@ -34,11 +34,11 @@ namespace CSEditor {
      * @brief Severity levels for logging
      */
     enum class ActionSeverity {
-        DEBUG,      // Detailed debug information
-        INFO,       // Normal information
-        WARNING,    // Warning messages
-        ERR,        // Error messages (renamed from ERROR to avoid Windows macro conflict)
-        CRITICAL    // Critical errors / crashes
+        DEBUG = 0,      // Detailed debug information
+        INFO = 1,       // Normal information
+        WARNING = 2,    // Warning messages
+        ERR = 3,        // Error messages (renamed from ERROR to avoid Windows macro conflict)
+        CRITICAL = 4    // Critical errors / crashes
     };
 
     /**

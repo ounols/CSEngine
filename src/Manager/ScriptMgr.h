@@ -16,14 +16,14 @@ namespace CSE {
         void Init() override;
 
 
-        static void RegisterScript(const std::string& script);
+        static void RegisterScript(const std::string& script, HSQUIRRELVM vm);
 
     private:
         void DefineClasses(HSQUIRRELVM vm = Sqrat::DefaultVM::Get());
 
         void ReleaseSqratObject();
 
-        static void ReadScriptList() ;
+        static void ReadScriptList(HSQUIRRELVM vm) ;
 
         template <class T>
         Sqrat::Class<T>& SQRClassDef(const std::string& className, HSQUIRRELVM vm = Sqrat::DefaultVM::Get());
@@ -33,6 +33,7 @@ namespace CSE {
 
     private:
         int m_gameobjectIndex = -1;
+        HSQUIRRELVM m_vm = nullptr;
     };
 
 
