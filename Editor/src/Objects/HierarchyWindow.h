@@ -17,6 +17,12 @@ namespace CSEditor {
 
         void SetUI() override;
 
+        // GameObject management
+        CSE::SGameObject* CreateEmptyGameObject(CSE::SGameObject* parent = nullptr);
+        CSE::SGameObject* CreatePrimitiveGameObject(const char* name, CSE::SGameObject* parent = nullptr);
+        void DeleteSelectedGameObject();
+        void DuplicateSelectedGameObject();
+
     private:
         void RenderTrees();
 
@@ -24,7 +30,15 @@ namespace CSEditor {
 
         void UpdateGameObject(CSE::SGameObject& parent);
 
+        void RenderContextMenu();
+
+        void RenderCreateMenu(CSE::SGameObject* parent);
+
+        void HandleKeyboardShortcuts();
+
     private:
         EEngineCore* m_core = nullptr;
+        bool m_showContextMenu = false;
+        CSE::SGameObject* m_contextMenuTarget = nullptr;
     };
 }

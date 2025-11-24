@@ -109,13 +109,13 @@ void ConsoleWindow::Draw(const char* title, bool* p_open) {
 void ConsoleWindow::AddLog(const char* buffer, int category) {
     int old_size = m_buffer.size();
     switch (static_cast<ELogMgr::Category>(category)) {
-        case ELogMgr::Category::WARNING:
+        case ELogMgr::Category::WARNING_LOG:
             m_buffer.append("[WARN] ");
             break;
-        case ELogMgr::Category::ERROR:
+        case ELogMgr::Category::ERROR_LOG:
             m_buffer.append("[ERROR] ");
             break;
-        case ELogMgr::Category::INFO:
+        case ELogMgr::Category::INFO_LOG:
             m_buffer.append("[INFO] ");
             break;
     }

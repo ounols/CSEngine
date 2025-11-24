@@ -1,6 +1,9 @@
 #include "EEngineCore.h"
 #include "EPreviewCore.h"
 #include "ELogMgr.h"
+#include "EditorActionLogger.h"
+#include "EditorAPIServer.h"
+#include "DebugStackTrace.h"
 #include "../Objects/Base/HierarchyData.h"
 #include "../../src/MacroDef.h"
 #include "../../src/OGLDef.h"
@@ -49,9 +52,19 @@ void EEngineCore::delInstance() {
 EEngineCore::EEngineCore() = default;
 
 EEngineCore::~EEngineCore() {
+    m_bIsDestroyQueue = true;
+    ACTION_LOG_SYSTEM(ActionSeverity::INFO, "Editor engine shutting down", "");
+
+    // Stop API server
+    EditorAPIServer::GetInstance().Stop();
+
+    // Uninstall crash handlers
+    DebugStackTrace::UninstallCrashHandlers();
+
     if (m_previewCore != nullptr) StopPreviewCore();
     glDeleteTextures(1, &m_previewTextureId);
     glDeleteFramebuffers(1, &m_previewFbo);
+    EditorActionLogger::GetInstance().Shutdown();
 }
 
 void EEngineCore::BindPreviewFramebuffer() const {
@@ -66,6 +79,8 @@ void EEngineCore::InitPreviewFramebuffer() {
 
 void EEngineCore::StartPreviewCore() {
     if (m_previewCore != nullptr) throw -1;
+
+    ACTION_LOG_SCENE("Play mode started", m_scenePath);
 
     m_logMgr->ClearLog();
     m_previewElapsedTime = 0.f;
@@ -87,6 +102,7 @@ void EEngineCore::StartPreviewCore() {
 }
 
 void EEngineCore::StopPreviewCore() {
+    ACTION_LOG_SCENE("Play mode stopped", m_scenePath);
     m_previewCore->ExterminateWithoutReflectionDefine();
     delete m_previewCore;
     m_previewCore = nullptr;
@@ -134,6 +150,18 @@ void EEngineCore::GenerateCores() {
     m_isGenerated = true;
     m_cores = std::vector<CoreBase*>();
     m_cores.reserve(10);
+
+    // Initialize action logger
+    EditorActionLogger::GetInstance().Init();
+    ACTION_LOG_SYSTEM(ActionSeverity::INFO, "Editor engine initializing", "GenerateCores started");
+
+    // Install crash handlers for debugging
+    DebugStackTrace::InstallCrashHandlers();
+
+    // Start API server for external tool integration
+    if (EditorAPIServer::GetInstance().Start(8080)) {
+        ACTION_LOG_SYSTEM(ActionSeverity::INFO, "API Server started", "port=8080");
+    }
 
     m_reflectionMgr = new ReflectionMgr();
     m_resMgr = new ResMgr();
@@ -183,6 +211,7 @@ void EEngineCore::Reset() {
 
 void EEngineCore::SetCurrentScene(std::string path) {
     m_scenePath = std::move(path);
+    ACTION_LOG_SCENE("Scene loaded", m_scenePath);
     const auto& scene = CSE::SSceneLoader::LoadScene(m_scenePath);
     m_sceneMgr->SetScene(scene);
 }

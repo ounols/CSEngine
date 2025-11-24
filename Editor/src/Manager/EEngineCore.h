@@ -95,6 +95,10 @@ namespace CSEditor {
             m_bIsRender = true;
         }
 
+        bool IsDestroyQueue() const {
+            return m_bIsDestroyQueue;
+        }
+
         InvokeState CheckInvokeState() {
             InvokeState result = m_invokeState;
             m_invokeState = InvokeState::NONE;
@@ -142,6 +146,8 @@ namespace CSEditor {
 
         HierarchyData* m_hierarchyData = nullptr;
         ELogMgr* m_logMgr = nullptr;
+
+        bool m_bIsDestroyQueue = false;
 
     protected:
         static EEngineCore* sInstance;

@@ -2,6 +2,7 @@
 
 #include <utility>
 #include "../Manager/EEngineCore.h"
+#include "../Manager/EditorActionLogger.h"
 #include "../Objects/MainDocker.h"
 #include "../../src/Manager/ResMgr.h"
 #include "../../src/Manager/SceneMgr.h"
@@ -65,9 +66,11 @@ void AssetWindow::OnDragDrop(const CSE::AssetMgr::AssetReference& asset) {
 
 bool AssetWindow::OnAssetClickEvent(const CSE::AssetMgr::AssetReference& asset) {
     if (asset.extension == "/\\?folder") {
+        ACTION_LOG_ASSET("Opened folder", asset.name_path);
         ChangeCurrentPath(asset.name_path + '/');
         RefreshExplorer();
     } else if (asset.extension == "scene" && !EEngineCore::getEditorInstance()->IsPreview()) {
+        ACTION_LOG_ASSET("Opened scene", asset.name_path);
         m_mainDocker->Reset();
         const auto& editorCore = EEngineCore::getEditorInstance();
         m_currentSceneAsset = const_cast<CSE::AssetMgr::AssetReference*>(&asset);
@@ -96,6 +99,11 @@ void AssetWindow::ReleasePreviewQueue() {
 }
 
 void AssetWindow::SaveCurrentScene() {
+    if (m_currentSceneAsset == nullptr) {
+        ACTION_LOG_SYSTEM(ActionSeverity::WARNING, "Save scene failed", "No scene is currently loaded");
+        return;
+    }
+    ACTION_LOG_SCENE("Scene saved", m_currentSceneAsset->name_path);
     const auto& scene = EEngineCore::getEditorInstance()->GetCore(SceneMgr)->GetCurrentScene();
     CSE::SSceneLoader::SaveScene(static_cast<CSE::SScene*>(scene), m_currentSceneAsset->name_path);
 }

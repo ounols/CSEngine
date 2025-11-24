@@ -12,6 +12,7 @@
 #include "SceneMgr.h"
 #include "MemoryMgr.h"
 #include "ReflectionMgr.h"
+#include "InputMgr.h"
 #include "../Sample/FirstDemoScene.h"
 #include "../Sample/WebDemoScene.h"
 #include "../Util/Loader/SCENE/SSceneLoader.h"
@@ -22,7 +23,7 @@
 #endif
 
 using namespace CSE;
-constexpr short ENGINE_COUNT = 10;
+constexpr short ENGINE_COUNT = 11;
 
 EngineCoreInstance::EngineCoreInstance() = default;
 
@@ -99,6 +100,7 @@ void EngineCoreInstance::GenerateCores() {
 #ifndef CSE_GLOBAL_SCRIPT_DISABLED
     m_scriptMgr = new ScriptMgr();
 #endif
+    m_inputMgr = new InputMgr();
 
     m_cores.push_back(m_reflectionMgr);
     m_cores.push_back(m_resMgr);
@@ -118,6 +120,7 @@ void EngineCoreInstance::GenerateCores() {
 #ifndef CSE_GLOBAL_SCRIPT_DISABLED
     m_cores.push_back(m_scriptMgr);
 #endif
+    m_cores.push_back(m_inputMgr);
 }
 
 void EngineCoreInstance::ResizeWindow(unsigned int width, unsigned int height) {

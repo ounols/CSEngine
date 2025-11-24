@@ -26,6 +26,7 @@ namespace CSE {
 #endif
     class OGLMgr;
     class ReflectionMgr;
+    class InputMgr;
     class CoreBase;
 }
 
@@ -47,6 +48,7 @@ namespace CSE {
         GET_CORE_FUNCTION(ScriptMgr, m_scriptMgr);
 #endif
         GET_CORE_FUNCTION(ReflectionMgr, m_reflectionMgr);
+        GET_CORE_FUNCTION(InputMgr, m_inputMgr);
 
         void Init(unsigned int width, unsigned int height);
         void Update(float elapsedTime);
@@ -79,6 +81,7 @@ namespace CSE {
         ScriptMgr* m_scriptMgr = nullptr;
 #endif
         ReflectionMgr* m_reflectionMgr = nullptr;
+        InputMgr* m_inputMgr = nullptr;
 
         OGLMgr* m_oglMgr = nullptr;
 
