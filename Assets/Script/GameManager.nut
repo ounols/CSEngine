@@ -1,13 +1,13 @@
 class GameManager extends CSEngineScript {
     score = 0;
-    spawnInterval = 2000.0; // ms
+    spawnInterval = 1500.0; // ms (1.5초마다 spawn)
     spawnTimer = 0.0;
     gameState = 0; // 0: READY, 1: PLAYING, 2: GAMEOVER
     playerObject = null;
     playerController = null;
     obstaclePool = [];
     obstaclePoolSize = 10;
-    spawnY = 5.0;  // Increased from 3.0 to 5.0
+    spawnY = 4.0;  // Obstacle spawn 높이
     spawnMinX = -1.5;
     spawnMaxX = 1.5;
     tickCount = 0; // DEBUG
@@ -61,9 +61,16 @@ class GameManager extends CSEngineScript {
     }
     
     function Tick(elapsedTime) {
-        // Calculate delta time (difference from last frame)
+        // Calculate delta time (difference from last frame, 밀리초 단위)
         local deltaTime = elapsedTime - lastElapsedTime;
-        lastElapsedTime = elapsedTime;
+        
+        // 첫 프레임이거나 deltaTime이 비정상적으로 큰 경우 처리
+        if (lastElapsedTime == 0.0 || deltaTime > 100.0) {
+            lastElapsedTime = elapsedTime;
+            deltaTime = 16.0; // 기본 16ms (60fps 기준)
+        } else {
+            lastElapsedTime = elapsedTime;
+        }
         
         // DEBUG: Tick 호출 확인
         tickCount++;
@@ -76,7 +83,7 @@ class GameManager extends CSEngineScript {
             return; // PLAYING 상태가 아니면 리턴
         }
         
-        // 장애물 생성 타이머
+        // 장애물 생성 타이머 (밀리초 단위)
         spawnTimer += deltaTime;
         if (spawnTimer >= spawnInterval) {
             Log("[GameManager] Spawning obstacle! spawnTimer: " + spawnTimer + " >= " + spawnInterval);
@@ -84,8 +91,8 @@ class GameManager extends CSEngineScript {
             SpawnObstacle();
         }
         
-        // 충돌 체크
-        CheckCollisions();
+        // 충돌 체크 (주석 처리됨 - 나중에 활성화)
+        // CheckCollisions();
     }
     
     function StartGame() {

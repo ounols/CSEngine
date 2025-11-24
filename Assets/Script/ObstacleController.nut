@@ -1,6 +1,6 @@
 class ObstacleController extends CSEngineScript {
-    fallSpeed = 1.5;
-    deleteY = -2.5;
+    fallSpeed = 2.0;  // 낙하 속도 (단위/초)
+    deleteY = -3.0;   // 삭제 Y 위치
     gameManager = null;
     isActive = false;
     collisionRadius = 0.3;
@@ -22,11 +22,18 @@ class ObstacleController extends CSEngineScript {
     function Tick(elapsedTime) {
         if (!isActive) return;
         
-        // Calculate delta time
+        // Calculate delta time (밀리초 단위)
         local deltaTime = elapsedTime - lastElapsedTime;
-        lastElapsedTime = elapsedTime;
         
-        // 아래로 이동
+        // 첫 프레임이거나 deltaTime이 비정상적으로 큰 경우 처리
+        if (lastElapsedTime == 0.0 || deltaTime > 100.0) {
+            lastElapsedTime = elapsedTime;
+            deltaTime = 16.0; // 기본 16ms (60fps 기준)
+        } else {
+            lastElapsedTime = elapsedTime;
+        }
+        
+        // 아래로 이동 (deltaTime을 초 단위로 변환: * 0.001)
         local transform = GetTransform();
         local pos = transform.position;
         pos.y -= fallSpeed * deltaTime * 0.001;
@@ -35,11 +42,14 @@ class ObstacleController extends CSEngineScript {
         // 화면 밖으로 나가면 제거
         if (pos.y < deleteY) {
             Deactivate();
-            gameManager.OnObstaclePassed();
+            if (gameManager != null) {
+                gameManager.OnObstaclePassed();
+            }
         }
     }
     
     function Activate(spawnX, spawnY) {
+        // Transform 위치 설정
         local transform = GetTransform();
         local pos = transform.position;
         pos.x = spawnX;
@@ -47,9 +57,15 @@ class ObstacleController extends CSEngineScript {
         pos.z = 0.0;
         transform.position = pos;
         
+        // 활성화 상태 설정
         isActive = true;
+        
+        // deltaTime 초기화 (첫 프레임 문제 방지)
+        lastElapsedTime = 0.0;
+        
         // Enable the game object so Tick runs
         gameobject.SetEnable(true);
+        
         Log("[ObstacleController] Activated at (" + spawnX + ", " + spawnY + ")");
     }
     
