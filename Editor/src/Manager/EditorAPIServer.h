@@ -107,6 +107,7 @@ namespace CSEditor {
         APIResponse HandleObjectSelect(const std::string& queryParams);
         APIResponse HandleObjectList();
         APIResponse HandleObjectInfo(const std::string& queryParams);
+        APIResponse HandleTransformSet(const std::string& body);
 
         APIResponse HandleComponentAdd(const std::string& body);
         APIResponse HandleComponentRemove(const std::string& body);
@@ -117,6 +118,8 @@ namespace CSEditor {
 
         APIResponse HandleEditorInfo();
         APIResponse HandleEditorCommand(const std::string& body);
+        
+        APIResponse HandleCapturePreview(const std::string& queryParams);
 
         // Debug/Crash endpoints
         APIResponse HandleDebugCrashInfo();
@@ -161,14 +164,64 @@ namespace CSEditor {
         std::mutex m_requestMutex;
         std::queue<std::pair<APIRequest, std::function<void(const APIResponse&)>>> m_pendingRequests;
 
-        // Pending scene load (to be processed on main thread)
-        std::mutex m_sceneMutex;
-        std::string m_pendingScenePath;
+    // Pending scene load/save (to be processed on main thread)
+    std::mutex m_sceneMutex;
+    std::string m_pendingScenePath;
+    bool m_pendingSceneSave = false;
+    std::string m_sceneSavePath;
 
-        // Statistics
-        std::atomic<unsigned long> m_requestCount{0};
-        std::atomic<unsigned long> m_errorCount{0};
+    // Pending object operations
+    struct PendingObjectCreate {
+        std::string type;
+        std::string name;
     };
+    struct PendingObjectDelete {
+        std::string name;
+    };
+    struct PendingComponentAdd {
+        std::string objectName;
+        std::string componentType;
+        std::string scriptPath;  // Optional, for CustomComponent
+    };
+    struct PendingComponentRemove {
+        std::string objectName;
+        std::string componentType;
+    };
+    struct PendingTransformSet {
+        std::string objectName;
+        float posX, posY, posZ;
+        float rotX, rotY, rotZ, rotW;
+        float scaleX, scaleY, scaleZ;
+        bool setPosition;
+        bool setRotation;
+        bool setScale;
+    };
+    struct PendingPreviewCapture {
+        std::string filename;
+        std::string* resultPath;      // Output parameter
+        int* resultWidth;              // Output parameter
+        int* resultHeight;             // Output parameter
+        bool* success;                 // Output parameter
+    };
+
+    std::mutex m_objectMutex;
+    std::queue<PendingObjectCreate> m_pendingObjectCreates;
+    std::queue<PendingObjectDelete> m_pendingObjectDeletes;
+    
+    std::mutex m_componentMutex;
+    std::queue<PendingComponentAdd> m_pendingComponentAdds;
+    std::queue<PendingComponentRemove> m_pendingComponentRemoves;
+    
+    std::mutex m_transformMutex;
+    std::queue<PendingTransformSet> m_pendingTransformSets;
+    
+    std::mutex m_previewCaptureMutex;
+    std::queue<PendingPreviewCapture> m_pendingPreviewCaptures;
+
+    // Statistics
+    std::atomic<unsigned long> m_requestCount{0};
+    std::atomic<unsigned long> m_errorCount{0};
+};
 
     // Convenience macro for checking API server
     #define API_SERVER CSEditor::EditorAPIServer::GetInstance()

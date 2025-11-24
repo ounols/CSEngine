@@ -87,11 +87,13 @@ void EEngineCore::StartPreviewCore() {
     m_startTime = GetCurrentMillis();
 
     m_previewCore = new EPreviewCore();
-//    if (m_previewFbo <= 0) {
-//        InitPreviewFramebuffer();
-//        BindPreviewFramebuffer();
-//        ResizePreviewFramebuffer(m_previewWidth, m_previewHeight);
-//    }
+    // Always resize framebuffer when starting preview to ensure texture is allocated
+    if (m_previewFbo <= 0) {
+        InitPreviewFramebuffer();
+    }
+    BindPreviewFramebuffer();
+    ResizePreviewFramebuffer(m_previewWidth, m_previewHeight);
+    
     m_previewCore->Init(m_previewWidth, m_previewHeight);
     if(!m_scenePath.empty()) {
         SScene* scene = SSceneLoader::LoadScene(m_scenePath);
@@ -173,6 +175,11 @@ void EEngineCore::GenerateCores() {
     m_sceneMgr = new SceneMgr();
     m_memoryMgr = new MemoryMgr();
     m_logMgr = new ELogMgr();
+    
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
+    // ScriptMgr 초기화 추가 (에디터에서도 스크립트를 로드할 수 있도록)
+    m_scriptMgr = new ScriptMgr();
+#endif
 
     m_cores.push_back(m_reflectionMgr);
     m_cores.push_back(m_resMgr);
@@ -191,6 +198,10 @@ void EEngineCore::GenerateCores() {
     m_cores.push_back(m_memoryMgr);
 
     m_cores.push_back(m_logMgr);
+    
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
+    m_cores.push_back(m_scriptMgr);
+#endif
 }
 
 void EEngineCore::AddLog(const char* log, int category) {
@@ -211,7 +222,17 @@ void EEngineCore::Reset() {
 
 void EEngineCore::SetCurrentScene(std::string path) {
     m_scenePath = std::move(path);
-    ACTION_LOG_SCENE("Scene loaded", m_scenePath);
+    ACTION_LOG_SCENE("Scene loading...", m_scenePath);
     const auto& scene = CSE::SSceneLoader::LoadScene(m_scenePath);
+    
+    if (!scene) {
+        ACTION_LOG_SYSTEM(ActionSeverity::ERR, "Scene load failed", "SSceneLoader returned null");
+        return;
+    }
+    
     m_sceneMgr->SetScene(scene);
+    
+    // Initialize scene to register all objects to GameObjectMgr
+    scene->Init();
+    ACTION_LOG_SCENE("Scene initialized", m_scenePath);
 }

@@ -10,10 +10,21 @@
 // Engine includes
 #include "../../../src/Object/SGameObject.h"
 #include "../../../src/Object/SScene.h"
+#include "../../../src/Object/SScriptObject.h"
 #include "../../../src/Manager/SceneMgr.h"
 #include "../../../src/Manager/GameObjectMgr.h"
+#include "../../../src/Component/SComponent.h"
+#include "../../../src/Component/TransformComponent.h"
+#include "../../../src/Component/RenderComponent.h"
+#include "../../../src/Component/CameraComponent.h"
+#include "../../../src/Component/LightComponent.h"
+#include "../../../src/Component/CustomComponent.h"
+#include "../../../src/Util/Loader/SCENE/SSceneLoader.h"
+#include "../../../src/Util/AssetsDef.h"
+#include "../../../src/Util/CaptureDef.h"
 
 #include <sstream>
+#include "sqrat.h"
 #include <iomanip>
 #include <chrono>
 
@@ -242,6 +253,14 @@ namespace CSEditor {
             res.set_content(response.body, response.contentType);
         });
 
+        svr.Post("/api/object/set-transform", [this, &setCorsHeaders, &safeHandler](const httplib::Request& req, httplib::Response& res) {
+            setCorsHeaders(res);
+            std::string body = req.body;
+            auto response = safeHandler("/api/object/set-transform", [this, body]() { return HandleTransformSet(body); });
+            res.status = response.statusCode;
+            res.set_content(response.body, response.contentType);
+        });
+
         // Component endpoints
         svr.Get("/api/component/list", [this, &setCorsHeaders, &safeHandler](const httplib::Request& req, httplib::Response& res) {
             setCorsHeaders(res);
@@ -303,6 +322,18 @@ namespace CSEditor {
             setCorsHeaders(res);
             std::string body = req.body;
             auto response = safeHandler("/api/editor/command", [this, body]() { return HandleEditorCommand(body); });
+            res.status = response.statusCode;
+            res.set_content(response.body, response.contentType);
+        });
+
+        svr.Get("/api/editor/capture-preview", [this, &setCorsHeaders, &safeHandler](const httplib::Request& req, httplib::Response& res) {
+            setCorsHeaders(res);
+            std::string query;
+            for (const auto& param : req.params) {
+                if (!query.empty()) query += "&";
+                query += param.first + "=" + param.second;
+            }
+            auto response = safeHandler("/api/editor/capture-preview", [this, query]() { return HandleCapturePreview(query); });
             res.status = response.statusCode;
             res.set_content(response.body, response.contentType);
         });
@@ -457,23 +488,29 @@ namespace CSEditor {
         APIResponse response;
 
         std::string path = ParseJsonValue(body, "path");
-        if (path.empty()) {
-            response.statusCode = 400;
-            response.body = "{\"error\":\"Missing path parameter\"}";
-            return response;
+        
+        // If path is empty or "new", create a new scene instead of loading from file
+        bool createNew = path.empty() || path == "new";
+        
+        if (!createNew) {
+            ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
+                             "API: Load Scene from file",
+                             ActionParams().Set("path", path));
+        } else {
+            ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
+                             "API: Create new Scene",
+                             ActionParams());
+            path = "new";  // Mark as new scene creation
         }
 
-        ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
-                         "API: Load Scene",
-                         ActionParams().Set("path", path));
-
-        // Queue scene load for main thread processing
+        // Queue scene load/creation for main thread processing
         {
             std::lock_guard<std::mutex> lock(m_sceneMutex);
             m_pendingScenePath = path;
         }
 
-        response.body = "{\"status\":\"queued\",\"path\":\"" + EscapeJsonString(path) + "\",\"message\":\"Scene will be loaded on next frame\"}";
+        response.body = "{\"status\":\"queued\",\"path\":\"" + EscapeJsonString(path) + 
+                       "\",\"message\":\"" + (createNew ? "New scene will be created" : "Scene will be loaded") + " on next frame\"}";
         return response;
     }
 
@@ -485,18 +522,243 @@ namespace CSEditor {
     }
 
     void EditorAPIServer::ProcessMainThreadCommands() {
-        // Process pending scene load
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) return;
+
+        // Process pending scene load/creation
         if (HasPendingSceneLoad()) {
             std::string scenePath = ConsumePendingScenePath();
             if (!scenePath.empty()) {
-                auto* core = EEngineCore::getEditorInstance();
-                if (core) {
-                    core->SetCurrentScene(scenePath);
+                if (scenePath == "new") {
+                    // Create a new empty scene instead of loading from file
+                    auto* newScene = new CSE::SScene();
+                    newScene->m_name = "New Scene";
+                    core->GetCore(SceneMgr)->SetScene(newScene);
                     ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
-                                     "API: Scene loaded",
-                                     ActionParams().Set("path", scenePath));
+                                     "API: New scene created",
+                                     ActionParams());
+                } else {
+                    // Load scene from file (following AssetWindow::OnAssetClickEvent logic)
+                    // Convert relative path to absolute path
+                    std::string fullPath;
+                    if (scenePath.find("Assets/") == 0) {
+                        // Path starts with "Assets/" - convert to absolute path
+                        fullPath = CSE::NativeAssetsPath() + scenePath.substr(7); // Remove "Assets/" prefix
+                    } else {
+                        // Assume it's already a full path or AssetMgr path
+                        fullPath = scenePath;
+                    }
+                    
+                    core->SetCurrentScene(fullPath);
+                    core->ResizePreviewCore();
+                    core->Update(0);
+                    core->InvokeEditorRender();
+                    ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
+                                     "API: Scene loaded from file",
+                                     ActionParams().Set("path", fullPath));
                 }
             }
+        }
+
+        // Process pending scene save
+        bool shouldSave = false;
+        std::string savePath;
+        {
+            std::lock_guard<std::mutex> lock(m_sceneMutex);
+            if (m_pendingSceneSave) {
+                shouldSave = true;
+                savePath = m_sceneSavePath;
+                m_pendingSceneSave = false;
+                m_sceneSavePath.clear();
+            }
+        }
+        
+        if (shouldSave) {
+            auto* scene = dynamic_cast<CSE::SScene*>(core->GetCore(SceneMgr)->GetCurrentScene());
+            if (scene) {
+                // Convert to absolute path using NativeAssetsPath
+                std::string fullPath = CSE::NativeAssetsPath() + savePath;
+                bool success = CSE::SSceneLoader::SaveScene(scene, fullPath);
+                if (success) {
+                    ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
+                                     "API: Scene saved",
+                                     ActionParams().Set("path", fullPath));
+                } else {
+                    ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::ERR,
+                                     "API: Scene save failed",
+                                     ActionParams().Set("path", fullPath));
+                }
+            }
+        }
+
+        // Process pending object creates
+        while (true) {
+            PendingObjectCreate create;
+            {
+                std::lock_guard<std::mutex> lock(m_objectMutex);
+                if (m_pendingObjectCreates.empty()) break;
+                create = m_pendingObjectCreates.front();
+                m_pendingObjectCreates.pop();
+            }
+
+            auto* scene = dynamic_cast<CSE::SScene*>(core->GetCore(SceneMgr)->GetCurrentScene());
+            if (scene) {
+                auto* obj = new CSE::SGameObject(create.name.c_str());
+                // Note: SGameObject constructor already creates TransformComponent and registers to GameObjectMgr
+                scene->GetRoot()->AddChild(obj);
+                obj->Init();  // Initialize the object after adding to scene
+                
+                ACTION_LOG_PARAMS(ActionCategory::GAMEOBJECT, ActionSeverity::INFO,
+                                 "API: Object created",
+                                 ActionParams()
+                                     .Set("name", create.name)
+                                     .Set("type", create.type));
+            }
+        }
+
+        // Process pending component adds
+        while (true) {
+            PendingComponentAdd add;
+            {
+                std::lock_guard<std::mutex> lock(m_componentMutex);
+                if (m_pendingComponentAdds.empty()) break;
+                add = m_pendingComponentAdds.front();
+                m_pendingComponentAdds.pop();
+            }
+
+            auto* obj = FindGameObjectByName(add.objectName);
+            if (obj) {
+                CSE::SComponent* component = nullptr;
+                
+                if (add.componentType == "RenderComponent") {
+                    component = new CSE::RenderComponent(obj);
+                } else if (add.componentType == "CameraComponent") {
+                    component = new CSE::CameraComponent(obj);
+                } else if (add.componentType == "LightComponent") {
+                    component = new CSE::LightComponent(obj);
+                } else if (add.componentType == "CustomComponent") {
+                    auto* customComp = new CSE::CustomComponent(obj);
+                    if (!add.scriptPath.empty()) {
+                        // SetClassName will use the already-initialized ScriptMgr
+                        customComp->SetClassName(add.scriptPath);
+                        ACTION_LOG_PARAMS(ActionCategory::COMPONENT, ActionSeverity::INFO,
+                                        "Script assigned to CustomComponent",
+                                        ActionParams()
+                                            .Set("object", add.objectName)
+                                            .Set("script", add.scriptPath));
+                    }
+                    component = customComp;
+                }
+                
+                if (component) {
+                    obj->AddComponent(component);
+                    component->Init();  // Initialize component after adding
+                    ACTION_LOG_PARAMS(ActionCategory::COMPONENT, ActionSeverity::INFO,
+                                     "API: Component added",
+                                     ActionParams()
+                                         .Set("object", add.objectName)
+                                         .Set("type", add.componentType));
+                }
+            }
+        }
+
+        // Process pending transform sets
+        while (true) {
+            PendingTransformSet transform;
+            {
+                std::lock_guard<std::mutex> lock(m_transformMutex);
+                if (m_pendingTransformSets.empty()) break;
+                transform = m_pendingTransformSets.front();
+                m_pendingTransformSets.pop();
+            }
+
+            auto* obj = FindGameObjectByName(transform.objectName);
+            if (obj) {
+                auto* transformComp = obj->GetTransform();
+                if (transformComp) {
+                    if (transform.setPosition) {
+                        transformComp->m_position.Set(transform.posX, transform.posY, transform.posZ);
+                    }
+                    if (transform.setRotation) {
+                        transformComp->m_rotation.Set(transform.rotX, transform.rotY, transform.rotZ, transform.rotW);
+                    }
+                    if (transform.setScale) {
+                        transformComp->m_scale.Set(transform.scaleX, transform.scaleY, transform.scaleZ);
+                    }
+                    
+                    ACTION_LOG_PARAMS(ActionCategory::TRANSFORM, ActionSeverity::INFO,
+                                     "API: Transform set",
+                                     ActionParams().Set("object", transform.objectName));
+                }
+            }
+        }
+
+        // Process pending preview captures
+        while (true) {
+            PendingPreviewCapture capture;
+            {
+                std::lock_guard<std::mutex> lock(m_previewCaptureMutex);
+                if (m_pendingPreviewCaptures.empty()) break;
+                capture = m_pendingPreviewCaptures.front();
+                m_pendingPreviewCaptures.pop();
+            }
+
+            // Execute the capture on the main thread (where OpenGL context is available)
+            unsigned int previewTextureId = core->GetPreviewTextureId();
+            if (previewTextureId == 0) {
+                *capture.success = false;
+                continue;
+            }
+
+            // Bind texture to get dimensions
+            glBindTexture(GL_TEXTURE_2D, previewTextureId);
+            GLint width, height;
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+            glBindTexture(GL_TEXTURE_2D, 0);
+
+            if (width <= 0 || height <= 0) {
+                *capture.success = false;
+                continue;
+            }
+
+            // Create temporary FBO for capture (following SEnvironmentMgr pattern)
+            GLuint captureFBO;
+            glGenFramebuffers(1, &captureFBO);
+            glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+            
+            // Attach the preview texture to the FBO (glFramebufferTexture2D as required)
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 
+                                   GL_TEXTURE_2D, previewTextureId, 0);
+
+            // Check FBO status
+            GLenum fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+            if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
+                glDeleteFramebuffers(1, &captureFBO);
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                *capture.success = false;
+                continue;
+            }
+
+            // Read pixels from the framebuffer
+            char* data = new char[width * height * 4];
+            glReadBuffer(GL_COLOR_ATTACHMENT0);
+            glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+            // Clean up FBO
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glDeleteFramebuffers(1, &captureFBO);
+
+            // Save as PNG
+            std::string fullPath = CSE::NativeAssetsPath() + "../" + capture.filename;
+            int saved = CSE::savePng(fullPath.c_str(), width, height, 4, data);
+            delete[] data;
+
+            // Set output parameters
+            *capture.resultPath = fullPath;
+            *capture.resultWidth = width;
+            *capture.resultHeight = height;
+            *capture.success = (saved != 0);
         }
     }
 
@@ -504,9 +766,21 @@ namespace CSEditor {
         m_requestCount++;
         APIResponse response;
 
-        ACTION_LOG(ActionCategory::SCENE, ActionSeverity::INFO, "API: Save Scene", "");
+        // Save to Scene folder (NativeAssetsPath already includes "Assets/")
+        std::string savePath = "Scene/DodgeMaster.scene";
 
-        response.body = "{\"status\":\"queued\"}";
+        ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
+                         "API: Save Scene",
+                         ActionParams().Set("path", savePath));
+
+        // Queue scene save for main thread processing
+        {
+            std::lock_guard<std::mutex> lock(m_sceneMutex);
+            m_pendingSceneSave = true;
+            m_sceneSavePath = savePath;
+        }
+
+        response.body = "{\"status\":\"queued\",\"path\":\"" + EscapeJsonString(savePath) + "\"}";
         return response;
     }
 
@@ -620,8 +894,15 @@ namespace CSEditor {
                              .Set("type", type)
                              .Set("name", name));
 
-        // Note: Object creation should be done on main thread
-        // Return queued status
+        // Queue object creation for main thread processing
+        {
+            std::lock_guard<std::mutex> lock(m_objectMutex);
+            PendingObjectCreate create;
+            create.type = type;
+            create.name = name;
+            m_pendingObjectCreates.push(create);
+        }
+
         response.body = "{\"status\":\"queued\",\"type\":\"" + EscapeJsonString(type) +
                        "\",\"name\":\"" + EscapeJsonString(name) + "\"}";
         return response;
@@ -643,6 +924,78 @@ namespace CSEditor {
                          ActionParams().Set("name", name));
 
         response.body = "{\"status\":\"queued\",\"name\":\"" + EscapeJsonString(name) + "\"}";
+        return response;
+    }
+
+    APIResponse EditorAPIServer::HandleTransformSet(const std::string& body) {
+        m_requestCount++;
+        APIResponse response;
+
+        std::string name = ParseJsonValue(body, "object");
+        if (name.empty()) {
+            response.statusCode = 400;
+            response.body = "{\"error\":\"Missing object parameter\"}";
+            return response;
+        }
+
+        PendingTransformSet transform;
+        transform.objectName = name;
+        transform.setPosition = false;
+        transform.setRotation = false;
+        transform.setScale = false;
+
+        // Parse position if present
+        std::string posX = ParseJsonValue(body, "posX");
+        std::string posY = ParseJsonValue(body, "posY");
+        std::string posZ = ParseJsonValue(body, "posZ");
+        if (!posX.empty() && !posY.empty() && !posZ.empty()) {
+            transform.posX = std::stof(posX);
+            transform.posY = std::stof(posY);
+            transform.posZ = std::stof(posZ);
+            transform.setPosition = true;
+        }
+
+        // Parse rotation if present
+        std::string rotX = ParseJsonValue(body, "rotX");
+        std::string rotY = ParseJsonValue(body, "rotY");
+        std::string rotZ = ParseJsonValue(body, "rotZ");
+        std::string rotW = ParseJsonValue(body, "rotW");
+        if (!rotX.empty() && !rotY.empty() && !rotZ.empty() && !rotW.empty()) {
+            transform.rotX = std::stof(rotX);
+            transform.rotY = std::stof(rotY);
+            transform.rotZ = std::stof(rotZ);
+            transform.rotW = std::stof(rotW);
+            transform.setRotation = true;
+        }
+
+        // Parse scale if present
+        std::string scaleX = ParseJsonValue(body, "scaleX");
+        std::string scaleY = ParseJsonValue(body, "scaleY");
+        std::string scaleZ = ParseJsonValue(body, "scaleZ");
+        if (!scaleX.empty() && !scaleY.empty() && !scaleZ.empty()) {
+            transform.scaleX = std::stof(scaleX);
+            transform.scaleY = std::stof(scaleY);
+            transform.scaleZ = std::stof(scaleZ);
+            transform.setScale = true;
+        }
+
+        if (!transform.setPosition && !transform.setRotation && !transform.setScale) {
+            response.statusCode = 400;
+            response.body = "{\"error\":\"No transform data provided (posX/Y/Z, rotX/Y/Z/W, or scaleX/Y/Z)\"}";
+            return response;
+        }
+
+        ACTION_LOG_PARAMS(ActionCategory::TRANSFORM, ActionSeverity::INFO,
+                         "API: Set Transform",
+                         ActionParams().Set("object", name));
+
+        // Queue transform set for main thread processing
+        {
+            std::lock_guard<std::mutex> lock(m_transformMutex);
+            m_pendingTransformSets.push(transform);
+        }
+
+        response.body = "{\"status\":\"queued\",\"object\":\"" + EscapeJsonString(name) + "\"}";
         return response;
     }
 
@@ -687,6 +1040,7 @@ namespace CSEditor {
 
         std::string objectName = ParseJsonValue(body, "object");
         std::string componentType = ParseJsonValue(body, "type");
+        std::string scriptPath = ParseJsonValue(body, "scriptPath");  // Optional, for CustomComponent (e.g., "PlayerController")
 
         if (objectName.empty() || componentType.empty()) {
             response.statusCode = 400;
@@ -699,6 +1053,16 @@ namespace CSEditor {
                          ActionParams()
                              .Set("object", objectName)
                              .Set("type", componentType));
+
+        // Queue component addition for main thread processing
+        {
+            std::lock_guard<std::mutex> lock(m_componentMutex);
+            PendingComponentAdd add;
+            add.objectName = objectName;
+            add.componentType = componentType;
+            add.scriptPath = scriptPath;  // For CustomComponent, this is the class name (not full path)
+            m_pendingComponentAdds.push(add);
+        }
 
         response.body = "{\"status\":\"queued\",\"object\":\"" + EscapeJsonString(objectName) +
                        "\",\"type\":\"" + EscapeJsonString(componentType) + "\"}";
@@ -790,8 +1154,9 @@ namespace CSEditor {
         if (command == "play") {
             auto* core = EEngineCore::getEditorInstance();
             if (core && !core->IsPreview()) {
-                core->InvokePreviewStart(800, 600);
-                response.body = "{\"status\":\"ok\",\"command\":\"play\"}";
+                // Start with default resolution (can be resized later)
+                core->InvokePreviewStart(1280, 720);
+                response.body = "{\"status\":\"ok\",\"command\":\"play\",\"resolution\":\"1280x720\"}";
             } else {
                 response.body = "{\"status\":\"already_playing\"}";
             }
@@ -805,6 +1170,88 @@ namespace CSEditor {
             }
         } else {
             response.body = "{\"status\":\"queued\",\"command\":\"" + EscapeJsonString(command) + "\"}";
+        }
+
+        return response;
+    }
+
+    APIResponse EditorAPIServer::HandleCapturePreview(const std::string& queryParams) {
+        m_requestCount++;
+        APIResponse response;
+
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) {
+            response.statusCode = 500;
+            response.body = "{\"error\":\"Editor core not available\"}";
+            return response;
+        }
+
+        // Get filename from query params (optional)
+        std::string filename = ParseQueryParam(queryParams, "filename");
+        if (filename.empty()) {
+            auto now = std::chrono::system_clock::now();
+            auto time = std::chrono::system_clock::to_time_t(now);
+            std::tm tm{};
+#ifdef _WIN32
+            localtime_s(&tm, &time);
+#else
+            localtime_r(&time, &tm);
+#endif
+            std::ostringstream oss;
+            oss << "preview_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".png";
+            filename = oss.str();
+        }
+
+        // Ensure .png extension
+        if (filename.find(".png") == std::string::npos) {
+            filename += ".png";
+        }
+
+        // Queue the capture request to be processed on the main thread
+        std::string resultPath;
+        int resultWidth = 0, resultHeight = 0;
+        bool success = false;
+        
+        {
+            std::lock_guard<std::mutex> lock(m_previewCaptureMutex);
+            m_pendingPreviewCaptures.push({
+                filename,
+                &resultPath,
+                &resultWidth,
+                &resultHeight,
+                &success
+            });
+        }
+
+        // Wait for the capture to be processed (with timeout)
+        int waitCount = 0;
+        while (waitCount < 100 && !success) {  // Wait up to 1 second (100 * 10ms)
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            waitCount++;
+        }
+
+        if (success) {
+            ACTION_LOG_PARAMS(ActionCategory::SYSTEM, ActionSeverity::INFO,
+                            "Preview captured",
+                            ActionParams()
+                                .Set("filename", filename)
+                                .Set("width", std::to_string(resultWidth))
+                                .Set("height", std::to_string(resultHeight)));
+
+            std::ostringstream jsonResponse;
+            jsonResponse << "{";
+            jsonResponse << "\"success\":true,";
+            jsonResponse << "\"filename\":\"" << filename << "\",";
+            jsonResponse << "\"path\":\"" << resultPath << "\",";
+            jsonResponse << "\"width\":" << resultWidth << ",";
+            jsonResponse << "\"height\":" << resultHeight;
+            jsonResponse << "}";
+
+            response.statusCode = 200;
+            response.body = jsonResponse.str();
+        } else {
+            response.statusCode = 500;
+            response.body = "{\"error\":\"Failed to capture preview (timeout or error)\"}";
         }
 
         return response;
