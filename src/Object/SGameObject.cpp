@@ -222,15 +222,12 @@ SGameObject* SGameObject::FindByHash(const std::string& hash) {
 }
 
 bool SGameObject::GetIsEnable() const {
+    if (m_parent != nullptr) return m_parent->GetIsEnable() && isEnable;
     return isEnable;
 }
 
 void SGameObject::SetIsEnable(bool is_enable) {
     isEnable = is_enable;
-    for (const auto& component: m_components) {
-        if (component == nullptr) continue;
-        component->SetIsEnable(is_enable);
-    }
 }
 
 void SGameObject::UpdateComponent(float elapsedTime) {

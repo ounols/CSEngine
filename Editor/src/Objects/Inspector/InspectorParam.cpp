@@ -7,6 +7,7 @@
 #include "../../../src/MacroDef.h"
 #include "../../../src/Manager/ResMgr.h"
 #include "../../../src/Manager/GameObjectMgr.h"
+#include "../../../src/Component/SComponent.h"
 #include "imgui.h"
 
 using namespace CSEditor;

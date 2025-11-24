@@ -6,6 +6,7 @@
 
 
 #include <iostream>
+#include <regex>
 #include "sqrat.h"
 #include "sqrat/sqratVM.h"
 #include "../Util/AssetsDef.h"
@@ -102,69 +103,66 @@ void SScriptObject::RemakeScript(const std::string& path) {
 }
 
 void SScriptObject::GetVariables(const std::string& str) {
+    // Step 1: 주석 제거
+    std::string code = str;
 
-    auto split_line = split(str, '\n');
-    int level = -1;
-    bool isComment = false;
+    // 블록 주석 제거 (/* ... */)
+    std::regex blockCommentRegex(R"(/\*[\s\S]*?\*/)");
+    code = std::regex_replace(code, blockCommentRegex, "");
 
-    //split line
-    for(const auto& line_raw : split_line) {
-		std::string line = trim(line_raw);
-        if(line.find("//") != std::string::npos) continue;
-        if(isComment && line.find("*/") != std::string::npos) {
-            isComment = false;
-            line = line.substr(line.find("*/") + 2);
-        }
-        else if(isComment || line.find("/*") != std::string::npos) {
-            if(isComment) continue;
+    // 라인 주석 제거 (// ...)
+    std::regex lineCommentRegex(R"(//[^\n]*)");
+    code = std::regex_replace(code, lineCommentRegex, "");
 
-            isComment = true;
-            line = line.substr(0, line.find("/*"));
-        }
-
-        //split start of brace
-        bool isBraceStart = line.find('{') != std::string::npos;
-        auto split_bs = split(line, '{');
-
-
-        for(const auto& bs : split_bs) {
-
-            if(level == 0 && m_className.empty()) {
-                if(line.find("class") != std::string::npos) {
-                    int start_index = line.find("class") + 5;
-                    int end_index = line.find("extends", start_index) - 5;
-
-                    m_className = trim(line.substr(start_index, end_index));
-                }
-            }
-
-            //split end of brace
-            bool isBraceEnd = line.find('}') != std::string::npos;
-            auto split_be = split(bs, '}');
-
-            for(const auto& be : split_be) {
-
-                if(level == 1) {
-                    //split semicolon
-                    auto split_end = split(be, ';');
-                    for(auto result : split_end) {
-                        if(result.empty()) continue;
-                        result = trim(result);
-
-                        if(result.find("function") != std::string::npos) continue;
-                        int index = result.find('=');
-                        m_variables.push_back(trim(result.substr(0, index)));
-                    }
-                }
-
-                if(isBraceEnd) level--;
-            }
-
-            if(isBraceStart) level++;
-        }
-
+    // Step 2: 클래스명 추출
+    // "class ClassName extends Parent" 또는 "class ClassName {"
+    std::regex classRegex(R"(class\s+(\w+)(?:\s+extends\s+\w+)?\s*\{)");
+    std::smatch classMatch;
+    if (std::regex_search(code, classMatch, classRegex)) {
+        m_className = classMatch[1].str();
     }
 
+    // Step 3: 클래스 본문 추출 (첫 번째 레벨의 중괄호 내부)
+    size_t classBodyStart = code.find('{');
+    if (classBodyStart == std::string::npos) return;
+
+    int braceLevel = 1;
+    size_t classBodyEnd = classBodyStart + 1;
+
+    for (; classBodyEnd < code.size() && braceLevel > 0; ++classBodyEnd) {
+        if (code[classBodyEnd] == '{') braceLevel++;
+        else if (code[classBodyEnd] == '}') braceLevel--;
+    }
+
+    std::string classBody = code.substr(classBodyStart + 1, classBodyEnd - classBodyStart - 2);
+
+    // Step 4: 멤버 변수 추출
+    // 패턴: "변수명 = 값;" 또는 "변수명;" (function, constructor, static 제외)
+    // 중첩 블록(함수 본문 등) 제거
+    std::string cleanBody;
+    braceLevel = 0;
+    for (const char& c : classBody) {
+        if (c == '{') {
+            braceLevel++;
+        } else if (c == '}') {
+            braceLevel--;
+        } else if (braceLevel == 0) {
+            cleanBody += c;
+        }
+    }
+
+    // 변수 선언 패턴 매칭: 식별자 = 값; 또는 식별자;
+    // function, constructor, static 키워드로 시작하는 것은 제외
+    std::regex varRegex(R"((?:^|;|\n)\s*(?!function\b|constructor\b|static\b)(\w+)\s*(?:=[^;]*)?;)");
+
+    std::sregex_iterator it(cleanBody.begin(), cleanBody.end(), varRegex);
+
+    for (std::sregex_iterator end; it != end; ++it) {
+        std::string varName = trim((*it)[1].str());
+        if (!varName.empty()) {
+            m_variables.push_back(varName);
+        }
+    }
 }
 
 std::vector<std::string> SScriptObject::GetVariables() const {

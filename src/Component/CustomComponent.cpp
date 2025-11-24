@@ -111,8 +111,11 @@ void CustomComponent::RegisterScript() {
 
 
 void CustomComponent::SetClassName(const std::string& name) {
-    auto asset = SResource::Get<SScriptObject>(name);
-    if (asset == nullptr) return;
+    const auto& asset = SResource::Get<SScriptObject>(name);
+    if (asset == nullptr) {
+        SafeLog::LogErrf("Can't find script object with name: %s", name.c_str());
+        return;
+    }
 
     m_classID = asset->GetHash();
     m_className = asset->GetScriptClassName();
@@ -159,15 +162,19 @@ SComponent* CustomComponent::Clone(SGameObject* object) {
 
 void CustomComponent::SetValue(const std::string& name_str, const Arguments& value) {
     if (name_str == "m_classID") {
-        SetClassName(ConvertSpaceStr(value[0], true));
+        if (!value.empty()) {
+            SetClassName(ConvertSpaceStr(value[0], true));
+        }
     }
     //variable : 0.name , 1.value, 2. type
     else if (name_str == "__variable__") {
-        for(auto& val : m_variables) {
-            if(val.name == trim(value[0])) {
-				val.value = trim(value[1]);
-				val.type = trim(value[2]);
-                BindValue(&val, ConvertSpaceStr(value[1], true).c_str());
+        if (value.size() >= 3) {
+            for(auto& val : m_variables) {
+                if(val.name == trim(value[0])) {
+                    val.value = trim(value[1]);
+                    val.type = trim(value[2]);
+                    BindValue(&val, ConvertSpaceStr(value[1], true).c_str());
+                }
             }
         }
     }
@@ -207,8 +214,8 @@ void CustomComponent::CreateClassInstance(const std::vector<std::string>& variab
     if(variables.empty()) return;
 
     for (const auto& val : variables) {
-        auto obj = m_classInstance->get(val.c_str());
-        auto r_obj = obj.GetObject()._type;
+        const auto& obj = m_classInstance->get(val.c_str());
+        const auto r_obj = obj.GetObject()._type;
 
         const char* name;
         std::string value;

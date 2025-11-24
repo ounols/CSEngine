@@ -2,6 +2,7 @@
 #include "GameObjectMgr.h"
 #include "MemoryMgr.h"
 #include "EngineCore.h"
+#include "../Component/SComponent.h"
 
 using namespace CSE;
 
