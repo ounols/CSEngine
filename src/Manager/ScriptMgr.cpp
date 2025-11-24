@@ -98,6 +98,10 @@ void ScriptMgr::RegisterScript(const std::string& script, HSQUIRRELVM vm) {
 
 }
 
+const HSQUIRRELVM & ScriptMgr::GetVM() const {
+    return m_vm;
+}
+
 SQInteger GetCustomComponentFunc(HSQUIRRELVM v) {
     SQInteger args = sq_gettop(v);
 

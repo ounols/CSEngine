@@ -8,10 +8,50 @@
 ## 아키텍처
 ```
 CSEngine/
-├── src/Manager/     # EngineCore, GameObjectMgr, SceneMgr, RenderMgr, InputMgr, ScriptMgr
-├── src/Component/   # Transform, Render, Camera, Light, CustomComponent
-├── src/Util/        # Vector, Quaternion, SafeLog
-└── Editor/          # ImGui UI, REST API Server
+├── src/Manager/        # EngineCore, GameObjectMgr, SceneMgr, RenderMgr, InputMgr, ScriptMgr
+├── src/Component/      # Transform, Render, Camera, Light, CustomComponent
+├── src/Util/           # Vector, Quaternion, SafeLog
+└── Editor/
+    ├── src/Backend/    # 비즈니스 로직 (API + GUI 공유)
+    ├── src/Objects/    # ImGui Window 클래스
+    └── src/Manager/    # EditorAPIServer, EEngineCore
+```
+
+## Editor Backend 아키텍처 (신규)
+
+### 개요
+Editor Backend는 REST API와 GUI에서 공통으로 사용하는 비즈니스 로직을 분리한 계층입니다.
+각 Backend 클래스는 싱글톤 패턴을 사용하며, API용 비동기 메서드와 GUI용 동기 메서드를 제공합니다.
+
+### Backend 클래스 목록
+| 클래스 | 역할 | 주요 Direct 메서드 |
+|--------|------|-------------------|
+| `ObjectBackend` | GameObject 생성/삭제/복제 | `CreateEmptyObjectDirect()`, `DeleteObjectDirect()`, `DuplicateObjectDirect()` |
+| `ComponentBackend` | 컴포넌트 추가/제거 | `AddComponentDirect()`, `RemoveComponentDirect()`, `HasComponent()` |
+| `SceneBackend` | 씬 로드/저장 | `LoadSceneDirect()`, `SaveSceneDirect()`, `CreateNewSceneDirect()` |
+| `EditorBackend` | Play/Stop, Preview | `PlayDirect()`, `StopDirect()`, `IsPlaying()`, `GetPreviewTextureId()` |
+| `LogBackend` | 로그 조회/삭제 | `GetRecentLogs()`, `ClearLogs()` |
+| `DebugBackend` | 디버그 정보 | `GetCrashInfo()`, `GetContext()` |
+
+### 사용 예시 (C++)
+```cpp
+// GUI에서 GameObject 생성
+#include "Backend/ObjectBackend.h"
+
+auto& backend = CSEditor::ObjectBackend::GetInstance();
+auto* obj = backend.CreateEmptyObjectDirect("Player", nullptr);
+
+// 컴포넌트 추가
+#include "Backend/ComponentBackend.h"
+
+auto& compBackend = CSEditor::ComponentBackend::GetInstance();
+compBackend.AddComponentDirect(obj, "CustomComponent", "PlayerController");
+
+// Play 모드 시작
+#include "Backend/EditorBackend.h"
+
+auto& editorBackend = CSEditor::EditorBackend::GetInstance();
+editorBackend.PlayDirect(1280, 720);
 ```
 
 ## Squirrel 스크립트 기본

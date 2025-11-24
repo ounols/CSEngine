@@ -16,8 +16,10 @@ private:
 
 private:
 	static void Log(LogLevel level, const char* log);
-	static void LogF(LogLevel level, const char* format, ...);
-	static void LogFS(LogLevel level, int size, const char* format, ...);
+
+	// va_list versions (internal use)
+	static void vLogF(LogLevel level, const char* format, va_list args);
+	static void vLogFS(LogLevel level, int size, const char* format, va_list args);
 
 public:
 	static void LogInfo(const char* log);

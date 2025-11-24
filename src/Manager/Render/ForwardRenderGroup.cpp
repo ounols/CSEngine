@@ -90,7 +90,7 @@ void ForwardRenderGroup::RenderAll(const CameraBase& camera) const {
 
             for (const auto& render : renderComp) {
                 if (render == nullptr) continue;
-                if (!render->isRenderActive) continue;
+                if (!render->IsRenderActive()) continue;
 
                 const auto& material = render->GetMaterial();
                 int materialLayout = material->AttachElement(layoutBegin);

@@ -2,6 +2,8 @@
 #include "Base/HierarchyData.h"
 #include "../Manager/EEngineCore.h"
 #include "../Manager/EditorActionLogger.h"
+#include "../Backend/ComponentBackend.h"
+#include "../Backend/EditorBackend.h"
 #include "../../src/Object/SGameObject.h"
 #include "../../src/Component/SComponent.h"
 #include "../../src/Component/TransformComponent.h"
@@ -144,56 +146,54 @@ void InspectorWindow::RenderGameObjectHeader(CSE::SGameObject* object) {
 void InspectorWindow::RenderAddComponentMenu(CSE::SGameObject* object) {
     if (object == nullptr) return;
 
+    auto& compBackend = ComponentBackend::GetInstance();
+    auto& editorBackend = EditorBackend::GetInstance();
+
     ImGui::Text("Add Component");
     ImGui::Separator();
 
-    // Check which components already exist
-    bool hasRender = object->GetComponent<RenderComponent>() != nullptr;
-    bool hasCamera = object->GetComponent<CameraComponent>() != nullptr;
-    bool hasLight = object->GetComponent<LightComponent>() != nullptr;
-    bool hasAnimator = object->GetComponent<AnimatorComponent>() != nullptr;
+    // Check which components already exist using backend
+    bool hasRender = compBackend.HasComponent(object, "RenderComponent");
+    bool hasCamera = compBackend.HasComponent(object, "CameraComponent");
+    bool hasLight = compBackend.HasComponent(object, "LightComponent");
+    bool hasAnimator = compBackend.HasComponent(object, "AnimatorComponent");
 
     if (ImGui::BeginMenu("Rendering")) {
         if (ImGui::MenuItem("Render Component", nullptr, false, !hasRender)) {
-            object->CreateComponent<RenderComponent>();
-            ACTION_LOG_COMPONENT("Added component", "RenderComponent", object->GetName());
+            compBackend.AddComponentDirect(object, "RenderComponent");
             ReleaseLayers();
             InitLayers(*object);
-            m_core->InvokeEditorRender();
+            editorBackend.InvokeEditorRender();
         }
         ImGui::EndMenu();
     }
 
     if (ImGui::BeginMenu("Camera")) {
         if (ImGui::MenuItem("Camera Component", nullptr, false, !hasCamera)) {
-            object->CreateComponent<CameraComponent>();
-            ACTION_LOG_COMPONENT("Added component", "CameraComponent", object->GetName());
+            compBackend.AddComponentDirect(object, "CameraComponent");
             ReleaseLayers();
             InitLayers(*object);
-            m_core->InvokeEditorRender();
+            editorBackend.InvokeEditorRender();
         }
         ImGui::EndMenu();
     }
 
     if (ImGui::BeginMenu("Lighting")) {
         if (ImGui::MenuItem("Light Component", nullptr, false, !hasLight)) {
-            auto* light = object->CreateComponent<LightComponent>();
-            light->SetLightType(LightComponent::DIRECTIONAL);
-            ACTION_LOG_COMPONENT("Added component", "LightComponent", object->GetName(), "Type: Directional");
+            compBackend.AddComponentDirect(object, "LightComponent");
             ReleaseLayers();
             InitLayers(*object);
-            m_core->InvokeEditorRender();
+            editorBackend.InvokeEditorRender();
         }
         ImGui::EndMenu();
     }
 
     if (ImGui::BeginMenu("Animation")) {
         if (ImGui::MenuItem("Animator Component", nullptr, false, !hasAnimator)) {
-            object->CreateComponent<AnimatorComponent>();
-            ACTION_LOG_COMPONENT("Added component", "AnimatorComponent", object->GetName());
+            compBackend.AddComponentDirect(object, "AnimatorComponent");
             ReleaseLayers();
             InitLayers(*object);
-            m_core->InvokeEditorRender();
+            editorBackend.InvokeEditorRender();
         }
         ImGui::EndMenu();
     }
@@ -201,11 +201,10 @@ void InspectorWindow::RenderAddComponentMenu(CSE::SGameObject* object) {
     // Script component is special - can have multiple
     if (ImGui::BeginMenu("Scripts")) {
         if (ImGui::MenuItem("Custom Script")) {
-            object->CreateComponent<CustomComponent>();
-            ACTION_LOG_COMPONENT("Added component", "CustomComponent", object->GetName());
+            compBackend.AddComponentDirect(object, "CustomComponent");
             ReleaseLayers();
             InitLayers(*object);
-            m_core->InvokeEditorRender();
+            editorBackend.InvokeEditorRender();
         }
         ImGui::EndMenu();
     }
@@ -214,15 +213,10 @@ void InspectorWindow::RenderAddComponentMenu(CSE::SGameObject* object) {
 void InspectorWindow::RemoveComponent(CSE::SGameObject* object, CSE::SComponent* component) {
     if (object == nullptr || component == nullptr) return;
 
-    // Don't allow removing TransformComponent
-    if (component->IsSameClass("TransformComponent")) return;
-
-    std::string componentType = component->GetClassType();
-    std::string objectName = object->GetName();
-
-    object->DeleteComponent(component);
-    ACTION_LOG_COMPONENT("Removed component", componentType, objectName);
-    ReleaseLayers();
-    InitLayers(*object);
-    m_core->InvokeEditorRender();
+    auto& compBackend = ComponentBackend::GetInstance();
+    if (compBackend.RemoveComponentDirect(object, component)) {
+        ReleaseLayers();
+        InitLayers(*object);
+        EditorBackend::GetInstance().InvokeEditorRender();
+    }
 }

@@ -18,6 +18,8 @@ namespace CSE {
 
         static void RegisterScript(const std::string& script, HSQUIRRELVM vm);
 
+        const HSQUIRRELVM& GetVM() const;
+
     private:
         void DefineClasses(HSQUIRRELVM vm = Sqrat::DefaultVM::Get());
 

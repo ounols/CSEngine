@@ -67,29 +67,23 @@ void SafeLog::Log(LogLevel level, const char* log) {
 #endif
 }
 
-void SafeLog::LogF(LogLevel level, const char* format, ...) {
-    va_list args;
-    va_start(args, format);
-    LogFS(level, 256, format, args);
-    va_end(args);
+void SafeLog::vLogF(LogLevel level, const char* format, va_list args) {
+    vLogFS(level, 256, format, args);
 }
 
-void SafeLog::LogFS(LogLevel level, int size, const char *format, ...) {
+void SafeLog::vLogFS(LogLevel level, int size, const char *format, va_list args) {
     if (size <= 0) size = 256;
     if (size > 8192) size = 8192;
 
     auto buffer = std::make_unique<char[]>(size);
 
-    va_list args;
-    va_start(args, format);
 #ifdef _WIN32
     _vsnprintf_s(buffer.get(), size, _TRUNCATE, format, args);
 #else
     vsnprintf(buffer.get(), size, format, args);
 #endif
-    va_end(args);
 
-    Log(level, buffer.get()); // This will automatically log to both console and EditorActionLogger
+    Log(level, buffer.get());
 }
 
 void SafeLog::LogInfo(const char* log) {
@@ -107,41 +101,41 @@ void SafeLog::LogErr(const char* log) {
 void SafeLog::LogInfof(const char* format, ...) {
     va_list args;
     va_start(args, format);
-    LogF(LogLevel::INFO, format, args);
+    vLogF(LogLevel::INFO, format, args);
     va_end(args);
 }
 
 void SafeLog::LogWarnf(const char* format, ...) {
     va_list args;
     va_start(args, format);
-    LogF(LogLevel::WARNING, format, args);
+    vLogF(LogLevel::WARNING, format, args);
     va_end(args);
 }
 
 void SafeLog::LogErrf(const char* format, ...) {
     va_list args;
     va_start(args, format);
-    LogF(LogLevel::ERR, format, args);
+    vLogF(LogLevel::ERR, format, args);
     va_end(args);
 }
 
 void SafeLog::LogInfof(int size, const char* format, ...) {
     va_list args;
     va_start(args, format);
-    LogFS(LogLevel::INFO, size, format, args);
+    vLogFS(LogLevel::INFO, size, format, args);
     va_end(args);
 }
 
 void SafeLog::LogWarnf(int size, const char* format, ...) {
     va_list args;
     va_start(args, format);
-    LogFS(LogLevel::WARNING, size, format, args);
+    vLogFS(LogLevel::WARNING, size, format, args);
     va_end(args);
 }
 
 void SafeLog::LogErrf(int size, const char* format, ...) {
     va_list args;
     va_start(args, format);
-    LogFS(LogLevel::ERR, size, format, args);
+    vLogFS(LogLevel::ERR, size, format, args);
     va_end(args);
 }

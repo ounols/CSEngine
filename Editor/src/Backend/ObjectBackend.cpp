@@ -7,8 +7,13 @@
 #include "../../../src/Object/SScene.h"
 #include "../../../src/Manager/SceneMgr.h"
 #include "../../../src/Component/TransformComponent.h"
+#include "../../../src/Component/RenderComponent.h"
+#include "../../../src/Component/CameraComponent.h"
+#include "../../../src/Component/LightComponent.h"
 
 #include <sstream>
+
+#include "../../../src/Manager/SCloneFactory.h"
 
 namespace CSEditor {
 
@@ -274,6 +279,172 @@ namespace CSEditor {
                 }
             }
         }
+    }
+
+    // ============================================
+    // Direct Operations Implementation
+    // ============================================
+
+    void ObjectBackend::InitializeNewObject(CSE::SGameObject* obj) {
+        if (!obj) return;
+        obj->Init();
+        obj->Tick(0);
+        for (const auto& child : obj->GetChildren()) {
+            InitializeNewObject(const_cast<CSE::SGameObject*>(child));
+        }
+    }
+
+    CSE::SGameObject* ObjectBackend::CreateEmptyObjectDirect(const std::string& name, CSE::SGameObject* parent) {
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) return nullptr;
+
+        auto* scene = dynamic_cast<CSE::SScene*>(core->GetCore(SceneMgr)->GetCurrentScene());
+        if (!scene) return nullptr;
+
+        auto* newObj = new CSE::SGameObject(name.c_str());
+        newObj->CreateComponent<CSE::TransformComponent>();
+
+        std::string parentName = parent != nullptr ? parent->GetName() : "Root";
+        if (parent != nullptr) {
+            parent->AddChild(newObj);
+        } else {
+            scene->GetRoot()->AddChild(newObj);
+        }
+
+        InitializeNewObject(newObj);
+
+        ACTION_LOG_PARAMS(ActionCategory::GAMEOBJECT, ActionSeverity::INFO,
+                         "Created empty GameObject",
+                         ActionParams()
+                             .Set("name", name)
+                             .Set("parent", parentName));
+
+        return newObj;
+    }
+
+    CSE::SGameObject* ObjectBackend::CreatePrimitiveObjectDirect(const std::string& type, const std::string& name, CSE::SGameObject* parent) {
+        auto* obj = CreateEmptyObjectDirect(name, parent);
+        if (!obj) return nullptr;
+
+        // Add RenderComponent for primitive objects
+        obj->CreateComponent<CSE::RenderComponent>();
+
+        ACTION_LOG_PARAMS(ActionCategory::GAMEOBJECT, ActionSeverity::INFO,
+                         "Created primitive GameObject",
+                         ActionParams()
+                             .Set("name", name)
+                             .Set("type", type));
+
+        return obj;
+    }
+
+    CSE::SGameObject* ObjectBackend::CreateLightObjectDirect(const std::string& lightType, CSE::SGameObject* parent) {
+        std::string name = lightType + " Light";
+        auto* obj = CreateEmptyObjectDirect(name, parent);
+        if (!obj) return nullptr;
+
+        auto* light = obj->CreateComponent<CSE::LightComponent>();
+        if (lightType == "Directional") {
+            light->SetLightType(CSE::LightComponent::DIRECTIONAL);
+        } else if (lightType == "Point") {
+            light->SetLightType(CSE::LightComponent::POINT);
+        } else if (lightType == "Spot") {
+            light->SetLightType(CSE::LightComponent::SPOT);
+        }
+
+        ACTION_LOG_PARAMS(ActionCategory::GAMEOBJECT, ActionSeverity::INFO,
+                         "Created light GameObject",
+                         ActionParams()
+                             .Set("name", name)
+                             .Set("lightType", lightType));
+
+        return obj;
+    }
+
+    CSE::SGameObject* ObjectBackend::CreateCameraObjectDirect(CSE::SGameObject* parent) {
+        auto* obj = CreateEmptyObjectDirect("Camera", parent);
+        if (!obj) return nullptr;
+
+        obj->CreateComponent<CSE::CameraComponent>();
+
+        ACTION_LOG_PARAMS(ActionCategory::GAMEOBJECT, ActionSeverity::INFO,
+                         "Created camera GameObject",
+                         ActionParams().Set("name", "Camera"));
+
+        return obj;
+    }
+
+    bool ObjectBackend::DeleteObjectDirect(CSE::SGameObject* object) {
+        if (!object) return false;
+
+        // Don't delete root object
+        if (object->GetParent() == nullptr) return false;
+
+        std::string deletedName = object->GetName();
+        std::string parentName = object->GetParent() != nullptr ? object->GetParent()->GetName() : "Root";
+
+        auto* parent = object->GetParent();
+        if (parent != nullptr) {
+            parent->RemoveChild(object);
+        }
+
+        object->Destroy();
+
+        ACTION_LOG_PARAMS(ActionCategory::GAMEOBJECT, ActionSeverity::INFO,
+                         "Deleted GameObject",
+                         ActionParams()
+                             .Set("name", deletedName)
+                             .Set("parent", parentName));
+
+        return true;
+    }
+
+    CSE::SGameObject* ObjectBackend::DuplicateObjectDirect(CSE::SGameObject* object) {
+        if (!object) return nullptr;
+
+        auto* parent = object->GetParent();
+        if (!parent) return nullptr;
+
+        std::string sourceName = object->GetName();
+
+        // Create duplicate with (Copy) suffix
+        auto* newObj = CSE::SCloneFactory::Clone(object, object->GetParent());
+        newObj->SetName(sourceName + " (Copy)");
+        newObj->Init();
+
+        ACTION_LOG_PARAMS(ActionCategory::GAMEOBJECT, ActionSeverity::INFO,
+                         "Duplicated GameObject",
+                         ActionParams()
+                             .Set("name", newObj->GetName())
+                             .Set("source", sourceName));
+
+        return newObj;
+    }
+
+    bool ObjectBackend::SetTransformDirect(CSE::SGameObject* object,
+                                          const float* position,
+                                          const float* rotation,
+                                          const float* scale) {
+        if (!object) return false;
+
+        auto* transform = object->GetTransform();
+        if (!transform) return false;
+
+        if (position) {
+            transform->m_position.Set(position[0], position[1], position[2]);
+        }
+        if (rotation) {
+            transform->m_rotation.Set(rotation[0], rotation[1], rotation[2], rotation[3]);
+        }
+        if (scale) {
+            transform->m_scale.Set(scale[0], scale[1], scale[2]);
+        }
+
+        ACTION_LOG_PARAMS(ActionCategory::TRANSFORM, ActionSeverity::INFO,
+                         "Transform set directly",
+                         ActionParams().Set("object", object->GetName()));
+
+        return true;
     }
 
 }

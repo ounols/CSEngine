@@ -46,6 +46,9 @@ namespace CSE {
     private:
         void SetJointMatrix(const GLProgramHandle* handle) const;
 
+    public:
+        bool IsRenderActive() const override;
+
     private:
         RenderMgr* m_renderMgr = nullptr;
         DrawableStaticMeshComponent* m_mesh = nullptr;
@@ -53,5 +56,7 @@ namespace CSE {
         SMaterial* m_material_clone = nullptr;
         // SMaterial* material (Override)
         bool m_disableShadow = false;
+
+        bool b_isError = false;
     };
 }

@@ -38,7 +38,26 @@ powershell -ExecutionPolicy Bypass -File "prompt-files/tools/api.ps1" stop
 **CSEngine**: C++/OpenGL 3D 게임 엔진
 - **스크립팅**: Squirrel (.nut)
 - **에디터**: ImGui + REST API (localhost:8080)
-- **현재 상태**: Dodge Master 게임 완료
+- **현재 상태**: Backend 아키텍처 리팩토링 진행 중
+
+## Editor Backend 아키텍처
+
+### 개요
+`Editor/src/Backend/` 폴더에 REST API와 GUI에서 공통으로 사용하는 비즈니스 로직이 위치합니다.
+
+### Backend 클래스
+| 클래스 | 역할 |
+|--------|------|
+| `ObjectBackend` | GameObject 생성/삭제/복제 |
+| `ComponentBackend` | 컴포넌트 추가/제거 |
+| `SceneBackend` | 씬 로드/저장 |
+| `EditorBackend` | Play/Stop, Preview 관리 |
+| `LogBackend` | 로그 조회 |
+| `DebugBackend` | 디버그 정보 |
+
+### 메서드 패턴
+- **API 메서드**: `CreateObject(body)` - pending 큐 사용, 비동기
+- **Direct 메서드**: `CreateEmptyObjectDirect(name, parent)` - 즉시 실행, GUI용
 
 ## 핵심 설계 원칙
 
@@ -74,12 +93,15 @@ Editor/platforms/Windows/x64/Debug/editor_log_*.json
 ## 프로젝트 구조
 ```
 CSEngine/
-├── src/                    # 엔진 소스
-├── Editor/                 # 에디터 소스
+├── src/                       # 엔진 소스
+├── Editor/
+│   ├── src/Backend/           # ⭐ 비즈니스 로직 (API+GUI 공유)
+│   ├── src/Objects/           # ImGui Window 클래스
+│   └── src/Manager/           # EditorAPIServer 등
 ├── Assets/
-│   ├── Script/            # 게임 스크립트
-│   └── Scene/             # 씬 파일
-└── prompt-files/          # AI 세션 컨텍스트
+│   ├── Script/                # 게임 스크립트
+│   └── Scene/                 # 씬 파일
+└── prompt-files/              # AI 세션 컨텍스트
 ```
 
 ## 상세 문서
@@ -90,12 +112,18 @@ CSEngine/
 | `EDITOR_API.md` | REST API 전체 문서 |
 | `GAME_DEV_PLAN.md` | Dodge Master 게임 설계 |
 
-## 현재 상태 (2025-11-24)
+## 현재 상태 (2025-11-25)
+
+### 진행 중
+- **Backend 아키텍처 마이그레이션**: API와 GUI 로직 통합
+  - ObjectBackend, ComponentBackend, SceneBackend, EditorBackend에 Direct 메서드 추가
+  - Window 클래스들이 Backend를 사용하도록 변경
 
 ### 완료
 - Dodge Master 게임 개발 완료
 - REST API 확장 (씬/오브젝트/컴포넌트 관리)
 - 자동화 도구 (build.ps1, run-editor.ps1, api.ps1)
+- Backend Direct 메서드 구현 완료
 
 ### 게임 실행
 ```powershell
@@ -111,5 +139,5 @@ powershell -ExecutionPolicy Bypass -File "prompt-files/tools/api.ps1" play
 
 ---
 
-**작성일**: 2025-11-24
-**상태**: Dodge Master 완료
+**작성일**: 2025-11-25
+**상태**: Backend 리팩토링 진행 중

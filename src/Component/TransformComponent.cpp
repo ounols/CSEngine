@@ -13,6 +13,7 @@ TransformComponent::~TransformComponent() = default;
 
 
 void TransformComponent::Init() {
+    Tick(0.f);
 }
 
 

@@ -5,10 +5,12 @@
 #include "../Manager/EEngineCore.h"
 #include "../../../src/Object/SGameObject.h"
 #include "../../../src/Component/SComponent.h"
+#include "../../../src/Component/TransformComponent.h"
 #include "../../../src/Component/RenderComponent.h"
 #include "../../../src/Component/CameraComponent.h"
 #include "../../../src/Component/LightComponent.h"
 #include "../../../src/Component/CustomComponent.h"
+#include "../../../src/Component/Animation/AnimatorComponent.h"
 
 #include <sstream>
 
@@ -118,39 +120,70 @@ namespace CSEditor {
             }
 
             auto* obj = BackendUtils::FindGameObjectByName(add.objectName);
-            if (obj) {
-                CSE::SComponent* component = nullptr;
+            AddComponentDirect(obj, add.componentType, add.scriptPath);
+        }
+    }
 
-                if (add.componentType == "RenderComponent") {
-                    component = new CSE::RenderComponent(obj);
-                } else if (add.componentType == "CameraComponent") {
-                    component = new CSE::CameraComponent(obj);
-                } else if (add.componentType == "LightComponent") {
-                    component = new CSE::LightComponent(obj);
-                } else if (add.componentType == "CustomComponent") {
-                    auto* customComp = new CSE::CustomComponent(obj);
-                    if (!add.scriptPath.empty()) {
-                        customComp->SetClassName(add.scriptPath);
-                        ACTION_LOG_PARAMS(ActionCategory::COMPONENT, ActionSeverity::INFO,
-                                        "Script assigned to CustomComponent",
-                                        ActionParams()
-                                            .Set("object", add.objectName)
-                                            .Set("script", add.scriptPath));
-                    }
-                    component = customComp;
-                }
+    // ============================================
+    // Direct Operations Implementation
+    // ============================================
 
-                if (component) {
-                    obj->AddComponent(component);
-                    component->Init();
-                    ACTION_LOG_PARAMS(ActionCategory::COMPONENT, ActionSeverity::INFO,
-                                     "API: Component added",
-                                     ActionParams()
-                                         .Set("object", add.objectName)
-                                         .Set("type", add.componentType));
-                }
+    CSE::SComponent* ComponentBackend::AddComponentDirect(CSE::SGameObject* object,
+                                                         const std::string& componentType,
+                                                         const std::string& scriptPath) {
+        if (!object) return nullptr;
+
+        CSE::SComponent* component = nullptr;
+
+        component = object->CreateComponent(componentType.c_str());
+
+        if (componentType == "CustomComponent") {
+            if (!scriptPath.empty()) {
+                static_cast<CSE::CustomComponent*>(component)->SetClassName(scriptPath);
             }
         }
+
+        if (component) {
+            ACTION_LOG_PARAMS(ActionCategory::COMPONENT, ActionSeverity::INFO,
+                             "Added component",
+                             ActionParams()
+                                 .Set("object", object->GetName())
+                                 .Set("type", componentType));
+        }
+
+        return component;
+    }
+
+    bool ComponentBackend::RemoveComponentDirect(CSE::SGameObject* object, CSE::SComponent* component) {
+        if (!object || !component) return false;
+
+        // Don't allow removing TransformComponent
+        if (component->IsSameClass("TransformComponent")) return false;
+
+        const std::string componentType = component->GetClassType();
+        const std::string objectName = object->GetName();
+
+        object->DeleteComponent(component);
+
+        ACTION_LOG_PARAMS(ActionCategory::COMPONENT, ActionSeverity::INFO,
+                         "Removed component directly",
+                         ActionParams()
+                             .Set("object", objectName)
+                             .Set("type", componentType));
+
+        return true;
+    }
+
+    bool ComponentBackend::HasComponent(const CSE::SGameObject* object, const std::string& componentType) {
+        if (!object) return false;
+
+        const auto& components = object->GetComponents();
+        for (const auto& comp : components) {
+            if (comp->GetClassType() == componentType) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

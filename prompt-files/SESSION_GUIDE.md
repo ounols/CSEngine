@@ -4,28 +4,30 @@
 **CSEngine**: C++/OpenGL 기반 3D 게임 엔진
 - **스크립팅**: Squirrel 언어 (.nut 파일)
 - **에디터**: ImGui UI + REST API (localhost:8080)
-- **현재 상태**: Dodge Master 회피 게임 완료
+- **현재 상태**: Backend 아키텍처 리팩토링 진행 중
 
 ## 이 폴더 파일 읽기 순서
 1. `PROJECT_STATUS.md` - 현재 무엇이 완료되었는지
-2. `ENGINE_REFERENCE.md` - API/스크립트 작성법
+2. `ENGINE_REFERENCE.md` - API/스크립트 작성법 + Backend 아키텍처
 3. `TROUBLESHOOTING.md` - 문제 발생 시 해결책
 4. `tools/README.md` - 자동화 스크립트 사용법
 
 ## 프로젝트 구조
 ```
 CSEngine/
-├── src/                    # 엔진 C++ 소스
-│   ├── Manager/           # EngineCore, ScriptMgr, InputMgr 등
-│   ├── Component/         # Transform, Render, Camera 등
-│   └── Util/              # Vector, SafeLog
-├── Editor/                 # 에디터 소스
-│   ├── src/Manager/       # EditorAPIServer (REST API)
-│   └── platforms/Windows/ # 빌드 설정
+├── src/                       # 엔진 C++ 소스
+│   ├── Manager/               # EngineCore, ScriptMgr, InputMgr 등
+│   ├── Component/             # Transform, Render, Camera 등
+│   └── Util/                  # Vector, SafeLog
+├── Editor/                    # 에디터 소스
+│   ├── src/Backend/           # ⭐ 비즈니스 로직 (API+GUI 공유)
+│   ├── src/Objects/           # ImGui Window 클래스
+│   ├── src/Manager/           # EditorAPIServer, EEngineCore
+│   └── platforms/Windows/     # 빌드 설정
 ├── Assets/
-│   ├── Script/            # Squirrel 게임 스크립트
-│   └── Scene/             # 씬 파일 (.scene)
-└── prompt-files/          # 이 폴더 (AI 컨텍스트)
+│   ├── Script/                # Squirrel 게임 스크립트
+│   └── Scene/                 # 씬 파일 (.scene)
+└── prompt-files/              # 이 폴더 (AI 컨텍스트)
 ```
 
 ## 작업별 빠른 가이드
@@ -40,12 +42,19 @@ CSEngine/
 ### B. 엔진 C++ 수정
 ```
 1. src/ 폴더 수정
-2. cmake -G "Visual Studio 17 2022" -A x64 -S Editor/platforms/Windows -B build
-3. cmake --build build --config Debug
-4. TROUBLESHOOTING.md로 빌드 오류 해결
+2. powershell -ExecutionPolicy Bypass -File "prompt-files/tools/build.ps1"
+3. TROUBLESHOOTING.md로 빌드 오류 해결
 ```
 
-### C. REST API로 씬 자동 구성
+### C. Editor Backend 수정 (신규)
+```
+1. Editor/src/Backend/ 폴더의 *Backend.h/cpp 수정
+2. Direct 메서드는 GUI에서 직접 호출됨
+3. API 메서드는 pending 큐를 통해 비동기 처리
+4. ENGINE_REFERENCE.md의 Backend 아키텍처 참조
+```
+
+### D. REST API로 씬 자동 구성
 ```powershell
 # 에디터 실행 확인
 Invoke-RestMethod "http://localhost:8080/api/health"
@@ -55,7 +64,7 @@ $body = '{"path": "new"}'
 Invoke-RestMethod -Uri "http://localhost:8080/api/scene/load" -Method Post -ContentType "application/json" -Body $body
 ```
 
-### D. 새 게임 개발
+### E. 새 게임 개발
 1. 기존 DodgeMaster 스크립트 참고 (Assets/Script/)
 2. 씬 구성: REST API 또는 에디터 UI
 3. 테스트: Play 모드 + 로그 확인

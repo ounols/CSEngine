@@ -173,4 +173,83 @@ namespace CSEditor {
         }
     }
 
+    // ============================================
+    // Direct Operations Implementation
+    // ============================================
+
+    bool SceneBackend::LoadSceneDirect(const std::string& path) {
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) return false;
+
+        std::string fullPath;
+        if (path.find("Assets/") == 0) {
+            fullPath = CSE::NativeAssetsPath() + path.substr(7);
+        } else {
+            fullPath = path;
+        }
+
+        core->SetCurrentScene(fullPath);
+        core->ResizePreviewCore();
+        core->Update(0);
+        core->InvokeEditorRender();
+
+        ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
+                         "Scene loaded directly",
+                         ActionParams().Set("path", fullPath));
+
+        return true;
+    }
+
+    CSE::SScene* SceneBackend::CreateNewSceneDirect() {
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) return nullptr;
+
+        auto* newScene = new CSE::SScene();
+        newScene->m_name = "New Scene";
+        core->GetCore(SceneMgr)->SetScene(newScene);
+
+        ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
+                         "New scene created directly",
+                         ActionParams());
+
+        return newScene;
+    }
+
+    bool SceneBackend::SaveSceneDirect(const std::string& path) {
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) return false;
+
+        auto* scene = dynamic_cast<CSE::SScene*>(core->GetCore(SceneMgr)->GetCurrentScene());
+        if (!scene) return false;
+
+        std::string fullPath = path;
+        if (path.find("Assets/") == std::string::npos && path.find(CSE::NativeAssetsPath()) == std::string::npos) {
+            fullPath = CSE::NativeAssetsPath() + path;
+        }
+
+        bool success = CSE::SSceneLoader::SaveScene(scene, fullPath);
+
+        if (success) {
+            ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
+                             "Scene saved directly",
+                             ActionParams().Set("path", fullPath));
+        } else {
+            ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::ERR,
+                             "Scene save failed",
+                             ActionParams().Set("path", fullPath));
+        }
+
+        return success;
+    }
+
+    std::string SceneBackend::GetCurrentSceneName() {
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) return "";
+
+        const auto* scene = core->GetCore(SceneMgr)->GetCurrentScene();
+        if (!scene) return "";
+
+        return scene->m_name;
+    }
+
 }

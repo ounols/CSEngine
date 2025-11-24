@@ -210,4 +210,72 @@ namespace CSEditor {
         }
     }
 
+    // ============================================
+    // Direct Operations Implementation
+    // ============================================
+
+    bool EditorBackend::PlayDirect(int width, int height) {
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) return false;
+
+        if (core->IsPreview()) {
+            return false; // Already playing
+        }
+
+        core->InvokePreviewStart(width, height);
+
+        ACTION_LOG_PARAMS(ActionCategory::EDITOR, ActionSeverity::INFO,
+                         "Preview started directly",
+                         ActionParams()
+                             .Set("width", std::to_string(width))
+                             .Set("height", std::to_string(height)));
+
+        return true;
+    }
+
+    bool EditorBackend::StopDirect() {
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) return false;
+
+        if (!core->IsPreview()) {
+            return false; // Not playing
+        }
+
+        core->InvokePreviewStop();
+
+        ACTION_LOG_PARAMS(ActionCategory::EDITOR, ActionSeverity::INFO,
+                         "Preview stopped directly",
+                         ActionParams());
+
+        return true;
+    }
+
+    void EditorBackend::ResizePreviewDirect(int width, int height) {
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) return;
+
+        core->InvokePreviewResize(width, height);
+    }
+
+    bool EditorBackend::IsPlaying() {
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) return false;
+
+        return core->IsPreview();
+    }
+
+    unsigned int EditorBackend::GetPreviewTextureId() {
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) return 0;
+
+        return core->GetPreviewTextureId();
+    }
+
+    void EditorBackend::InvokeEditorRender() {
+        auto* core = EEngineCore::getEditorInstance();
+        if (!core) return;
+
+        core->InvokeEditorRender();
+    }
+
 }

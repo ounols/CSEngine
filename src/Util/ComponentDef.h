@@ -40,6 +40,7 @@ if (object == nullptr) {            \
 cloneName = new className(object);       \
 } else {    \
 cloneName = object->CreateComponent<className>();    \
-}
+} \
+cloneName->isEnable = isEnable;
 
 #endif //CSENGINE_APP_COMPONENTDEF_H

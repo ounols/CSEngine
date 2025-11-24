@@ -3,6 +3,10 @@
 #include <string>
 #include <mutex>
 
+namespace CSE {
+    class SScene;
+}
+
 namespace CSEditor {
 
     struct APIResponse;
@@ -20,7 +24,9 @@ namespace CSEditor {
         SceneBackend(const SceneBackend&) = delete;
         SceneBackend& operator=(const SceneBackend&) = delete;
 
-        // Scene operations
+        // ============================================
+        // API Operations (async, uses pending queue)
+        // ============================================
         APIResponse GetSceneInfo();
         APIResponse GetSceneList();
         APIResponse LoadScene(const std::string& body);
@@ -35,6 +41,36 @@ namespace CSEditor {
 
         // Process pending operations on main thread
         void ProcessPendingOperations();
+
+        // ============================================
+        // Direct Operations (sync, for GUI use)
+        // ============================================
+
+        /**
+         * @brief Load a scene directly (synchronous)
+         * @param path Full path to the scene file
+         * @return true on success, false on failure
+         */
+        bool LoadSceneDirect(const std::string& path);
+
+        /**
+         * @brief Create a new empty scene directly (synchronous)
+         * @return Pointer to the new scene or nullptr on failure
+         */
+        CSE::SScene* CreateNewSceneDirect();
+
+        /**
+         * @brief Save the current scene directly (synchronous)
+         * @param path Path to save the scene (relative to Assets/)
+         * @return true on success, false on failure
+         */
+        bool SaveSceneDirect(const std::string& path);
+
+        /**
+         * @brief Get the current scene name
+         * @return Current scene name or empty string if no scene loaded
+         */
+        std::string GetCurrentSceneName();
 
     private:
         SceneBackend() = default;

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <regex>
 #include "sqrat.h"
+#include "../Manager/ScriptMgr.h"
 #include "sqrat/sqratVM.h"
 #include "../Util/AssetsDef.h"
 #include "../Util/MoreString.h"
@@ -29,7 +30,8 @@ void SScriptObject::Init(const AssetMgr::AssetReference* asset) {
 }
 
 void SScriptObject::RegisterScript(const std::string& script) {
-    HSQUIRRELVM vm = DefaultVM::Get();
+    const auto& script_mgr = CORE->GetCore(ScriptMgr);
+    HSQUIRRELVM vm = script_mgr->GetVM();
 
     //register script
     if (!script.empty()) {

@@ -63,9 +63,9 @@ namespace CSE {
             return material;
         }
 
+        virtual bool IsRenderActive() const = 0;
+
     protected:
         SMaterial* material = nullptr;
-    public:
-        bool isRenderActive = false;
     };
 }
