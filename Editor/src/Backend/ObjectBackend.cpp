@@ -25,14 +25,7 @@ namespace CSEditor {
     APIResponse ObjectBackend::GetObjectList() {
         APIResponse response;
 
-        auto* core = EEngineCore::getEditorInstance();
-        if (!core) {
-            response.statusCode = 500;
-            response.body = "{\"error\":\"Editor core not available\"}";
-            return response;
-        }
-
-        auto* scene = dynamic_cast<CSE::SScene*>(core->GetCore(SceneMgr)->GetCurrentScene());
+        auto* scene = BackendUtils::GetCurrentScene();
         if (!scene) {
             response.statusCode = 404;
             response.body = "{\"error\":\"No scene loaded\"}";
@@ -49,7 +42,7 @@ namespace CSEditor {
             for (const auto* child : children) {
                 if (!first) oss << ",";
                 first = false;
-                oss << BackendUtils::GameObjectToJson(const_cast<CSE::SGameObject*>(child), false);
+                oss << BackendUtils::GameObjectToJson(child, false);
             }
         }
 

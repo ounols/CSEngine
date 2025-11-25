@@ -5,6 +5,7 @@
 #include <queue>
 #include "Base/WindowBase.h"
 #include "../../src/Manager/AssetMgr.h"
+#include "../Backend/AssetBackend.h"
 
 namespace CSE {
     class STexture;
@@ -13,7 +14,8 @@ namespace CSE {
 namespace CSEditor {
     class AssetWindow : public WindowBase {
     private:
-        typedef std::vector<CSE::AssetMgr::AssetReference*> AssetsVector;
+        using AssetsVector = AssetBackend::AssetsVector;
+        using AssetMap = AssetBackend::AssetMap;
 
     public:
         AssetWindow();
@@ -34,7 +36,7 @@ namespace CSEditor {
         void SaveCurrentScene();
 
     private:
-        void OnDragDrop(const CSE::AssetMgr::AssetReference& asset);
+        void OnDragDrop(CSE::AssetMgr::AssetReference* asset);
 
         bool OnAssetClickEvent(const CSE::AssetMgr::AssetReference& asset);
 
@@ -49,11 +51,11 @@ namespace CSEditor {
     private:
         std::string m_targetPath;
 
-        std::unordered_map<std::string, AssetsVector> m_assets;
-        AssetsVector* m_selectedFolder = nullptr;
+        AssetMap m_assets;
+        const AssetsVector* m_selectedFolder = nullptr;
         std::string m_currentPath;
         CSE::AssetMgr::AssetReference* m_currentSceneAsset = nullptr;
-        std::queue<void*> m_previewAssetQueue;
+        std::queue<CSE::AssetMgr::AssetReference*> m_previewAssetQueue;
 
         std::vector<std::string> m_pathSelector;
     };

@@ -105,11 +105,21 @@ namespace CSEditor {
                              .Set("object", objectName)
                              .Set("type", componentType));
 
-        response.body = "{\"status\":\"queued\"}";
+        {
+            std::lock_guard<std::mutex> lock(m_componentMutex);
+            PendingComponentRemove remove;
+            remove.objectName = objectName;
+            remove.componentType = componentType;
+            m_pendingComponentRemoves.push(remove);
+        }
+
+        response.body = "{\"status\":\"queued\",\"object\":\"" + BackendUtils::EscapeJsonString(objectName) +
+                       "\",\"type\":\"" + BackendUtils::EscapeJsonString(componentType) + "\"}";
         return response;
     }
 
     void ComponentBackend::ProcessPendingOperations() {
+        // Process pending component adds
         while (true) {
             PendingComponentAdd add;
             {
@@ -120,7 +130,31 @@ namespace CSEditor {
             }
 
             auto* obj = BackendUtils::FindGameObjectByName(add.objectName);
-            AddComponentDirect(obj, add.componentType, add.scriptPath);
+            if (obj) {
+                AddComponentDirect(obj, add.componentType, add.scriptPath);
+            }
+        }
+
+        // Process pending component removes
+        while (true) {
+            PendingComponentRemove remove;
+            {
+                std::lock_guard<std::mutex> lock(m_componentMutex);
+                if (m_pendingComponentRemoves.empty()) break;
+                remove = m_pendingComponentRemoves.front();
+                m_pendingComponentRemoves.pop();
+            }
+
+            auto* obj = BackendUtils::FindGameObjectByName(remove.objectName);
+            if (obj) {
+                const auto& components = obj->GetComponents();
+                for (auto* comp : components) {
+                    if (comp->GetClassType() == remove.componentType) {
+                        RemoveComponentDirect(obj, comp);
+                        break;
+                    }
+                }
+            }
         }
     }
 

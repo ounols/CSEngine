@@ -22,7 +22,7 @@ namespace CSEditor {
     APIResponse EditorBackend::GetEditorInfo() {
         APIResponse response;
 
-        auto* core = EEngineCore::getEditorInstance();
+        auto* core = BackendUtils::GetEditorCore();
         std::ostringstream oss;
         oss << "{";
         oss << "\"version\":\"CSEditor 1.0\",";
@@ -50,17 +50,13 @@ namespace CSEditor {
                          ActionParams().Set("command", command));
 
         if (command == "play") {
-            auto* core = EEngineCore::getEditorInstance();
-            if (core && !core->IsPreview()) {
-                core->InvokePreviewStart(1280, 720);
+            if (PlayDirect(1280, 720)) {
                 response.body = "{\"status\":\"ok\",\"command\":\"play\",\"resolution\":\"1280x720\"}";
             } else {
                 response.body = "{\"status\":\"already_playing\"}";
             }
         } else if (command == "stop") {
-            auto* core = EEngineCore::getEditorInstance();
-            if (core && core->IsPreview()) {
-                core->InvokePreviewStop();
+            if (StopDirect()) {
                 response.body = "{\"status\":\"ok\",\"command\":\"stop\"}";
             } else {
                 response.body = "{\"status\":\"not_playing\"}";
@@ -75,7 +71,7 @@ namespace CSEditor {
     APIResponse EditorBackend::CapturePreview(const std::string& queryParams) {
         APIResponse response;
 
-        auto* core = EEngineCore::getEditorInstance();
+        auto* core = BackendUtils::GetEditorCore();
         if (!core) {
             response.statusCode = 500;
             response.body = "{\"error\":\"Editor core not available\"}";
@@ -150,7 +146,7 @@ namespace CSEditor {
     }
 
     void EditorBackend::ProcessPendingOperations() {
-        auto* core = EEngineCore::getEditorInstance();
+        auto* core = BackendUtils::GetEditorCore();
         if (!core) return;
 
         while (true) {
@@ -215,11 +211,9 @@ namespace CSEditor {
     // ============================================
 
     bool EditorBackend::PlayDirect(int width, int height) {
-        auto* core = EEngineCore::getEditorInstance();
-        if (!core) return false;
-
-        if (core->IsPreview()) {
-            return false; // Already playing
+        auto* core = BackendUtils::GetEditorCore();
+        if (!core || core->IsPreview()) {
+            return false; // Already playing or no core
         }
 
         core->InvokePreviewStart(width, height);
@@ -234,11 +228,9 @@ namespace CSEditor {
     }
 
     bool EditorBackend::StopDirect() {
-        auto* core = EEngineCore::getEditorInstance();
-        if (!core) return false;
-
-        if (!core->IsPreview()) {
-            return false; // Not playing
+        auto* core = BackendUtils::GetEditorCore();
+        if (!core || !core->IsPreview()) {
+            return false; // Not playing or no core
         }
 
         core->InvokePreviewStop();
@@ -251,28 +243,26 @@ namespace CSEditor {
     }
 
     void EditorBackend::ResizePreviewDirect(int width, int height) {
-        auto* core = EEngineCore::getEditorInstance();
+        auto* core = BackendUtils::GetEditorCore();
         if (!core) return;
 
         core->InvokePreviewResize(width, height);
     }
 
     bool EditorBackend::IsPlaying() {
-        auto* core = EEngineCore::getEditorInstance();
-        if (!core) return false;
-
-        return core->IsPreview();
+        auto* core = BackendUtils::GetEditorCore();
+        return core && core->IsPreview();
     }
 
     unsigned int EditorBackend::GetPreviewTextureId() {
-        auto* core = EEngineCore::getEditorInstance();
+        auto* core = BackendUtils::GetEditorCore();
         if (!core) return 0;
 
         return core->GetPreviewTextureId();
     }
 
     void EditorBackend::InvokeEditorRender() {
-        auto* core = EEngineCore::getEditorInstance();
+        auto* core = BackendUtils::GetEditorCore();
         if (!core) return;
 
         core->InvokeEditorRender();

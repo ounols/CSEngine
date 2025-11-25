@@ -20,7 +20,7 @@ namespace CSEditor {
     APIResponse SceneBackend::GetSceneInfo() {
         APIResponse response;
 
-        auto* core = EEngineCore::getEditorInstance();
+        auto* core = BackendUtils::GetEditorCore();
         if (!core) {
             response.statusCode = 500;
             response.body = "{\"error\":\"Editor core not available\"}";
@@ -120,7 +120,7 @@ namespace CSEditor {
     }
 
     void SceneBackend::ProcessPendingOperations() {
-        auto* core = EEngineCore::getEditorInstance();
+        auto* core = BackendUtils::GetEditorCore();
         if (!core) return;
 
         // Process pending scene load/creation
@@ -128,27 +128,9 @@ namespace CSEditor {
             std::string scenePath = ConsumePendingScenePath();
             if (!scenePath.empty()) {
                 if (scenePath == "new") {
-                    auto* newScene = new CSE::SScene();
-                    newScene->m_name = "New Scene";
-                    core->GetCore(SceneMgr)->SetScene(newScene);
-                    ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
-                                     "API: New scene created",
-                                     ActionParams());
+                    CreateNewSceneDirect();
                 } else {
-                    std::string fullPath;
-                    if (scenePath.find("Assets/") == 0) {
-                        fullPath = CSE::NativeAssetsPath() + scenePath.substr(7);
-                    } else {
-                        fullPath = scenePath;
-                    }
-
-                    core->SetCurrentScene(fullPath);
-                    core->ResizePreviewCore();
-                    core->Update(0);
-                    core->InvokeEditorRender();
-                    ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
-                                     "API: Scene loaded from file",
-                                     ActionParams().Set("path", fullPath));
+                    LoadSceneDirect(scenePath);
                 }
             }
         }
@@ -156,20 +138,7 @@ namespace CSEditor {
         // Process pending scene save
         if (HasPendingSceneSave()) {
             std::string savePath = ConsumePendingSceneSavePath();
-            auto* scene = dynamic_cast<CSE::SScene*>(core->GetCore(SceneMgr)->GetCurrentScene());
-            if (scene) {
-                std::string fullPath = CSE::NativeAssetsPath() + savePath;
-                bool success = CSE::SSceneLoader::SaveScene(scene, fullPath);
-                if (success) {
-                    ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
-                                     "API: Scene saved",
-                                     ActionParams().Set("path", fullPath));
-                } else {
-                    ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::ERR,
-                                     "API: Scene save failed",
-                                     ActionParams().Set("path", fullPath));
-                }
-            }
+            SaveSceneDirect(savePath);
         }
     }
 
@@ -178,7 +147,7 @@ namespace CSEditor {
     // ============================================
 
     bool SceneBackend::LoadSceneDirect(const std::string& path) {
-        auto* core = EEngineCore::getEditorInstance();
+        auto* core = BackendUtils::GetEditorCore();
         if (!core) return false;
 
         std::string fullPath;
@@ -201,7 +170,7 @@ namespace CSEditor {
     }
 
     CSE::SScene* SceneBackend::CreateNewSceneDirect() {
-        auto* core = EEngineCore::getEditorInstance();
+        auto* core = BackendUtils::GetEditorCore();
         if (!core) return nullptr;
 
         auto* newScene = new CSE::SScene();
@@ -216,10 +185,7 @@ namespace CSEditor {
     }
 
     bool SceneBackend::SaveSceneDirect(const std::string& path) {
-        auto* core = EEngineCore::getEditorInstance();
-        if (!core) return false;
-
-        auto* scene = dynamic_cast<CSE::SScene*>(core->GetCore(SceneMgr)->GetCurrentScene());
+        auto* scene = BackendUtils::GetCurrentScene();
         if (!scene) return false;
 
         std::string fullPath = path;
@@ -227,23 +193,18 @@ namespace CSEditor {
             fullPath = CSE::NativeAssetsPath() + path;
         }
 
-        bool success = CSE::SSceneLoader::SaveScene(scene, fullPath);
+        const bool success = CSE::SSceneLoader::SaveScene(scene, fullPath);
 
-        if (success) {
-            ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::INFO,
-                             "Scene saved directly",
-                             ActionParams().Set("path", fullPath));
-        } else {
-            ACTION_LOG_PARAMS(ActionCategory::SCENE, ActionSeverity::ERR,
-                             "Scene save failed",
-                             ActionParams().Set("path", fullPath));
-        }
+        ACTION_LOG_PARAMS(ActionCategory::SCENE,
+                         success ? ActionSeverity::INFO : ActionSeverity::ERR,
+                         success ? "Scene saved directly" : "Scene save failed",
+                         ActionParams().Set("path", fullPath));
 
         return success;
     }
 
     std::string SceneBackend::GetCurrentSceneName() {
-        auto* core = EEngineCore::getEditorInstance();
+        auto* core = BackendUtils::GetEditorCore();
         if (!core) return "";
 
         const auto* scene = core->GetCore(SceneMgr)->GetCurrentScene();

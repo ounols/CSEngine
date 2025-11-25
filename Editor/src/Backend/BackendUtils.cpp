@@ -1,11 +1,22 @@
 #include "BackendUtils.h"
 #include "../Manager/EEngineCore.h"
 #include "../../../src/Object/SGameObject.h"
+#include "../../../src/Object/SScene.h"
 #include "../../../src/Manager/SceneMgr.h"
 #include "../../../src/Manager/GameObjectMgr.h"
 #include "../../../src/Component/TransformComponent.h"
 
 namespace CSEditor {
+
+    EEngineCore* BackendUtils::GetEditorCore() {
+        return EEngineCore::getEditorInstance();
+    }
+
+    CSE::SScene* BackendUtils::GetCurrentScene() {
+        auto* core = GetEditorCore();
+        if (!core) return nullptr;
+        return dynamic_cast<CSE::SScene*>(core->GetCore(SceneMgr)->GetCurrentScene());
+    }
 
     std::string BackendUtils::ParseJsonValue(const std::string& json, const std::string& key) {
         std::string searchKey = "\"" + key + "\"";
@@ -69,7 +80,7 @@ namespace CSEditor {
         return oss.str();
     }
 
-    std::string BackendUtils::GameObjectToJson(CSE::SGameObject* obj, bool includeChildren) {
+    std::string BackendUtils::GameObjectToJson(const CSE::SGameObject* obj, bool includeChildren) {
         if (!obj) return "null";
 
         std::ostringstream oss;
@@ -77,7 +88,7 @@ namespace CSEditor {
         oss << "\"name\":\"" << EscapeJsonString(obj->GetName()) << "\",";
         oss << "\"enabled\":" << (obj->GetIsEnable() ? "true" : "false") << ",";
 
-        auto* transform = obj->GetTransform();
+        const auto* transform = obj->GetTransform();
         if (transform) {
             oss << "\"transform\":{";
             oss << "\"position\":[" << transform->m_position.x << "," << transform->m_position.y << "," << transform->m_position.z << "],";
@@ -103,7 +114,7 @@ namespace CSEditor {
             for (const auto* child : children) {
                 if (!first) oss << ",";
                 first = false;
-                oss << GameObjectToJson(const_cast<CSE::SGameObject*>(child), true);
+                oss << GameObjectToJson(child, true);
             }
             oss << "]";
         }
@@ -113,7 +124,7 @@ namespace CSEditor {
     }
 
     CSE::SGameObject* BackendUtils::FindGameObjectByName(const std::string& name) {
-        auto* core = EEngineCore::getEditorInstance();
+        auto* core = GetEditorCore();
         if (!core) return nullptr;
 
         auto* scene = core->GetCore(SceneMgr)->GetCurrentScene();
