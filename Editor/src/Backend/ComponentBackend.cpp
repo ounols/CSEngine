@@ -3,6 +3,7 @@
 #include "../Manager/EditorAPIServer.h"
 #include "../Manager/EditorActionLogger.h"
 #include "../Manager/EEngineCore.h"
+#include "../../../src/Util/Loader/XML/XML.h"
 #include "../../../src/Object/SGameObject.h"
 #include "../../../src/Component/SComponent.h"
 #include "../../../src/Component/TransformComponent.h"
@@ -39,14 +40,17 @@ namespace CSEditor {
         }
 
         std::ostringstream oss;
-        oss << "{\"object\":\"" << BackendUtils::EscapeJsonString(objectName) << "\",\"components\":[";
+        oss << R"({"object":")" << BackendUtils::EscapeJsonString(objectName) << "\",\"components\":[";
 
         const auto& components = obj->GetComponents();
         bool first = true;
         for (const auto& comp : components) {
             if (!first) oss << ",";
             first = false;
-            oss << "{\"type\":\"" << BackendUtils::EscapeJsonString(comp->GetClassType()) << "\"}";
+            oss << R"({"type":")" << BackendUtils::EscapeJsonString(comp->GetClassType()) << '\"';
+            oss << R"({"hash":")" << BackendUtils::EscapeJsonString(comp->GetHash()) << '\"';
+            oss << R"({"values":")" << BackendUtils::EscapeJsonString(comp->PrintValue()) << '\"';
+            oss << "}";
         }
 
         oss << "]}";
@@ -59,11 +63,11 @@ namespace CSEditor {
 
         std::string objectName = BackendUtils::ParseJsonValue(body, "object");
         std::string componentType = BackendUtils::ParseJsonValue(body, "type");
-        std::string scriptPath = BackendUtils::ParseJsonValue(body, "scriptPath");
+        std::string rawValues = BackendUtils::ParseJsonValue(body, "rawValues");
 
         if (objectName.empty() || componentType.empty()) {
             response.statusCode = 400;
-            response.body = "{\"error\":\"Missing object or type parameter\"}";
+            response.body = R"({"error":"Missing object or type parameter"})";
             return response;
         }
 
@@ -76,14 +80,14 @@ namespace CSEditor {
         {
             std::lock_guard<std::mutex> lock(m_componentMutex);
             PendingComponentAdd add;
-            add.objectName = objectName;
-            add.componentType = componentType;
-            add.scriptPath = scriptPath;
+            add.objectName = std::move(objectName);
+            add.componentType = std::move(componentType);
+            add.node = XFILE().loadBuffer(rawValues);
             m_pendingComponentAdds.push(add);
-        }
 
-        response.body = "{\"status\":\"queued\",\"object\":\"" + BackendUtils::EscapeJsonString(objectName) +
-                       "\",\"type\":\"" + BackendUtils::EscapeJsonString(componentType) + "\"}";
+            response.body = R"({"status":"queued","object":")" + BackendUtils::EscapeJsonString(add.objectName) +
+               R"(","type":")" + BackendUtils::EscapeJsonString(add.componentType) + "\"}";
+        }
         return response;
     }
 
@@ -113,8 +117,8 @@ namespace CSEditor {
             m_pendingComponentRemoves.push(remove);
         }
 
-        response.body = "{\"status\":\"queued\",\"object\":\"" + BackendUtils::EscapeJsonString(objectName) +
-                       "\",\"type\":\"" + BackendUtils::EscapeJsonString(componentType) + "\"}";
+        response.body = R"({"status":"queued","object":")" + BackendUtils::EscapeJsonString(objectName) +
+                       R"(","type":")" + BackendUtils::EscapeJsonString(componentType) + "\"}";
         return response;
     }
 
@@ -131,8 +135,10 @@ namespace CSEditor {
 
             auto* obj = BackendUtils::FindGameObjectByName(add.objectName);
             if (obj) {
-                AddComponentDirect(obj, add.componentType, add.scriptPath);
+                AddComponentDirect(obj, add.componentType, add.node);
             }
+
+            SAFE_DELETE(add.node);
         }
 
         // Process pending component removes
@@ -163,17 +169,25 @@ namespace CSEditor {
     // ============================================
 
     CSE::SComponent* ComponentBackend::AddComponentDirect(CSE::SGameObject* object,
-                                                         const std::string& componentType,
-                                                         const std::string& scriptPath) {
+                                                          const std::string& componentType,
+                                                          const XNode* node) {
         if (!object) return nullptr;
 
         CSE::SComponent* component = nullptr;
 
         component = object->CreateComponent(componentType.c_str());
 
-        if (componentType == "CustomComponent") {
-            if (!scriptPath.empty()) {
-                static_cast<CSE::CustomComponent*>(component)->SetClassName(scriptPath);
+        if (node != nullptr) {
+            for (const auto& value: node->children) {
+                if (value.name != "value") continue;
+
+                std::string v_name = value.getAttribute("name").value;
+                auto v_values = value.value.toStringVector();
+
+                for (auto& v_value : v_values) {
+                    v_value = CSE::ConvertSpaceStr(v_value, true);
+                }
+                component->SetValue(v_name, v_values);
             }
         }
 

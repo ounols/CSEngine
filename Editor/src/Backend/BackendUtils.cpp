@@ -65,7 +65,7 @@ namespace CSEditor {
 
     std::string BackendUtils::EscapeJsonString(const std::string& str) {
         std::ostringstream oss;
-        for (char c : str) {
+        for (const char c : str) {
             switch (c) {
                 case '"':  oss << "\\\""; break;
                 case '\\': oss << "\\\\"; break;
@@ -86,6 +86,7 @@ namespace CSEditor {
         std::ostringstream oss;
         oss << "{";
         oss << "\"name\":\"" << EscapeJsonString(obj->GetName()) << "\",";
+        oss << "\"hash\":\"" << EscapeJsonString(obj->GetHash()) << "\",";
         oss << "\"enabled\":" << (obj->GetIsEnable() ? "true" : "false") << ",";
 
         const auto* transform = obj->GetTransform();
@@ -103,7 +104,7 @@ namespace CSEditor {
         for (const auto& comp : components) {
             if (!first) oss << ",";
             first = false;
-            oss << "\"" << EscapeJsonString(comp->GetClassType()) << "\"";
+            oss << "\"" << EscapeJsonString(comp->GetClassType()) << " (" << comp->GetHash() << ")\"";
         }
         oss << "]";
 

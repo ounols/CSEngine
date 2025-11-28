@@ -1,16 +1,85 @@
 # CSEngine 새 세션 시작 가이드
 
+## ⚡ 핵심 명령어 (가장 자주 사용)
+
+### 에디터 상태 확인 & 로그
+```bash
+# 에디터 실행 여부 확인
+curl http://localhost:8080/api/health
+
+# 로그 확인 (문제 발생 시 제일 먼저!)
+curl "http://localhost:8080/api/log/recent?count=50"
+```
+
+### 게임 테스트 플로우
+```bash
+# 1. 씬 로드
+curl -X POST -H "Content-Type: application/json" -d "{\"path\":\"Assets/Scene/DodgeMaster.scene\"}" http://localhost:8080/api/scene/load
+Start-Sleep -Seconds 2
+
+# 2. 플레이 시작
+curl -X POST -H "Content-Type: application/json" -d "{\"command\":\"play\"}" http://localhost:8080/api/editor/command
+Start-Sleep -Seconds 5
+
+# 3. 로그로 동작 확인
+curl "http://localhost:8080/api/log/recent?count=30"
+
+# 4. 정지
+curl -X POST -H "Content-Type: application/json" -d "{\"command\":\"stop\"}" http://localhost:8080/api/editor/command
+```
+
+### 빌드 & 에디터 실행
+```powershell
+# C++ 코드 수정 후 빌드
+powershell -ExecutionPolicy Bypass -File "prompt-files/tools/build.ps1"
+
+# 에디터 실행 (API 준비될 때까지 대기)
+powershell -ExecutionPolicy Bypass -File "prompt-files/tools/run-editor.ps1" -WaitApi
+```
+
+## 📋 작업별 체크리스트
+
+### 새 게임 개발 시
+- [ ] `WORKFLOWS.md`의 "새 게임 개발" 섹션 읽기
+- [ ] 기존 DodgeMaster 스크립트 참고 (`Assets/Script/`)
+- [ ] 씬 구성 (REST API 또는 에디터 UI)
+- [ ] 스크립트 작성 (Squirrel .nut 파일)
+- [ ] Play 모드로 테스트
+- [ ] 로그로 동작 확인
+
+### 엔진 C++ 수정 시
+- [ ] 수정 전에 백업 또는 브랜치 생성 고려
+- [ ] `src/` 폴더 수정
+- [ ] 빌드 (`build.ps1`)
+- [ ] `TROUBLESHOOTING.md`로 빌드 오류 해결
+- [ ] 에디터 재시작
+
+### 에디터 Backend 수정 시
+- [ ] `Editor/src/Backend/` 폴더의 *Backend.h/cpp 수정
+- [ ] Direct 메서드는 GUI 직접 호출용
+- [ ] API 메서드는 pending 큐 통한 비동기 처리
+- [ ] `ENGINE_REFERENCE.md`의 Backend 아키텍처 참조
+
+### 문제 발생 시
+- [ ] **먼저 로그 확인** (`curl "http://localhost:8080/api/log/recent?count=50"`)
+- [ ] 로그 API 실패 시 파일 직접 읽기: `Editor/platforms/Windows/x64/Debug/editor_log_*.json`
+- [ ] `TROUBLESHOOTING.md`에서 유사 사례 검색
+- [ ] 근본 원인 파악 후 수정
+- [ ] 필요한 경우만 에디터 재시작
+
+## 📖 문서 읽기 순서
+1. `WORKFLOWS.md` - 실전 워크플로우 (게임 개발 시나리오)
+2. `PROJECT_STATUS.md` - 현재 무엇이 완료되었는지
+3. `ENGINE_REFERENCE.md` - API/스크립트 작성법 + Backend 아키텍처
+4. `TROUBLESHOOTING.md` - 문제 발생 시 해결책
+5. `tools/README.md` - 자동화 스크립트 사용법
+
 ## 프로젝트 개요
 **CSEngine**: C++/OpenGL 기반 3D 게임 엔진
+- **기술 스택**: C++17, OpenGL 3.3+, Squirrel 3.x, ImGui 1.89
 - **스크립팅**: Squirrel 언어 (.nut 파일)
 - **에디터**: ImGui UI + REST API (localhost:8080)
 - **현재 상태**: Backend 아키텍처 리팩토링 진행 중
-
-## 이 폴더 파일 읽기 순서
-1. `PROJECT_STATUS.md` - 현재 무엇이 완료되었는지
-2. `ENGINE_REFERENCE.md` - API/스크립트 작성법 + Backend 아키텍처
-3. `TROUBLESHOOTING.md` - 문제 발생 시 해결책
-4. `tools/README.md` - 자동화 스크립트 사용법
 
 ## 프로젝트 구조
 ```

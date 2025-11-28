@@ -4,6 +4,9 @@
 #include <queue>
 #include <mutex>
 
+
+class XNode;
+
 namespace CSE {
     class SGameObject;
     class SComponent;
@@ -19,7 +22,7 @@ namespace CSEditor {
     struct PendingComponentAdd {
         std::string objectName;
         std::string componentType;
-        std::string scriptPath;
+        const XNode* node;
     };
 
     /**
@@ -61,12 +64,12 @@ namespace CSEditor {
          * @brief Add a component directly (synchronous)
          * @param object Target GameObject
          * @param componentType Type of component to add
-         * @param scriptPath Optional script path for CustomComponent
+         * @param node Optional script path for CustomComponent
          * @return Created component or nullptr on failure
          */
         CSE::SComponent* AddComponentDirect(CSE::SGameObject* object,
-                                           const std::string& componentType,
-                                           const std::string& scriptPath = "");
+                                            const std::string& componentType,
+                                            const XNode* node = nullptr);
 
         /**
          * @brief Remove a component directly (synchronous)
