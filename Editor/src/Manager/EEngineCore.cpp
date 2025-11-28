@@ -1,6 +1,9 @@
 #include "EEngineCore.h"
 #include "EPreviewCore.h"
 #include "ELogMgr.h"
+#include "EditorActionLogger.h"
+#include "EditorAPIServer.h"
+#include "DebugStackTrace.h"
 #include "../Objects/Base/HierarchyData.h"
 #include "../../src/MacroDef.h"
 #include "../../src/OGLDef.h"
@@ -49,9 +52,19 @@ void EEngineCore::delInstance() {
 EEngineCore::EEngineCore() = default;
 
 EEngineCore::~EEngineCore() {
+    m_bIsDestroyQueue = true;
+    ACTION_LOG_SYSTEM(ActionSeverity::INFO, "Editor engine shutting down", "");
+
+    // Stop API server
+    EditorAPIServer::GetInstance().Stop();
+
+    // Uninstall crash handlers
+    DebugStackTrace::UninstallCrashHandlers();
+
     if (m_previewCore != nullptr) StopPreviewCore();
     glDeleteTextures(1, &m_previewTextureId);
     glDeleteFramebuffers(1, &m_previewFbo);
+    EditorActionLogger::GetInstance().Shutdown();
 }
 
 void EEngineCore::BindPreviewFramebuffer() const {
@@ -67,16 +80,20 @@ void EEngineCore::InitPreviewFramebuffer() {
 void EEngineCore::StartPreviewCore() {
     if (m_previewCore != nullptr) throw -1;
 
+    ACTION_LOG_SCENE("Play mode started", m_scenePath);
+
     m_logMgr->ClearLog();
     m_previewElapsedTime = 0.f;
     m_startTime = GetCurrentMillis();
 
     m_previewCore = new EPreviewCore();
-//    if (m_previewFbo <= 0) {
-//        InitPreviewFramebuffer();
-//        BindPreviewFramebuffer();
-//        ResizePreviewFramebuffer(m_previewWidth, m_previewHeight);
-//    }
+    // Always resize framebuffer when starting preview to ensure texture is allocated
+    if (m_previewFbo <= 0) {
+        InitPreviewFramebuffer();
+    }
+    BindPreviewFramebuffer();
+    ResizePreviewFramebuffer(m_previewWidth, m_previewHeight);
+    
     m_previewCore->Init(m_previewWidth, m_previewHeight);
     if(!m_scenePath.empty()) {
         SScene* scene = SSceneLoader::LoadScene(m_scenePath);
@@ -87,6 +104,7 @@ void EEngineCore::StartPreviewCore() {
 }
 
 void EEngineCore::StopPreviewCore() {
+    ACTION_LOG_SCENE("Play mode stopped", m_scenePath);
     m_previewCore->ExterminateWithoutReflectionDefine();
     delete m_previewCore;
     m_previewCore = nullptr;
@@ -135,6 +153,18 @@ void EEngineCore::GenerateCores() {
     m_cores = std::vector<CoreBase*>();
     m_cores.reserve(10);
 
+    // Initialize action logger
+    EditorActionLogger::GetInstance().Init();
+    ACTION_LOG_SYSTEM(ActionSeverity::INFO, "Editor engine initializing", "GenerateCores started");
+
+    // Install crash handlers for debugging
+    DebugStackTrace::InstallCrashHandlers();
+
+    // Start API server for external tool integration
+    if (EditorAPIServer::GetInstance().Start(8080)) {
+        ACTION_LOG_SYSTEM(ActionSeverity::INFO, "API Server started", "port=8080");
+    }
+
     m_reflectionMgr = new ReflectionMgr();
     m_resMgr = new ResMgr();
     m_gameObjectMgr = new GameObjectMgr();
@@ -145,6 +175,11 @@ void EEngineCore::GenerateCores() {
     m_sceneMgr = new SceneMgr();
     m_memoryMgr = new MemoryMgr();
     m_logMgr = new ELogMgr();
+    
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
+    // ScriptMgr 초기화 추가 (에디터에서도 스크립트를 로드할 수 있도록)
+    m_scriptMgr = new ScriptMgr();
+#endif
 
     m_cores.push_back(m_reflectionMgr);
     m_cores.push_back(m_resMgr);
@@ -163,6 +198,10 @@ void EEngineCore::GenerateCores() {
     m_cores.push_back(m_memoryMgr);
 
     m_cores.push_back(m_logMgr);
+    
+#ifndef CSE_GLOBAL_SCRIPT_DISABLED
+    m_cores.push_back(m_scriptMgr);
+#endif
 }
 
 void EEngineCore::AddLog(const char* log, int category) {
@@ -183,6 +222,17 @@ void EEngineCore::Reset() {
 
 void EEngineCore::SetCurrentScene(std::string path) {
     m_scenePath = std::move(path);
+    ACTION_LOG_SCENE("Scene loading...", m_scenePath);
     const auto& scene = CSE::SSceneLoader::LoadScene(m_scenePath);
+    
+    if (!scene) {
+        ACTION_LOG_SYSTEM(ActionSeverity::ERR, "Scene load failed", "SSceneLoader returned null");
+        return;
+    }
+    
     m_sceneMgr->SetScene(scene);
+    
+    // Initialize scene to register all objects to GameObjectMgr
+    scene->Init();
+    ACTION_LOG_SCENE("Scene initialized", m_scenePath);
 }

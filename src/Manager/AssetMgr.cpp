@@ -78,7 +78,7 @@ AssetMgr::AssetReference* AssetMgr::GetAsset(const std::string& name) const {
         if (make_lower_copy(asset->name_full) == lowerName) return asset;
     }
     auto errorLog = "[Assets Warning] " + name + " does not exist.";
-    SafeLog::Log(errorLog.c_str());
+    SafeLog::LogWarn(errorLog.c_str());
     return nullptr;
 }
 

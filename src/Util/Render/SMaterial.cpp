@@ -113,7 +113,7 @@ void SMaterial::SetTexture(const std::string& name, SResource* texture) {
 }
 
 void SMaterial::SetRawData(const std::string& name, std::vector<std::string> raw) {
-    auto find_iter = m_elements.find(name);
+    const auto find_iter = m_elements.find(name);
     if (find_iter == m_elements.end()) return;
     find_iter->second->valueStr = std::move(raw);
     SetBindFuncByType(find_iter->second);

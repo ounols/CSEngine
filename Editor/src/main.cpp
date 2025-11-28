@@ -44,6 +44,7 @@ static void MainLoopForEmscripten()     { MainLoopForEmscriptenP(); }
 
 #include "Objects/MainDocker.h"
 #include "Manager/EEngineCore.h"
+#include "Manager/EditorAPIServer.h"
 
 #define __CSE_REFLECTION_ENABLE__
 
@@ -161,9 +162,12 @@ void setupImGui(const char* glsl_version) {
     ImGui_ImplOpenGL3_Init(glsl_version);
 }
 
-void renderFrame(CSEditor::MainDocker* mainDocker, bool& show_demo_window, bool& show_another_window, 
+void renderFrame(CSEditor::MainDocker* mainDocker, bool& show_demo_window, bool& show_another_window,
                 const ImVec4& clear_color) {
     glfwPollEvents();
+
+    // Process API server commands on main thread (scene loading, etc.)
+    CSEditor::EditorAPIServer::GetInstance().ProcessMainThreadCommands();
 
     ImGuiIO& io = ImGui::GetIO();
     if (io.DeltaTime <= 0.0f) io.DeltaTime = 0.00001f;

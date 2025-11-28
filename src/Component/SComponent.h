@@ -62,7 +62,8 @@ namespace CSE {
 
 
         virtual bool GetIsEnable() const {
-            return isEnable;
+            if (!gameObject) return false;
+            return gameObject->GetIsEnable() && isEnable;
         }
 
 

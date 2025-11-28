@@ -87,7 +87,7 @@ DeferredRenderGroup::RenderGbuffer(const CameraBase& camera, const SGBuffer& gbu
 
     for (const auto& render : renderLayer) {
         if (render == nullptr) continue;
-        if (!render->isRenderActive) continue;
+        if (!render->IsRenderActive()) continue;
 
         const auto& material = render->GetMaterial();
         material->AttachElement(0);

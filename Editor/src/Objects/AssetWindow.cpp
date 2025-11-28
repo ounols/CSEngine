@@ -2,6 +2,10 @@
 
 #include <utility>
 #include "../Manager/EEngineCore.h"
+#include "../Manager/EditorActionLogger.h"
+#include "../Backend/AssetBackend.h"
+#include "../Backend/SceneBackend.h"
+#include "../Backend/EditorBackend.h"
 #include "../Objects/MainDocker.h"
 #include "../../src/Manager/ResMgr.h"
 #include "../../src/Manager/SceneMgr.h"
@@ -36,47 +40,36 @@ void AssetWindow::SetUI() {
 }
 
 void AssetWindow::RefreshAssets() {
-    m_assets.clear();
-    const auto& assetsList = EEngineCore::getEditorInstance()->GetResMgrCore()->GetAllAssetReferences();
-    for (const auto& asset: assetsList) {
-        m_assets[asset->path].push_back(asset);
-    }
+    m_assets = AssetBackend::GetInstance().RefreshAssetsDirect();
 }
 
 void AssetWindow::RefreshExplorer() {
-    const auto& iter = m_assets.find(m_currentPath);
-    if (iter == m_assets.end()) return;
-    m_selectedFolder = &iter->second;
+    m_selectedFolder = AssetBackend::GetInstance().GetFolderAssetsDirect(m_currentPath, m_assets);
 }
 
 void AssetWindow::ChangeCurrentPath(std::string path) {
     m_currentPath = std::move(path);
-    std::string path_str = m_currentPath.substr(m_targetPath.size());
-    m_pathSelector = CSE::split(path_str, '/');
+    m_pathSelector = AssetBackend::GetInstance().ParsePathComponentsDirect(m_currentPath, m_targetPath);
 }
 
-void AssetWindow::OnDragDrop(const CSE::AssetMgr::AssetReference& asset) {
-//    if(asset.resource == nullptr) return;
+void AssetWindow::OnDragDrop(CSE::AssetMgr::AssetReference* asset) {
+    if (!asset) return;
     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
-        ImGui::SetDragDropPayload("AW_RES", &asset, sizeof(CSE::AssetMgr::AssetReference));
+        ImGui::SetDragDropPayload("AW_RES", &asset, sizeof(CSE::AssetMgr::AssetReference*));
         ImGui::EndDragDropSource();
     }
 }
 
 bool AssetWindow::OnAssetClickEvent(const CSE::AssetMgr::AssetReference& asset) {
     if (asset.extension == "/\\?folder") {
+        ACTION_LOG_ASSET("Opened folder", asset.name_path);
         ChangeCurrentPath(asset.name_path + '/');
         RefreshExplorer();
-    } else if (asset.extension == "scene" && !EEngineCore::getEditorInstance()->IsPreview()) {
+    } else if (asset.extension == "scene" && !EditorBackend::GetInstance().IsPlaying()) {
+        ACTION_LOG_ASSET("Opened scene", asset.name_path);
         m_mainDocker->Reset();
-        const auto& editorCore = EEngineCore::getEditorInstance();
         m_currentSceneAsset = const_cast<CSE::AssetMgr::AssetReference*>(&asset);
-//        ReleasePreviewQueue();
-        editorCore->SetCurrentScene(asset.name_path);
-        editorCore->ResizePreviewCore();
-        editorCore->Update(0);
-        editorCore->InvokeEditorRender();
-
+        SceneBackend::GetInstance().LoadSceneDirect(asset.name_path);
     } else {
         return false;
     }
@@ -88,16 +81,19 @@ bool AssetWindow::OnAssetClickEvent(const CSE::AssetMgr::AssetReference& asset) 
 }
 
 void AssetWindow::ReleasePreviewQueue() {
-    for (; !m_previewAssetQueue.empty(); m_previewAssetQueue.pop()) {
-        const auto& texture = static_cast<CSE::AssetMgr::AssetReference*>(m_previewAssetQueue.front());
-        CORE->GetCore(ResMgr)->Remove(texture->resource);
-        texture->resource = nullptr;
+    while (!m_previewAssetQueue.empty()) {
+        auto* asset = m_previewAssetQueue.front();
+        m_previewAssetQueue.pop();
+        AssetBackend::GetInstance().ReleaseAssetPreviewDirect(asset);
     }
 }
 
 void AssetWindow::SaveCurrentScene() {
-    const auto& scene = EEngineCore::getEditorInstance()->GetCore(SceneMgr)->GetCurrentScene();
-    CSE::SSceneLoader::SaveScene(static_cast<CSE::SScene*>(scene), m_currentSceneAsset->name_path);
+    if (m_currentSceneAsset == nullptr) {
+        ACTION_LOG_SYSTEM(ActionSeverity::WARNING, "Save scene failed", "No scene is currently loaded");
+        return;
+    }
+    SceneBackend::GetInstance().SaveSceneDirect(m_currentSceneAsset->name_path);
 }
 
 bool AssetWindow::RenderBreadcrumbNavigation() {
@@ -132,19 +128,26 @@ bool AssetWindow::RenderBreadcrumbNavigation() {
 }
 
 void* AssetWindow::GetAssetPreview(CSE::AssetMgr::AssetReference *asset, bool& isPreviewLoaded) {
-    void* preview = nullptr;
-    if (dynamic_cast<CSE::STexture*>(asset->resource)) {
-        preview = (void*) static_cast<CSE::STexture*>(asset->resource)->GetTextureID();
+    // Check if already loaded
+    void* preview = AssetBackend::GetInstance().GetLoadedPreviewDirect(asset);
+    if (preview) {
+        return preview;
     }
-    else if(!isPreviewLoaded && asset->class_type == "STexture") {
-        asset->resource = CSE::SResource::Create<CSE::STexture>(asset);
-        m_previewAssetQueue.push(asset);
-        isPreviewLoaded = true;
+
+    // Load if not yet loaded
+    if (!isPreviewLoaded && asset->class_type == "STexture") {
+        preview = AssetBackend::GetInstance().LoadAssetPreviewDirect(asset);
+        if (preview) {
+            m_previewAssetQueue.push(asset);
+            isPreviewLoaded = true;
+        }
     }
     return preview;
 }
 
 bool AssetWindow::RenderAssetGrid() {
+    if (!m_selectedFolder) return true;
+
     ImGui::BeginChild("aw_scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 
     ImVec2 button_sz(70, 70);
@@ -157,6 +160,15 @@ bool AssetWindow::RenderAssetGrid() {
 
     for (int n = 0; n < size; n++) {
         const auto& asset = m_selectedFolder->at(n);
+
+        // Check if the prefab's inner resources.
+        bool isDaeSubResource = asset->class_type == "Animation"
+                                || asset->class_type == "Skeleton"
+                                || asset->class_type == "MeshSurface";
+
+        if (isDaeSubResource) {
+            continue;
+        }
 
         void* preview = GetAssetPreview(asset, isPreviewLoaded);
 
@@ -178,7 +190,7 @@ bool AssetWindow::RenderAssetGrid() {
             OnAssetClickEvent(*asset)) {
             return false;
         }
-        OnDragDrop(*asset);
+        OnDragDrop(asset);
         float last_button_x2 = ImGui::GetItemRectMax().x;
         float next_button_x2 =
                 last_button_x2 + style.ItemSpacing.x + button_sz.x;

@@ -22,6 +22,8 @@ namespace CSEditor {
     private:
         void SetMenuBar() const;
 
+        void HandleGlobalShortcuts() const;
+
         void SetDockerNodes();
 
         void GenerateWindows();

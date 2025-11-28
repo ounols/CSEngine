@@ -37,11 +37,11 @@ void CustomComponent::Init() {
     try {
         if(!m_classInstance->call_safe(m_funcInit)) {
             m_isError = true;
-            SafeLog::Log(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+            SafeLog::LogErrf(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
         }
     } catch (Sqrat::Exception e) {
         m_isError = true;
-		SafeLog::Log(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+		SafeLog::LogErrf(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
     }
 
 }
@@ -58,7 +58,7 @@ void CustomComponent::Tick(float elapsedTime) {
     }
     catch (Sqrat::Exception e) {
         m_isError = true;
-		SafeLog::Log(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+		SafeLog::LogErrf(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
     }
 
 }
@@ -73,18 +73,18 @@ void CustomComponent::RegisterScript() {
         m_specialization = new sqext::SQIClass(m_className.c_str());
         if(!m_specialization->bind_safe(m_funcSetCSEngine, "SetCSEngine")) {
             m_funcSetCSEngine = -1;
-            SafeLog::Log(("[" + m_className + " (SetCSEngine)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+            SafeLog::LogErrf(("[" + m_className + " (SetCSEngine)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
         }
     }
     catch (Sqrat::Exception e) {
         m_funcSetCSEngine = -1;
-		SafeLog::Log(("[" + m_className + " (SetCSEngine)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+		SafeLog::LogErrf(("[" + m_className + " (SetCSEngine)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
     }
 
     try {
         if(!m_specialization->bind_safe(m_funcInit, "Init")) {
             m_funcInit = -1;
-            SafeLog::Log(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+            SafeLog::LogErrf(("[" + m_className + " (Init)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
 
         }
     }
@@ -92,7 +92,7 @@ void CustomComponent::RegisterScript() {
     try {
         if(!m_specialization->bind_safe(m_funcTick, "Tick")) {
             m_funcTick = -1;
-            SafeLog::Log(("[" + m_className + " (Tick)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+            SafeLog::LogErrf(("[" + m_className + " (Tick)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
 
         }
     }
@@ -101,7 +101,7 @@ void CustomComponent::RegisterScript() {
     try {
         if(!m_specialization->bind_safe(m_funcExterminate, "Destroy")){
             m_funcExterminate = -1;
-            SafeLog::Log(("[" + m_className + " (Destroy)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+            SafeLog::LogErrf(("[" + m_className + " (Destroy)] " + Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
 
         }
     }
@@ -111,8 +111,11 @@ void CustomComponent::RegisterScript() {
 
 
 void CustomComponent::SetClassName(const std::string& name) {
-    auto asset = SResource::Get<SScriptObject>(name);
-    if (asset == nullptr) return;
+    const auto& asset = SResource::Get<SScriptObject>(name);
+    if (asset == nullptr) {
+        SafeLog::LogErrf("Can't find script object with name: %s", name.c_str());
+        return;
+    }
 
     m_classID = asset->GetHash();
     m_className = asset->GetScriptClassName();
@@ -139,7 +142,7 @@ void CustomComponent::SetIsEnable(bool is_enable) {
 
 
 void CustomComponent::Log(const char* log) {
-	SafeLog::Log((std::string(log) + '\n').c_str());
+	SafeLog::LogInfo((std::string(log) + '\n').c_str());
 }
 
 
@@ -159,15 +162,19 @@ SComponent* CustomComponent::Clone(SGameObject* object) {
 
 void CustomComponent::SetValue(const std::string& name_str, const Arguments& value) {
     if (name_str == "m_classID") {
-        SetClassName(ConvertSpaceStr(value[0], true));
+        if (!value.empty()) {
+            SetClassName(ConvertSpaceStr(value[0], true));
+        }
     }
     //variable : 0.name , 1.value, 2. type
     else if (name_str == "__variable__") {
-        for(auto& val : m_variables) {
-            if(val.name == trim(value[0])) {
-				val.value = trim(value[1]);
-				val.type = trim(value[2]);
-                BindValue(&val, ConvertSpaceStr(value[1], true).c_str());
+        if (value.size() >= 3) {
+            for(auto& val : m_variables) {
+                if(val.name == trim(value[0])) {
+                    val.value = trim(value[1]);
+                    val.type = trim(value[2]);
+                    BindValue(&val, ConvertSpaceStr(value[1], true).c_str());
+                }
             }
         }
     }
@@ -200,15 +207,15 @@ void CustomComponent::CreateClassInstance(const std::vector<std::string>& variab
         m_classInstance->call(m_funcSetCSEngine, this);
     } catch (Sqrat::Exception e) {
         m_isError = true;
-		SafeLog::Log((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
+		SafeLog::LogErr((Sqrat::LastErrorString(Sqrat::DefaultVM::Get()) + '\n').c_str());
         return;
     }
 
     if(variables.empty()) return;
 
     for (const auto& val : variables) {
-        auto obj = m_classInstance->get(val.c_str());
-        auto r_obj = obj.GetObject()._type;
+        const auto& obj = m_classInstance->get(val.c_str());
+        const auto r_obj = obj.GetObject()._type;
 
         const char* name;
         std::string value;

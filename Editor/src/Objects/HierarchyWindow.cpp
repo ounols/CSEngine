@@ -4,10 +4,18 @@
 
 #include "HierarchyWindow.h"
 #include "../Manager/EEngineCore.h"
+#include "../Manager/EditorActionLogger.h"
+#include "../Backend/ObjectBackend.h"
+#include "../Backend/EditorBackend.h"
 #include "../../src/Manager/SceneMgr.h"
+#include "../../src/Manager/GameObjectMgr.h"
 #include "../../src/Object/SScene.h"
 #include "../../src/Object/SPrefab.h"
 #include "../../../src/Manager/ResMgr.h"
+#include "../../src/Component/TransformComponent.h"
+#include "../../src/Component/RenderComponent.h"
+#include "../../src/Component/CameraComponent.h"
+#include "../../src/Component/LightComponent.h"
 
 using namespace CSEditor;
 
@@ -22,6 +30,17 @@ void HierarchyWindow::SetUI() {
     ImGui::Begin("Hierarchy");
 
     RenderTrees();
+
+    // Context menu for empty space
+    if (ImGui::BeginPopupContextWindow("HierarchyContextMenu", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
+        RenderCreateMenu(nullptr);
+        ImGui::EndPopup();
+    }
+
+    // Handle keyboard shortcuts
+    if (!m_core->IsPreview() && ImGui::IsWindowFocused()) {
+        HandleKeyboardShortcuts();
+    }
 
     if (!m_core->IsPreview() && (ImGui::IsWindowFocused() || ImGui::IsWindowHovered())) {
         for (ImGuiKey key = static_cast<ImGuiKey>(0); key < ImGuiKey_COUNT; key = (ImGuiKey) (key + 1)) {
@@ -69,8 +88,36 @@ void HierarchyWindow::RenderGameObject(CSE::SGameObject& parent) {
                                                   (m_selected != nullptr && m_selected == &parent
                                                    ? ImGuiTreeNodeFlags_Selected : NULL), name.c_str());
     if (ImGui::IsItemDeactivated() && ImGui::IsItemHovered()) {
+        if (m_selected != &parent) {
+            ACTION_LOG_SELECTION(parent.GetName(), true);
+        }
         m_selected = &parent;
     }
+
+    // Context menu for this item
+    if (ImGui::BeginPopupContextItem()) {
+        m_selected = &parent;
+
+        RenderCreateMenu(&parent);
+
+        ImGui::Separator();
+
+        if (ImGui::MenuItem("Duplicate", "Ctrl+D")) {
+            DuplicateSelectedGameObject();
+        }
+        if (ImGui::MenuItem("Delete", "Delete")) {
+            DeleteSelectedGameObject();
+        }
+
+        ImGui::Separator();
+
+        if (ImGui::MenuItem("Rename")) {
+            // TODO: Implement rename functionality
+        }
+
+        ImGui::EndPopup();
+    }
+
     // When Dragging
     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
         ImGui::SetDragDropPayload("INSP_GOBJ", &parent, sizeof(CSE::SGameObject));
@@ -110,5 +157,113 @@ void HierarchyWindow::UpdateGameObject(CSE::SGameObject& parent) {
     parent.Tick(0);
     for (const auto& child : parent.GetChildren()) {
         UpdateGameObject(*child);
+    }
+}
+
+void HierarchyWindow::RenderContextMenu() {
+    // This is now handled in RenderGameObject and SetUI
+}
+
+void HierarchyWindow::RenderCreateMenu(CSE::SGameObject* parent) {
+    auto& objBackend = ObjectBackend::GetInstance();
+    auto& editorBackend = EditorBackend::GetInstance();
+
+    if (ImGui::BeginMenu("Create")) {
+        if (ImGui::MenuItem("Empty Object")) {
+            auto* obj = CreateEmptyGameObject(parent);
+            m_selected = obj;
+            editorBackend.InvokeEditorRender();
+        }
+
+        ImGui::Separator();
+
+        if (ImGui::BeginMenu("3D Object")) {
+            if (ImGui::MenuItem("Cube")) {
+                auto* obj = CreatePrimitiveGameObject("Cube", parent);
+                m_selected = obj;
+                editorBackend.InvokeEditorRender();
+            }
+            if (ImGui::MenuItem("Sphere")) {
+                auto* obj = CreatePrimitiveGameObject("Sphere", parent);
+                m_selected = obj;
+                editorBackend.InvokeEditorRender();
+            }
+            if (ImGui::MenuItem("Plane")) {
+                auto* obj = CreatePrimitiveGameObject("Plane", parent);
+                m_selected = obj;
+                editorBackend.InvokeEditorRender();
+            }
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Light")) {
+            if (ImGui::MenuItem("Directional Light")) {
+                auto* obj = objBackend.CreateLightObjectDirect("Directional", parent);
+                m_selected = obj;
+                editorBackend.InvokeEditorRender();
+            }
+            if (ImGui::MenuItem("Point Light")) {
+                auto* obj = objBackend.CreateLightObjectDirect("Point", parent);
+                m_selected = obj;
+                editorBackend.InvokeEditorRender();
+            }
+            if (ImGui::MenuItem("Spot Light")) {
+                auto* obj = objBackend.CreateLightObjectDirect("Spot", parent);
+                m_selected = obj;
+                editorBackend.InvokeEditorRender();
+            }
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::MenuItem("Camera")) {
+            auto* obj = objBackend.CreateCameraObjectDirect(parent);
+            m_selected = obj;
+            editorBackend.InvokeEditorRender();
+        }
+
+        ImGui::EndMenu();
+    }
+}
+
+void HierarchyWindow::HandleKeyboardShortcuts() {
+    // Delete key - delete selected object
+    if (ImGui::IsKeyPressed(ImGuiKey_Delete) && m_selected != nullptr) {
+        DeleteSelectedGameObject();
+    }
+
+    // Ctrl+D - duplicate selected object
+    if (ImGui::GetIO().KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_D) && m_selected != nullptr) {
+        DuplicateSelectedGameObject();
+    }
+}
+
+CSE::SGameObject* HierarchyWindow::CreateEmptyGameObject(CSE::SGameObject* parent) {
+    auto& backend = ObjectBackend::GetInstance();
+    return backend.CreateEmptyObjectDirect("New GameObject", parent);
+}
+
+CSE::SGameObject* HierarchyWindow::CreatePrimitiveGameObject(const char* name, CSE::SGameObject* parent) {
+    auto& backend = ObjectBackend::GetInstance();
+    return backend.CreatePrimitiveObjectDirect(name, name, parent);
+}
+
+void HierarchyWindow::DeleteSelectedGameObject() {
+    if (m_selected == nullptr) return;
+
+    auto& backend = ObjectBackend::GetInstance();
+    if (backend.DeleteObjectDirect(m_selected)) {
+        m_selected = nullptr;
+        EditorBackend::GetInstance().InvokeEditorRender();
+    }
+}
+
+void HierarchyWindow::DuplicateSelectedGameObject() {
+    if (m_selected == nullptr) return;
+
+    auto& backend = ObjectBackend::GetInstance();
+    auto* newObj = backend.DuplicateObjectDirect(m_selected);
+    if (newObj) {
+        m_selected = newObj;
+        EditorBackend::GetInstance().InvokeEditorRender();
     }
 }

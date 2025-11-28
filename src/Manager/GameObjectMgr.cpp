@@ -2,6 +2,7 @@
 #include "GameObjectMgr.h"
 #include "MemoryMgr.h"
 #include "EngineCore.h"
+#include "../Component/SComponent.h"
 
 using namespace CSE;
 
@@ -77,6 +78,7 @@ SGameObject* GameObjectMgr::FindByID(const std::string& id) const {
 
 SGameObject* GameObjectMgr::FindByHash(const std::string& hash) const {
     std::string obj_hash = split(hash, '?')[0];
+    if (obj_hash.empty()) return nullptr;
     return SContainerHash<SGameObject*>::Get(obj_hash);
 }
 

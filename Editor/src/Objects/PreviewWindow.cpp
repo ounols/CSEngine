@@ -1,11 +1,12 @@
 #include "PreviewWindow.h"
 #include "../Manager/EEngineCore.h"
+#include "../Backend/EditorBackend.h"
 
 using namespace CSEditor;
 
 PreviewWindow::PreviewWindow() {
     m_engineCore = EEngineCore::getEditorInstance();
-    m_engineCore->InvokeEditorRender();
+    EditorBackend::GetInstance().InvokeEditorRender();
 }
 
 PreviewWindow::~PreviewWindow() {
@@ -13,27 +14,29 @@ PreviewWindow::~PreviewWindow() {
 }
 
 void PreviewWindow::SetUI() {
+    auto& backend = EditorBackend::GetInstance();
+
     ImGui::Begin("Preview");
     const unsigned int width = ImGui::GetContentRegionAvail().x;
     const unsigned int height = ImGui::GetContentRegionAvail().y;
 
     if (m_bIsInit) {
-        m_engineCore->InvokePreviewStart(width, height);
+        backend.PlayDirect(width, height);
         m_bIsInit = false;
         m_prevWidth = width;
         m_prevHeight = height;
     }
 
     if ((m_prevWidth != width || m_prevHeight != height)) {
-        m_engineCore->InvokePreviewResize(width, height);
-        m_engineCore->InvokeEditorRender();
+        backend.ResizePreviewDirect(width, height);
+        backend.InvokeEditorRender();
     }
 
-    if (!m_engineCore->IsPreview()) {
+    if (!backend.IsPlaying()) {
         if(ImGui::IsWindowFocused() || ImGui::IsWindowHovered()) {
             for (ImGuiKey key = static_cast<ImGuiKey>(0); key < ImGuiKey_COUNT; key = (ImGuiKey) (key + 1)) {
                 if (ImGui::IsKeyDown(key)) {
-                    m_engineCore->InvokeEditorRender();
+                    backend.InvokeEditorRender();
                     break;
                 }
             }
@@ -42,7 +45,7 @@ void PreviewWindow::SetUI() {
 
     ImVec2 pos = ImGui::GetCursorScreenPos();
     ImGui::GetWindowDrawList()->AddImage(
-            (void*) m_engineCore->GetPreviewTextureId(),
+            (void*) backend.GetPreviewTextureId(),
             ImVec2(pos.x, pos.y),
             ImVec2(pos.x + width, pos.y + height),
             ImVec2(0, 1),
@@ -59,10 +62,10 @@ void PreviewWindow::InitPreview() {
 }
 
 void PreviewWindow::ReleasePreview() {
-    m_engineCore->InvokePreviewStop();
+    EditorBackend::GetInstance().StopDirect();
     m_bIsInit = false;
 }
 
 bool PreviewWindow::IsPreview() const {
-    return m_engineCore->IsPreview();
+    return EditorBackend::GetInstance().IsPlaying();
 }

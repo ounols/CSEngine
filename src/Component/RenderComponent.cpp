@@ -45,14 +45,11 @@ void RenderComponent::Init() {
 #endif
 
     if (material == nullptr) {
-        isEnable = isRenderActive = false;
+        b_isError = false;
     }
-
-    isRenderActive = isEnable;
 }
 
 void RenderComponent::Tick(float elapsedTime) {
-
     if (m_mesh == nullptr) {
         m_mesh = gameObject->GetComponent<DrawableStaticMeshComponent>();
 #ifndef CSE_GLOBAL_SKINNED_ANIMATION_DISABLED
@@ -82,14 +79,11 @@ void RenderComponent::Render(const GLProgramHandle* handle) const {
 
 void RenderComponent::SetIsEnable(bool is_enable) {
     SComponent::SetIsEnable(is_enable);
-
-    isRenderActive = isEnable;
 }
 
 SComponent* RenderComponent::Clone(SGameObject* object) {
     INIT_COMPONENT_CLONE(RenderComponent, clone);
 
-    clone->isRenderActive = isRenderActive;
     clone->SetMaterial(material);
 
     return clone;
@@ -103,12 +97,16 @@ void RenderComponent::SetJointMatrix(const GLProgramHandle* handle) const {
 #endif
 }
 
+bool RenderComponent::IsRenderActive() const {
+    return GetIsEnable() && !b_isError;
+}
+
 SMaterial* RenderComponent::GetMaterial() const {
     return m_material_clone;
 }
 
 void RenderComponent::SetMaterial(SMaterial* material) {
-    auto renderMgr = CORE->GetCore(RenderMgr);
+    const auto& renderMgr = CORE->GetCore(RenderMgr);
     if (this->material == nullptr)
         this->material = SResource::Create<SMaterial>(Settings::GetDefaultDeferredMaterialId());
     else {
@@ -117,6 +115,11 @@ void RenderComponent::SetMaterial(SMaterial* material) {
         this->material = material;
     }
 
+    b_isError = this->material == nullptr;
+    if (b_isError) {
+        SafeLog::LogErr("Material is null.");
+        return;
+    }
     const auto& mode = this->material->GetMode();
     renderMgr->Register(this, (RenderContainer::RenderGroupMode) mode);
 

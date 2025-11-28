@@ -13,7 +13,7 @@ namespace CSE {
     struct SLight : BaseLight {
 
         //Direction
-        vec4 direction;
+        vec4 direction = vec4{ 0.f, -1.f, 0.f, 0.f };
 
         //Point Light
         vec3* position;

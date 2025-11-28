@@ -56,7 +56,7 @@ void DepthOnlyRenderGroup::RenderAll(const CameraBase& camera) const {
         if (handle == nullptr) continue;
         glUseProgram(handle->Program);
         for(const auto& render : shadowObject.second) {
-            if (!render->isRenderActive) continue;
+            if (!render->IsRenderActive()) continue;
             const auto& shadowTransform = static_cast<RenderComponent*>(render)->GetGameObject()->GetTransform();
 
             if (LightMgr::SHADOW_DISTANCE < vec3::Distance(cameraMatrix.cameraPosition, shadowTransform->m_position))

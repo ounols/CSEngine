@@ -169,7 +169,7 @@ void SGameObject::DeleteComponent(SComponent* component) {
 SComponent* SGameObject::CreateComponent(const char* type) {
     SComponent* component = static_cast<SComponent*>(ReflectionObject::NewObject(type));
     if (component == nullptr) {
-        SafeLog::LogF("ERROR: \'%s\' is undefined.", type);
+        SafeLog::LogErrf("ERROR: \'%s\' is undefined.", type);
         return nullptr;
     }
     component->SetGameObject(this);
@@ -222,15 +222,12 @@ SGameObject* SGameObject::FindByHash(const std::string& hash) {
 }
 
 bool SGameObject::GetIsEnable() const {
+    if (m_parent != nullptr) return m_parent->GetIsEnable() && isEnable;
     return isEnable;
 }
 
 void SGameObject::SetIsEnable(bool is_enable) {
     isEnable = is_enable;
-    for (const auto& component: m_components) {
-        if (component == nullptr) continue;
-        component->SetIsEnable(is_enable);
-    }
 }
 
 void SGameObject::UpdateComponent(float elapsedTime) {

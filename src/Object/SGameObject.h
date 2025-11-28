@@ -6,7 +6,6 @@
 #include "../SObject.h"
 
 #include "../Util/Interface/TransformInterface.h"
-#include "../Component/SComponent.h"
 #ifndef CSE_GLOBAL_SCRIPT_DISABLED
 #include "sqrat/sqratUtil.h"
 #endif

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CSESCENE version="1.0.0">
+<prefab name="Player" fileid="MK57mhRtk3bOb2vd" hash="v1WdS9gmijmZwcfl">
+<changegameobject name="Player" hash="v1WdS9gmijmZwcfl" fileid="MK57mhRtk3bOb2vd" ref="GncJUGcCvo9OHcuv">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 0 0</value>
+<value name="m_scale" t="vec3">0.3 0.3 0.3</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID" t="classId">kZv23mh6HWcWy0wn</value>
+<value name="__variable__" t="classVal">moveSpeed 2.000000 float</value>
+<value name="__variable__" t="classVal">minX -2.000000 float</value>
+<value name="__variable__" t="classVal">maxX 2.000000 float</value>
+<value name="__variable__" t="classVal">gameManager null null</value>
+<value name="__variable__" t="classVal">isAlive t bool</value>
+<value name="__variable__" t="classVal">collisionRadius 0.400000 float</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</changegameobject></prefab><gameobject name="GameManager" hash="4XMbZarM9ZOkcGix">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 0 0</value>
+<value name="m_scale" t="vec3">1 1 1</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="1">
+<value name="m_classID" t="classId">48JWKidyrlQCmWtd</value>
+<value name="__variable__" t="classVal">score 0 int</value>
+<value name="__variable__" t="classVal">spawnTimer 0.000000 float</value>
+<value name="__variable__" t="classVal">playerObject null null</value>
+<value name="__variable__" t="classVal">playerController null null</value>
+<value name="__variable__" t="classVal">obstaclePool null arr</value>
+<value name="__variable__" t="classVal">obstaclePoolSize 10 int</value>
+<value name="__variable__" t="classVal">spawnMinX -1.500000 float</value>
+<value name="__variable__" t="classVal">spawnMaxX 1.500000 float</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</gameobject><prefab name="Obstacle1" fileid="MK57mhRtk3bOb2vd" hash="jevPOShshqDDo8P7">
+<changegameobject name="Obstacle1" hash="jevPOShshqDDo8P7" fileid="MK57mhRtk3bOb2vd" ref="GncJUGcCvo9OHcuv">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 100 0</value>
+<value name="m_scale" t="vec3">0.3 0.3 0.3</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="0">
+<value name="m_classID" t="classId">vU4Y2DUAeLo77f3u</value>
+<value name="__variable__" t="classVal">fallSpeed 1.500000 float</value>
+<value name="__variable__" t="classVal">deleteY -2.500000 float</value>
+<value name="__variable__" t="classVal">gameManager null null</value>
+<value name="__variable__" t="classVal">isActive f bool</value>
+<value name="__variable__" t="classVal">collisionRadius 0.300000 float</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</changegameobject></prefab><prefab name="Obstacle2" fileid="MK57mhRtk3bOb2vd" hash="IqPA361Llsk0fMh1">
+<changegameobject name="Obstacle2" hash="IqPA361Llsk0fMh1" fileid="MK57mhRtk3bOb2vd" ref="GncJUGcCvo9OHcuv">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 100 0</value>
+<value name="m_scale" t="vec3">0.3 0.3 0.3</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="0">
+<value name="m_classID" t="classId">vU4Y2DUAeLo77f3u</value>
+<value name="__variable__" t="classVal">fallSpeed 1.500000 float</value>
+<value name="__variable__" t="classVal">deleteY -2.500000 float</value>
+<value name="__variable__" t="classVal">gameManager null null</value>
+<value name="__variable__" t="classVal">isActive f bool</value>
+<value name="__variable__" t="classVal">collisionRadius 0.300000 float</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material" t="res" d="SMaterial">gqdRZYJXjjPn0skc</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</changegameobject></prefab><prefab name="Obstacle3" fileid="MK57mhRtk3bOb2vd" hash="55c6bWBxkIhT8HPq">
+<changegameobject name="Obstacle3" hash="55c6bWBxkIhT8HPq" fileid="MK57mhRtk3bOb2vd" ref="GncJUGcCvo9OHcuv">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 100 0</value>
+<value name="m_scale" t="vec3">0.3 0.3 0.3</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="0">
+<value name="m_classID" t="classId">vU4Y2DUAeLo77f3u</value>
+<value name="__variable__" t="classVal">fallSpeed 1.500000 float</value>
+<value name="__variable__" t="classVal">deleteY -2.500000 float</value>
+<value name="__variable__" t="classVal">gameManager null null</value>
+<value name="__variable__" t="classVal">isActive f bool</value>
+<value name="__variable__" t="classVal">collisionRadius 0.300000 float</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material" t="res" d="SMaterial">gqdRZYJXjjPn0skc</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</changegameobject></prefab><prefab name="Obstacle4" fileid="MK57mhRtk3bOb2vd" hash="o6tSMS9gCIlK3csZ">
+<changegameobject name="Obstacle4" hash="o6tSMS9gCIlK3csZ" fileid="MK57mhRtk3bOb2vd" ref="GncJUGcCvo9OHcuv">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 100 0</value>
+<value name="m_scale" t="vec3">0.3 0.3 0.3</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="0">
+<value name="m_classID" t="classId">vU4Y2DUAeLo77f3u</value>
+<value name="__variable__" t="classVal">fallSpeed 1.500000 float</value>
+<value name="__variable__" t="classVal">deleteY -2.500000 float</value>
+<value name="__variable__" t="classVal">gameManager null null</value>
+<value name="__variable__" t="classVal">isActive f bool</value>
+<value name="__variable__" t="classVal">collisionRadius 0.300000 float</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material" t="res" d="SMaterial">gqdRZYJXjjPn0skc</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</changegameobject></prefab><prefab name="Obstacle5" fileid="MK57mhRtk3bOb2vd" hash="NUF0kVpkOQa5l1pf">
+<changegameobject name="Obstacle5" hash="NUF0kVpkOQa5l1pf" fileid="MK57mhRtk3bOb2vd" ref="GncJUGcCvo9OHcuv">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 100 0</value>
+<value name="m_scale" t="vec3">0.3 0.3 0.3</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="0">
+<value name="m_classID" t="classId">vU4Y2DUAeLo77f3u</value>
+<value name="__variable__" t="classVal">fallSpeed 1.500000 float</value>
+<value name="__variable__" t="classVal">deleteY -2.500000 float</value>
+<value name="__variable__" t="classVal">gameManager null null</value>
+<value name="__variable__" t="classVal">isActive f bool</value>
+<value name="__variable__" t="classVal">collisionRadius 0.300000 float</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material" t="res" d="SMaterial">gqdRZYJXjjPn0skc</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</changegameobject></prefab><prefab name="Obstacle6" fileid="MK57mhRtk3bOb2vd" hash="EB4tayjl4Tq2So14">
+<changegameobject name="Obstacle6" hash="EB4tayjl4Tq2So14" fileid="MK57mhRtk3bOb2vd" ref="GncJUGcCvo9OHcuv">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 100 0</value>
+<value name="m_scale" t="vec3">0.3 0.3 0.3</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="0">
+<value name="m_classID" t="classId">vU4Y2DUAeLo77f3u</value>
+<value name="__variable__" t="classVal">fallSpeed 1.500000 float</value>
+<value name="__variable__" t="classVal">deleteY -2.500000 float</value>
+<value name="__variable__" t="classVal">gameManager null null</value>
+<value name="__variable__" t="classVal">isActive f bool</value>
+<value name="__variable__" t="classVal">collisionRadius 0.300000 float</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material" t="res" d="SMaterial">gqdRZYJXjjPn0skc</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</changegameobject></prefab><prefab name="Obstacle7" fileid="MK57mhRtk3bOb2vd" hash="5Hua1u6gRpGNceek">
+<changegameobject name="Obstacle7" hash="5Hua1u6gRpGNceek" fileid="MK57mhRtk3bOb2vd" ref="GncJUGcCvo9OHcuv">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 100 0</value>
+<value name="m_scale" t="vec3">0.3 0.3 0.3</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="0">
+<value name="m_classID" t="classId">vU4Y2DUAeLo77f3u</value>
+<value name="__variable__" t="classVal">fallSpeed 1.500000 float</value>
+<value name="__variable__" t="classVal">deleteY -2.500000 float</value>
+<value name="__variable__" t="classVal">gameManager null null</value>
+<value name="__variable__" t="classVal">isActive f bool</value>
+<value name="__variable__" t="classVal">collisionRadius 0.300000 float</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material" t="res" d="SMaterial">gqdRZYJXjjPn0skc</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</changegameobject></prefab><prefab name="Obstacle8" fileid="MK57mhRtk3bOb2vd" hash="LkFKGmnXYLLyit8e">
+<changegameobject name="Obstacle8" hash="LkFKGmnXYLLyit8e" fileid="MK57mhRtk3bOb2vd" ref="GncJUGcCvo9OHcuv">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 100 0</value>
+<value name="m_scale" t="vec3">0.3 0.3 0.3</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="0">
+<value name="m_classID" t="classId">vU4Y2DUAeLo77f3u</value>
+<value name="__variable__" t="classVal">fallSpeed 1.500000 float</value>
+<value name="__variable__" t="classVal">deleteY -2.500000 float</value>
+<value name="__variable__" t="classVal">gameManager null null</value>
+<value name="__variable__" t="classVal">isActive f bool</value>
+<value name="__variable__" t="classVal">collisionRadius 0.300000 float</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material" t="res" d="SMaterial">gqdRZYJXjjPn0skc</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</changegameobject></prefab><prefab name="Obstacle9" fileid="MK57mhRtk3bOb2vd" hash="rgnf7ZIY0iLSxjSW">
+<changegameobject name="Obstacle9" hash="rgnf7ZIY0iLSxjSW" fileid="MK57mhRtk3bOb2vd" ref="GncJUGcCvo9OHcuv">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 100 0</value>
+<value name="m_scale" t="vec3">0.3 0.3 0.3</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="0">
+<value name="m_classID" t="classId">vU4Y2DUAeLo77f3u</value>
+<value name="__variable__" t="classVal">fallSpeed 1.500000 float</value>
+<value name="__variable__" t="classVal">deleteY -2.500000 float</value>
+<value name="__variable__" t="classVal">gameManager null null</value>
+<value name="__variable__" t="classVal">isActive f bool</value>
+<value name="__variable__" t="classVal">collisionRadius 0.300000 float</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material" t="res" d="SMaterial">gqdRZYJXjjPn0skc</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</changegameobject></prefab><prefab name="Obstacle10" fileid="MK57mhRtk3bOb2vd" hash="YJKZrTLGGiSO6y7Z">
+<changegameobject name="Obstacle10" hash="YJKZrTLGGiSO6y7Z" fileid="MK57mhRtk3bOb2vd" ref="GncJUGcCvo9OHcuv">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 100 0</value>
+<value name="m_scale" t="vec3">0.3 0.3 0.3</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="CustomComponent" enable="0">
+<value name="m_classID" t="classId">vU4Y2DUAeLo77f3u</value>
+<value name="__variable__" t="classVal">fallSpeed 1.500000 float</value>
+<value name="__variable__" t="classVal">deleteY -2.500000 float</value>
+<value name="__variable__" t="classVal">gameManager null null</value>
+<value name="__variable__" t="classVal">isActive f bool</value>
+<value name="__variable__" t="classVal">collisionRadius 0.300000 float</value>
+</component>
+<component type="RenderComponent" enable="1">
+<value name="material" t="res" d="SMaterial">gqdRZYJXjjPn0skc</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</changegameobject></prefab><gameobject name="MainCamera" hash="CL3Dq6FHdiBMQV66">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 1.5 9.465</value>
+<value name="m_scale" t="vec3">1 1 1</value>
+<value name="m_rotation" t="quaternion">-0.087 0 0 0.996</value>
+</component>
+<component type="CameraComponent" enable="1">
+<value name="m_target" t="vec3">0 0 -1</value>
+<value name="m_up" t="vec3">0 1 0</value>
+<value name="m_targetObject" t="obj"></value>
+<value name="m_cameraMatrix" t="mat4">1 0 0 0 0 1 0 0 0 0 1 0 0 -1.5 -6.685 1</value>
+<value name="m_projectionMatrix" t="mat4">1.29493 0 0 0 0 2.41421 0 0 0 0 0.001001 -1 0 0 -0.1001 0</value>
+<value name="m_type" t="int">1</value>
+<value name="m_pFov" t="float">45</value>
+<value name="m_orthoValue" t="vec4">-1 1 -1 1</value>
+<value name="m_distance" t="vec2">0.1 100</value>
+<value name="m_backgroundType" t="int">1</value>
+<value name="m_backgroundColor" t="col3">0.4 0.4 0.4</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</gameobject><gameobject name="DirectionalLight" hash="1ZYi6wGeHsCMveVe">
+<component type="TransformComponent" enable="1">
+<value name="m_position" t="vec3">0 10 0</value>
+<value name="m_scale" t="vec3">1 1 1</value>
+<value name="m_rotation" t="quaternion">0 0 0 1</value>
+</component>
+<component type="LightComponent" enable="1">
+<value name="m_type" t="int">1</value>
+<value name="m_disableShadow" t="bool">0</value>
+<value name="m_near" t="float">-100</value>
+<value name="m_far" t="float">100</value>
+<value name="m_direction" t="vec4">0 0 1 0</value>
+<value name="m_color" t="col3">2 2 2</value>
+</component>
+<parent>__ROOT_OF_SCENE__</parent>
+</gameobject></CSESCENE>

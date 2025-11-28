@@ -3,7 +3,6 @@
 #include "../Component/LightComponent.h"
 #include "../Component/DrawableSkinnedMeshComponent.h"
 #include "../Component/CameraComponent.h"
-#include "../../Assets/teapot_smooth.h"
 #include "../Component/RenderComponent.h"
 #include "../Component/CustomComponent.h"
 #include "../Manager/GameObjectMgr.h"
@@ -86,8 +85,8 @@ void FirstDemoScene::Init() {
 //	STexture* empty = new STexture();
 //	empty->LoadEmpty();
 
-    cube = new MeshSurface(CH02::teapot_smoothNumVerts, CH02::teapot_smoothVerts, CH02::teapot_smoothNormals);
-    cube->SetUndestroyable(false);
+    // teapot_smooth.h 제거됨 - cube 메시 생성 스킵
+    cube = nullptr;
     SFrameBuffer* buffer = new SFrameBuffer();
     buffer->GenerateFramebuffer(SFrameBuffer::PLANE, 512, 512);
     const auto& buf_tex = buffer->GenerateTexturebuffer(SFrameBuffer::RENDER, GL_RGB);
@@ -168,7 +167,7 @@ void FirstDemoScene::Init() {
     c2->SetParent(testing);
     // c2->AddComponent(c->GetComponent<DrawableStaticMeshComponent>());
     c2->CreateComponent<DrawableStaticMeshComponent>();
-    c2->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
+    // cube mesh 제거됨 - SetMesh 스킵
 //	c2->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
 //	c2->GetComponent<MaterialComponent>()->SetAlbedoTexture(empty);
     c2->GetTransform()->m_position = vec3{ -0.2f, -0.3f, -0.2f };
@@ -329,7 +328,7 @@ void FirstDemoScene::switchingObject() {
     } else {
         c2 = new SGameObject();
         c2->CreateComponent<DrawableStaticMeshComponent>();
-        c2->GetComponent<DrawableStaticMeshComponent>()->SetMesh(*cube);
+        // cube mesh 제거됨 - SetMesh 스킵
 //        c2->CreateComponent<MaterialComponent>();
 //		c2->GetComponent<MaterialComponent>()->SetMaterialAmbient(vec3{ 1, 0, 0 });
 //		c2->GetComponent<MaterialComponent>()->SetMaterialSpecular(vec3{ 0, 0, 0 });

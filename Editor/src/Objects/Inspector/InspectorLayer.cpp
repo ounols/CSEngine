@@ -34,8 +34,29 @@ void InspectorLayer::UpdateParams() {
 }
 
 void InspectorLayer::RenderUI() {
-    if (!ImGui::CollapsingHeader(m_component->GetClassType(), ImGuiTreeNodeFlags_DefaultOpen))
+    // Check if this is TransformComponent (can't be removed)
+    bool isTransform = m_component->IsSameClass("TransformComponent");
+
+    // Header with context menu
+    bool isOpen = ImGui::CollapsingHeader(m_component->GetClassType(), ImGuiTreeNodeFlags_DefaultOpen);
+
+    // Context menu for component actions
+    if (!isTransform && ImGui::BeginPopupContextItem()) {
+        if (ImGui::MenuItem("Remove Component")) {
+            auto* gameObject = m_component->GetGameObject();
+            if (gameObject != nullptr) {
+                gameObject->DeleteComponent(m_component);
+            }
+        }
+        if (ImGui::MenuItem("Reset")) {
+            // TODO: Reset component to default values
+        }
+        ImGui::EndPopup();
+    }
+
+    if (!isOpen)
         return;
+
     // When Dragging
     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
         ImGui::SetDragDropPayload("INSP_COMP", m_component, sizeof(CSE::SComponent));
@@ -48,7 +69,9 @@ void InspectorLayer::RenderUI() {
     ImGui::Text("Enable");
     ImGui::TableNextColumn();
     bool enable = m_component->GetIsEnable();
-    ImGui::Checkbox("", &enable);
+    if (ImGui::Checkbox("##Enable", &enable)) {
+        m_component->SetIsEnable(enable);
+    }
 
     for (const auto& param: m_params) {
         const auto& name = param->GetName();

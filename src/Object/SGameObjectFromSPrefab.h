@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "SGameObject.h"
+#include "../Component/SComponent.h"
 
 namespace CSE {
 

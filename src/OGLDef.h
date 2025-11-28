@@ -54,7 +54,7 @@ static void checkGlError(const char *op) {
 #elif IOS
 
 #else
-        SafeLog::Log((std::string(op) + ": glError " + std::to_string(error)).c_str());
+        SafeLog::LogErr((std::string(op) + ": glError " + std::to_string(error)).c_str());
         std::cout << op << ": glError " << error << '\n';
 #endif
     }
